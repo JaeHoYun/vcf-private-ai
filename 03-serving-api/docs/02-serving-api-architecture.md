@@ -216,7 +216,7 @@ PAIS는 VCF Automation의 **조직(Organization)·네임스페이스**(§2.1 토
 
 | 주제 | 왜 여기가 아닌가 | 기준 문서 |
 |------|----------------|----------|
-| **DLVM (Deep Learning VM)** | 서빙 평면이 아니라 **개발·실험 평면**. 데이터 과학자·MLOps의 개인 GPU 워크스테이션 VM으로 모델 평가·프로토타이핑·검증에 쓰며, 프로덕션 상시 서빙 대상이 아님. App Developer는 DLVM 없이 PAIS API URL만으로 개발 | [① §2.7·§1.3](../../01-infra/docs/01-concepts.md), 라이프사이클 [① §4.1](../../01-infra/docs/04-dev-scenarios.md) |
+| **DLVM (Deep Learning VM)** | 서빙 평면이 아니라 **개발·실험 평면**. 데이터 과학자·MLOps의 개인 GPU 워크스테이션 VM으로 모델 평가·프로토타이핑·검증에 쓰며, 프로덕션 상시 서빙 대상이 아님. App Developer는 DLVM 없이 PAIS API URL만으로 개발 | [① §1.3](../../01-infra/docs/01-concepts.md) · [① §2.7](../../01-infra/docs/02-architecture.md), 라이프사이클 [① §4.1](../../01-infra/docs/04-dev-scenarios.md) |
 | **GPU 할당 방식 / 구축 순서** | 플랫폼 토대(vGPU vs DirectPath I/O, Phase별 구축) | [① §2.3·§2.6](../../01-infra/docs/02-architecture.md) |
 | **컴퓨트·GPU·VKS 토폴로지 설계** | 노드풀·배치 같은 설계 결정 | [⑦ §3](../../07-design/docs/03-compute-gpu-topology.md) |
 | **용량·복제본·GPU 사이징(정량)** | 수식·산정은 본 가이드 범위 밖 | [⑥ §2](../../06-sizing-cost/docs/02-gpu-sizing.md) |

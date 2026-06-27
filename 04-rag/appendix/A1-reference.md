@@ -71,11 +71,5 @@ PAIS(Private AI Services) 2.1의 Artifact Mirroring Tool(아티팩트 미러링 
 - [Building GenAI Agents on VCF with Private AI Services (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2025/08/26/vmware-private-ai-services-demo/)
 - 시리즈 형제 가이드: [① 인프라](../../01-infra/README.md) · [② VectorDB](../../02-vectordb/README.md) · [③ 서빙 API](../../03-serving-api/README.md)
 
-## A1.5 CHANGELOG
-
-| 버전 | 날짜 | 내용 |
-|------|------|------|
-| v1.0 | 2026-06 | 초판 — VCF 9.1 / PAIS(Private AI Services) 2.1 기준 엔드투엔드 RAG 레퍼런스(01–07) 신설 |
-
 ---
 [← 이전: 07 프로덕션 운영](../docs/07-production-operations.md) · [목차](../README.md)

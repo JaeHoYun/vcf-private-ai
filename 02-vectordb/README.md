@@ -86,12 +86,6 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 출처: https://github.com/JaeHoYun/vcf-private-ai/tree/main/02-vectordb
 ```
 
-## 업데이트 이력
-
-- v2.1 (2026-06): VCF 9.1 / DSM 9.1 / PAIF 9.1 기준 갱신, 생애주기 기반 구조 재편, 배포·운영 가이드 신설
-- v2.0 (2026-02): 검증 기반 수정 반영, 경쟁 비교 보강
-- v1.0 (2025-02): 초안 작성
-
 ## 피드백
 
 오류 발견, 개선 제안, 질문은 [Issues](https://github.com/JaeHoYun/vcf-private-ai/issues)에 남겨주세요.

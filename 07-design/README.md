@@ -43,7 +43,7 @@
 | 07 | [설계 리뷰 체크리스트와 검증 관문](docs/07-design-review.md) | 설계 리뷰 항목, 단계별 검증 관문 |
 | 08 | [브라운필드 통합 설계](docs/08-brownfield-integration.md) | 기존 온프렘 AI·MLOps의 PAIF 점진 통합, 퍼블릭 클라우드 처리 |
 | 09 | [역할과 책임 (RACI)](docs/09-roles-raci.md) | AI 플랫폼 수명주기 단계별 역할표(인프라/플랫폼/앱/보안/데이터) |
-| A1 | [부록](appendix/A1-reference.md) | 용어집, 참조 링크, 변경 이력 |
+| A1 | [부록](appendix/A1-reference.md) | 용어집, 참조 링크 |
 | 워크시트 | [채워넣기 워크시트](worksheet/README.md) | 결정 요인 시트 + 설계 결정 기록(D1–D12) 채워넣기 양식 |
 
 ## 빠른 시작

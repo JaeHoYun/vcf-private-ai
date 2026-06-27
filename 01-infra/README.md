@@ -48,7 +48,7 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축·개발
 | 09 | **[구축 시나리오](docs/09-deployment-scenarios.md)** | 신규(그린필드)·기존 환경에 얹기(브라운필드)·전환(마이그레이션) 구축 출발 상황별 절차 골격·선결요건·리스크 |
 | 10 | **[Day-2 운영](docs/10-operations.md)** | 구축 이후 운영 — 업그레이드(LCM)·트러블슈팅·백업복구·인증서 회전·SLO/알람·온콜·네트워크·스토리지 Day-2 런북 + 운영자 독자 트랙(상황별 라우터) |
 | 11 | **[GPU Enablement 핸즈온](docs/11-gpu-enablement.md)** (딥다이브) | 시리즈 표준보다 깊은 핸즈온 트랙 — BIOS 전제→하이퍼바이저 인식→할당 모드 4종→버전 인터락→GPU Operator→PAIS 소비 수직 경로, known-good 스냅샷, PoC 검증 경로, 자주 막히는 함정(CDI·vGPU 라이선스) |
-| A1 | [FAQ·버전 매트릭스·용어집](appendix/A1-appendix.md) | 자주 묻는 질문, 호환성, 용어, 참고 링크, CHANGELOG |
+| A1 | [FAQ·버전 매트릭스·용어집](appendix/A1-appendix.md) | 자주 묻는 질문, 호환성, 용어, 참고 링크 |
 | 워크시트 | [채워넣기 워크시트](worksheet/README.md) | 09 구축 시나리오 결정·현황 파악·SoW 정의, 10 Day-2 점검·업그레이드·복구·SLO 기록용 채워넣기 양식(계산용 xlsx 아님) |
 
 ## 빠른 시작
@@ -89,21 +89,6 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축·개발
 ```
 출처: https://github.com/JaeHoYun/vcf-private-ai/tree/main/01-infra
 ```
-
-## 업데이트 이력
-
-- **v4.10 (2026-06):** 워크시트 09 전면 개편 — 문서 09의 그대로 옮겨 쓰는 체크리스트에서 **현황 파악 → 갭·선결요건 → SoW(작업기술서) 정의** 도구로 재설계. 시나리오별 자기완결 블록(G 그린필드·B 브라운필드·M 마이그레이션) 각각에 풀 SoW 골격(범위 In/Out·산출물·WBS·전제/의존성·RACI·마일스톤·인수기준·리스크/롤백) 수록, WBS를 시나리오별 절차 골격(02 §2.6 / 편입 Convert·Import / 09 §9.4 5단계)에 매핑. 관련 상위 README·worksheet README·docs 09 명칭·설명을 일치시킴.
-- **v4.9 (2026-06):** 자립성 패턴 이식 — 문서 09·10 도입부에 선수지식 표 추가, 채워넣기 워크시트 신설(worksheet/: 09 구축 시나리오 결정·선결요건, 10 Day-2 점검·업그레이드·복구·SLO 기록), A1.3 용어집에 구축·운영 용어(그린필드·브라운필드·마이그레이션·Workload Mobility·LCM·SDDC Manager·SLI/SLO·TTFT·Trust Bundle·vSAN Effective Capacity·Adaptive Resync 등) 추가, 빠른 시작에 운영자 진입로(§10.6)·워크시트 노출.
-- **v4.8 (2026-06):** 문서 10에 §10.5 네트워크·스토리지 Day-2 운영 추가 — NSX Edge·로드밸런서·Network Policy·GPU 패브릭 네트워크 운영과 vSAN(Effective Capacity·Automatic Rebalance·resync)·AI 자산 store(Harbor·pgvector/DSM) 스토리지 운영. 기존 운영자 독자 트랙은 §10.5 → §10.6으로 이동. 구성·설계는 문서 02·09, 용량 산정은 ⑥로 경계를 명시.
-- **v4.7 (2026-06):** 문서 10에 §10.5 운영자 독자 트랙 추가 — 상황별 라우터(무슨 일이 생기면 어디로), 운영자 정기 점검 리듬(일·주·월·분기), 운영 책임 경계. 문서 10 Day-2 운영 1차 범위 마감(09 구축 시나리오 + 10 Day-2 운영으로 ① 인프라 운영 라이프사이클 골격 완비).
-- **v4.6 (2026-06):** 문서 10에 §10.4 SLO·알람·온콜 추가 — 06.8 관측 대시보드를 운영 액션으로 연결(SLI/SLO 정의, VCF Operations Alert/Symptom/Notification 기반 알람, 온콜·에스컬레이션). AI 지표(TTFT·토큰 처리량·GPU 사용률) 기반.
-- **v4.5 (2026-06):** 문서 10에 §10.3 백업·복구와 인증서·시크릿 회전 추가 — 플랫폼 구성(SDDC Manager·vCenter·NSX) 파일 기반 백업, 복구 훈련, VCF 9 자동 인증서 갱신(Fleet Management CA)·수동 교체·PAIS Trust Bundle/시크릿 회전.
-- **v4.4 (2026-06):** 문서 10에 §10.2 트러블슈팅 런북 추가 — 02.9 알려진 이슈를 증상→진단→조치로 승격(GPU/ModelRuntime의 `CDI device injection failed`·vGPU Unlicensed, 모델 엔드포인트, 관측성, DLVM). 진단 기본 흐름·계층별 1차 확인 포함.
-- **v4.3 (2026-06):** 문서 10 Day-2 운영 신설 — 플랫폼 업그레이드·패치(LCM) 런북: VCF 코어(SDDC Manager → NSX → vCenter → ESX → vSAN) → 관리 서비스 → Kubernetes → GPU → PAIS 업그레이드 순서, 사전 점검, 다운타임(PAIS 2.0→2.1 VKS 재생성)·롤백·검증. 트러블슈팅·백업복구·인증서·SLO·운영자 트랙은 후속 보강 예정.
-- **v4.2 (2026-06):** 문서 09 구축 시나리오 신설 — 신규(그린필드)·기존 환경에 얹기(브라운필드: VCF Import/Convert + GPU 워크로드 도메인 추가)·전환(마이그레이션: VCF Operations Workload Mobility) 3가지 구축 출발 상황별 절차 골격·선결요건·리스크. 업그레이드는 Day-2 운영 영역으로 분리하고 본 문서에선 선결요건으로 참조만.
-- **v4.1 (2026-06):** 문서 07 GPUaaS(PAIF GPU 자원 서비스) 신설 — 책임 경계 2티어, VM+K8s 셀프서비스, GPU 분할 매트릭스, 쇼백·차지백, 사내 셀프서비스/계열사 공유 풀 시나리오. 기존 산업(→문서 08)·부록(→문서 09) 리넘버링.
-- **v4.0 (2026-06):** VCF 9.1 / PAIF 9.1 / PAIS 2.1 전면 반영. 문서 구조 재설계(문서 00 What's New, 문서 05 에이전트·MCP, 문서 08 산업 시나리오 신설), 버전 기준 단일 출처 표 도입, 라이선스·용어 정정, 엔진 버전 매트릭스 갱신.
-- 이전 이력(v3.x, 9.0.1 기반)은 [A1 CHANGELOG](appendix/A1-appendix.md) 참조.
 
 ## 피드백
 

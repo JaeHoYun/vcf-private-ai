@@ -181,16 +181,4 @@ kubectl logs <pod> -n <ns>
 
 ---
 
-## A1.5 CHANGELOG
-
-| 버전 | 날짜 | 주요 변경 |
-|------|------|----------|
-| **4.0** | **2026-06** | **VCF 9.1 / PAIF 9.1 / PAIS 2.1 전면 반영.** 구조 재설계(문서 00 What's New·문서 05 에이전트/MCP·문서 08 산업 시나리오 신설), 버전 단일 기준 문서(README) 도입, 라이선스 정정(PAIF=코어 포함), DirectPath/vMotion·Blackwell 정정, 엔진 버전 매트릭스 갱신(vLLM 0.11.2/Infinity 0.0.76/llama.cpp/GPU Operator 25.10.1/VKr 1.33), MCP·Artifact Mirroring Tool·관측성·CPU 추론·Google Workspace 추가, 용어 VCF 9.x 정합(PAIF Workload Domain), 날짜·중복 정리 |
-| 3.1 | 2026-01 | (9.0.1 기반) DR/HA 보강, "AI 플레이그라운드 vs Playground" 용어 구분, 코드 샘플 최적화 |
-| 3.0 | 2026-01 | (9.0.1 기반) 6문서 구조 재편, DLVM 9.0.1 반영, 프로덕션 아키텍처 추가 |
-| 2.x | 2026-01 | (9.0 기반) 페르소나 워크플로우·RAG 상세화, FAQ·인증 흐름 |
-| 1.0 | 2026-01 | 초안 |
-
----
-
 [← 이전: 11 GPU Enablement 핸즈온](../docs/11-gpu-enablement.md) · [목차](../README.md)

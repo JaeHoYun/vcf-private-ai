@@ -14,7 +14,7 @@
 
 ### 2.1.1 이기종 소스 연결 패턴
 
-PAIS의 관리형 인입은 네 종류의 커넥터(Google Drive·Confluence·SharePoint·S3)로 한정됩니다. 지원 커넥터 목록의 기준 문서는 시리즈 ②이며(교차링크: [vcf-dsm-vectordb-guide 05-usage-rag](../../02-vectordb/docs/05-usage-rag.md)), 본 절은 그 범위 밖을 다룹니다. 네 종류 밖의 소스(레거시 관계형 데이터베이스, 파일 셰어, 사내 자체 시스템, 미지원 형식)는 별도의 커스텀 인제스트 파이프라인이 필요합니다.
+PAIS의 관리형 인입은 네 종류의 커넥터(Google Drive·Confluence·SharePoint·S3)로 한정됩니다. 지원 커넥터 목록의 기준 문서는 시리즈 ②이며(교차링크: [② 05-usage-rag](../../02-vectordb/docs/05-usage-rag.md)), 본 절은 그 범위 밖을 다룹니다. 네 종류 밖의 소스(레거시 관계형 데이터베이스, 파일 셰어, 사내 자체 시스템, 미지원 형식)는 별도의 커스텀 인제스트 파이프라인이 필요합니다.
 
 공통 파이프라인은 단계별 순차 변환 구조로 구성합니다: 추출(extract) → 정규화·정제(normalize/clean) → 청킹(chunk) → 임베딩(embed) → 적재(load). ([Unstructured](https://unstructured.io/insights/rag-systems-best-practices-unstructured-data-pipeline), [AWS Big Data Blog](https://aws.amazon.com/blogs/big-data/build-a-rag-data-ingestion-pipeline-for-large-scale-ml-workloads/))
 

@@ -1,6 +1,6 @@
 # 01 — 사이징 방법론과 워크로드 분류
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
-> 시리즈 인덱스: [vcf-private-ai-series](../../README.md)
+> 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 VMware Cloud Foundation(VCF) 9.1 / VMware Private AI Foundation with NVIDIA(PAIF) 9.1 / VMware Private AI Services(PAIS) 2.1 위에서 프라이빗 AI 워크로드를 운영할 때, 자원을 얼마나 준비해야 하는지를 결정하는 **사이징 방법론의 출발점**입니다. ([VCF 9.1 발표](https://www.broadcom.com/company/news/product-releases/64326), [PAIF with NVIDIA 9.1 TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html))
 

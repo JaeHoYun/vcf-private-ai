@@ -23,7 +23,7 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 | **Private AI Services (PAIS)** | **2.1** | UI 셀프서비스, MCP, Artifact Mirroring Tool(아티팩트 미러링 도구, 에어갭 아티팩트 반입) 추가 |
 | Private AI Services API | OpenAI 호환 (`/compatibility/openai/v1`) | [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) |
 
-> **추론 엔진 버전(vLLM·Infinity·llama.cpp 등)** 은 형제 가이드의 버전 단일 기준 문서를 따릅니다 → [vcf-private-ai-guide README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 본 가이드는 **API 계층**에 집중하며, 엔진 버전은 별도로 단정하지 않고 그 표를 기준선으로 삼습니다. 엔진 버전은 릴리스마다 변동되므로 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다.
+> **추론 엔진 버전(vLLM·Infinity·llama.cpp 등)** 은 형제 가이드의 버전 단일 기준 문서를 따릅니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 본 가이드는 **API 계층**에 집중하며, 엔진 버전은 별도로 단정하지 않고 그 표를 기준선으로 삼습니다. 엔진 버전은 릴리스마다 변동되므로 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다.
 
 ---
 

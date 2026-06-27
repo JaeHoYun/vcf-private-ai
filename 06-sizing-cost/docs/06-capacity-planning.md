@@ -1,7 +1,7 @@
 # 06 — 용량 계획과 운영
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
-> 시리즈 인덱스: [vcf-private-ai-series](../../README.md)
+> 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 GPU WLD)을 한 번 구축했다고 끝이 아닙니다. AI 워크로드는 모델 교체·동시 사용자 증가·신규 테넌트 온보딩에 따라 수요가 빠르게 변합니다. 본 문서는 "지금 용량이 충분한가, 언제 무엇을 증설해야 하는가, 그 비용은 누구에게 귀속되는가"라는 운영 단계의 질문에 답하기 위한 **용량 계획(capacity planning)** 관점을 다룹니다.
 

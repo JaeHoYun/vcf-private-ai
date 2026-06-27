@@ -1,11 +1,11 @@
 # 07 — 감사·로깅·사고대응 및 컴플라이언스 체크리스트
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)을 참조하세요.
-> 시리즈 인덱스: [vcf-private-ai-series](../../README.md)
+> 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 시리즈 ⑤(`vcf-private-ai-security-governance`)의 마무리 문서입니다. 01–06 문서에서 설계한 통제가 실제로 "증명 가능"하도록, (1) 무엇을 로그로 남기고 어떻게 무결성을 지킬 것인가, (2) 모델 행위를 어떻게 관측하고 이상을 탐지할 것인가, (3) AI 특유의 사고가 발생했을 때 어떻게 탐지·대응·복구할 것인가, (4) 통제를 어떤 일반 컴플라이언스 범주에 매핑하는가, 그리고 (5) 모든 통제를 한 표로 모아 각각의 검증 방법을 명시하는 **마스터 통제 체크리스트**를 다룹니다.
+이 문서는 시리즈 ⑤(보안·거버넌스)의 마무리 문서입니다. 01–06 문서에서 설계한 통제가 실제로 "증명 가능"하도록, (1) 무엇을 로그로 남기고 어떻게 무결성을 지킬 것인가, (2) 모델 행위를 어떻게 관측하고 이상을 탐지할 것인가, (3) AI 특유의 사고가 발생했을 때 어떻게 탐지·대응·복구할 것인가, (4) 통제를 어떤 일반 컴플라이언스 범주에 매핑하는가, 그리고 (5) 모든 통제를 한 표로 모아 각각의 검증 방법을 명시하는 **마스터 통제 체크리스트**를 다룹니다.
 
-기반 사실은 VCF 9.1 / PAIF(VMware Private AI Foundation with NVIDIA) 9.1 / PAIS(Private AI Services) 2.1이며, 관측성은 VCF Operations와 OpenTelemetry(OTel), Grafana를 연계하는 ③ 문서([vcf-paif-serving-api-guide](../../03-serving-api/README.md))를 따릅니다. GPU 가속 워크로드는 공식 용어 "GPU-Accelerated Workload Domain"(이하 GPU 워크로드 도메인)으로 표기합니다.
+기반 사실은 VCF 9.1 / PAIF(VMware Private AI Foundation with NVIDIA) 9.1 / PAIS(Private AI Services) 2.1이며, 관측성은 VCF Operations와 OpenTelemetry(OTel), Grafana를 연계하는 ③ 문서([③ 서빙 API](../../03-serving-api/README.md))를 따릅니다. GPU 가속 워크로드는 공식 용어 "GPU-Accelerated Workload Domain"(이하 GPU 워크로드 도메인)으로 표기합니다.
 
 > 규제 표현 주의: 이 문서는 특정 규제기관이나 실명 기업을 특정 행위와 결부하지 않습니다. 규제는 "개인정보보호 규제", "금융 규제", "산업 보안 요건" 같은 일반 범주로만 추상화합니다. 조직별 적용은 자체 법무·컴플라이언스 검토가 필요합니다(확인 필요).
 

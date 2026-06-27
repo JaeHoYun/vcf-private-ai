@@ -1,7 +1,7 @@
 # 05 — 데이터 거버넌스·프라이버시
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)을 참조하세요.
-> 시리즈 인덱스: [vcf-private-ai-series](../../README.md)
+> 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 사내 폐쇄망(프라이빗) 환경에서 운영하는 생성형 AI 플랫폼의 데이터 거버넌스와 프라이버시 통제를 다룹니다. 기반 스택은 VMware Cloud Foundation(VCF) 9.1과 그 위에서 동작하는 VMware Private AI Foundation with NVIDIA(PAIF) 9.1, VMware Private AI Services(PAIS) 2.1입니다. 검색·생성에 쓰이는 벡터 데이터 계층은 시리즈 ② 가이드에서 다룬 Data Services Manager(DSM) 기반 PostgreSQL + pgvector를 전제합니다. PAIF에서 벡터DB가 pgvector(PostgreSQL) 위에서 DSM으로 배포·관리된다는 점은 Broadcom TechDocs와 VCF 블로그에서 확인됩니다([Broadcom TechDocs: Deploy a Vector Database for PAIF](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-rag-workloads-in-private-ai-foundation-with-nvidia/deploy-a-vector-database-for-paif.html), [VCF Blog: Initial Availability of PAIF](https://blogs.vmware.com/cloud-foundation/2024/03/18/announcing-initial-availability-of-vmware-private-ai-foundation-with-nvidia/)).
 
@@ -193,8 +193,8 @@ VCF/PAIF는 인터넷 비연결(disconnected/air-gapped) 환경에서 RAG 워크
 
 ### 관련 문서
 
-- ② 벡터DB 가이드: [vcf-dsm-vectordb-guide](../../02-vectordb/README.md) — pgvector 스키마·DSM 운영
-- ④ RAG 참조 아키텍처: [vcf-rag-reference-architecture](../../04-rag/README.md) — 검색 파이프라인·인프라 격리
+- ② 벡터DB 가이드: [② 벡터 DB](../../02-vectordb/README.md) — pgvector 스키마·DSM 운영
+- ④ RAG 참조 아키텍처: [④ RAG](../../04-rag/README.md) — 검색 파이프라인·인프라 격리
 - [06 앱 가드레일](06-app-guardrails.md): 런타임 입력·출력 통제(본 시리즈)
 
 ---

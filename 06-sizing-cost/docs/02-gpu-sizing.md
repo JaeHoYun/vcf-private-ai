@@ -1,13 +1,13 @@
 # 02 — GPU 사이징
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
-> 시리즈 인덱스: [vcf-private-ai-series](../../README.md)
+> 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 VCF 9.1 / PAIF 9.1 / PAIS 2.1 환경의 GPU-Accelerated Workload Domain(약칭: GPU WLD) 위에서 추론 워크로드를 운영할 때, "모델 크기와 서비스 목표를 입력하면 GPU 메모리(VRAM)와 GPU 수량이 얼마나 필요한가"를 추정하는 방법을 다룹니다. vLLM·llama.cpp 등 추론 엔진을 전제로 합니다.
 
 아래의 모든 메모리·처리량 수치는 아키텍처·정밀도·엔진 버전·하드웨어에 따라 크게 달라지는 **어림**(approximation)이며, 배포 전 반드시 대상 환경에서 실측이 필요합니다. 산식은 "1차 사이징 가이드"로만 사용하시고, 확정 용량은 실측값으로 갈음하세요.
 
-관련 문서: 컴퓨트·시스템 메모리 사이징은 [03-compute-memory-sizing.md](03-compute-memory-sizing.md), VKS 클러스터 사이징은 [04-vks-cluster-sizing.md](04-vks-cluster-sizing.md)를 참조하세요. GPU 공유 방식의 상세 아키텍처는 시리즈 ① [vcf-private-ai-guide](../../01-infra/README.md)를 참조하세요.
+관련 문서: 컴퓨트·시스템 메모리 사이징은 [03-compute-memory-sizing.md](03-compute-memory-sizing.md), VKS 클러스터 사이징은 [04-vks-cluster-sizing.md](04-vks-cluster-sizing.md)를 참조하세요. GPU 공유 방식의 상세 아키텍처는 시리즈 [① 인프라](../../01-infra/README.md)를 참조하세요.
 
 ---
 
@@ -167,7 +167,7 @@ PAIF에서 ESXi 호스트의 GPU는 vGPU 타임슬라이스, MIG, DirectPath I/O
 
 - **MIG**는 단일 물리 GPU를 하드웨어로 쪼개 각 슬라이스를 다른 VM에 할당합니다. 예컨대 H100은 8개의 메모리 슬라이스(각 약 10GB)와 7개의 컴퓨트 슬라이스로 구성되며, `[compute]g.[memory]gb` 표기로 프로파일을 지정합니다(예: `3g.40gb` = 컴퓨트 3슬라이스·VRAM 40GB). 프로파일은 1·2·3·4·7 슬라이스를 소비하며 합이 7 이하인 조합만 유효합니다([NVIDIA MIG User Guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-mig-profiles.html)).
 - **선택 가이드(용량 효율)**: 작은 모델을 강한 격리로 여러 개 돌릴 때는 MIG, 하나의 큰 모델로 최대 성능을 낼 때는 DirectPath I/O, 부하가 낮고 간헐적인 소형 워크로드가 많을 때는 vGPU 타임슬라이스가 일반적으로 효율적입니다.
-- 상세 아키텍처·구성 절차는 시리즈 ① [vcf-private-ai-guide](../../01-infra/README.md)를 참조하세요.
+- 상세 아키텍처·구성 절차는 시리즈 [① 인프라](../../01-infra/README.md)를 참조하세요.
 
 ---
 

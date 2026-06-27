@@ -1,13 +1,13 @@
 # 05 — 스토리지·네트워크 용량 사이징
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
-> 시리즈 인덱스: [vcf-private-ai-series](../../README.md)
+> 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 GPU-Accelerated Workload Domain(이하 GPU WLD)에서 프라이빗 AI 추론·RAG 워크로드를 운영할 때 필요한 스토리지 용량·성능과 네트워크 대역폭을 사이징하는 방법을 다룹니다. 스토리지는 vSAN(ESA), 데이터/벡터는 DSM pgvector(②), 모델 레지스트리는 Harbor, 네트워크는 NSX를 전제로 합니다.
 
 본 문서의 모든 수치는 공신력 있는 출처를 인라인으로 표기했으나, 실제 환경의 모델·임베딩·트래픽 특성에 따라 크게 달라집니다. 표에 제시한 값은 **어림(order-of-magnitude) 추정이며 실측이 필요**합니다. 검증 불가한 항목은 "확인 필요"로 표기했습니다.
 
-멀티호스트 RDMA 패브릭(GPUDirect, RoCE 등) 설계는 본 문서 범위 밖이며 ① 인프라 가이드([vcf-private-ai-guide](../../01-infra/README.md))에 위임합니다.
+멀티호스트 RDMA 패브릭(GPUDirect, RoCE 등) 설계는 본 문서 범위 밖이며 ① 인프라 가이드([① 인프라](../../01-infra/README.md))에 위임합니다.
 
 ---
 
@@ -45,7 +45,7 @@
 
 ## 5.2 벡터 인덱스 용량 — DSM pgvector 산정 (② 연계)
 
-벡터 인덱스 용량은 ② [vcf-dsm-vectordb-guide](../../02-vectordb/README.md)와 연계해 별도로 산정합니다. 본 절은 용량 환산식만 다루고, 인덱스 튜닝·운영은 ②에 위임합니다.
+벡터 인덱스 용량은 [② 벡터 DB](../../02-vectordb/README.md)와 연계해 별도로 산정합니다. 본 절은 용량 환산식만 다루고, 인덱스 튜닝·운영은 ②에 위임합니다.
 
 ### 기본 환산식
 
@@ -143,7 +143,7 @@ NSX Edge VM(Large)은 흐름·패킷 크기·서비스에 따라 게이트웨이
 | 내부(앱↔pgvector↔모델) | 검색·프롬프트 트래픽 | NSX 분산 스위칭/DFW | DFW 정책 오버헤드 확인 필요 |
 | GPU 간 RDMA 패브릭 | 범위 밖 | 전용 패브릭 | ① 인프라로 위임 |
 
-> 멀티호스트 GPU 간 RDMA(GPUDirect/RoCE) 패브릭은 본 표에서 의도적으로 제외했습니다. 설계·사이징은 ① [vcf-private-ai-guide](../../01-infra/README.md)를 참조하세요.
+> 멀티호스트 GPU 간 RDMA(GPUDirect/RoCE) 패브릭은 본 표에서 의도적으로 제외했습니다. 설계·사이징은 [① 인프라](../../01-infra/README.md)를 참조하세요.
 
 ---
 
@@ -183,7 +183,7 @@ NSX Edge VM(Large)은 흐름·패킷 크기·서비스에 따라 게이트웨이
 본 문서의 모든 수치는 출처 기반 어림이므로, 운영 전 다음 절차로 실측·검증하세요.
 
 1. **모델 아티팩트 실측**: Harbor 레지스트리에서 대상 모델의 실제 정밀도·샤딩 기준 디스크 점유와 보존 버전 수를 확인합니다. FP16 140GB(70B)는 출발점일 뿐이며 양자화 시 크게 줄어듭니다([Spheron, "GPU Memory Requirements for LLMs"](https://www.spheron.network/blog/gpu-memory-requirements-llm/)).
-2. **벡터 인덱스 실측**: 대표 데이터 1만–10만 건으로 pgvector HNSW를 실제 빌드해 인덱스 크기를 측정하고, 1.5–3배 오버헤드 범위 중 실제 계수를 도출합니다([Lantern Blog](https://lantern.dev/blog/pgvector-storage); [DEV Community, "Scaling pgvector"](https://dev.to/philip_mcclarence_2ef9475/scaling-pgvector-memory-quantization-and-index-build-strategies-8m2)). 운영 지침은 ② [vcf-dsm-vectordb-guide](../../02-vectordb/README.md)를 따릅니다.
+2. **벡터 인덱스 실측**: 대표 데이터 1만–10만 건으로 pgvector HNSW를 실제 빌드해 인덱스 크기를 측정하고, 1.5–3배 오버헤드 범위 중 실제 계수를 도출합니다([Lantern Blog](https://lantern.dev/blog/pgvector-storage); [DEV Community, "Scaling pgvector"](https://dev.to/philip_mcclarence_2ef9475/scaling-pgvector-memory-quantization-and-index-build-strategies-8m2)). 운영 지침은 [② 벡터 DB](../../02-vectordb/README.md)를 따릅니다.
 3. **콜드스타트 측정**: 대상 모델을 레지스트리→GPU로 실제 로딩해 콜드스타트 시간을 측정하고, "가중치 ÷ 유효 대역폭" 추정치와 비교해 단계별 병목을 식별합니다.
 4. **vSAN 성능·용량 검증**: vSAN ESA 성능 대시보드로 IOPS·지연·대역폭을 확인하고([Broadcom TechDocs, "vSAN ESA Performance Dashboard"](https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-operations/8-18/vmware-aria-operations-configuration-guide-8-18/predefined-dashboards-in-vrealize-operations-manager/performance-dashboards/vsan-esa-performance-dashboard.html)), Auto-RAID 정책별 실제 가용/원시 용량 비율을 확인합니다([VCF Blog, "Auto-RAID in vSAN for VCF 9.1"](https://blogs.vmware.com/cloud-foundation/2026/05/08/auto-raid-in-vsan-for-vcf-9-1/)).
 5. **네트워크 처리량 검증**: 추론 트래픽은 워크로드 믹스(텍스트/멀티모달)로 대역폭을 실측하고, NSX Edge 게이트웨이 처리량이 흐름·서비스 조합에서 예상치를 충족하는지 확인합니다([VCF Blog, "VCF 9.1 Network Scale and Performance"](https://blogs.vmware.com/cloud-foundation/2026/05/05/simplify-workload-connectivity-and-enhance-network-scale-and-performance-with-vcf-9-1/)).

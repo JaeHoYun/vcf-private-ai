@@ -1,7 +1,7 @@
 # 00 — 오리엔테이션 (독자 가이드·선수지식·용어집·개념 미니맵)
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
-> 시리즈 인덱스: [vcf-private-ai-series](../../README.md)
+> 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 **VCF/PAIF가 처음인 독자**가 본 가이드에서 길을 잃지 않도록 돕는 출발점입니다. 어디부터 읽을지(독자별 경로), 무엇을 알고 있으면 좋은지(선수지식), 전체 그림(개념 미니맵), 모르는 용어(미니 용어집)를 정리했습니다.
 
@@ -31,8 +31,8 @@
 | LLM 추론 | 모델 가중치·KV 캐시·토큰·정밀도(FP16/FP8/INT8) | 0.4 용어집 + [01.2](01-sizing-methodology.md#12-워크로드-분류와-자원-특성) |
 | 서빙 | vLLM, Replica, 동시성/QPS, TTFT/TPOT | 0.4 용어집 + [02.5](02-gpu-sizing.md#25-처리량지연-목표--gpu-수replica-환산) |
 | 쿠버네티스 | 노드/파드, requests/limits, taint, 오토스케일 | 0.4 용어집 + 외부 K8s 입문 자료 |
-| VCF/vSphere | 클러스터·호스트·vSAN·NSX·VM Class | 0.4 용어집 + ① [vcf-private-ai-guide](../../01-infra/README.md) |
-| RAG | 임베딩·벡터DB·리랭커·청킹 | 0.4 용어집 + ④ [vcf-rag-reference-architecture](../../04-rag/README.md) |
+| VCF/vSphere | 클러스터·호스트·vSAN·NSX·VM Class | 0.4 용어집 + [① 인프라](../../01-infra/README.md) |
+| RAG | 임베딩·벡터DB·리랭커·청킹 | 0.4 용어집 + [④ RAG](../../04-rag/README.md) |
 
 > 깊은 아키텍처·구축 절차는 본 가이드(사이징·비용)의 범위 밖이며, 시리즈 ①–⑤가 담당합니다. 본 가이드는 "얼마나·몇 개·얼마"에 집중합니다.
 

@@ -1,7 +1,7 @@
 # 03 — 컴퓨트·메모리 사이징
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
-> 시리즈 인덱스: [vcf-private-ai-series](../../README.md)
+> 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 본 문서는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 GPU WLD)에서 **GPU 자체를 제외한 자원** — 호스트 vCPU·메모리, NUMA·PCIe 배치, 데이터 파이프라인, CPU 추론 경로, 임베딩·리랭커 같은 RAG 비-LLM 컴포넌트, 그리고 워크로드를 노드 수요로 환산하는 규칙 — 을 사이징합니다. GPU(vGPU 프로파일·VRAM) 사이징은 [02 — GPU 사이징](./02-gpu-sizing.md)에서 다루며, 본 문서는 그 결과물을 입력으로 받습니다.
 

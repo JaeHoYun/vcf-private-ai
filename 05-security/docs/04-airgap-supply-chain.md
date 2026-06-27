@@ -1,9 +1,9 @@
 # 04 — 에어갭·공급망·모델 출처
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)을 참조하세요.
-> 시리즈 인덱스: [vcf-private-ai-series](../../README.md)
+> 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 폐쇄망(에어갭) 환경에서 Private AI 워크로드를 운영할 때의 공급망 보안을 다룹니다. 모델·컨테이너·드라이버가 외부에서 어떻게 안전하게 반입되고, 출처(provenance)와 무결성이 어떻게 검증되며, 로컬 레지스트리(Harbor) 단계에서 어떤 통제가 걸리는지를 보안 관점으로 정리합니다. 인프라 구성 절차 자체는 ① 인프라 가이드([vcf-private-ai-guide](../../01-infra/README.md))의 Artifact Mirroring Tool·Harbor 서술을 참조하고, 본 문서는 그 위에 보안 통제를 얹습니다.
+이 문서는 폐쇄망(에어갭) 환경에서 Private AI 워크로드를 운영할 때의 공급망 보안을 다룹니다. 모델·컨테이너·드라이버가 외부에서 어떻게 안전하게 반입되고, 출처(provenance)와 무결성이 어떻게 검증되며, 로컬 레지스트리(Harbor) 단계에서 어떤 통제가 걸리는지를 보안 관점으로 정리합니다. 인프라 구성 절차 자체는 ① 인프라 가이드([① 인프라](../../01-infra/README.md))의 Artifact Mirroring Tool·Harbor 서술을 참조하고, 본 문서는 그 위에 보안 통제를 얹습니다.
 
 용어 주의: 본 문서의 에어갭 반입 도구는 Broadcom 공식 명칭 **"Artifact Mirroring Tool(아티팩트 미러링 도구)"** 으로 표기합니다. 운영 현장에서 "에어갭 모델/툴링 반입 도구" 등으로 풀어 부르기도 하나, 공식 산출물 기준 명칭은 Artifact Mirroring Tool이며 Private AI Services 2.1에서 도입되었습니다([Broadcom TechDocs — Private AI Services Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html)).
 

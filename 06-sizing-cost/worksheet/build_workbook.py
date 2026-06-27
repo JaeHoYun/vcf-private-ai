@@ -1,7 +1,7 @@
 """
 VCF Private AI 사이징·TCO 계산 워크북 생성기.
 입력(파란 셀)을 바꾸면 GPU·노드·스토리지·TCO 골격이 수식으로 재계산된다.
-출처: https://github.com/JaeHoYun/vcf-private-ai-sizing-cost
+출처: https://github.com/JaeHoYun/vcf-private-ai/tree/main/06-sizing-cost
 """
 import os
 from openpyxl import Workbook
@@ -64,7 +64,7 @@ notes = [
     "[기본 예시] 사내 임직원 5,000명 한국어 문서 RAG 챗봇 → 산출: GPU 약 3장 / 9 노드 / 가용 약 0.6TB",
     "(가이드 docs/08 레퍼런스 시나리오와 동일)",
     "",
-    "출처: https://github.com/JaeHoYun/vcf-private-ai-sizing-cost  ·  라이선스 CC BY 4.0",
+    "출처: https://github.com/JaeHoYun/vcf-private-ai/tree/main/06-sizing-cost  ·  라이선스 CC BY 4.0",
     "비공식 문서 — 벤더 공식 입장 아님. 모든 수치는 어림이며 실측·견적으로 재확인 필요.",
 ]
 r = 4

@@ -68,7 +68,7 @@ flowchart TB
 | ④ | [04-rag](04-rag/README.md) | 통합 | ②③을 하나로 꿰는 엔드투엔드 RAG 레퍼런스 아키텍처 |
 | ⑤ | [05-security](05-security/README.md) | 보안·거버넌스 | 위협모델·격리·접근통제·공급망·데이터 거버넌스·감사 (전 계층 가로지름) |
 | ⑥ | [06-sizing-cost](06-sizing-cost/README.md) | 사이징·용량·비용 | 워크로드·GPU·VKS 사이징, 용량 계획, TCO (전 계층 가로지름) |
-| ⑦ | [07-design](07-design/README.md) | 통합 설계 | 12개 설계 결정, 레퍼런스 블루프린트(소·중·대), ADR 카탈로그 (전 계층 종합) |
+| ⑦ | [07-design](07-design/README.md) | 통합 설계 | 12개 설계 결정, 레퍼런스 블루프린트(소·중·대), 설계 결정 기록 카탈로그 (전 계층 종합) |
 
 > 위 ①–⑦이 Private AI **플랫폼**을 구축·운영·보호·설계하는 시리즈 본편이며, 그 플랫폼 **위에 올리는 에이전트 서비스**는 아래 '다음 단계'의 별도 최상위 가이드에서 다룹니다.
 
@@ -114,7 +114,7 @@ flowchart TB
 
 ## 주요 주제
 
-`VCF` · `PAIF` · `PAIS` · `VKS` · `vSAN` · `NSX` · `DLVM` · `vLLM` · `RAG` · `VectorDB` · `pgvector` · `Model Serving` · `MCP` · `Agent Builder` · `Security` · `Governance` · `Sizing` · `TCO` · `Design` · `Blueprint` · `ADR`
+`VCF` · `PAIF` · `PAIS` · `VKS` · `vSAN` · `NSX` · `DLVM` · `vLLM` · `RAG` · `VectorDB` · `pgvector` · `Model Serving` · `MCP` · `Agent Builder` · `Security` · `Governance` · `Sizing` · `TCO` · `Design` · `Blueprint`
 
 ## 라이선스
 

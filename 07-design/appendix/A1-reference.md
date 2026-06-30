@@ -13,7 +13,7 @@
 | 설계 결정(design decision) | 설계 중 둘 이상의 경로 가운데 하나를 골라야 하는 갈림길. 이 가이드의 중심 개념 |
 | D1–D12 | 12개 설계 결정에 붙인 식별 번호 (→ [06.1](../docs/06-decision-forks.md)) |
 | 결정 요인(driver) | 설계 결정을 끌고 가는 요구사항·제약 (워크로드·SLO·규제·예산·기존 자산·스킬셋 등) (→ [01](../docs/01-design-process.md)) |
-| 설계 결정 기록(ADR) | Architecture Decision Record(아키텍처 의사결정 기록). 결정 하나의 선택·근거·트레이드오프를 남기는 한 장짜리 기록 (→ [06.3](../docs/06-decision-forks.md)) |
+| 설계 결정 기록 | 결정 하나의 선택·근거·트레이드오프를 한 장으로 남기는 기록 (→ [06.3](../docs/06-decision-forks.md)) |
 | 블루프린트(소·중·대) | 여러 설계 결정을 미리 묶어 둔 레퍼런스 설계 출발점 (→ [02](../docs/02-reference-blueprints.md)) |
 | 그린필드(greenfield) · 브라운필드(brownfield) | 처음부터 새로 짓는 환경 / 기존 자산(온프렘 AI·MLOps)이 이미 있는 환경 (→ [08](../docs/08-brownfield-integration.md)) |
 | 점진 통합(incremental integration) | 기존 환경을 한 번에 바꾸지 않고 단계로 나눠 PAIF로 옮기는 방식 (→ [08](../docs/08-brownfield-integration.md)) |

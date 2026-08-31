@@ -12,9 +12,9 @@ VMware Cloud Foundation(VCF) **9.1** 기반 **Private AI**를 다루는 공개 �
 - **반복 업무의 초안 자동화** — 리포트·분석 초안을 사람이 검토·확정하는 흐름으로 처리 시간을 줄입니다.
 - **규제·기밀 환경 적합** — 데이터 사외 반출 없이, 접근통제·감사를 갖춘 상태로 운영합니다.
 
-추상적 약속이 아니라 **무엇을·왜·어떤 지표로** 푸는지는 산업 유스케이스로 정리했습니다.
+추상적 약속이 아니라 **어디에 써야 성과가 나고 어디서 실패하는지** — 도입 판단 기준, 파일럿이 멈추는 실패 모드, 사례 2종(사내 지식 응대·운영 알림 1차 진단) — 로 정리했습니다.
 
-→ **[산업 유스케이스 — 결과·KPI로 보는 에이전트](https://github.com/JaeHoYun/vcf-private-ai-agents/blob/main/docs/08-use-cases.md)**
+→ **[어디에 쓰나 — 성과가 나는 일, 실패하는 일](https://github.com/JaeHoYun/vcf-private-ai-agents/blob/main/docs/08-use-cases.md)**
 
 ## 시작하기 전에 (Primer)
 

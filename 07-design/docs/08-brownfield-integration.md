@@ -20,7 +20,7 @@
 | 쿠브플로우·MLflow류 MLOps | 모델 아티팩트는 Model Gallery(Harbor)로 적재 경로가 있으나, 파이프라인 오케스트레이션 직접 통합 커넥터는 미확인 |
 | 병행 퍼블릭 클라우드 | 일부는 온프렘 회귀 후보, 일부는 매핑 불가로 현행 유지+연계 — 본류가 아닌 분류 작업(8.5) |
 
-> 출발점 인벤토리가 곧 통합 범위입니다. "있으면 좋은 것"이 아니라 **자산별로 가져올지·둘지·온프렘 회귀할지**를 적어야 다음 단계의 결정을 끌 수 있습니다. 다수 사업부 자산이 섞여 들어오는 전사 확장이라면 목표 형상은 [02 §2.5 전사 확장 블루프린트](02-reference-blueprints.md#25-전사-확장멀티테넌트)와 [05 §5.1.1 전사 확장 시 멀티테넌트 기반 설계](05-tenancy-security.md#511-전사-확장-시-멀티테넌트-기반-설계)를 참조합니다.
+> 출발점 인벤토리가 곧 통합 범위입니다. "있으면 좋은 것"이 아니라 **자산별로 가져올지·둘지·온프렘 회귀할지**를 적어야 다음 단계 결정의 근거가 될 수 있습니다. 다수 사업부 자산이 섞여 들어오는 전사 확장이라면 목표 형상은 [02 §2.5 전사 확장 블루프린트](02-reference-blueprints.md#25-전사-확장멀티테넌트)와 [05 §5.1.1 전사 확장 시 멀티테넌트 기반 설계](05-tenancy-security.md#511-전사-확장-시-멀티테넌트-기반-설계)를 참조합니다.
 
 ## 8.2 통합 원칙
 
@@ -38,7 +38,7 @@
 
 - **VCF Convert** — 아직 VCF 인스턴스가 없는 상태에서 기존 VCF Operations·vCenter·NSX를 묶어 관리 도메인(management domain)을 구성하는 경로입니다. 해당 vCenter는 그 안의 모든 클러스터를 포함해 단일 관리 도메인으로 전환되며, 빠진 구성요소는 배포로 채워집니다.
 - **VCF Import** — 이미 VCF 인스턴스가 있는 상태에서 기존 vSphere(vCenter)를 추가 VI 워크로드 도메인으로 중앙 관리에 편입하는 경로입니다. VCF 9.1 브라운필드 Import의 클러스터 요건은 vSphere 8.0 Update 3 + NSX 4.2 이상입니다. 이와 별개로, VCF 9.0-and-later 통합 Import 문서 기준 하한은 VCF 인스턴스 9.0 이상, vCenter 8.0 Update 1 이상, ESX 8.0 Update 1 이상, NSX Manager(존재 시) 4.1.0.2 이상(3노드 클러스터), vSphere Distributed Switch 8.0 이상입니다. 두 값은 출처가 다른 값이며(앞은 9.1 기준 클러스터 요건, 뒤는 통합 Import 문서 베이스라인), 적용 전 작성 시점(2026-06) 공식 BOM·릴리스노트로 재확인하시기 바랍니다. 편입은 vCenter 전체 단위로 일어나 그 안의 모든 vSphere 클러스터가 함께 들어오며(클러스터 부분 선택 불가), VDS 없는 vCenter·Cisco 가상스위치는 미지원입니다. 기존 vCenter에 SSH 활성화가 필요하고, 모든 ESX 호스트가 short name이 아닌 FQDN을 써야 합니다. NSX가 없으면 Import 과정에서 호환되는 최신 NSX를 새로 배포하고, 있으면 그것을 사용합니다.
-- **신규 도메인 병행 후 이전** — PAIF AI-ready 워크로드 도메인을 새로 구축해 두고, 기존 워크로드를 검증하며 옮기는 경로입니다. two-way-door 성격이 가장 강해 운영 위험이 낮습니다. 신규 구축 절차의 상세는 [① 구축 시나리오](../../01-infra/README.md)로 딥링크합니다.
+- **신규 도메인 병행 후 이전** — PAIF AI-ready 워크로드 도메인을 새로 구축해 두고, 기존 워크로드를 검증하며 옮기는 경로입니다. two-way-door 성격이 가장 강해 운영 위험이 낮습니다. 신규 구축 절차의 상세는 [① 구축 시나리오](../../01-infra/README.md)로 바로 연결합니다.
 
 > [출처 구분] Import 버전 하한은 두 베이스라인이 공존합니다. VCF 9.1 브라운필드 Import의 클러스터 요건은 vSphere 8.0 Update 3 + NSX 4.2 이상이고, VCF 9.0-and-later 통합 Import 문서 기준 하한은 vCenter/ESX 8.0 Update 1·NSX 4.1.0.2입니다. 어느 쪽도 단정이 아니라 출처가 다른 값이므로, 적용 환경의 버전 하한은 9.1 GA 시점 공식 BOM·릴리스노트로 재확인하시기 바랍니다. GPU 워크로드 도메인의 Import 가능 여부·조건은 1차 문서에 명시가 없으므로(없음이 곧 제약 없음을 뜻하지 않음) PAIF 9.1 배포 문서로 별도 확인하시기 바랍니다.
 
@@ -59,7 +59,7 @@
 
 기존 모델의 편입 경로는 분명합니다. 승인된 모델을 Model Gallery(Harbor)에 적재하면 Model Runtime이 이를 소비해 OpenAI 호환 엔드포인트(completion·embedding)로 서비스합니다. Private AI Services는 VCF Automation으로 생성한 vSphere Supervisor 네임스페이스 위에서 동작합니다.
 
-**기존 사내 Harbor가 이미 있는 경우** — Model Gallery는 본질적으로 Harbor 프로젝트이며 모델은 리비전 단위로 OCI 아티팩트로 저장됩니다. Model Runtime은 모델 엔드포인트의 Model URL이 가리키는 Harbor modelStore(레지스트리 FQDN + 프로젝트)에서 가중치를 내려받습니다. 따라서 브라운필드에서는 레거시 가중치는 기존 사내 Harbor에 그대로 두고, 추론 서비스 대상 모델만 ORAS 또는 KitOps로 OCI 아티팩트로 패키징해 Model Gallery 규약을 갖춘 Harbor 프로젝트로 반입하는 분리 운영이 합리적입니다. 외부 카탈로그(NVIDIA NGC 등)에서 받아오는 경로에는 Harbor proxy cache를, 인스턴스 간 사본 유지에는 Harbor replication을 활용할 수 있습니다. 다만 Broadcom 공식 설계 가이드가 권고하는 정식 토폴로지는 PAIF가 워크로드 도메인에 배포하는 Harbor Supervisor Service이며, 기존 사내 Harbor를 Model Gallery로 그대로 전용하거나 두 Harbor를 replication으로 상시 연동하는 구성을 명문화한 공식 문서 근거는 작성 시점까지 확인되지 않았습니다. 해당 구성은 사내 Harbor가 Model Gallery의 OCI 아티팩트 레이아웃과 접근권한 규약을 충족한다는 전제 아래 환경 검증 후 채택하시기 바랍니다.
+**기존 사내 Harbor가 이미 있는 경우** — Model Gallery는 본질적으로 Harbor 프로젝트이며 모델은 리비전 단위로 OCI 아티팩트로 저장됩니다. Model Runtime은 모델 엔드포인트의 Model URL이 가리키는 Harbor modelStore(레지스트리 FQDN + 프로젝트)에서 가중치를 내려받습니다. 따라서 브라운필드에서는 레거시 가중치는 기존 사내 Harbor에 그대로 두고, 추론 서비스 대상 모델만 ORAS(OCI 레지스트리에 임의 파일을 저장하는 도구)나 KitOps(AI 모델 패키징 도구)를 써서 OCI 아티팩트로 패키징해 Model Gallery 규약을 갖춘 Harbor 프로젝트로 반입하는 분리 운영이 합리적입니다. 외부 카탈로그(NVIDIA NGC 등)에서 받아오는 경로에는 Harbor proxy cache를, 인스턴스 간 사본 유지에는 Harbor replication을 활용할 수 있습니다. 다만 Broadcom 공식 설계 가이드가 권고하는 정식 토폴로지는 PAIF가 워크로드 도메인에 배포하는 Harbor Supervisor Service이며, 기존 사내 Harbor를 Model Gallery로 그대로 전용하거나 두 Harbor를 replication으로 상시 연동하는 구성을 명문화한 공식 문서 근거는 작성 시점까지 확인되지 않았습니다. 해당 구성은 사내 Harbor가 Model Gallery의 OCI 아티팩트 레이아웃과 접근권한 규약을 충족한다는 전제 아래 환경 검증 후 채택하시기 바랍니다.
 
 > [확인 범위] (가) 비-vSphere 자체 쿠버네티스·MLOps 스택을 그대로 PAIF로 흡수하는 단일 자동 경로는 공식 문서에서 확인되지 않았습니다. 확인된 것은 (Import/Convert로 vSphere 기반 인프라를 도메인으로 편입)+(그 위에 PAIF/PAIS를 신규 배포)의 2단계 조합입니다. (나) "VKS로의 워크로드 이전"이 기존 K8s 매니페스트 재배포(리프트앤시프트)인지 자동 전환인지는 미확인입니다. (다) 쿠브플로우·MLflow 파이프라인을 PAIS Agent Builder·인덱싱에 직접 통합하는 공식 커넥터도 미확인이며, 모델 산출물의 Harbor 적재 경로만 확인됩니다.
 
@@ -77,8 +77,8 @@
 브라운필드 통합은 다음 순서로 진행합니다. 앞 단계가 뒤 단계의 범위를 좁힙니다.
 
 1. **인벤토리** — 기존 자산을 [8.1](#81-브라운필드-출발점) 유형으로 적고, 자산별로 가져올지·둘지·온프렘 회귀할지를 1차 분류합니다.
-2. **목표 아키텍처 확정** — 어디로 통합할지를 [02 블루프린트](02-reference-blueprints.md)의 소/중/대 출발점과 [05 멀티테넌시](05-tenancy-security.md)의 격리 모델로 그립니다. 전사 확장을 전제로 한다면 [02 §2.5 전사 확장 블루프린트](02-reference-blueprints.md#25-전사-확장멀티테넌트)와 [05 §5.1.1 전사 확장 시 멀티테넌트 기반 설계](05-tenancy-security.md#511-전사-확장-시-멀티테넌트-기반-설계)를 목표 형상으로 딥링크해 참조합니다. 그린필드와 달리 출발점이 기존 자산이므로, 블루프린트는 목표 형상으로 삼고 차이만 메웁니다.
-3. **능력별 이관 순서** — [8.2](#82-통합-원칙)의 능력 단위 pull로, 되돌리기 쉽고 의존성이 적은 능력부터 옮깁니다(예: 신규 추론 서비스 → RAG 인덱싱 → 모델 게재 순). 토폴로지·GPU 공유·서빙 배치·스토리지 등 능력별 설계 결정은 [06 설계 결정 카탈로그](06-decision-forks.md)로 딥링크해 경로를 고르고 근거를 남깁니다.
+2. **목표 아키텍처 확정** — 어디로 통합할지를 [02 블루프린트](02-reference-blueprints.md)의 소/중/대 출발점과 [05 멀티테넌시](05-tenancy-security.md)의 격리 모델로 그립니다. 전사 확장을 전제로 한다면 [02 §2.5 전사 확장 블루프린트](02-reference-blueprints.md#25-전사-확장멀티테넌트)와 [05 §5.1.1 전사 확장 시 멀티테넌트 기반 설계](05-tenancy-security.md#511-전사-확장-시-멀티테넌트-기반-설계)를 목표 형상으로 바로 연결해 참조합니다. 그린필드와 달리 출발점이 기존 자산이므로, 블루프린트는 목표 형상으로 삼고 차이만 메웁니다.
+3. **능력별 이관 순서** — [8.2](#82-통합-원칙)의 능력 단위 pull로, 되돌리기 쉽고 의존성이 적은 능력부터 옮깁니다(예: 신규 추론 서비스 → RAG 인덱싱 → 모델 게재 순). 토폴로지·GPU 공유·서빙 배치·스토리지 등 능력별 설계 결정은 [06 설계 결정 카탈로그](06-decision-forks.md)에서 경로를 고르고 근거를 남깁니다.
 4. **무중단 이전 수단** — vSphere VM 단위 이전이 필요하면 VCF Operations Workload Mobility(구 HCX)의 Replication Assisted vMotion(RAV)으로 다수 VM을 사전 복제 후 switchover 윈도에서 라이브 전환합니다(RAV 라이브 사용 시 VM 하드웨어 버전 9 이상). 공유 SCSI 버스·multi-writer·Fault Tolerance·공유 VMDK·VBS VM 등은 이전 미지원이므로 cold/bulk 이전이나 재배포로 우회합니다.
 5. **검증 관문** — 능력을 옮길 때마다 [07 설계 리뷰·검증 관문](07-design-review.md)의 관문을 통과시킵니다. 결정·기록·검증의 추적 체인이 끊기지 않아야 나중에 "왜 이렇게 옮겼나"에 답할 수 있습니다.
 

@@ -292,7 +292,7 @@ cat /var/log/nvidia-gridd.log     # Linux 라이선스 데몬 로그
 
 이 문서가 다루는 GPU enablement에 직접 영향을 주는 PAIF 9.1 변경 사항입니다(상세·근거는 [문서 00 What's New](00-whats-new.md)).
 
-- **Enhanced DirectPath I/O + 이동성** — 전용 GPU를 NVAIE 없이 쓰면서 vMotion·HA·DRS를 노립니다. 단, 공식 확인 장치는 주로 NIC·특정 가속기 계열이며 **NVIDIA 데이터센터 GPU의 EDPIO+vMotion은 §11.5.2 단서대로 [Broadcom 호환성 가이드](https://compatibilityguide.broadcom.com/)에서 장치별 확인이 필수**입니다.
+- **Enhanced DirectPath I/O + 이동성** — 전용 GPU를 NVAIE 없이 쓰면서 vMotion·HA·DRS 이점까지 확보합니다. 단, 공식 확인 장치는 주로 NIC·특정 가속기 계열이며 **NVIDIA 데이터센터 GPU의 EDPIO+vMotion은 §11.5.2 단서대로 [Broadcom 호환성 가이드](https://compatibilityguide.broadcom.com/)에서 장치별 확인이 필수**입니다.
 - **no-NVAIE 경로의 명확화** — passthrough 계열은 vGPU VIB·NVAIE 없이 전용 GPU. 라이선스 비용 설계에 직접 영향(§11.5.1).
 - **DRA 기반 GPU 스케줄링·AI Conformance** — VKS가 오픈 표준으로 GPU를 선언·할당, 멀티클러스터·이식성 향상.
 - **Blackwell 지원** — HGX B200, RTX PRO 6000/4500 Blackwell 지원(passthrough 확인). vGPU 모드는 ESXi 9.0.1.0+ 요구, 데이터센터 B200의 ESXi vGPU 지원·일부 Blackwell vGPU 알려진 이슈는 **확인 필요**([VCF 9.1 AI 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/), NVIDIA vGPU 매트릭스).

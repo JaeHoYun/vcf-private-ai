@@ -67,7 +67,7 @@ LIMIT :k;
 
 ## 3.6 보안 — 프롬프트 인젝션 방어와 입력 살균
 
-RAG에는 일반 챗봇에 없는 고유한 공격면이 있습니다. **검색된 청크 자체가 인젝션 벡터**라는 점입니다. RAG는 외부(사내 문서)에서 가져온 텍스트를 프롬프트에 끼워 넣어 모델에 먹이는데, 그 문서 안에 "이전 지시를 무시하고 …하라" 같은 **숨겨진 명령**이 들어 있으면 모델이 그것을 사용자 지시로 오인할 수 있습니다. 이것이 OWASP가 LLM01로 꼽은 **간접 프롬프트 인젝션(Indirect Prompt Injection)** 이며, OWASP는 "공격자가 RAG가 참조하는 저장소의 문서를 수정해 두면, 사용자 질의가 그 오염된 콘텐츠를 검색했을 때 악성 지시가 LLM 출력을 변조한다"고 명시합니다([OWASP LLM01:2025 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/)). 신뢰하던 데이터 소스 자체가 공격 경로가 됩니다. 벡터 저장소·임베딩 파이프라인에 대한 오염·미흡한 격리·미살균 검색결과 주입은 별도 항목인 [OWASP LLM08:2025 Vector and Embedding Weaknesses](https://genai.owasp.org/llmrisk/llm082025-vector-and-embedding-weaknesses/)로도 다뤄집니다.
+RAG에는 일반 챗봇에 없는 고유한 공격면이 있습니다. **검색된 청크 자체가 인젝션 벡터**라는 점입니다. RAG는 외부(사내 문서)에서 가져온 텍스트를 프롬프트에 끼워 넣어 모델에 전달하는데, 그 문서 안에 "이전 지시를 무시하고 …하라" 같은 **숨겨진 명령**이 들어 있으면 모델이 그것을 사용자 지시로 오인할 수 있습니다. 이것이 OWASP가 LLM01로 꼽은 **간접 프롬프트 인젝션(Indirect Prompt Injection)** 이며, OWASP는 "공격자가 RAG가 참조하는 저장소의 문서를 수정해 두면, 사용자 질의가 그 오염된 콘텐츠를 검색했을 때 악성 지시가 LLM 출력을 변조한다"고 명시합니다([OWASP LLM01:2025 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/)). 신뢰하던 데이터 소스 자체가 공격 경로가 됩니다. 벡터 저장소·임베딩 파이프라인에 대한 오염·미흡한 격리·미살균 검색결과 주입은 별도 항목인 [OWASP LLM08:2025 Vector and Embedding Weaknesses](https://genai.owasp.org/llmrisk/llm082025-vector-and-embedding-weaknesses/)로도 다뤄집니다.
 
 방어는 한 겹으로 끝나지 않습니다. OWASP가 권고하는 **다층 방어(defense-in-depth)** 를 RAG 단계에 매핑하면 다음과 같습니다.
 

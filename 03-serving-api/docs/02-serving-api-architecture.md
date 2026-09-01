@@ -2,7 +2,7 @@
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 
-앞 문서(01)에서 "왜 사내 추론 API인가"를 봤다면, 이 문서는 **그 API가 실제로 어떻게 만들어지고 노출되는가** — 모델 하나가 들어와서 앱이 호출 가능한 엔드포인트가 되기까지의 구조와 절차 — 를 다룹니다. PAIS의 어느 모듈이 무엇을 수행하고, 무엇에 의존하며, 서로 어떻게 연결되는지를 따라가면, 이후 문서(엔드포인트·인증·운영)에서 마주칠 설계가 왜 그렇게 생겼는지 자연히 풀립니다.
+앞 문서(01)에서 "왜 사내 추론 API인가"를 봤다면, 이 문서는 **그 API가 실제로 어떻게 만들어지고 노출되는가** — 모델 하나가 들어와서 앱이 호출 가능한 엔드포인트가 되기까지의 구조와 절차 — 를 다룹니다. PAIS의 어느 모듈이 무엇을 수행하고, 무엇에 의존하며, 서로 어떻게 연결되는지를 따라가면, 이후 문서(엔드포인트·인증·운영)에서 마주칠 설계가 왜 그렇게 생겼는지가 자연히 이해됩니다.
 
 > **이 문서의 고도(altitude)와 경계** — 이 가이드는 **API 서빙 계층**을 다룹니다. 그 아래의 플랫폼 토대(VCF·Supervisor·VKS·GPU 할당·DLVM·구축 순서)는 **[① 인프라 가이드 §2 아키텍처](../../01-infra/docs/02-architecture.md)** 가 기준이고, 토폴로지·노드풀 같은 설계 결정은 **[⑦ 통합 설계 가이드](../../07-design/README.md)**, 용량·비용 산정은 **[⑥ 사이징](../../06-sizing-cost/README.md)** 이 맡습니다. 이 문서는 그 토대를 **다시 쓰지 않고**, 그 위에 얹히는 서빙 계층의 그림과 흐름에 집중합니다. 본 문서에서 다루지 않는 것은 §2.9에 명시했습니다.
 
@@ -10,7 +10,7 @@
 
 ## 2.1 무엇 위에 얹히나 — 서빙 계층의 토대
 
-서빙은 허공에 뜨지 않습니다. PAIS의 모든 추론 API는 아래 토대 위에서 동작하며, **이 귀속 관계가 GPU·격리·스케일링이 어디서 결정되는지를 정합니다.**
+서빙 계층은 단독으로 존재하지 않습니다. PAIS의 모든 추론 API는 아래 토대 위에서 동작하며, **이 귀속 관계가 GPU·격리·스케일링이 어디서 결정되는지를 정합니다.**
 
 ```
 VCF 9.1 — PAIF Workload Domain (GPU 가속 워크로드 도메인)
@@ -28,7 +28,7 @@ VCF 9.1 — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 핵심만 짚으면:
 
 - **GPU는 호스트(ESXi)에 물려 있고**, Model Endpoint 파드는 VKS 워커 노드(VM) 위에서 그 물리 GPU에 연결됩니다(§2.3). 즉 "모델에 GPU를 붙인다"는 곧 *Endpoint 파드를 GPU 호스트가 받치는 워커 노드에 스케줄한다*는 뜻입니다.
-- **격리·쿼터는 vSphere Namespace 단위**입니다(§2.8). 어느 모델·에이전트가 누구에게 보이고, 복제본을 몇 개까지 띄울 수 있는지가 여기서 걸립니다.
+- **격리·쿼터는 vSphere Namespace 단위**입니다(§2.8). 어느 모델·에이전트가 누구에게 보이고, 복제본을 몇 개까지 띄울 수 있는지가 여기서 결정됩니다.
 - **공유 인프라**(Harbor·DSM의 pgvector·VCF Automation·관측성)는 네임스페이스들이 함께 씁니다.
 
 > GPU 할당 방식(vGPU vs Enhanced DirectPath I/O), 구축 Phase, 의존성 다이어그램의 상세는 **[① §2.1·§2.3·§2.8](../../01-infra/docs/02-architecture.md)** 에 있습니다. 본 문서는 "서빙이 이 위에 얹힌다"는 연결만 세웁니다.
@@ -73,7 +73,7 @@ VCF 9.1 — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 | **Data Indexing & Retrieval** | 데이터 소스 파싱·청킹·임베딩·의미 검색 | Knowledge Base / 인덱스(pgvector에 영속) | **임베딩 Endpoint**(Runtime), DSM의 pgvector, 데이터 소스 커넥터 | **검색 API** / KB (§[04](04-agent-rag-api.md)) |
 | **Agent Builder** | 모델+KB+도구를 묶어 RAG·세션·도구호출 오케스트레이션 | **stateful** — `session_id` 기반 대화·세션 | Model Endpoint(LLM), KB(검색), MCP 도구 | **Agent API** (§2.6·[04](04-agent-rag-api.md)·[06](06-mcp-tools-api.md)) |
 
-읽는 법: **위에서 아래로 의존이 흐릅니다.** Gallery가 모델을 대고 → Runtime이 그걸 Endpoint로 띄우고 → Indexing이 그 임베딩 Endpoint를 써서 KB를 만들고 → Agent가 그 Endpoint와 KB와 도구를 묶습니다. 그래서 한 모듈이 막히면 그 아래가 함께 막힙니다(예: 임베딩 Endpoint가 없으면 KB 인덱싱이 안 됩니다).
+읽는 법: **위에서 아래로 의존이 흐릅니다.** Gallery가 모델을 공급하고 → Runtime이 그걸 Endpoint로 띄우고 → Indexing이 그 임베딩 Endpoint를 써서 KB를 만들고 → Agent가 그 Endpoint와 KB와 도구를 묶습니다. 그래서 한 모듈이 막히면 그 아래가 함께 막힙니다(예: 임베딩 Endpoint가 없으면 KB 인덱싱이 안 됩니다).
 
 ### 제어 평면(control plane)과 데이터 평면(data plane)
 
@@ -84,7 +84,7 @@ VCF 9.1 — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 | **제어 평면** | 모델 반입·Endpoint 생성/삭제·복제본 조정·KB 구성 | 관리자/MLOps (UI·`vcf pais` CLI·REST) | VCF Automation UI / PAIS UI / kubectl |
 | **데이터 평면** | 실제 추론 요청·응답(토큰) | 앱(런타임 트래픽) | ML API Gateway → Endpoint 파드 |
 
-이 분리가 중요한 이유: **앱이 쓰는 것은 데이터 평면 하나**(Gateway 단일 URL)뿐입니다. 모델을 새로 올리거나(제어 평면) 복제본을 늘려도, 앱 코드는 데이터 평면 경로를 그대로 두면 됩니다(§2.7의 스케일아웃 흡수가 여기서 나옵니다).
+이 분리가 중요한 이유: **앱이 쓰는 것은 데이터 평면 하나**(Gateway 단일 URL)뿐입니다. 모델을 새로 올리거나(제어 평면) 복제본을 늘려도, 앱 코드는 데이터 평면 경로를 그대로 두면 됩니다(§2.7에서 말한, 앱 변경 없이 스케일아웃을 흡수할 수 있는 이유가 여기에 있습니다).
 
 > 추론 엔진의 정확한 버전(vLLM·Infinity·llama.cpp)은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)의 안내대로 형제 가이드 표를 기준선으로 삼고, 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다.
 

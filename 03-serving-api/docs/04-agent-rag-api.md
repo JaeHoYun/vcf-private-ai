@@ -24,7 +24,7 @@ Data Source ──▶ Knowledge Base ──▶ Index ──▶ (검색) ──�
 | **Index** | 청크·임베딩 색인 | `/control/knowledge-bases/{kb-id}/indexes` |
 | **Agent** | 모델 + KB(+도구)를 묶은 호출 단위 | `/compatibility/openai/v1/agents` |
 
-> OpenAI 호환 인터페이스(`/compatibility/openai/v1`)에는 **모델·에이전트 호출**이, 컨트롤 플레인(`/control`)에는 **데이터·인덱스·MCP(Model Context Protocol) 도구 관리**가 놓입니다. 호출(런타임) vs 관리(구성)의 분리로 이해하면 경로가 외워집니다.
+> OpenAI 호환 인터페이스(`/compatibility/openai/v1`)에는 **모델·에이전트 호출**이, 컨트롤 플레인(`/control`)에는 **데이터·인덱스·MCP(Model Context Protocol) 도구 관리**가 놓입니다. 호출(런타임) vs 관리(구성)의 분리로 이해하면 경로를 기억하기 쉽습니다.
 
 ---
 

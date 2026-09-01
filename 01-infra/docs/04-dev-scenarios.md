@@ -225,10 +225,10 @@ AI 앱 4-Tier (위 → 아래, 호출 흐름)
 
 | 계층 | 책임 | PAIS 담당 | 개발팀 담당 |
 |------|------|:---:|------|
-| Frontend | UI/UX | 미지원 | 지원 전체 |
-| Backend | 비즈니스 로직, 인증 | 미지원 | 지원 전체 |
-| AI Service | LLM 추론, RAG | 지원 Agent/Endpoint | 프롬프트·KB 구성 |
-| Infrastructure | GPU, 컴퓨팅 | 지원 자동 프로비저닝 | 미지원 |
+| Frontend | UI/UX | — | 전체 담당 |
+| Backend | 비즈니스 로직, 인증 | — | 전체 담당 |
+| AI Service | LLM 추론, RAG | Agent/Endpoint 제공 | 프롬프트·KB 구성 |
+| Infrastructure | GPU, 컴퓨팅 | 자동 프로비저닝 | — |
 
 "PAIS Agent = AI 두뇌" — 제공 경계:
 

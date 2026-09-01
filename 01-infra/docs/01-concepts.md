@@ -43,12 +43,12 @@ VMware Cloud Foundation 9.1 (코어 구독)
 
 | 항목 | 포함 여부 | 비고 |
 |------|----------|------|
-| PAIF (cores) | 지원 VCF 코어 구독 포함 | 별도 구매 불필요 |
-| PAIS, DLVM 이미지 | 지원 PAIF에 포함 | — |
-| 벡터 DB(pgvector) via DSM | 지원 PAIS 사용분 한정 포함 | DSM은 본래 별도 라이선스 Advanced Service이나, **PAIS가 벡터 DB용 DSM 사용 권한(entitlement)을 포함** |
-| **NVIDIA AI Enterprise (NVAIE)** | 미지원 별도 (NVIDIA 구매) | vGPU 드라이버·NIM·NeMo 등 |
-| GPU 하드웨어 | 미지원 별도 | BCG/HCL 확인 |
-| DSM 일반 DBaaS 확장 사용 | 미지원 별도 | 벡터 DB 외 용도로 DSM 확장 시 Advanced Service 라이선스 |
+| PAIF (cores) | 포함 — VCF 코어 구독 | 별도 구매 불필요 |
+| PAIS, DLVM 이미지 | 포함 — PAIF에 포함 | — |
+| 벡터 DB(pgvector) via DSM | 포함 — PAIS 사용분 한정 | DSM은 본래 별도 라이선스 Advanced Service이나, **PAIS가 벡터 DB용 DSM 사용 권한(entitlement)을 포함** |
+| **NVIDIA AI Enterprise (NVAIE)** | 미포함 — 별도 (NVIDIA 구매) | vGPU 드라이버·NIM·NeMo 등 |
+| GPU 하드웨어 | 미포함 — 별도 | BCG/HCL 확인 |
+| DSM 일반 DBaaS 확장 사용 | 미포함 — 별도 | 벡터 DB 외 용도로 DSM 확장 시 Advanced Service 라이선스 |
 
 > **자주 틀리는 부분 1:** "PAIF는 Add-on이다" → 틀립니다. PAIF는 VCF 코어 포함입니다.
 > **자주 틀리는 부분 2:** "NVAIE도 VCF에 포함된다" → 틀립니다. NVAIE는 NVIDIA에서 별도 구매합니다. 도입 비용 산정 시 NVAIE 누락이 가장 흔한 실수입니다.
@@ -61,10 +61,10 @@ VMware Cloud Foundation 9.1 (코어 구독)
 ## 1.3 DLVM과 PAIS의 관계
 
 ```
-미지원 잘못된 이해:
+잘못된 이해 (X):
    PAIS = 개발 플레이그라운드 → 그 안에서 DLVM 배포
 
-지원 올바른 이해:
+올바른 이해 (O):
    DLVM = 개발자 개인용 GPU VM (워크스테이션) — 모델 검증/실험용
    PAIS = 모델을 프로덕션 API로 서빙하는 관리형 플랫폼
    둘 다 "AI 플레이그라운드"라는 개념적 영역 안에서 함께 동작
@@ -106,9 +106,9 @@ VMware Cloud Foundation 9.1 (코어 구독)
 
 | 엔진 | 버전 | 용도 | GPU 필요 |
 |------|------|------|:---:|
-| **vLLM** | 0.11.2 | Completion(+Embedding) 고성능 추론 | 지원 |
+| **vLLM** | 0.11.2 | Completion(+Embedding) 고성능 추론 | 필요 |
 | **Infinity** | 0.0.76 | Embedding 전용 | CPU 가능 |
-| **llama.cpp** | b7739 | Completion·Embedding **CPU 추론** | 미지원 (CPU) |
+| **llama.cpp** | b7739 | Completion·Embedding **CPU 추론** | 불필요 (CPU) |
 
 > 9.1부터는 소규모/테스트/비용 민감 워크로드의 **Completion 추론도 CPU(llama.cpp)** 로 가능합니다. 대규모·실시간 추론은 여전히 GPU(vLLM)가 정석입니다.
 
@@ -132,10 +132,10 @@ VMware Cloud Foundation 9.1 (코어 구독)
 
 | 역할 | DLVM 필요 | 이유 |
 |------|:---:|------|
-| **Data Scientist** | 지원 필수 | GPU로 모델 테스트, 프롬프트 튜닝 |
-| **MLOps Engineer** | 지원 필요 | 모델 Push용 CLI, PAIS UI는 브라우저 |
-| **App Developer** | 미지원 불필요 | API URL만 있으면 로컬 PC에서 개발 |
-| **Platform Engineer** | 미지원 불필요 | vSphere/VCF 관리 도구 사용 |
+| **Data Scientist** | 필수 | GPU로 모델 테스트, 프롬프트 튜닝 |
+| **MLOps Engineer** | 필요 | 모델 Push용 CLI, PAIS UI는 브라우저 |
+| **App Developer** | 불필요 | API URL만 있으면 로컬 PC에서 개발 |
+| **Platform Engineer** | 불필요 | vSphere/VCF 관리 도구 사용 |
 
 ### 1.6.3 협업 흐름
 
@@ -182,7 +182,7 @@ Data Scientist = 요리사 (레시피, 온도, 조리 시간 결정)
 | 사용 도구 | JupyterLab, Python, ML 프레임워크 | VS Code, React/Vue, FastAPI |
 | 필요 지식 | ML/DL, NLP, 통계 | 웹 개발, REST API, 소프트웨어 공학 |
 | 산출물 | "최적 모델+설정" 가이드 | 실제 서비스 앱 |
-| DLVM 필요 | 지원 필수 | 미지원 불필요 |
+| DLVM 필요 | 필수 | 불필요 |
 
 App Developer가 MLOps/Data Scientist로부터 받는 것: **① PAIS Base URL ② Agent/Endpoint 이름 ③ 인증 정보(Token/OAuth) ④ 사용 가이드(세션·타임아웃)**. 이것만 있으면 로컬 PC에서 일반 REST API처럼 개발합니다. 상세는 [문서 04](04-dev-scenarios.md).
 

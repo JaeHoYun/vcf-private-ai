@@ -86,7 +86,7 @@ POST {PAIS}/compatibility/openai/v1/embeddings   # 경로는 예시 — ③/공�
 
 pgvector는 컬럼당 차원이 고정이므로 차원을 사전에 확정해야 합니다. 모델이 마트료시카 표현 학습(MRL, Matryoshka Representation Learning)을 지원하면, 큰 출력 벡터의 앞부분만 잘라 저장해 비용을 줄일 수 있습니다. 모달리티별로 별도 테이블이나 컬럼으로 분리하는 편이 자연스럽고, 단일 공유 벡터 공간이 필요하면 같은 모델로 정렬된 임베딩을 한 컬럼에 모읍니다. ([Weaviate](https://weaviate.io/blog/multimodal-guide))
 
-메타데이터에는 `modality` 태그와 모달리티별 역참조 키를 둡니다(PDF은 `page_number`·`document_id`, 오디오·비디오는 `start_time`·`end_time`·`chunk_index`). 이로써 원본 신호로 역참조하고 출처를 추적할 수 있습니다. 신선도와 접근 규칙(ACL) 정책(2.5)은 모달리티와 무관하게 일관되게 적용합니다. ([Weaviate](https://weaviate.io/blog/multimodal-guide))
+메타데이터에는 `modality` 태그와 모달리티별 역참조 키를 둡니다(PDF는 `page_number`·`document_id`, 오디오·비디오는 `start_time`·`end_time`·`chunk_index`). 이로써 원본 신호로 역참조하고 출처를 추적할 수 있습니다. 신선도와 접근 규칙(ACL) 정책(2.5)은 모달리티와 무관하게 일관되게 적용합니다. ([Weaviate](https://weaviate.io/blog/multimodal-guide))
 
 ## 2.4 pgvector 적재
 
@@ -141,7 +141,7 @@ ACL은 청크 메타데이터로 인덱싱하고, 필터링은 벡터 스토어 
 
 변경된 청크만 콘텐츠 해시 기반으로 선택 재임베딩하면 비용을 줄일 수 있습니다. 증분 갱신은 upsert로 처리하되, 임베딩 모델·차원·청킹 전략이 바뀔 때는 전체 재인덱싱이 필요합니다(2.5 본문의 전면 재인덱싱 트리거와 일관). ([Medium 재인덱싱](https://medium.com/@kandaanusha/vector-database-reindexing-pipeline-87efa1d1cd19))
 
-멱등성과 중복 제거(디듑)는 결정론적 키(소스 식별자 + 콘텐츠 해시)와 체크포인트로 확보합니다. 변경 데이터 캡처(CDC)는 통상 at-least-once(최소 한 번) 전달이라 재시도 시 중복이 발생하는데, 이를 upsert로 무해화합니다. pgvector 예시는 `(source_id, chunk_index)`에 유니크 제약을 두고 `ON CONFLICT ... DO UPDATE`로 처리하는 형태입니다. ([Estuary](https://estuary.dev/blog/the-complete-introduction-to-change-data-capture-cdc/))
+멱등성과 중복 제거(dedup)는 결정론적 키(소스 식별자 + 콘텐츠 해시)와 체크포인트로 확보합니다. 변경 데이터 캡처(CDC)는 통상 at-least-once(최소 한 번) 전달이라 재시도 시 중복이 발생하는데, 이를 upsert로 무해화합니다. pgvector 예시는 `(source_id, chunk_index)`에 유니크 제약을 두고 `ON CONFLICT ... DO UPDATE`로 처리하는 형태입니다. ([Estuary](https://estuary.dev/blog/the-complete-introduction-to-change-data-capture-cdc/))
 
 대규모 초기 백필은 다음 순서로 진행합니다: 스냅샷 적재 → 워터마크 또는 로그 위치 기록 → 증분 스트림으로 전환. 명시적 포지션을 기록해 두면 실패 시 그 지점부터 재개할 수 있고, 변경 누락(드리프트)을 막을 수 있습니다. ([AWS Big Data Blog](https://aws.amazon.com/blogs/big-data/build-a-rag-data-ingestion-pipeline-for-large-scale-ml-workloads/))
 

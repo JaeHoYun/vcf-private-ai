@@ -35,7 +35,7 @@ PAIS Model Runtime — 모델이 GPU 소비  (§11.9)
 
 ## 11.2 단일 출처 — 호환성은 매트릭스로, 여기서는 규칙으로
 
-GPU 스택의 버전 호환은 빠르게 변합니다. 그래서 이 문서는 특정 숫자를 기준으로 삼지 않고, **공식 매트릭스를 단일 출처으로 가리키고** 변하지 않는 **인터락 규칙**(§11.6)을 본문에 둡니다. 구성 전 아래를 1차 기준으로 확인하십시오.
+GPU 스택의 버전 호환은 빠르게 변합니다. 그래서 이 문서는 특정 숫자를 기준으로 삼지 않고, **공식 매트릭스를 단일 출처로 삼고** 변하지 않는 **인터락 규칙**(§11.6)을 본문에 둡니다. 구성 전 아래를 1차 기준으로 확인하십시오.
 
 - **Broadcom 호환성 가이드(GPU·가속기, AI/ML)** — VCF/ESXi가 어떤 GPU·서버를 지원하는지의 기준: [compatibilityguide.broadcom.com](https://compatibilityguide.broadcom.com/)
 - **PAIF 9.1 배포 요구사항** — PAIF가 요구하는 GPU 전제·드라이버: [techdocs — Requirements for Deploying PAIF with NVIDIA](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html)

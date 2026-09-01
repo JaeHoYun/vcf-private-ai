@@ -1,6 +1,6 @@
 # 05 — 데이터 거버넌스·프라이버시
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)을 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 사내 폐쇄망(프라이빗) 환경에서 운영하는 생성형 AI 플랫폼의 데이터 거버넌스와 프라이버시 통제를 다룹니다. 기반 스택은 VMware Cloud Foundation(VCF) 9.1과 그 위에서 동작하는 VMware Private AI Foundation with NVIDIA(PAIF) 9.1, VMware Private AI Services(PAIS) 2.1입니다. 검색·생성에 쓰이는 벡터 데이터 계층은 시리즈 ② 가이드에서 다룬 Data Services Manager(DSM) 기반 PostgreSQL + pgvector를 전제합니다. PAIF에서 벡터DB가 pgvector(PostgreSQL) 위에서 DSM으로 배포·관리된다는 점은 Broadcom TechDocs와 VCF 블로그에서 확인됩니다([Broadcom TechDocs: Deploy a Vector Database for PAIF](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-rag-workloads-in-private-ai-foundation-with-nvidia/deploy-a-vector-database-for-paif.html), [VCF Blog: Initial Availability of PAIF](https://blogs.vmware.com/cloud-foundation/2024/03/18/announcing-initial-availability-of-vmware-private-ai-foundation-with-nvidia/)).
@@ -52,7 +52,7 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 - 이벤트 기반 우선: 원본 시스템의 권한 변경·삭제 이벤트를 구독해 즉시 메타데이터를 갱신하거나 레코드를 무효화합니다. 권한 회수는 지연 없이 반영되어야 합니다.
 - 주기적 전수 대사(reconciliation) 병행: 이벤트 유실에 대비해 `source_doc_id` 기준으로 원본 ACL과 벡터DB 메타데이터를 주기 대조하고, 불일치 시 회수 우선 정책으로 처리합니다.
 - 회수는 "차단 후 정리": 권한 회수 신호가 오면 먼저 검색 노출을 차단(soft-delete/tombstone)하고, 이후 임베딩 잔존까지 제거(5.5 참조)합니다.
-- 삭제 전파: 원본 문서 삭제는 벡터DB 레코드 삭제 + 잊혀질 권리 처리(5.5)로 연결됩니다.
+- 삭제 전파: 원본 문서 삭제는 벡터DB 레코드 삭제 + 잊힐 권리 처리(5.5)로 연결됩니다.
 
 > 주의: 권한 재동기화는 "검색 결과의 정확성"이 아니라 "권한 회수의 즉시성"을 보장하는 통제입니다. 동기화 주기가 길수록 회수된 권한이 노출되는 시간 창이 길어집니다. 구체적인 SLA(예: 회수 반영 목표 시간)는 조직 정책에 따르며, 운영 도구별 이벤트 지원 여부는 확인 필요입니다.
 
@@ -84,7 +84,7 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 
 프라이버시 통제는 데이터가 들어올 때와 나갈 때 양쪽에서 작동해야 합니다. 한쪽만 막으면 다른 경로로 새어 나갑니다.
 
-### 인입 양단(데이터 적재 시)
+### 인입 단(데이터 적재 시)
 
 원본 문서를 청크로 나눠 임베딩하기 전에 PII를 식별하고 처리합니다. NIST는 식별 가능성을 낮추는 기법으로 억제(suppression, 불필요 PII 삭제), 가명화(pseudonymization, 분석 용도용 토큰화), 일반화(generalization), 잡음 추가, 집계를 제시합니다([NIST SP 800-188 De-Identifying Datasets](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-188.3pd.pdf), [NIST SP 800-122 PII 가이드](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-122.pdf)).
 
@@ -97,7 +97,7 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 
 핵심 주의점: 마스킹은 임베딩 생성 이전에 이루어져야 합니다. 원문을 임베딩한 뒤 마스킹하면, 임베딩 벡터에 PII 의미가 남아 역전 공격(5.5)으로 복원될 수 있습니다.
 
-### 출력 양단(응답 생성 시)
+### 출력 단(응답 생성 시)
 
 검색 결과나 모델 생성 응답에 PII가 섞여 나가는 것을 막는 출력 측 필터입니다. 인입 단에서 놓친 PII, 또는 여러 청크 조합으로 재구성되는 식별 정보를 마지막에 거릅니다. 다만 출력 가드레일의 런타임 구현(응답 검열·차단 로직)은 06 문서가 다루며, 본 문서는 "출력 단에서도 PII 통제가 필요하다"는 정책 경계까지를 규정합니다.
 
@@ -105,9 +105,9 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 
 ---
 
-## 5.5 데이터 수명주기: 보존·삭제·잊혀질 권리·임베딩 잔존
+## 5.5 데이터 수명주기: 보존·삭제·잊힐 권리·임베딩 잔존
 
-데이터는 인입으로 끝나지 않습니다. 보존 기간, 삭제, 잊혀질 권리(right to be forgotten), 그리고 임베딩에 남는 원문 잔존까지가 수명주기 통제 범위입니다.
+데이터는 인입으로 끝나지 않습니다. 보존 기간, 삭제, 잊힐 권리(right to be forgotten), 그리고 임베딩에 남는 원문 잔존까지가 수명주기 통제 범위입니다.
 
 ### 임베딩 잔존 위험(반드시 인지)
 
@@ -121,12 +121,12 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 |---|---|---|
 | 보존(retention) | 분류 등급별 보존기간 설정, 만료 시 자동 정리 | 만료 청크의 임베딩 동시 만료 |
 | 삭제(deletion) | 원본 삭제 → 청크·임베딩·인덱스 삭제 전파 | 인덱스에서 물리 제거까지 확인 |
-| 잊혀질 권리 | 특정 개인 데이터 식별 후 전 계층 삭제 | 해당 개인 관련 임베딩 전부 추적·제거 |
+| 잊힐 권리 | 특정 개인 데이터 식별 후 전 계층 삭제 | 해당 개인 관련 임베딩 전부 추적·제거 |
 | 학습/파인튜닝 데이터 | 별도 거버넌스: 동의·출처·보존 기록 | 학습 데이터는 모델 가중치에 잔류(되돌리기 곤란) |
 
 ### 학습/파인튜닝 데이터 거버넌스
 
-RAG는 검색 데이터를 모델에 재학습시키지 않고 외부에서 보태므로, 잊혀질 권리 대응이 상대적으로 용이합니다([VCF Blog: PAIF Technical Overview](https://blogs.vmware.com/cloud-foundation/2024/03/05/vmware-private-ai-foundation-with-nvidia-a-technical-overview/)). 반면 파인튜닝·학습에 투입된 데이터는 모델 가중치에 흡수되어 사후 삭제가 어렵습니다. 따라서 학습 데이터는 인입 전 PII 처리·동의·출처 기록을 더 엄격히 적용하고, 가능하면 "삭제가 필요할 수 있는 데이터는 학습이 아닌 RAG로" 두는 설계가 안전합니다(데이터 최소화 원칙의 연장).
+RAG는 검색 데이터를 모델에 재학습시키지 않고 외부에서 보태므로, 잊힐 권리 대응이 상대적으로 용이합니다([VCF Blog: PAIF Technical Overview](https://blogs.vmware.com/cloud-foundation/2024/03/05/vmware-private-ai-foundation-with-nvidia-a-technical-overview/)). 반면 파인튜닝·학습에 투입된 데이터는 모델 가중치에 흡수되어 사후 삭제가 어렵습니다. 따라서 학습 데이터는 인입 전 PII 처리·동의·출처 기록을 더 엄격히 적용하고, 가능하면 "삭제가 필요할 수 있는 데이터는 학습이 아닌 RAG로" 두는 설계가 안전합니다(데이터 최소화 원칙의 연장).
 
 ---
 

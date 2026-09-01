@@ -42,7 +42,7 @@
 | 04 | [추론 통합](docs/04-inference-integration.md) | Agent vs Model Endpoint, RAG 호출 흐름, 스트리밍, 인용 |
 | 05 | [앱 통합 패턴](docs/05-app-integration.md) | 4-Tier 구조, base_url 스위치, 인증, 멀티턴 세션 |
 | 06 | [평가·품질](docs/06-evaluation-quality.md) | RAG 평가 지표, 환각·근거율, 회귀 테스트, 관측성 |
-| 07 | [프로덕션 운영](docs/07-production-operations.md) | 스케일링, 멀티테넌트, 캐시, 사이징, 에어갭(폐쇄망) 환경 배포(Artifact Mirroring Tool, Artifact Mirroring Tool) |
+| 07 | [프로덕션 운영](docs/07-production-operations.md) | 스케일링, 멀티테넌트, 캐시, 사이징, 에어갭(폐쇄망) 환경 배포(Artifact Mirroring Tool, 아티팩트 미러링 도구) |
 | A1 | [부록](appendix/A1-reference.md) | FAQ, 용어, 체크리스트, 참고 링크 |
 
 ## 빠른 시작

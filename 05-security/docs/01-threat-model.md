@@ -1,5 +1,5 @@
 # 01 — 위협 모델 및 보안 아키텍처 전경
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)을 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 PAIF(Private AI Foundation) 9.1 / PAIS(Private AI Services) 2.1 기반 Private AI 플랫폼의 **위협 모델**과 **보안 아키텍처 전경**(landscape)을 정리합니다. 개별 통제의 상세 설계는 02–07 문서로 위임하며, 본 문서는 "무엇을 왜 방어하는가"를 파악하는 출발점입니다.
@@ -60,7 +60,7 @@ L2에서 vDefend Distributed Firewall은 하이퍼바이저에 내장된 소프�
 - 워크로드 도메인 ↔ 관리 평면(vCenter/NSX): 관리 트래픽 분리, 운영자 권한 최소화.
 - 플랫폼 ↔ 외부 레지스트리(NGC 등): 공급망 경계. 에어갭 환경은 단방향 미러링만 허용([04-airgap-supply-chain.md](04-airgap-supply-chain.md)).
 
-PAIF는 에어갭 배치를 지원하며, Artifact Mirroring Tool(PAIS 2.1 신규)를 통해 GPU 모델 엔드포인트·에이전트를 포함한 전 기능을 외부 인터넷 없이 운용할 수 있습니다([Broadcom: Secure Private AI Part 2](https://blogs.vmware.com/cloud-foundation/2026/04/30/guide-to-secure-private-ai-with-broadcom-part-2/)).
+PAIF는 에어갭 배치를 지원하며, Artifact Mirroring Tool(PAIS 2.1 신규)을 통해 GPU 모델 엔드포인트·에이전트를 포함한 전 기능을 외부 인터넷 없이 운용할 수 있습니다([Broadcom: Secure Private AI Part 2](https://blogs.vmware.com/cloud-foundation/2026/04/30/guide-to-secure-private-ai-with-broadcom-part-2/)).
 
 ## 1.5 책임 분담 모델
 
@@ -99,7 +99,7 @@ OWASP 2025 개정에서 시스템 프롬프트 유출(LLM07)과 벡터·임베�
 
 ## 1.7 위협 우선순위화 관점
 
-모든 위협을 동시에 막을 수는 없으므로, 자산 가치 x 발생 가능성 x 노출도로 우선순위를 둡니다.
+모든 위협을 동시에 막을 수는 없으므로, 자산 가치 × 발생 가능성 × 노출도로 우선순위를 둡니다.
 
 - 즉시(P0): 교차테넌트 누수(LLM08), 공급망 변조(LLM03) — 격리·서명이 깨지면 피해가 비가역적.
 - 단기(P1): 간접 프롬프트 인젝션(LLM01), 과도한 권한(LLM06) — RAG·에이전트 도입 시 노출면 급증.
@@ -122,7 +122,7 @@ OWASP 2025 개정에서 시스템 프롬프트 유출(LLM07)과 벡터·임베�
    - 체크포인트: 모든 GPU 호스트가 Attested 상태, GPU 격리 모드(MIG/passthrough) 정책과 일치.
 
 3. **L2 세그멘테이션 적용 확인**: vDefend Distributed Firewall이 워크로드 NIC에 적용 중인지, 테넌트 간 기본 거부(default-deny)인지 확인합니다.
-   - Security Segmentation Report로 미세그먼트(allow-any) 규칙 존재 여부 점검([vDefend](https://www.vmware.com/products/cloud-infrastructure/vdefend-distributed-firewall)).
+   - Security Segmentation Report로 전면 허용(allow-any) 규칙 존재 여부 점검([vDefend](https://www.vmware.com/products/cloud-infrastructure/vdefend-distributed-firewall)).
    - 검증 테스트: 테넌트 A 워크로드에서 테넌트 B 추론 엔드포인트로 연결 시도 → 차단되어야 정상(상세는 [02](02-network-tenant-isolation.md)).
 
 4. **L3 권한 최소화 확인**: 네임스페이스/서비스계정의 RBAC가 최소권한인지 점검합니다.

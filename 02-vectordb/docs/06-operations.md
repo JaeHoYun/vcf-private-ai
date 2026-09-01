@@ -115,7 +115,7 @@ pgvector 0.8.2 미만에서 병렬 HNSW 인덱스 빌드에 buffer overflow 취�
 
 | 영역 | 조치 |
 |---|---|
-| 접근 제어(네트워크) | NSX 마이크로세그멘테이션으로 RAG to pgvector 트래픽 격리 |
+| 접근 제어(네트워크) | NSX 마이크로세그멘테이션으로 RAG → pgvector 트래픽 격리 |
 | 접근 제어(DB) | pg_hba.conf를 프로비저닝 시점에 사전 구성, Row-Level Security |
 | 인증 | LDAPS 연동(DSM UI 및 DB 접근), GRANT 기반 LDAP 사용자 권한 |
 | 암호화 | 저장 시 암호화(VM Crypt 선택 또는 데이터스토어 전체), 전송 SSL/TLS |

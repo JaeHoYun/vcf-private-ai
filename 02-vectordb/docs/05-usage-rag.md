@@ -113,7 +113,7 @@ PAIS는 모델 서빙(Model Runtime), 지식 기반 구축(Data Indexing & Retri
 |---|---|---|
 | Model Gallery | 모델 거버넌스(Harbor 레지스트리 기반) | 간접 |
 | Model Runtime | 추론 서빙(vLLM completion, Infinity embedding, NVIDIA NIM 연동) | 임베딩 모델이 텍스트를 벡터로 변환 |
-| Data Indexing & Retrieval | 지식 기반 구축(소스 연결 to 청킹 to 임베딩 to 저장 to 갱신) | pgvector가 벡터 저장소 |
+| Data Indexing & Retrieval | 지식 기반 구축(소스 연결 → 청킹 → 임베딩 → 저장 → 갱신) | pgvector가 벡터 저장소 |
 | Agent Builder | RAG 에이전트 구성(노코드) | 에이전트가 pgvector에서 컨텍스트 검색 |
 | DSM (Vector DB) | PostgreSQL + pgvector 프로비저닝/관리 | 핵심 인프라 |
 
@@ -139,7 +139,7 @@ PAIS는 모델 서빙(Model Runtime), 지식 기반 구축(Data Indexing & Retri
 
 ### 지원 소스와 커스텀 인제스트 경계
 
-PAIS Data Indexing & Retrieval가 관리형(네이티브)으로 처리하는 범위와, 설계자가 별도 파이프라인을 구성해야 하는 범위를 구분합니다. 네이티브 데이터 소스 커넥터는 정확히 4종이며, 소스 유형은 지식 기반 생성 후 변경할 수 없습니다. 커넥터별 입력 정보는 Google Drive=폴더 URL과 서비스 계정 JSON 키, Confluence=사이트 URL과 스페이스 키 또는 페이지 ID, SharePoint=사이트 URL(하위 사이트·폴더 포함), S3=엔드포인트 URL과 자격증명, 버킷입니다. 관리형 파이프라인이 인식하는 문서 형식은 PDF, DOCX, PPTX, HTML, Markdown, CSV, Plaintext와 Google 네이티브 Docs/Sheets/Slides(2.1 신규)입니다.
+PAIS Data Indexing & Retrieval이 관리형(네이티브)으로 처리하는 범위와, 설계자가 별도 파이프라인을 구성해야 하는 범위를 구분합니다. 네이티브 데이터 소스 커넥터는 정확히 4종이며, 소스 유형은 지식 기반 생성 후 변경할 수 없습니다. 커넥터별 입력 정보는 Google Drive=폴더 URL과 서비스 계정 JSON 키, Confluence=사이트 URL과 스페이스 키 또는 페이지 ID, SharePoint=사이트 URL(하위 사이트·폴더 포함), S3=엔드포인트 URL과 자격증명, 버킷입니다. 관리형 파이프라인이 인식하는 문서 형식은 PDF, DOCX, PPTX, HTML, Markdown, CSV, Plaintext와 Google 네이티브 Docs/Sheets/Slides(2.1 신규)입니다.
 
 | 소스/형식 | 관리형 커넥터 지원 | 비고 |
 |---|---|---|
@@ -173,9 +173,9 @@ PAIS Data Indexing & Retrieval가 관리형(네이티브)으로 처리하는 범
 - Recall@k: Ground Truth 대비 상위 k개 결과의 정답 포함률
 - `hnsw.ef_search` 상향으로 recall 개선(속도 트레이드오프)
 - 필터 결합 시 Iterative Scan 활성화로 overfiltering 완화
-- 임베딩 모델 교체 시 전체 재임베딩 필요(05 운영 문서 재임베딩 전략 참조)
+- 임베딩 모델 교체 시 전체 재임베딩 필요(06 운영 문서 재임베딩 전략 참조)
 
-품질·성능 측정 절차는 07 PoC 가이드의 검증 단계를 활용합니다.
+품질·성능 측정 절차는 08 PoC 가이드의 검증 단계를 활용합니다.
 
 ---
 

@@ -221,7 +221,7 @@ AI 앱 4-Tier (위 → 아래, 호출 흐름)
           엔터프라이즈 인프라·멀티테넌시·보안, 담당: VI Admin·Platform Engineer
 ```
 
-> **PAIF의 범위 주의:** Tier 3(PAIS)와 Tier 4의 PAIF 코어 기능 계층은 **둘 다 PAIF(솔루션)에 속합니다** — PAIF는 한 티어가 아니라 서비스 계층(Tier 3)과 코어 기능 계층(Tier 4)을 함께 감쌉니다([문서 02 §2.1](02-architecture.md#21-전체-계층-구조)). 고객 앱(Tier 1·2)만 PAIF 밖입니다.
+> **PAIF의 범위 주의:** Tier 3(PAIS)와 Tier 4의 PAIF 코어 기능 계층은 **둘 다 PAIF(솔루션)에 속합니다** — PAIF는 한 티어가 아니라 서비스 계층(Tier 3)과 코어 기능 계층(Tier 4)을 함께 아우릅니다([문서 02 §2.1](02-architecture.md#21-전체-계층-구조)). 고객 앱(Tier 1·2)만 PAIF 밖입니다.
 
 | 계층 | 책임 | PAIS 담당 | 개발팀 담당 |
 |------|------|:---:|------|

@@ -90,7 +90,7 @@
 
 **강점**: 내장 하이브리드 검색 — Dense Vector + BM25 Sparse Vector를 단일 쿼리로 결합 가능. Vectorizer 모듈을 통해 데이터 입력 시 자동 임베딩 생성이 가능하며, v1.30부터 Generative Search 모듈로 검색→LLM 답변 생성까지 DB 내부에서 처리합니다. Knowledge Graph 구조로 객체 간 관계를 모델링할 수 있어 복잡한 도메인에 적합합니다.
 
-**약점**: 그래프 기능의 오버헤드로 인해 순수 벡터 검색 벤치마크에서는 Milvus, Qdrant보다 느립니다. 1억 벡터 이상에서 메모리와 컴퓨트 소비가 급증합니다. 무료 체험 기간이 14일로 가장 짧으며, 가격 구조(AIU 기반)가 다소 복잡합니다.
+**약점**: 그래프 기능의 오버헤드로 인해 순수 벡터 검색 벤치마크에서는 Milvus, Qdrant보다 느립니다. 1억 벡터 이상에서 메모리와 컴퓨트 소비가 급증합니다. 무료 체험 기간이 14일로 가장 짧으며, 가격 구조(AIU, Weaviate의 과금 단위인 AI Unit 기반)가 다소 복잡합니다.
 
 ---
 
@@ -345,7 +345,7 @@
 
 1. **수십억 벡터 + 수천 QPS**: 단일 PostgreSQL 인스턴스의 수직 확장에는 한계가 있습니다. Citus를 통한 수평 확장이 가능하지만, Milvus의 네이티브 분산 아키텍처에 비해 복잡도가 높습니다.
 2. **GPU 가속이 필수인 경우**: pgvector는 CPU 기반(SIMD 최적화)이며, NVIDIA GPU 가속은 지원하지 않습니다. 대규모 인덱스 빌드에 GPU가 필요하면 Milvus(CAGRA)를 검토해야 합니다. Elasticsearch의 cuVS GPU 가속은 2025년 기준 Tech Preview 상태이므로 프로덕션 사용 시 GA 여부를 확인해야 합니다.
-3. **네이티브 하이브리드 검색(Dense + Sparse)**: pgvector는 SQL WHERE 절과 벡터 검색을 결합할 수 있지만, BM25 등 Sparse Vector 기반 키워드 검색을 벡터 검색과 통합하려면 추가 구성이 필요합니다. Weaviate, Elasticsearch, 그리고 최근 네이티브 Full-text Search를 추가한 Milvus(2.5+)가 이 영역에서 우위.
+3. **네이티브 하이브리드 검색(Dense + Sparse)**: pgvector는 SQL WHERE 절과 벡터 검색을 결합할 수 있지만, BM25 등 Sparse Vector 기반 키워드 검색을 벡터 검색과 통합하려면 추가 구성이 필요합니다. Weaviate, Elasticsearch, 그리고 최근 네이티브 Full-text Search를 추가한 Milvus(2.5+)가 이 영역에서 우위에 있습니다.
 4. **서버리스/자동 스케일링**: Pinecone처럼 트래픽에 따라 자동으로 스케일업/다운하는 기능은 없습니다. 직접 인프라를 프로비저닝해야 합니다.
 5. **ORM 지원 미비**: Prisma 등 주요 ORM에서 pgvector와 파티셔닝을 완전히 지원하지 않아 Workaround가 필요할 수 있습니다 (2025년 9월 기준).
 

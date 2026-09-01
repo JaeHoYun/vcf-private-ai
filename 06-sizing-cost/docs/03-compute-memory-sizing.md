@@ -91,14 +91,14 @@ GPU 없이 **소형 모델·임베딩**을 서빙해야 하는 경우(예: GPU �
 
 ## 3.5 임베딩·리랭커 서버 사이징(RAG 비-LLM 컴포넌트)
 
-전형적 RAG 흐름은 `질의 → 바이-인코더 검색(top 50) → 크로스-인코더 리랭커(top 10) → LLM`입니다([arXiv 2409.07691, Benchmarking Rerankers for RAG](https://arxiv.org/html/2409.07691v1)). 임베딩·리랭커는 LLM과 **별도 서버로 분리**해 독립 확장하는 것이 사이징을 단순화합니다.
+전형적 RAG 흐름은 `질의 → 바이-인코더(질의·문서를 각각 임베딩해 비교) 검색(top 50) → 크로스-인코더(질의·문서 쌍을 함께 평가) 리랭커(top 10) → LLM`입니다([arXiv 2409.07691, Benchmarking Rerankers for RAG](https://arxiv.org/html/2409.07691v1)). 임베딩·리랭커는 LLM과 **별도 서버로 분리**해 독립 확장하는 것이 사이징을 단순화합니다.
 
 | 컴포넌트 | 배치 권장 | 지연(어림) | 근거 |
 | --- | --- | --- | --- |
 | 임베딩(바이-인코더) | 중급 GPU 또는 CPU(저볼륨) | BGE-CPU 약 350ms vs GPU 약 80ms | [Medium/Xiwei Zhou, Reranker Speed Showdown](https://medium.com/@xiweizhou/speed-showdown-reranker-1f7987400077) |
 | 리랭커(크로스-인코더) | 중급 GPU 권장 | 쌍별 평가로 임베딩보다 무거움 | [arXiv 2409.07691](https://arxiv.org/html/2409.07691v1) |
 
-임베딩·리랭커 워크로드는 중급 GPU(예: A100, 일부 워크스테이션급)로 대부분의 프로덕션 RAG 볼륨을 H100급 없이 커버할 수 있습니다([Spheron, Self-Host Embeddings and Rerankers (TEI)](https://www.spheron.network/blog/self-host-embedding-reranker-tei-gpu-cloud/)). 대용량 코퍼스에서는 인덱싱 처리량이 병목이 되어 더 작은 임베딩 모델을 쓰고, 엄격한 서빙 지연 요구에서는 큰 리랭커가 부적합합니다([tensoria, Embedding Models 2026](https://tensoria.fr/en/blog/embedding-models-2026-guide)). 실제 모델·코퍼스별 처리량은 실측이 필요합니다(확인 필요).
+임베딩·리랭커 워크로드는 중급 GPU(예: A100, 일부 워크스테이션급)로 대부분의 프로덕션 RAG 볼륨을 H100급 없이 커버할 수 있습니다([Spheron, Self-Host Embeddings and Rerankers (TEI)](https://www.spheron.network/blog/self-host-embedding-reranker-tei-gpu-cloud/)). 대용량 코퍼스에서는 인덱싱 처리량이 병목이 되어 더 작은 임베딩 모델을 쓰고, 엄격한 서빙 지연 요구에서는 큰 리랭커가 부적합합니다([tensoria, Embedding Models 2026](https://tensoria.fr/en/blog/embedding-models-2026-guide)). 실제 모델·코퍼스별 처리량은 실측이 필요합니다.
 
 ---
 

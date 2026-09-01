@@ -1,11 +1,11 @@
 # 07 — 감사·로깅·사고대응 및 컴플라이언스 체크리스트
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)을 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 시리즈 ⑤(보안·거버넌스)의 마무리 문서입니다. 01–06 문서에서 설계한 통제가 실제로 "증명 가능"하도록, (1) 무엇을 로그로 남기고 어떻게 무결성을 지킬 것인가, (2) 모델 행위를 어떻게 관측하고 이상을 탐지할 것인가, (3) AI 특유의 사고가 발생했을 때 어떻게 탐지·대응·복구할 것인가, (4) 통제를 어떤 일반 컴플라이언스 범주에 매핑하는가, 그리고 (5) 모든 통제를 한 표로 모아 각각의 검증 방법을 명시하는 **마스터 통제 체크리스트**를 다룹니다.
 
-기반 사실은 VCF 9.1 / PAIF(VMware Private AI Foundation with NVIDIA) 9.1 / PAIS(Private AI Services) 2.1이며, 관측성은 VCF Operations와 OpenTelemetry(OTel), Grafana를 연계하는 ③ 문서([③ 서빙 API](../../03-serving-api/README.md))를 따릅니다. GPU 가속 워크로드는 공식 용어 "GPU-Accelerated Workload Domain"(이하 GPU 워크로드 도메인)으로 표기합니다.
+기반 사실은 VCF 9.1 / PAIF(VMware Private AI Foundation with NVIDIA) 9.1 / PAIS(Private AI Services) 2.1이며, 관측성은 VCF Operations와 OpenTelemetry(OTel), Grafana를 연계하는 ③ 문서([③ 서빙 API](../../03-serving-api/README.md))를 따릅니다. GPU 가속 워크로드 도메인은 공식 용어 "GPU-Accelerated Workload Domain"(이하 GPU 워크로드 도메인)으로 표기합니다.
 
 > 규제 표현 주의: 이 문서는 특정 규제기관이나 실명 기업을 특정 행위와 결부하지 않습니다. 규제는 "개인정보보호 규제", "금융 규제", "산업 보안 요건" 같은 일반 범주로만 추상화합니다. 조직별 적용은 자체 법무·컴플라이언스 검토가 필요합니다(확인 필요).
 
@@ -125,7 +125,7 @@ OWASP 2025 갱신본은 System Prompt Leakage(LLM07)와 Vector and Embedding Wea
 | C-02 | [03 ID·인증·접근통제](./03-identity-access.md) | SSO·IdP 인증 강제 | 우회 로그인 시도 → 차단 + 인증 실패 로그 생성 확인 | 우회 차단 + 로그 남음 |
 | C-03 | [03 ID·인증·접근통제](./03-identity-access.md) | 최소권한 RBAC | 권한 외 리소스 접근 시도 → 거부 + 인가 거부 로그 | 거부 + 로그 남음 |
 | C-04 | [02 네트워크·테넌트·GPU 격리](./02-network-tenant-isolation.md) | GPU 워크로드 도메인 네트워크 분리 | 허용되지 않은 동서(east-west) 트래픽 시도 → 차단 확인 | 비인가 트래픽 차단 |
-| C-05 | [02 네트워크·테넌트·GPU 격리](./02-network-tenant-isolation.md) | 정책 드리프트 연속 점검 | 의도적 정책 변경 주입 → ACC가 드리프트 탐지·교정 | 드리프트 탐지+자동 교정 |
+| C-05 | [02 네트워크·테넌트·GPU 격리](./02-network-tenant-isolation.md) | 정책 드리프트 연속 점검 | 의도적 정책 변경 주입 → 구성 준수 상시 점검 도구(ACC)가 드리프트 탐지·교정 | 드리프트 탐지+자동 교정 |
 | C-06 | [04 에어갭·공급망·모델 출처](./04-airgap-supply-chain.md) | 모델·데이터 무결성 검증 | 변조 아티팩트 배포 시도 → 서명·검증 단계에서 차단 | 변조본 거부 |
 | C-07 | [05 데이터 거버넌스·프라이버시](./05-data-governance.md) | 출력 민감정보 마스킹 | 민감정보 유도 프롬프트 → 출력 측 차단/마스킹 확인 | 노출 0건 |
 | C-08 | [06 앱 계층 가드레일](./06-app-guardrails.md) | 도구 호출 인가·최소권한 | 비인가 도구 호출 시도 → 거부 + 도구 호출 로그 | 거부 + 로그 남음 |

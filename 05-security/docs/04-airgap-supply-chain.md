@@ -1,6 +1,6 @@
 # 04 — 에어갭·공급망·모델 출처
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)을 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 폐쇄망(에어갭) 환경에서 Private AI 워크로드를 운영할 때의 공급망 보안을 다룹니다. 모델·컨테이너·드라이버가 외부에서 어떻게 안전하게 반입되고, 출처(provenance)와 무결성이 어떻게 검증되며, 로컬 레지스트리(Harbor) 단계에서 어떤 통제가 걸리는지를 보안 관점으로 정리합니다. 인프라 구성 절차 자체는 ① 인프라 가이드([① 인프라](../../01-infra/README.md))의 Artifact Mirroring Tool·Harbor 서술을 참조하고, 본 문서는 그 위에 보안 통제를 얹습니다.
@@ -31,7 +31,7 @@ Harbor 자체를 에어갭에 처음 세울 때는 "부트스트랩 문제"가 �
 
 ## 4.2 모델 공급망: 출처·서명·무결성 검증
 
-모델은 NVIDIA NGC 카탈로그, Hugging Face Hub, 기타 ML 카탈로그에서 **신뢰 소스에서만** 내려받아야 합니다([Broadcom TechDocs — Storing ML Models in VMware Private AI Foundation](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/storing-ml-models-in-vmware-private-ai-foundation.html)). 반입 모델은 Harbor(OCI 호환 레지스트리)를 모델 스토어로 삼는 Model Gallery 구조에 저장되며, 다음 계층으로 관리됩니다([같은 TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/storing-ml-models-in-vmware-private-ai-foundation.html)).
+모델은 NVIDIA NGC 카탈로그, Hugging Face Hub 같은 **신뢰할 수 있는 소스에서만** 내려받아야 합니다([Broadcom TechDocs — Storing ML Models in VMware Private AI Foundation](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/storing-ml-models-in-vmware-private-ai-foundation.html)). 반입 모델은 Harbor(OCI 호환 레지스트리)를 모델 스토어로 삼는 Model Gallery 구조에 저장되며, 다음 계층으로 관리됩니다([같은 TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/storing-ml-models-in-vmware-private-ai-foundation.html)).
 
 | 계층 | 내용 | 무결성 의미 |
 | --- | --- | --- |
@@ -67,7 +67,7 @@ Harbor 자체를 에어갭에 처음 세울 때는 "부트스트랩 문제"가 �
 
 SBOM은 "무엇이 들어있는가"를, SLSA provenance는 "변조되지 않았음"을 증명하여 상호 보완합니다([Practical DevSecOps — SLSA Framework Guide](https://www.practical-devsecops.com/slsa-framework-guide-software-supply-chain-security/)). SBOM 표준 포맷은 SPDX(Linux Foundation, ISO/IEC 5962:2021)와 CycloneDX(OWASP)이며, Harbor는 SBOM과 attestation 생성을 지원합니다([VCF Blog — Securing Your Software Supply Chain with Harbor](https://blogs.vmware.com/cloud-foundation/2026/01/30/securing-your-software-supply-chain-with-harbor/)). SLSA는 빌드 출처 보증 수준을 Level 1–3(이상)으로 정의하며, Level 3은 위조 불가능한(non-falsifiable) provenance를 요구합니다([SLSA Framework Guide](https://www.practical-devsecops.com/slsa-framework-guide-software-supply-chain-security/)).
 
-접근통제: Harbor RBAC는 LDAP/Active Directory/OIDC와 연동되며, CI/CD 파이프라인에는 만료일과 범위가 제한된 **robot account**를 부여해 사람 자격증명 노출을 방지합니다([VCF Blog — Securing Your Software Supply Chain with Harbor](https://blogs.vmware.com/cloud-foundation/2026/01/30/securing-your-software-supply-chain-with-harbor/)). 프로젝트 단위로 RBAC·스캔정책·쿼터·태그보존 규칙이 독립 적용됩니다([WebSearch 종합 — Harbor 프로젝트 구조](https://blogs.vmware.com/cloud-foundation/2026/01/30/securing-your-software-supply-chain-with-harbor/)).
+접근통제: Harbor RBAC는 LDAP/Active Directory/OIDC와 연동되며, CI/CD 파이프라인에는 만료일과 범위가 제한된 **robot account**를 부여해 사람 자격증명 노출을 방지합니다([VCF Blog — Securing Your Software Supply Chain with Harbor](https://blogs.vmware.com/cloud-foundation/2026/01/30/securing-your-software-supply-chain-with-harbor/)). 프로젝트 단위로 RBAC·스캔정책·쿼터·태그보존 규칙이 독립 적용됩니다(출처는 앞의 VCF Blog와 같습니다).
 
 ---
 

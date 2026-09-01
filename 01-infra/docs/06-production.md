@@ -173,7 +173,7 @@ OTel Collector로 에이전트 요청을 단계별(RAG 검색 → MCP 도구 호
 
 ## 6.9 에어갭(Air-Gapped) 환경 — Artifact Mirroring Tool (9.1 신규)
 
-방산·금융·공공·일부 제조처럼 **외부망 연결이 불가**한 환경을 위해 PAIS 2.1은 **Artifact Mirroring Tool** 를 제공합니다.
+방산·금융·공공·일부 제조처럼 **외부망 연결이 불가**한 환경을 위해 PAIS 2.1은 **Artifact Mirroring Tool**을 제공합니다.
 
 ```
 [ 인터넷 연결 미러 호스트 ]                 [ 에어갭 환경 (내부망) ]

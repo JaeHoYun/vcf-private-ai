@@ -14,8 +14,8 @@
 | 역할 | 단일 모델 API 노출 | RAG + 도구 사용 캡슐화 |
 | 입력 | 프롬프트 | 사용자 질문 |
 | 출력 | LLM 응답 | 응답 + 출처 + 세션 (+도구 실행 결과) |
-| RAG | 미지원 | 지원 내장 |
-| Knowledge Base | 미지원 | 지원 연결 |
+| RAG | 미지원 | 내장 |
+| Knowledge Base | 미지원 | 연결 지원 |
 | **외부 도구(MCP)** | 미지원 | 지원 **(9.1)** |
 | 세션 관리 | 미지원 | 지원 |
 | API | `/v1/chat/completions` | `/v1/agents/{name}/chat` |

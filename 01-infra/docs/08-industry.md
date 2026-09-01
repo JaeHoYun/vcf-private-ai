@@ -113,10 +113,10 @@ Phase 3: 그룹 GPU 풀 + 프로덕션
 ```
 
 **도입 비용 산정 시 필수 체크:**
-- 지원 **NVAIE 별도 구매** 누락 금지 (vGPU 분할·NIM/NeMo 사용 시). Enhanced DirectPath I/O 전용 패스스루만 쓰면 NVAIE 불필요.
-- 지원 **GPU 하드웨어 호환성 목록(BCG/HCL)** 사전 확인 — BCG: Broadcom Compatibility Guide / HCL: Hardware Compatibility List (Blackwell·ConnectX-7·BlueField-3 포함).
-- 지원 **TCO 비교**(퍼블릭 GPU vs 온프레미스 PAIF)는 워크로드·사용률에 좌우 → 고객 실측 기반.
-- 지원 **한국어 평가셋** 확보 (글로벌 벤치마크와 한국어 성능 차이 큼). 한국어 임베딩(bge-m3 등) 평가.
+- **NVAIE 별도 구매** 누락 금지 (vGPU 분할·NIM/NeMo 사용 시). Enhanced DirectPath I/O 전용 패스스루만 쓰면 NVAIE 불필요.
+- **GPU 하드웨어 호환성 목록(BCG/HCL)** 사전 확인 — BCG: Broadcom Compatibility Guide / HCL: Hardware Compatibility List (Blackwell·ConnectX-7·BlueField-3 포함).
+- **TCO 비교**(퍼블릭 GPU vs 온프레미스 PAIF)는 워크로드·사용률에 좌우 → 고객 실측 기반.
+- **한국어 평가셋** 확보 (글로벌 벤치마크와 한국어 성능 차이 큼). 한국어 임베딩(bge-m3 등) 평가.
 
 ---
 

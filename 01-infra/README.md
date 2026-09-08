@@ -12,23 +12,26 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축·개발
 ## 기반 버전 (Source of Truth)
 
 > **이 표가 문서 전체의 버전 기준이 되는 단일 출처입니다.** 각 문서는 개별 버전을 반복 표기하지 않고 이 표를 참조합니다.
-> 모든 수치·버전은 작성 시점(2026-06) Broadcom 공식 릴리스 노트 기준이며, 적용 전 [공식 문서](#참고-자료)로 재확인하시기 바랍니다.
+> 모든 수치·버전은 작성 시점(2026-06) Broadcom 공식 릴리스 노트 기준이고, 2026-09에 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 GA(2026-09-03) 내용을 반영했습니다. 적용 전 [공식 문서](#참고-자료)로 재확인하시기 바랍니다.
 
 | 구분 | 버전 | 비고 |
 |------|------|------|
-| **VMware Cloud Foundation** | **9.1** | GA 2026년 5월 |
-| **Private AI Foundation with NVIDIA (PAIF)** | **9.1** | VCF 코어 구독 포함 (NVAIE만 별도) |
-| **Private AI Services (PAIS)** | **2.1** | UI 셀프서비스, MCP, Artifact Mirroring Tool(에어갭) 추가 |
-| Deep Learning VM(DLVM) 이미지 | VCF 9.1 호환 이미지 | Miniforge3 24.3.0, 신규 Ubuntu/ML 스택 |
-| vLLM (Completion/Embedding) | **0.11.2** | completions + embeddings 지원 |
-| Infinity (Embedding) | **0.0.76** | embeddings 전용 |
-| llama.cpp (CPU 추론) | **b7739** | completions + embeddings, CPU 추론 |
-| VKr (vSphere Kubernetes release) | **1.33** | ClusterClass `builtin-generic-v3.2.0` |
-| VKS (vSphere Kubernetes Service) | **3.5.0+** 권장 | — |
-| NVIDIA GPU Operator | **25.10.1** (기본값) | GPU 드라이버 v580.x 계열 |
-| PostgreSQL / pgvector | 16.8 / 0.8.0 | DSM(Data Services Manager) 제공 벡터 DB |
+| **VMware Cloud Foundation** | **9.1.1** | 9.1 GA 2026년 5월, 9.1.1 GA 2026년 9월(유지보수 릴리스, BOM 갱신) |
+| **Private AI Foundation with NVIDIA (PAIF)** | **9.1.1** | VCF 코어 구독 포함 (NVAIE만 별도). 9.1.1 변경은 PAIS 3.0 제공과 DLVM 이미지 갱신 |
+| **Private AI Services (PAIS)** | **3.0** | VCF 9.1.x 호환. 공유 모델 호스팅, 원격 클라우드 모델, API 토큰, 관측성 확장 추가. 2.1의 UI 셀프서비스, MCP, Artifact Mirroring Tool(에어갭)은 그대로 유지 |
+| Deep Learning VM(DLVM) 이미지 | 9.1.1 | Ubuntu 26.04 LTS, NVIDIA 데이터센터 드라이버 595.71.05, Miniforge 26.1.1(deprecated 예고), VCF CLI 9.1.0 동봉. 9.1 이미지는 Ubuntu 24.04, 드라이버 580.95.05, Miniforge 24.11.3 |
+| vLLM (Completion/Embedding) | **0.20.0** | completions + embeddings 지원. CUDA 13.0 기본이라 GPU 드라이버 580 이상 필요 |
+| Infinity (Embedding) | **0.0.76** | embeddings 전용 (2.1과 동일) |
+| llama.cpp (CPU 추론) | **b9309** | completions + embeddings, CPU 추론 |
+| VKr (vSphere Kubernetes release) | **1.34** | ClusterClass `builtin-generic-v3.5.0`, Ubuntu 24.04 노드 이미지. 컨트롤 플레인 VM 클래스는 best-effort-large 이상 |
+| VKS (vSphere Kubernetes Service) | **3.7.x** | VKS 3.7.1(2026-08)이 VKr 1.33에서 1.36까지 지원. PAIS가 고정한 VKr과 ClusterClass 값을 우선 따릅니다 |
+| NVIDIA GPU Operator | **25.10.1** (기본값) 또는 **26.3.1** | 데이터센터 드라이버 580.105.8 또는 580.126.20, vGPU(NVAIE) 드라이버 580.105.8 |
+| Data Services Manager (DSM) | 9.1.1 | PostgreSQL 18.4, 17.10, 16.14, 15.18, 14.23 지원. PostgreSQL 12와 13은 9.1.1에서 제거 |
+| PostgreSQL / pgvector (PAIS 검증 조합) | 16.8 / 0.8.0 | PAIS Data Indexing이 검증한 조합. 2.1과 동일 |
 
 > **9.0.x에서 올라오신 경우**: 엔진·운영 컴포넌트 버전이 대폭 상향됐습니다. 변경 요약과 마이그레이션 체크리스트는 [00](docs/00-whats-new.md)을 먼저 보시기 바랍니다.
+>
+> **9.1 / PAIS 2.1을 운영 중이라면**: 9.1.1 / PAIS 3.0에서 무엇이 바뀌었는지는 [00의 0.7절](docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga)에, 기능이 어느 버전에서 들어왔는지는 [00의 0.8절 버전별 기능 이력](docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)에 정리했습니다. 2.1 기준으로 쓰인 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 읽을 수 있습니다.
 
 ---
 
@@ -36,7 +39,7 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축·개발
 
 | 문서 | 제목 | 주요 내용 |
 |------|------|----------|
-| 00 | **[What's New (9.1)](docs/00-whats-new.md)** | VCF/PAIF 9.1 신규 기능, 버전 매트릭스 변경, 9.0.x→9.1 마이그레이션 |
+| 00 | **[What's New (9.1 / 9.1.1)](docs/00-whats-new.md)** | VCF/PAIF 9.1 신규 기능, 9.1.1 / PAIS 3.0 변경, 버전별 기능 이력, 버전 매트릭스, 9.0.x→9.1→9.1.1 마이그레이션 |
 | 01 | [핵심 개념 및 페르소나](docs/01-concepts.md) | PAIF/PAIS/DLVM 개념, 라이선스 구조, 역할 정의 |
 | 02 | [아키텍처 및 구축 순서](docs/02-architecture.md) | 계층 구조, GPU(DirectPath/vGPU/Blackwell/DRA), Phase별 구축 |
 | 03 | [역할별 워크플로우](docs/03-workflows.md) | AI 플레이그라운드, 모델 준비, RAG 구성, PAIS UI, 데이터 소스 |
@@ -54,6 +57,7 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축·개발
 ## 빠른 시작
 
 - **"9.0에서 뭐가 바뀌었나요?"** → [00](docs/00-whats-new.md)
+- **"9.1.1 / PAIS 3.0에서 뭐가 바뀌었나요?"** → [00의 0.7절](docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga)
 - **"PAIF가 뭔가요?"** → [01](docs/01-concepts.md)
 - **"아키텍처/구축 순서가 궁금해요"** → [02](docs/02-architecture.md)
 - **"개발자로서 뭘 할 수 있나요?"** → [03](docs/03-workflows.md) + [04](docs/04-dev-scenarios.md)
@@ -100,7 +104,7 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축·개발
 
 **비공식 문서** — 이 가이드는 VCF/PAIF 공식 기술 문서를 기반으로 작성된 비공식 실무 가이드입니다. Broadcom, NVIDIA 또는 기타 벤더의 공식 입장을 대변하지 않습니다.
 
-**정확성 및 최신성** — 본 문서의 내용은 작성 시점(2026년 6월) 기준이며, 제품 업데이트에 따라 달라질 수 있습니다. 정확성을 위해 노력하였으나 오류나 누락이 있을 수 있습니다. 프로덕션 적용 전 반드시 공식 문서를 확인하시기 바랍니다. 특히 본문에 인용된 성능·비용 수치(예: 서버비용·TCO 절감률)는 Broadcom 발표 기준이며 실제 효과는 워크로드·환경별 검증이 필요합니다.
+**정확성 및 최신성** — 본 문서의 내용은 작성 시점(2026년 6월, VCF 9.1.1과 PAIS 3.0 반영 2026년 9월) 기준이며, 제품 업데이트에 따라 달라질 수 있습니다. 정확성을 위해 노력하였으나 오류나 누락이 있을 수 있습니다. 프로덕션 적용 전 반드시 공식 문서를 확인하시기 바랍니다. 특히 본문에 인용된 성능·비용 수치(예: 서버비용·TCO 절감률)는 Broadcom 발표 기준이며 실제 효과는 워크로드·환경별 검증이 필요합니다.
 
 **책임 한계** — 본 문서를 참고하여 발생한 직접적·간접적 손해에 대해 작성자는 책임을 지지 않습니다. 실제 구축·운영은 각 조직의 요구사항과 환경에 맞게 검토 후 진행하시기 바랍니다. 기술 지원이 필요한 경우 Broadcom 공식 지원 채널을 이용하시기 바랍니다.
 
@@ -109,6 +113,10 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축·개발
 ## 참고 자료
 
 - [VMware Cloud Foundation 9.1 Release Notes (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes.html)
+- [VMware Cloud Foundation 9.1.1.0 Release Notes (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html)
 - [VMware Private AI Foundation with NVIDIA 9.1 (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)
+- [VMware Private AI Foundation with NVIDIA 9.1 / 9.1.1 Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)
+- [VMware Private AI Services Release Notes (3.0, 2.1.2, 2.1)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)
+- [VMware Deep Learning VM Image Release Notes (9.1, 9.1.1)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-deep-learning-vm-image-release-notes.html)
 - [Announcing VCF 9.1 (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2026/05/05/announcing-vcf-9-1-modern-private-cloud-built-for-efficiency-and-resilience/)
 - [Broadcom Announces VCF 9.1 — Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)

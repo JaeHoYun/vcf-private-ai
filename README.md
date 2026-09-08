@@ -2,7 +2,7 @@
 
 VMware Cloud Foundation(VCF) **9.1** 기반 **Private AI**를 다루는 공개 실무 가이드입니다(전 7편, 단일 저장소). 핵심 축인 **PAIF**(Private AI Foundation with NVIDIA)와 **PAIS**(Private AI Services)를 **인프라 → 데이터 → 서빙 → 통합(RAG)** 흐름으로 풀어냅니다. **보안·거버넌스**와 **사이징·용량·비용**은 이 모든 계층을 가로지르고, **통합 설계**는 이 결정들을 하나의 일관된 플랫폼 설계로 묶습니다. 그 플랫폼 위에 올리는 **에이전트 서비스**는 시리즈의 번호 챕터가 아니라 별도 최상위 가이드에서 다룹니다(아래 '다음 단계').
 
-데이터가 사내를 벗어나지 않는 환경에서 LLM·RAG·에이전트 서비스를 처음부터 끝까지 **구축·운영·보호·산정**하려는 인프라팀·MLOps·앱 개발자를 위한 현장 레퍼런스를 지향합니다. 모든 수치·버전은 작성 시점(2026-06) Broadcom 공식 릴리스 노트를 기준선으로 하며, 적용 전 공식 문서 재확인을 권장합니다.
+데이터가 사내를 벗어나지 않는 환경에서 LLM·RAG·에이전트 서비스를 처음부터 끝까지 **구축·운영·보호·산정**하려는 인프라팀·MLOps·앱 개발자를 위한 현장 레퍼런스를 지향합니다. 모든 수치·버전은 작성 시점(2026-06) Broadcom 공식 릴리스 노트를 기준선으로 하고, 2026-09에 VCF 9.1.1과 PAIS 3.0 GA 내용을 반영했으며, 적용 전 공식 문서 재확인을 권장합니다.
 
 ## 무엇을 얻나 — 비즈니스 관점
 
@@ -87,7 +87,7 @@ flowchart TB
 
 이 시리즈는 Private AI **플랫폼**을 구축·운영·보호·설계하는 ①–⑦입니다. 그 플랫폼 **위에 에이전트 서비스를 올리는** 일은 시리즈의 번호 챕터가 아니라 별도의 최상위 가이드에서 다룹니다. 플랫폼(이 시리즈)과 그 위 실행 계층(에이전트)을 분리해, 프로필의 **AX(전략) → Private AI(인프라) → 에이전트(실행)** 3단계 구성과 맞춥니다.
 
-- [PAIS 에이전트 서비스 가이드](https://github.com/JaeHoYun/vcf-private-ai-agents) — PAIS 2.1 Agent Builder·MCP·Model Runtime으로 추론·도구 호출 에이전트를 설계·구축·운영. 서빙(③)·RAG(④)로 딥링크.
+- [PAIS 에이전트 서비스 가이드](https://github.com/JaeHoYun/vcf-private-ai-agents) — PAIS 3.0 Agent Builder·MCP·Model Runtime으로 추론·도구 호출 에이전트를 설계·구축·운영. 서빙(③)·RAG(④)로 딥링크.
 
 ## 관련 가이드
 
@@ -105,12 +105,15 @@ flowchart TB
 
 | 구분 | 버전 |
 |------|------|
-| VMware Cloud Foundation | 9.1 (GA 2026-05) |
-| Private AI Foundation with NVIDIA (PAIF) | 9.1 |
-| Private AI Services (PAIS) | 2.1 |
-| PostgreSQL / pgvector (DSM 9.1) | 16.8 / 0.8.0 (PAIS 검증 조합) |
+| VMware Cloud Foundation | 9.1.1 (9.1 GA 2026-05, 9.1.1 GA 2026-09) |
+| Private AI Foundation with NVIDIA (PAIF) | 9.1.1 |
+| Private AI Services (PAIS) | 3.0 (2026-09 GA, VCF 9.1.x 호환) |
+| Data Services Manager (DSM) | 9.1.1 |
+| PostgreSQL / pgvector (PAIS 검증 조합) | 16.8 / 0.8.0 |
 
-> 엔진·컴포넌트 상세 버전 단일 기준 문서는 [① README의 기반 버전표](01-infra/README.md#기반-버전-source-of-truth)를 따릅니다.
+> 엔진·컴포넌트 상세 버전 단일 기준 문서는 [① README의 기반 버전표](01-infra/README.md#기반-버전-source-of-truth)를 따릅니다. 어느 기능이 어느 버전에서 들어왔는지는 [① 00 What's New의 버전별 기능 이력](01-infra/docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)에서 확인할 수 있습니다.
+>
+> **이전 기준선이 필요하다면** — PAIS 2.1 / VCF 9.1 기준으로 작성된 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 그대로 읽을 수 있습니다. 본문에서 "PAIS 3.0부터"로 표기한 대목은 2.1 환경에서는 건너뛰면 됩니다.
 
 ## 주요 주제
 

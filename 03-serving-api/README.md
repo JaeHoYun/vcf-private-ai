@@ -14,13 +14,13 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 
 ## 기반 버전 (Source of Truth)
 
-> 모든 수치·버전은 작성 시점(2026-06) Broadcom 공식 문서 기준이며, 적용 전 [참고 자료](#참고-자료)의 공식 문서로 재확인하시기 바랍니다.
+> 모든 수치·버전은 작성 시점(2026-06) Broadcom 공식 문서 기준이고, 2026-09에 VCF 9.1.1 / PAIS 3.0 GA 내용을 반영했습니다. 적용 전 [참고 자료](#참고-자료)의 공식 문서로 재확인하시기 바랍니다.
 
 | 구분 | 버전 | 비고 |
 |------|------|------|
-| **VMware Cloud Foundation** | **9.1** | GA 2026년 5월 |
-| **Private AI Foundation with NVIDIA (PAIF)** | **9.1** | VCF 코어 구독 포함 (NVAIE만 별도) |
-| **Private AI Services (PAIS)** | **2.1** | UI 셀프서비스, MCP, Artifact Mirroring Tool(아티팩트 미러링 도구, 에어갭 아티팩트 반입) 추가 |
+| **VMware Cloud Foundation** | **9.1.1** | 9.1 GA 2026년 5월, 9.1.1 GA 2026년 9월 |
+| **Private AI Foundation with NVIDIA (PAIF)** | **9.1.1** | VCF 코어 구독 포함 (NVAIE만 별도) |
+| **Private AI Services (PAIS)** | **3.0** | 공유 모델 호스팅, 원격 클라우드 모델, API 토큰, OpenAI 호환 API 개선 추가. 2.1의 UI 셀프서비스, MCP, Artifact Mirroring Tool(아티팩트 미러링 도구, 에어갭 아티팩트 반입)은 유지. non-chat completions는 deprecated |
 | Private AI Services API | OpenAI 호환 (`/compatibility/openai/v1`) | [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) |
 
 > **추론 엔진 버전(vLLM·Infinity·llama.cpp 등)** 은 형제 가이드의 버전 단일 기준 문서를 따릅니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 본 가이드는 **API 계층**에 집중하며, 엔진 버전은 별도로 단정하지 않고 그 표를 기준선으로 삼습니다. 엔진 버전은 릴리스마다 변동되므로 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다.
@@ -106,7 +106,7 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 
 **비공식 문서** — 공개된 공식 기술 문서·API 레퍼런스·릴리스 노트를 기반으로 작성한 비공식 실무 레퍼런스입니다. Broadcom, VMware, NVIDIA 또는 기타 벤더의 공식 입장을 대변하지 않습니다.
 
-**정확성 및 최신성** — 본 문서의 내용은 작성 시점(2026년 6월) 기준이며, 제품 업데이트에 따라 달라질 수 있습니다. 특히 **API 엔드포인트 경로·요청/응답 스키마·인증 방식**은 PAIS 버전에 따라 변경될 수 있으므로, 적용 전 반드시 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 확인하시기 바랍니다. 또한 본문에 언급된 **성능·비용 관련 서술**(예: 단위 비용·레이턴시 이점)은 일반론이며 실제 효과는 워크로드·환경별 검증이 필요합니다.
+**정확성 및 최신성** — 본 문서의 내용은 작성 시점(2026년 6월, PAIS 3.0 반영 2026년 9월) 기준이며, 제품 업데이트에 따라 달라질 수 있습니다. 특히 **API 엔드포인트 경로·요청/응답 스키마·인증 방식**은 PAIS 버전에 따라 변경될 수 있으므로, 적용 전 반드시 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 확인하시기 바랍니다. 또한 본문에 언급된 **성능·비용 관련 서술**(예: 단위 비용·레이턴시 이점)은 일반론이며 실제 효과는 워크로드·환경별 검증이 필요합니다.
 
 **책임 한계** — 본 문서를 참고하여 발생한 직접적·간접적 손해에 대해 작성자는 책임을 지지 않습니다. 실제 구축·운영은 각 조직의 요구사항과 환경에 맞게 검토 후 진행하시고, 기술 지원이 필요한 경우 Broadcom 공식 지원 채널을 이용하시기 바랍니다.
 
@@ -121,6 +121,6 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 - [VMware Private AI Foundation with NVIDIA 9.1 (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)
 - [Streamline, Simplify and Protect all your AI workloads with VCF 9.1 (VCF Blog, 2026-05)](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/) — llama.cpp CPU 추론·멀티 액셀러레이터·Grafana AI 메트릭 근거
 - [Broadcom Announces VMware Cloud Foundation 9.1 (Broadcom, 2026-05)](https://www.broadcom.com/company/news/product-releases/64326) — AMD·NVIDIA 멀티 액셀러레이터, AMD·Intel·NVIDIA 혼합 컴퓨트 근거
-- [VMware Private AI Services Release Notes (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html) — PAIS 2.1(llama.cpp b7739, 관측성, MCP tool calling) 근거. *URL 경로는 `/9-0/`이나 PAIS 릴리스 노트는 2.1(=9.1 동반) 내용을 동일 경로에 누적 게시하므로 9.1 기준선으로 인용.*
+- [VMware Private AI Services Release Notes (Broadcom TechDocs, 9.1 문서 경로)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html) — PAIS 3.0(공유 모델, 원격 모델, API 토큰, API 폐기 사항)과 2.1(llama.cpp, 관측성, MCP tool calling) 근거. 3.0 항목은 `/9-1/` 경로에만 게시됩니다.
 - [Running Completion or Embedding Models by Using Model Endpoints (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/deploying-model-endpoints.html) — *9.1 전용 딥링크가 아직 공개되지 않아 9.0 문서를 9.1 기준선으로 인용(엔드포인트 개념은 버전 간 동일). 적용 직전 9.1 문서 세트에서 재확인 권장.*
 - [How to Connect your VMware Private AI Services Agents to OpenWeb UI (VCF Blog)](https://blogs.vmware.com/cloud-foundation/2025/08/15/how-to-connect-your-vmware-private-ai-services-agents-to-openweb-ui/)

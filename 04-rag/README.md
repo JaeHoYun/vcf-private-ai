@@ -14,13 +14,13 @@
 
 ## 기반 버전 (기준 문서)
 
-> 본 가이드는 **통합 흐름**에 집중하며, 엔진·컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이며 적용 전 공식 문서로 재확인하시기 바랍니다.
+> 본 가이드는 **통합 흐름**에 집중하며, 엔진·컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이고 2026-09에 VCF 9.1.1 / PAIS 3.0을 반영했으며, 적용 전 공식 문서로 재확인하시기 바랍니다.
 
 | 구분 | 버전 | 비고 |
 |------|------|------|
-| VMware Cloud Foundation / PAIF | 9.1 | GA 2026-05 |
-| Private AI Services (PAIS) | 2.1 | Agent Builder, Data Indexing(RAG), MCP Tools Registry |
-| PostgreSQL / pgvector (DSM 9.1, Data Services Manager) | 16.8 / 0.8.0 | PAIS 검증 조합 (②) |
+| VMware Cloud Foundation / PAIF | 9.1.1 | 9.1 GA 2026-05, 9.1.1 GA 2026-09 |
+| Private AI Services (PAIS) | 3.0 | Agent Builder, Data Indexing(RAG), MCP Tools Registry. 3.0에서 지식베이스 복제, 인용 노드 ID, 원격 임베딩 모델 추가 |
+| PostgreSQL / pgvector (DSM 9.1.1, Data Services Manager) | 16.8 / 0.8.0 | PAIS 검증 조합 (②) |
 
 ## 레퍼런스 시나리오
 

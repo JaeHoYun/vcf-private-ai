@@ -8,7 +8,7 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 
 이 가이드는 Vector DB 기초 개념부터 VCF DSM 아키텍처, 실제 배포 절차, 운영(Day-2) 런북, 도입 시나리오까지 생애주기 순서로 정리한 기술 레퍼런스입니다.
 
-기준 버전: VCF 9.1 / DSM 9.1 / PAIF 9.1 / PAIS 2.1
+기준 버전: VCF 9.1.1 / DSM 9.1.1 / PAIF 9.1.1 / PAIS 3.0 (2026-09 반영, 상세는 [01 버전 호환 매트릭스](docs/01-version-compatibility.md))
 
 > **VCF Private AI 가이드 시리즈 — ② 데이터(VectorDB)** · 7부작 중 한 편입니다. [전체 7개 보기 — 시리즈 허브](../README.md) · 상위 전략 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)
 
@@ -98,7 +98,7 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 
 비공식 문서: 공개된 기술 문서, 블로그, 릴리스 노트를 기반으로 작성한 비공식 기술 레퍼런스입니다. Broadcom, VMware, NVIDIA 또는 기타 벤더의 공식 입장을 대변하지 않습니다.
 
-정확성 및 최신성: 작성 시점(2026년 6월) 기준이며, 제품 업데이트에 따라 내용이 달라질 수 있습니다. 가격, 기능, 성능 수치는 시점에 따라 변동되므로 공식 문서를 함께 확인하시기 바랍니다.
+정확성 및 최신성: 작성 시점(2026년 6월, DSM 9.1.1과 PAIS 3.0 반영 2026년 9월) 기준이며, 제품 업데이트에 따라 내용이 달라질 수 있습니다. 가격, 기능, 성능 수치는 시점에 따라 변동되므로 공식 문서를 함께 확인하시기 바랍니다.
 
 벤치마크: 인용된 벤치마크는 각 출처의 테스트 환경과 조건에 따른 결과이며, 실제 워크로드에서의 성능은 다를 수 있습니다. 프로덕션 도입 전 자체 워크로드 기반 테스트를 권장합니다.
 

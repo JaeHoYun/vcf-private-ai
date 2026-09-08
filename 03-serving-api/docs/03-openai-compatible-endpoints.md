@@ -39,6 +39,8 @@ curl -s 'https://{fqdn}/api/v1/compatibility/openai/v1/models' \
   -H 'Authorization: Bearer <access-token>'
 ```
 
+> PAIS 3.0부터 각 항목에 모델 **status** 필드가 추가되어, 엔드포인트가 기동 중인지 서빙 가능한지를 목록 조회만으로 알 수 있습니다. 또한 3.0에서는 다른 인스턴스의 공유 모델과 원격 클라우드 모델도 이 목록에 로컬 모델과 같은 형태로 나타나므로([02 2.5.1절](02-serving-api-architecture.md)), 앱이 모델을 고를 때 이름만 보고 데이터 행선지를 짐작할 수는 없습니다. 어느 모델이 원격인지는 플랫폼 팀이 앱 팀에 알려 주어야 합니다.
+>
 > `model_type`(completion/embedding)·`model_engine`(vLLM/Infinity/llama.cpp 등)으로 그 모델이 무엇을 할 수 있는지 구분합니다. 앱에서 사용할 `model` 이름은 여기 `id`에서 가져옵니다. 같은 completion 모델이라도 **GPU(vLLM)인지 CPU(llama.cpp)인지**가 `model_engine`에 드러나므로, 지연·처리량 기대치를 여기서 가늠할 수 있습니다(9.1에서 llama.cpp 기반 CPU 추론 추가 → [02.5](02-serving-api-architecture.md#25-model-runtime--추론-엔진과-멀티-액셀러레이터-91)).
 
 ---
@@ -50,7 +52,7 @@ curl -s 'https://{fqdn}/api/v1/compatibility/openai/v1/models' \
 | 항목 | 값 |
 |------|----|
 | 경로 | `POST /compatibility/openai/v1/embeddings` |
-| 요청 | `input`, `model` |
+| 요청 | `input`, `model`, PAIS 3.0부터 `encoding_format`(float 또는 base64 등, OpenAI 규약과 같음) |
 | 응답 | `object`, `data[]`(임베딩 배열), `model`, `usage`(`prompt_tokens`, `total_tokens`) |
 
 ```bash
@@ -118,6 +120,8 @@ for chunk in client.chat.completions.create(
     print(delta, end="", flush=True)
 ```
 
+> PAIS 3.0은 스트리밍 처리량을 개선했고, OpenAI 규약에 없는 비표준 속성(예: vLLM 확장 옵션)을 요청에 실으면 추론 엔진까지 전달하도록 바뀌었습니다. 3.7절의 `extra_body` 방식이 이 전달 경로에 기댑니다.
+>
 > AI 응답은 초 단위로 길어질 수 있습니다. 사용자 체감 지연을 줄이려면 **스트리밍 + 진행 표시**를 기본으로 두는 것을 권장합니다. 첫 토큰 지연(TTFT)을 줄이려면 복제본 최소 1개를 항상 켜 두는 구성([07 운영](07-observability-ops.md))이 도움이 됩니다.
 
 ---

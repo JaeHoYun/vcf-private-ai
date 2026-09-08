@@ -229,6 +229,8 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 | 증상 | 가능 원인 | 조치 |
 |------|----------|------|
 | LLM 트레이스 미표시 | OTel Collector 수신 문제 (PAIS 2.1 알려진 이슈) | 트레이스 수신 검증, 릴리스 노트 Workaround 확인 ([문서 06 §6.8](06-production.md)) |
+| 설치나 업그레이드 직후 메트릭이 비어 있음 | PAIS 3.0 동작 변경: Prometheus 수집이 PAIS 관리 VKS 클러스터 가용 이후 시작 | 장애가 아님. 클러스터 READY 확인 후 수집 재개를 기다리고, 알람 규칙에 유예 구간을 둠 |
+| 원격 클라우드 모델 호출이 실패 | `InferenceGatewayRoute`의 TLS 검증 모드와 발급자 인증서 불일치, 자격증명 Secret 만료 | 네임스페이스 CA 신뢰 번들에 발급자 인증서 추가, Secret 갱신 ([③ 02 2.5.1절](../../03-serving-api/docs/02-serving-api-architecture.md)) |
 
 ### 10.2.5 DLVM · 드라이버 (9.0.x 보고 — 재확인 필요)
 
@@ -289,7 +291,9 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 **PAIS Trust Bundle · 시크릿:**
 
 - PAIS **Trust Bundle = OIDC · Harbor · DSM 인증서**([문서 02 §2.3](02-architecture.md) Phase 3). 이들 인증서 갱신 시 Trust Bundle을 재구성합니다.
-- 시크릿 = Harbor 레지스트리 자격증명, OIDC 클라이언트 시크릿, 서비스 계정 토큰([문서 06 §6.10](06-production.md)) → 정기 회전.
+- 시크릿 = Harbor 레지스트리 자격증명, OIDC 클라이언트 시크릿, 서비스 계정 토큰([문서 06 §6.10](06-production.md)) → 정기 회전. PAIS 3.0부터는 API 토큰과 원격 클라우드 모델 자격증명 Secret도 회전 대상입니다([⑤ 03](../../05-security/docs/03-identity-access.md)).
+- **PAIS 3.0 Ingress 인증서 반입(BYO)**: 3.0부터 PAIS Ingress의 TLS 종단 인증서를 조직 CA가 발급한 것으로 바꿔 넣을 수 있고, OIDC 연결의 TLS 검증도 설정할 수 있습니다. 반입한 인증서는 플랫폼이 자동 갱신하지 않으므로 만료 추적과 교체를 이 절의 회전 일정에 넣습니다. 공유 모델의 consumer 쪽에 전달한 provider 발급자 인증서도 provider가 Ingress 인증서를 바꾸면 함께 갱신해야 합니다([문서 06 6.4.1절](06-production.md)).
+- **VCF Operations 9.1.1 인증서 관리 범위 확장**: 9.1.1부터 vSphere Supervisor, NSX Edge, 라이선스 서버, cloud proxy, VCF Automation의 인증서가 VCF Operations의 인증서 관리와 만료 알람 대상에 들어왔습니다. PAIS가 도는 Supervisor의 인증서를 별도 추적하던 절차는 이 관리 화면으로 합칩니다.
 
 > **적용 전 확인:** VCF 9의 자동 인증서 갱신(Fleet Management CA)·파일 기반 백업·복구 절차는 공식 문서 기준이나, 정확한 단계와 9.1 차이는 적용 전 [백업·복구 문서](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/backup-and-restore-of-cloud-foundation/file-based-backups-for-sddc-manager-and-vcenter-server.html)·[인증서 자동 갱신(VCF 블로그)](https://blogs.vmware.com/cloud-foundation/2025/06/19/automatic-certificate-renewal-in-vcf-9/)로 재확인하시기 바랍니다.
 
@@ -320,6 +324,7 @@ VCF Operations의 **Alert Definition(Symptom + 임계치) · Notification**으�
 - **알람(Alert)**: 증상 조합 + 심각도(Critical/Warning).
 - **알림(Notification)**: 이메일·웹훅 등으로 통지.
 - 9.1은 신규 알람(예: vCenter High Session Count·Increased request load)과 전체 헬스 대시보드를 제공합니다.
+- 9.1.1은 VKS 메트릭을 OpenTelemetry 표준으로 2초 간격 스트리밍하고(기존 5분 폴링 대비) 멀티클러스터 VKS 뷰를 제공하므로, 모델 엔드포인트가 도는 VKS 워커의 포화를 알람 임계에 반영할 때 지연이 크게 줄었습니다. Grafana 대시보드 임포트도 지원합니다.
 
 알람 설계 원칙(노이즈 방지):
 
@@ -338,6 +343,22 @@ VCF Operations의 **Alert Definition(Symptom + 임계치) · Notification**으�
 - **사후**: 인시던트 기록·포스트모템, 반복 이슈는 알람·런북에 반영(피드백 루프).
 
 > **적용 전 확인:** VCF Operations의 Alert/Symptom/Notification 프레임워크와 9.1 AI·GPU 지표(TTFT·토큰 처리량·GPU 사용률)는 공식 문서 기준이나, 정확한 알람 정의·지표 명칭은 적용 전 [알람 정의 모범사례 문서](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/infrastructure-operations/configuring-alerts-and-actions/defining-alerts-best-practices.html)로 확인하시기 바랍니다.
+
+---
+
+### 10.4.4 AI Assistant로 진단 보조 (VCF 9.1.1)
+
+VCF Operations 9.1.1은 콘솔 안에 대화형 **AI Assistant**를 넣었습니다. 자연어로 VCF 상태를 묻고, 알람과 구성과 로그를 함께 엮어 원인 후보(예: ESX CPU와 메모리 경합)를 짚어 주며, API 지식 없이 관리 팩(management pack)을 만드는 데도 씁니다. 백엔드 모델은 두 가지 중에서 고릅니다. **PAIS에서 서빙 중인 모델 엔드포인트**이거나, 조직이 계약한 사설 Google Gemini 인스턴스입니다.
+
+Private AI 인프라 운영 관점에서는 첫 번째 선택지가 자연스럽습니다. 이 플랫폼이 이미 서빙하는 사내 모델로 플랫폼 자신을 진단하므로 운영 데이터(알람, 로그, 구성)가 밖으로 나가지 않습니다. 두 번째 선택지를 고르면 그 데이터가 사외로 나가므로 [⑤ 05 5.6절](../../05-security/docs/05-data-governance.md)의 반출 통제가 그대로 적용됩니다.
+
+운영 절차에서의 자리는 다음과 같습니다.
+
+- 10.2절의 트러블슈팅 런북에서 "증상 식별 → 계층 좁히기" 단계의 보조 도구로 씁니다. 결론을 내는 주체는 여전히 런북과 운영자입니다.
+- AI Assistant가 쓰는 PAIS 모델 엔드포인트는 운영 전용 네임스페이스에 두고, 다른 워크로드의 피크가 진단 도구의 응답을 막지 않도록 레플리카를 분리합니다.
+- 관리 팩 생성 기능으로 만든 대시보드와 알람은 10.4.2절의 알람 설계 원칙(증상 기반, 심각도 분리, 런북 링크)에 맞춰 검토한 뒤에만 운영에 올립니다.
+
+> 근거: [New AI and Kubernetes Private Cloud Operations Capabilities in VCF 9.1.1 (VMware Cloud Foundation Blog, 2026-09-03)](https://blogs.vmware.com/cloud-foundation/2026/09/03/new-ai-and-kubernetes-private-cloud-operations-capabilities-in-vmware-cloud-foundation-9-1-1/). 구성 절차와 지원 모델 범위는 적용 직전 VCF Operations 9.1.1 문서로 확인하시기 바랍니다.
 
 ---
 

@@ -18,6 +18,8 @@
 
 > 토큰 사용량을 **호출 단위로 로깅**해 두면, 어느 앱·사용자·에이전트가 GPU를 많이 쓰는지 사후 분석이 가능합니다. 사내 추론은 종량 청구서가 오지 않으므로, **쇼백(showback)을 직접 만들어야** 부서별 비용 책임이 가시화됩니다.
 
+PAIS 3.0부터는 원격 클라우드 모델([02 2.5.1절](02-serving-api-architecture.md))의 토큰 사용량도 플랫폼이 추적합니다. 이쪽은 사내 GPU와 달리 공급자 청구서가 실제로 오므로, 같은 `usage` 필드라도 의미가 다릅니다. 로컬과 공유 모델의 토큰은 쇼백의 배분 기준이고, 원격 모델의 토큰은 실비이자 반출 증빙입니다. 호출 로그에 모델이 어느 연결 방식인지를 함께 남겨 두어야 둘을 나눠 집계할 수 있습니다.
+
 ---
 
 ## 7.2 LLM 트레이싱 (OpenTelemetry)
@@ -31,7 +33,9 @@ PAIS 2.1은 **OpenTelemetry(OTel) 기반 LLM 트레이싱**을 제공합니다. 
 | MCP 도구 호출 | 호출된 도구·인자·결과·소요 시간 |
 | 전체 트레이스 | 한 요청의 end-to-end 단계별 타임라인 |
 
-> **알려진 이슈(PAIS 2.1):** 일부 환경에서 PAIS의 LLM 트레이스가 OpenTelemetry Collector에 표시되지 않을 수 있다고 릴리스 노트에 기재되어 있습니다. 관측성 구성 시 **트레이스 수신을 반드시 검증**하고, 적용 직전 릴리스 노트에서 해당 이슈의 상태를 확인하시기 바랍니다.
+> **알려진 이슈(PAIS 2.1):** 일부 환경에서 PAIS의 LLM 트레이스가 OpenTelemetry Collector에 표시되지 않을 수 있다고 릴리스 노트에 기재되어 있습니다. 관측성 구성 시 **트레이스 수신을 반드시 검증**하고, 적용 직전 릴리스 노트에서 해당 이슈의 상태를 확인하시기 바랍니다. 3.0 릴리스 노트의 알려진 이슈 목록에는 이 항목이 없지만, 구성 오류로 트레이스가 보이지 않는 경우는 여전히 있으므로 검증 절차는 그대로 둡니다.
+
+PAIS 3.0은 트레이싱 범위를 "LLM 상호작용 전체"로 넓혔다고 밝힙니다. 동작 변경도 하나 있습니다. Prometheus 메트릭 수집이 PAIS가 관리하는 VKS 클러스터가 가용해진 뒤에 시작되므로, 설치나 업그레이드 직후에는 메트릭이 비어 있는 구간이 생깁니다. 이 구간을 장애로 오인하지 않도록 알람 규칙에 유예를 두십시오([① 10 10.2.4절](../../01-infra/docs/10-operations.md)).
 
 ---
 
@@ -58,7 +62,9 @@ OpenTelemetry Collector ──▶ 메트릭 백엔드(Prometheus 등)
                         (모델 health · quality · behavior)
 ```
 
-> **전제 조건** — AI 메트릭 대시보드는 조직이 **Grafana를 직접 배포**해야 동작합니다. 즉 관측성은 "켜져 있는" 기능이 아니라 **배포·연결해야 하는** 구성입니다. 정확한 메트릭 항목·대시보드 구성은 적용 직전 [PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html)와 [VCF 9.1 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/)로 확인하시기 바랍니다.
+> **전제 조건** — AI 메트릭 대시보드는 조직이 **Grafana를 직접 배포**해야 동작합니다. 즉 관측성은 "켜져 있는" 기능이 아니라 **배포·연결해야 하는** 구성입니다. 정확한 메트릭 항목·대시보드 구성은 적용 직전 [PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)와 [VCF 9.1 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/)로 확인하시기 바랍니다.
+
+**PAIS 3.0에서 달라진 것** — Grafana를 직접 배포해야 한다는 전제는 같지만, 3.0은 그 위에 올릴 **예시 Grafana 구성**을 제공하고, 모델과 에이전트 메트릭을 PAIS UI에서 실시간 대시보드로 바로 보여 주며, 추론 백엔드의 헬스를 실시간으로 노출합니다. 2.1에서 "대시보드를 어떻게 구성하나"가 조직의 몫이었다면 3.0은 출발점을 줍니다. 같은 시기에 나온 VCF Operations 9.1.1은 Grafana 대시보드 임포트와 VKS 메트릭의 OpenTelemetry 2초 간격 스트리밍을 더해, 아래 7.4절의 인프라 레벨과 AI 서비스 레벨이 같은 표준(OTel)으로 만납니다.
 
 ---
 

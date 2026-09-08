@@ -98,7 +98,7 @@ VKS가 **Dynamic Resource Allocation(DRA)** 기반의 개방형 GPU 스케줄링
 | DLVM 기본 OS | Ubuntu 22.04 | 9.1: Ubuntu 24.04 | **9.1.1: Ubuntu 26.04** | 상향 |
 | DLVM Conda | Miniconda 24.3.0 | Miniforge 24.11.3 (9.1 RN 기준) | Miniforge 26.1.1 (deprecated 예고) | 상향 |
 | DLVM NVIDIA 드라이버 | — | 580.95.05 | **595.71.05** | 상향 |
-| DLVM 동봉 CLI | VCF CLI + pais 플러그인 | VCF CLI 9.0.1, standalone pais CLI 제거 | VCF CLI 9.1.0, Helm 4.2.0, kubectl vSphere 플러그인 | 확장 |
+| DLVM 동봉 CLI | standalone `pais` CLI | VCF CLI 9.0.1 + pais 플러그인 2.0.89, standalone `pais` CLI 제거 | VCF CLI 9.1.0, Helm 4.2.0, kubectl vSphere 플러그인 | 확장 |
 
 > 9.1 열의 DLVM Conda 값은 초판에서 "Miniforge3 24.3.0"으로 적었으나, DLVM 9.1 릴리스 노트 기준 24.11.3이 맞습니다(24.3.0은 DLVM 9.0.2 값). 이번 판에서 정정했습니다.
 

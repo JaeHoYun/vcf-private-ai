@@ -133,5 +133,11 @@
 
 관련: [① 백업·복구·DR](../../01-infra/docs/10-operations.md) · [⑥ 사이징](../../06-sizing-cost/README.md)
 
+### 4.5.1 호스트 배치와 페일오버 용량 (VCF 9.1.1부터)
+
+가용성 결정에서 자주 빠지는 것이 "레플리카가 실제로 다른 호스트에 있는가"입니다. vCenter 9.1.1은 컴퓨트 정책(compute policy)으로 VM-VM anti-affinity 규칙을 지원하므로, 모델 엔드포인트 레플리카가 도는 VKS 워커 VM을 호스트 단위로 분산하도록 플랫폼에서 강제할 수 있습니다. 반대로 지연이 중요한 구성요소(예: 에이전트와 그 모델 엔드포인트)는 affinity로 같은 호스트에 모읍니다. 쿠버네티스 파드 anti-affinity는 노드 단위이지 호스트 단위가 아니므로, 두 노드가 같은 호스트에 있으면 무의미합니다. 이 결정은 VM 층에서 닫아야 합니다.
+
+또 하나는 메모리 티어링(NVMe)입니다. 9.1.1의 vSphere HA admission control은 DRAM을 티어드 메모리와 분리해 추적하므로, 페일오버 시 DRAM이 모자라 VM이 뜨지 않는 상황을 미리 막습니다. 티어링으로 메모리를 늘려 잡은 GPU 호스트라면 N+1 계산을 총 메모리가 아니라 DRAM 기준으로 다시 해야 합니다([⑥ 03](../../06-sizing-cost/docs/03-compute-memory-sizing.md)). 운영 절차는 [① 06 6.2절](../../01-infra/docs/06-production.md)에 있습니다.
+
 ---
 [← 이전: 03 설계 결정 — 컴퓨트·GPU·VKS 토폴로지](03-compute-gpu-topology.md) · [목차](../README.md) · [다음: 05 설계 결정 — 멀티테넌시·보안 설계 →](05-tenancy-security.md)

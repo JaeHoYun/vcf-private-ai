@@ -45,6 +45,8 @@ ML API Gateway (LB · Health Check · Failover)
 
 **Replica 권장**: 개발 1 / 스테이징 1–2 / 프로덕션 2–3(N+1) / 미션크리티컬 3+. GPU 점유 = 비용이므로 자동 스케일링으로 최소 유지 후 부하 시 증설.
 
+위 그림처럼 레플리카가 서로 다른 ESXi 호스트에 놓여야 호스트 장애가 한 레플리카에서 끝납니다. vCenter 9.1.1부터는 컴퓨트 정책으로 VM-VM anti-affinity 규칙을 걸어 VKS 워커 VM을 호스트 단위로 분산하도록 강제할 수 있고, 반대로 지연이 중요한 구성요소는 affinity로 같은 호스트에 모을 수 있습니다. 쿠버네티스 쪽 파드 anti-affinity와 함께 두면 파드와 VM 두 층에서 분산이 보장됩니다. 메모리 티어링(NVMe)을 쓰는 호스트에서는 9.1.1의 vSphere HA admission control이 DRAM을 따로 추적하므로, 페일오버 용량 계산에 티어드 메모리가 아니라 DRAM 기준이 쓰인다는 점을 사이징에 반영합니다([⑦ 04](../../07-design/docs/04-network-storage-availability.md)).
+
 ### pgvector(DSM, Data Services Manager) HA / VKS HA
 
 DSM이 PostgreSQL Primary/Standby 동기 복제와 VIP 기반 자동 Failover를 관리합니다. VKS는 Control Plane 3노드(자동) + Worker Multi-node(최소 3 권장) + Deployment Replicas 2+로 구성합니다.

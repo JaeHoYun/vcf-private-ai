@@ -41,7 +41,7 @@ PAIS API는 OIDC를 인가 기반으로 사용하며, 대화형 클라이언트�
 | 앱 개발자 | 에이전트·앱 구축 | Agent Builder 사용, 승인된 도구·KB 소비 | MCP 서버 신규 등록 승인, 인프라 변경 |
 | 감사자 | 통제·로그 검증 | 로그·구성·권한 부여 내역 읽기 전용 | 모든 쓰기·실행·삭제 |
 
-VCF SSO와 vCenter Server Linking을 사용하면 워크로드 도메인 전반의 구성을 일관되게 관리하면서, 공통 ID 소스로 더 세분화된 접근통제를 구현할 수 있습니다([10 VCF 9 Enhancements, Broadcom VCF Blog](https://blogs.vmware.com/cloud-foundation/2025/09/18/10-vmware-cloud-foundation-9-enhancements-simplifying-your-day-2-operations/)).
+VCF SSO와 vCenter Server Linking을 사용하면 워크로드 도메인 전반의 구성을 일관되게 관리하면서, 공통 ID 소스로 더 세분화된 접근통제를 구현할 수 있습니다([10 VCF 9 Enhancements, Broadcom VCF Blog](https://blogs.vmware.com/cloud-foundation/2025/09/18/10-vmware-cloud-foundation-9-enhancements-simplifying-your-day-2-operations/)). VKS 3.7(VCF 9.1.1 동반)부터는 워크로드 클러스터가 Pinniped를 거치지 않는 네이티브 OIDC 인증과 Workload Identity Federation(서비스 계정 발급자 URL로 외부 시스템이 클러스터 워크로드의 신원을 검증)을 지원하므로, 모델 엔드포인트가 도는 VKS 클러스터의 kubectl 접근과 워크로드 신원도 같은 IdP 체계로 묶을 수 있습니다. VCF Operations 9.1.1의 AD와 LDAP 온디맨드 조회는 사전 프로비저닝 없이 그룹 소속으로 로그인을 허용하므로, 위 표의 역할을 IdP 그룹에 매핑해 두면 신규 인력 온보딩이 단순해집니다.
 
 PAIS의 Agent Builder·KB·도구 소비는 VCF Automation의 **네임스페이스** 단위로 가용성이 결정되므로, 네임스페이스 경계를 RBAC의 1차 격리 단위로 삼는 것이 효과적입니다([Adding MCP Servers, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities.html)).
 

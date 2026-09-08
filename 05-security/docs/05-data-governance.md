@@ -17,7 +17,7 @@
 |---|---|---|
 | 인프라 소유자 | GPU WLD, 격리, 데이터 상주(residency) 경계 | 5.6 |
 | 데이터 소유자 | 원본 ACL, 접근등급 부여, 보존·삭제 정책 | 5.2, 5.5 |
-| 플랫폼 운영자 | 인입 파이프라인, 임베딩, 권한 재동기화 | 5.2, 5.3, 5.4 |
+| 플랫폼 운영자 | 인입 파이프라인, 임베딩, 권한 재동기화, 원격 클라우드 모델 연결의 허용 목록(3.0부터) | 5.2, 5.3, 5.4, 5.6 |
 | 앱 소유자 | 출력 가드레일, 사용자 인증 컨텍스트 전달 | 06 문서 |
 
 모든 데이터는 인입 전에 분류(classification) 등급이 부여되어야 합니다. 데이터 최소화 원칙(data minimization)은 목적에 필요한 데이터만 수집·보관하라는 NIST Privacy Framework의 핵심 통제(CT.DM 계열)로, AI 파이프라인에도 동일하게 적용됩니다([NIST Privacy Framework v1.0 Core](https://www.nist.gov/document/nist-privacy-framework-version-1-core-pdf), [NIST: Data Minimization 가이드](https://www.strac.io/blog/nist-privacy-framework-data-minimization)). 즉 "수집 가능하니까 인입"이 아니라 "RAG 목적에 필요하니까 인입"이 되어야 하며, 분류 등급에 따라 이후의 권한 필터·마스킹·보존기간이 결정됩니다.
@@ -143,6 +143,24 @@ VCF/PAIF는 인터넷 비연결(disconnected/air-gapped) 환경에서 RAG 워크
 - 데이터·임베딩·로그·백업이 모두 지정된 GPU-Accelerated Workload Domain과 그 스토리지 경계 안에 머무르도록 합니다.
 - 외부 연동이 필요한 경우 국외 이전 여부를 정책으로 명시하고, 이전 경로·로그를 추적 가능하게 남깁니다(append-only 로깅 권장).
 - 역할·지역 기준 RBAC로 누가 어느 경계의 데이터를 다룰 수 있는지 제한합니다([Cross-Border Data Residency (Airbyte)](https://airbyte.com/data-engineering-resources/cross-border-data-residency)).
+
+### 원격 클라우드 모델 경로의 반출 통제 (PAIS 3.0부터)
+
+위 상주 원칙은 "외부 모델 API로 가는 경로가 없다"를 전제로 했습니다. PAIS 3.0은 그 경로를 정식 기능으로 열었습니다. 조직 관리자나 VI 관리자가 `InferenceGatewayRoute` 리소스로 Google Gemini 네이티브 API, Gemini Enterprise Agent Platform(구 Vertex AI), Google OpenAI 호환 계층, 서드파티 OpenAI 호환 서비스를 연결하면, 그 모델은 사내 모델과 같은 엔드포인트 형태로 앱과 에이전트에 보입니다([③ 02 2.5.1절](../../03-serving-api/docs/02-serving-api-architecture.md)). 앱 코드가 구분하지 않기 때문에, 통제는 앱이 아니라 이 절이 정하는 정책과 플랫폼 설정에서 이뤄져야 합니다.
+
+**무엇이 나가나** — completion 원격 모델에는 사용자 질의, 시스템 지시문, 검색으로 가져온 청크, MCP 도구가 돌려준 결과가 프롬프트로 나갑니다. embedding 원격 모델에는 지식베이스 인덱싱 시 문서 본문 전체가 나갑니다. 즉 "질문만 나간다"가 아니라 "그 에이전트가 볼 수 있는 모든 데이터가 나갈 수 있다"로 보고 설계해야 합니다.
+
+| 통제 | 내용 | 관련 절 |
+|---|---|---|
+| 허용 목록 | 원격 모델 연결은 명시된 네임스페이스에만 만들고, 어떤 지식베이스와 에이전트가 원격 모델을 쓸 수 있는지를 5.1의 분류 등급으로 정합니다. 기본은 공개와 내부 등급만 허용하고 기밀과 제한 등급 지식베이스는 사내 모델로 고정 | 5.1, 5.2 |
+| 인입 단 마스킹 | 원격 모델이 허용된 지식베이스는 인입 단계에서 PII를 마스킹한 사본을 씁니다. 출력 단 마스킹만으로는 이미 나간 데이터를 되돌릴 수 없습니다 | 5.4 |
+| 전송 검증 | `InferenceGatewayRoute`의 TLS 검증 모드는 strict를 기본으로 하고, 사설 CA를 쓰는 서드파티 서비스만 caOnly로 둡니다. none은 시험 환경 밖에서 금지 | ③ 02 |
+| 자격증명 | 원격 서비스 API 키와 서비스 계정 키는 Secret으로만 참조하고 최소 범위로 발급, 정기 회전 | 03 3.5절 |
+| 국외 이전 명시 | 원격 모델의 처리 위치(리전)와 공급자의 데이터 보존 정책을 확인해 국외 이전 여부를 정책 문서에 적습니다. 공급자가 프롬프트를 학습에 쓰지 않는다는 계약 조건을 확보합니다 | 5.6 |
+| 추적 | PAIS가 제공하는 원격 모델 토큰 사용량 추적을 반출 증빙으로 남기고, 게이트웨이 요청 로그에서 원격 모델 호출을 별도 태그로 구분해 감사 대상에 넣습니다 | 07 |
+| 에어갭 | 완전 에어갭 환경에서는 이 경로가 성립하지 않습니다. 원격 모델을 허용하려면 프록시 수준 이상의 연결이 필요하므로 ⑦ D12 에어갭 수준 결정과 함께 정합니다 | ⑦ 05 |
+
+> 원칙: 원격 모델은 "사내에 둘 수 없는 상용 모델이 필요하고, 그 유스케이스가 다루는 데이터가 반출 정책 안에 있을 때"만 씁니다. GPU 부족을 원격 모델로 메우는 결정은 비용 문제가 아니라 데이터 경계 문제이므로, 이 표의 통제를 먼저 갖춘 뒤에만 허용합니다. ([근거: Connect to a Remote Model Running in the Cloud, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/connect-to-a-remote-model-running-in-the-cloud.html))
 
 ### 멀티테넌트 데이터 경계
 

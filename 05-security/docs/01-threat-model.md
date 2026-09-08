@@ -59,6 +59,8 @@ L2에서 vDefend Distributed Firewall은 하이퍼바이저에 내장된 소프�
 - 테넌트 A ↔ 테넌트 B(계열사/사업부): 네트워크·네임스페이스·벡터 인덱스 격리. 교차 누수 금지.
 - 워크로드 도메인 ↔ 관리 평면(vCenter/NSX): 관리 트래픽 분리, 운영자 권한 최소화.
 - 플랫폼 ↔ 외부 레지스트리(NGC 등): 공급망 경계. 에어갭 환경은 단방향 미러링만 허용([04-airgap-supply-chain.md](04-airgap-supply-chain.md)).
+- PAIS ↔ 원격 클라우드 모델(PAIS 3.0부터): 데이터 반출 경계. `InferenceGatewayRoute`로 연결된 Gemini나 OpenAI 호환 서비스에는 프롬프트, 검색 청크, 도구 결과, 임베딩용 문서 본문이 나갑니다. 허용 목록, 분류 등급, 인입 단 마스킹, TLS strict, 토큰 추적으로 통제([05-data-governance.md 5.6절](05-data-governance.md)).
+- provider 인스턴스 ↔ consumer 네임스페이스(PAIS 3.0부터): 공유 모델 경계. API 토큰으로만 통과하며 모델 가중치는 provider에, 지식베이스와 에이전트는 consumer에 남습니다([03-identity-access.md](03-identity-access.md)).
 
 PAIF는 에어갭 배치를 지원하며, Artifact Mirroring Tool(PAIS 2.1 신규)을 통해 GPU 모델 엔드포인트·에이전트를 포함한 전 기능을 외부 인터넷 없이 운용할 수 있습니다([Broadcom: Secure Private AI Part 2](https://blogs.vmware.com/cloud-foundation/2026/04/30/guide-to-secure-private-ai-with-broadcom-part-2/)).
 

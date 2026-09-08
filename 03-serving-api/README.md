@@ -8,6 +8,8 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 
 핵심 메시지는 하나입니다. **기존 OpenAI 코드의 `base_url`만 사내 PAIS로 바꾸면, 데이터가 외부로 나가지 않는 사내 추론으로 그대로 전환됩니다.**
 
+한 가지 단서가 PAIS 3.0부터 붙습니다. 같은 `base_url` 뒤에는 이제 사내 GPU의 로컬 모델뿐 아니라 다른 인스턴스의 공유 모델과 Google Gemini 같은 원격 클라우드 모델도 놓일 수 있습니다. 앱 코드는 구분하지 않지만 데이터의 행선지는 다르므로, `GET /models`에 보이는 모델 중 어느 것이 원격인지는 앱 팀이 알고 있어야 합니다([02 2.5.1절](docs/02-serving-api-architecture.md), 반출 통제는 [⑤ 05 5.6절](../05-security/docs/05-data-governance.md)).
+
 > **VCF Private AI 가이드 시리즈 — ③ 서빙 API** · 7부작 중 한 편입니다. [전체 7개 보기 — 시리즈 허브](../README.md) · 상위 전략 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)
 
 ---

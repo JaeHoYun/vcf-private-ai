@@ -17,7 +17,7 @@
 | D1 | VCF 토폴로지 | 표준(기본) vs 통합(비권고) | 표준이 기본 — 통합은 최소 VCF용이라 Private AI 비권고 | [03](03-compute-gpu-topology.md) |
 | D2 | GPU 공유 | MIG vs 타임슬라이싱 vs 패스스루 | 멀티테넌트 추론 → MIG / dev 가변부하 → 타임슬라이싱 / 대형 단일 → 패스스루 | [03](03-compute-gpu-topology.md) |
 | D3 | 서빙 배치 | VKS vs DLVM | 프로덕션·다수 모델 → VKS / PoC·단일 → DLVM | [03](03-compute-gpu-topology.md) |
-| D4 | 서빙 방식 | PAIS Runtime vs NIM vs 자가 vLLM | 표준 운영 → PAIS / 최고 성능·지원 → NIM / 최신 OSS → 자가 | [03](03-compute-gpu-topology.md) |
+| D4 | 서빙 방식 | PAIS Runtime vs NIM vs 자가 vLLM. PAIS Runtime 안에서는 모델 위치가 다시 갈림: 로컬 vs 중앙 공유 vs 원격 클라우드(3.0부터) | 표준 운영 → PAIS / 최고 성능·지원 → NIM / 최신 OSS → 자가. 여러 테넌트가 같은 모델 → 중앙 공유 / 사내에 둘 수 없는 모델 → 원격(반출 통제 전제) | [03](03-compute-gpu-topology.md) |
 | D5 | 네트워킹 | NSX 오버레이·VPC vs 물리 VLAN | 셀프서비스·마이크로세그 → 오버레이 / 기존 VLAN·단순 → VLAN | [04](04-network-storage-availability.md) |
 | D6 | 로드밸런서 | AVI vs 내장 L4 vs 서드파티 | 프로덕션 L7·WAF → AVI / 단순 L4 → 내장 / 특수 → 서드파티 | [04](04-network-storage-availability.md) |
 | D7 | 스토리지 | vSAN vs 외장(NFS·FC·vVol) | 그린필드·HCI → vSAN / 기존 SAN·NAS → 외장 | [04](04-network-storage-availability.md) |

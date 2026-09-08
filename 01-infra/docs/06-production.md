@@ -88,6 +88,21 @@ vSphere Namespace로 팀/부서/고객을 격리합니다.
 
 대부분 **Namespace 격리**로 충분하며, 규제·극보안 시 상위 격리를 검토합니다. 네임스페이스별 **리소스 쿼터**(`nvidia.com/gpu`, CPU/Memory/Storage, Pod/Service 수)로 GPU·컴퓨팅을 통제합니다. Harbor는 프로젝트 권한, DSM은 인스턴스/스키마로 격리합니다.
 
+### 6.4.1 공유 모델 호스팅 — 테넌트마다 모델을 복제하지 않는 길 (PAIS 3.0부터)
+
+2.1까지는 격리 단위마다 자기 모델 엔드포인트를 띄워야 했습니다. 같은 사내 표준 LLM을 사업부 다섯 곳이 쓰면 GPU도 다섯 벌이 들었습니다. PAIS 3.0은 한 인스턴스(provider)에서 서빙 중인 completion 또는 embedding 엔드포인트를 다른 PAIS 인스턴스와 네임스페이스(consumer)에서 참조하는 **공유 모델 호스팅**을 도입했습니다. 격리 경계는 그대로 두고 모델만 공유하는 방식입니다.
+
+| 항목 | 내용 |
+|------|------|
+| 구조 | 조직 관리자가 중앙 provider 인스턴스에 모델 엔드포인트를 배포하고, 발급자 인증서와 API 자격증명을 consumer 쪽 관리자에게 전달. consumer 네임스페이스는 그 모델을 자기 엔드포인트처럼 참조 |
+| 무엇이 공유되나 | completion과 embedding 모델 엔드포인트만. 지식베이스, 에이전트, MCP 도구, 세션은 공유되지 않고 각 네임스페이스에 남음 |
+| 전제 | provider 인스턴스 인증이 VCF Automation 계정 또는 로컬 계정이어야 함(외부 OIDC 공급자 토큰은 인스턴스 간 접근에 쓸 수 없음). consumer 네임스페이스에 LoadBalancer 지원 Ingress. API 토큰 발급 활성화([③ 05 5.6절](../../03-serving-api/docs/05-auth-and-gateway.md)) |
+| 데이터 격리 | 프롬프트와 응답은 consumer의 요청 경로로 오가지만 모델 가중치와 GPU는 provider가 소유. 지식베이스 데이터는 consumer 네임스페이스 밖으로 나가지 않음 |
+| 언제 쓰나 | 사내 표준 LLM, 공통 임베딩 모델처럼 여러 테넌트가 같은 모델을 쓰는 경우. 사업부 전용 파인튜닝 모델은 그대로 로컬 배포 |
+| 대가 | provider 엔드포인트가 멈추면 모든 consumer가 멈춤(단일 장애점). 한 consumer의 폭주가 다른 consumer의 지연으로 번짐(소음 이웃). provider 쪽 레플리카 수, 네임스페이스 쿼터, 관측으로 상쇄 |
+
+> 설계 결정으로서의 위치는 [⑦ 03 3.4.1절](../../07-design/docs/03-compute-gpu-topology.md)과 [⑦ 05 테넌시](../../07-design/docs/05-tenancy-security.md)에서, GPU 절감 산식은 [⑥ 02 GPU 사이징](../../06-sizing-cost/docs/02-gpu-sizing.md)에서, API 관점의 연결 방식은 [③ 02 서빙 아키텍처](../../03-serving-api/docs/02-serving-api-architecture.md)에서 다룹니다. ([근거: Share a Model with Other Private AI Services Instances](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/share-a-model-with-other-private-ai-services-instances.html), [Connect to a Shared Model](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/connect-to-shared-private-ai-services-models.html))
+
 ---
 
 ## 6.5 스케일링

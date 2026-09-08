@@ -77,12 +77,12 @@ PAIF 코어 기능 계층의 **공유 서비스 4종**(Harbor·DSM·VCF Automati
 
 ## 2.2 PAIS 서비스 아키텍처
 
-PAIS(Private AI Services 2.1)는 구성요소를 나열한 평면 박스가 아니라 **세 개의 평면**으로 보면 "무엇이 무엇을 호출하는가"가 드러납니다. 제어 평면이 입구를 지키고, 추론 평면이 요청을 모델까지 나르며, 인입 평면이 검색에 쓰일 지식을 미리 채워 둡니다. 관측성은 제어·추론 평면을 가로지릅니다.
+PAIS(Private AI Services 3.0)는 구성요소를 나열한 평면 박스가 아니라 **세 개의 평면**으로 보면 "무엇이 무엇을 호출하는가"가 드러납니다. 제어 평면이 입구를 지키고, 추론 평면이 요청을 모델까지 나르며, 인입 평면이 검색에 쓰일 지식을 미리 채워 둡니다. 관측성은 제어·추론 평면을 가로지릅니다.
 
 ```
                         클라이언트(고객 AI 앱)
                                │  OpenAI 호환 요청
-═══════════════════════════════╪═══════════════ PAIS 2.1 ═══════════════
+═══════════════════════════════╪═══════════════ PAIS 3.0 ═══════════════
                                ▼
   ┌─ 제어 평면 ────────────────────────────────────────────────────┐
   │  ML API Gateway : 인증/인가 · 라우팅 · 로드밸런싱 · OpenAI 호환  │
@@ -90,7 +90,7 @@ PAIS(Private AI Services 2.1)는 구성요소를 나열한 평면 박스가 아�
                                   │  라우팅
   ┌─ 추론(데이터) 평면 ───────────▼─────────────────────────────────┐
   │   Completion Endpoint     Embedding Endpoint      Agent          │
-  │   • vLLM 0.11.2           • Infinity 0.0.76       • RAG          │
+  │   • vLLM 0.20.0           • Infinity 0.0.76       • RAG          │
   │   • llama.cpp(CPU)        • (CPU 가능)            • Tool-calling │
   │   • GPU                                           • MCP(외부도구) │
   │        │                       │                      │          │
@@ -106,7 +106,7 @@ PAIS(Private AI Services 2.1)는 구성요소를 나열한 평면 박스가 아�
 ```
 
 - **제어 평면 — ML API Gateway.** 모든 요청의 단일 입구입니다. 인증/인가, 엔드포인트·에이전트로의 라우팅, 로드밸런싱을 담당하고 OpenAI 호환 인터페이스를 노출합니다.
-- **추론(데이터) 평면 — 요청 경로.** 클라이언트 → Gateway → **Completion/Embedding Endpoint** 또는 **Agent**(RAG·Tool-calling)로 흐르고, 끝단에서 모델 런타임(vLLM 0.11.2 / Infinity 0.0.76 / llama.cpp) 또는 Knowledge Base를 호출합니다. Agent는 검색(Knowledge Base)과 외부 도구(MCP)를 묶어 답을 만듭니다.
+- **추론(데이터) 평면 — 요청 경로.** 클라이언트 → Gateway → **Completion/Embedding Endpoint** 또는 **Agent**(RAG·Tool-calling)로 흐르고, 끝단에서 모델 런타임(vLLM 0.20.0 / Infinity 0.0.76 / llama.cpp b9309) 또는 Knowledge Base를 호출합니다. Agent는 검색(Knowledge Base)과 외부 도구(MCP)를 묶어 답을 만듭니다.
 - **인입(인덱싱) 평면 — 지식 적재 경로.** Data Source에서 가져온 문서를 파싱 → 청킹 → 임베딩한 뒤 pgvector(DSM)에 적재하고, 소스 변경을 자동 갱신합니다. 추론 평면의 RAG가 여기서 채운 Knowledge Base를 읽습니다.
 - **관측성 — 횡단 관심사.** 모델 메트릭(캐시·토큰·지연)·GPU 메트릭·OTel 트레이싱이 제어·추론 두 평면을 가로질러 수집됩니다.
 
@@ -219,7 +219,7 @@ harbor.company.com/
 ```
 [3.1] PAIS Supervisor Service 설치 (Broadcom Support Portal YAML, OCI Registry 인증)
 [3.2] Trust Bundle 구성 (OIDC · Harbor · DSM 인증서)
-[3.3] PAISConfiguration CRD 적용 (GPU Operator 25.10.1 오버라이드 가능)
+[3.3] PAISConfiguration CRD 적용 (GPU Operator 25.10.1 기본, 3.0부터 26.3.1 선택 가능)
 [3.4-A] VCF Automation 사용: 조직 설정 → Private AI Quickstart → 카탈로그 자동 생성
 [3.4-B] kubectl 직접 배포: PAIS 독립 UI 접근
         ───────────────────────────────────
@@ -295,7 +295,7 @@ VCF 9.1
 - **운영 런북(증상→진단→조치)** — [문서 10 §10.2](10-operations.md): ModelRuntime GPU Pod 시작 실패, 업그레이드 후 Endpoint 재배포 실패, LLM 트레이스 미표시, 업그레이드 다운타임 등.
 - **PoC 핸즈온 함정** — [문서 11 §11.11](11-gpu-enablement.md): GPU enablement 단계에서 가장 자주 막히는 지점.
 
-> GPU Operator가 24.9.0 → **25.10.1**(드라이버 v580.x)로 올라갔으므로, 9.0.x에서 적용했던 드라이버 고정·MIG 관련 Workaround는 **재검증**이 필요합니다. 정확한 증상·Workaround·해결 여부는 [공식 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)로 재확인하시기 바랍니다.
+> GPU Operator가 24.9.0 → **25.10.1**(드라이버 v580.x)로 올라갔으므로, 9.0.x에서 적용했던 드라이버 고정·MIG 관련 Workaround는 **재검증**이 필요합니다. PAIS 3.0은 25.10.1을 기본으로 두면서 26.3.1을 선택지로 더했고, vLLM 0.20.0이 CUDA 13.0을 기본으로 쓰기 때문에 게스트 드라이버는 580 이상이어야 합니다. 2.1 알려진 이슈였던 CDI 주입 실패는 3.0 릴리스 노트의 알려진 이슈 목록에는 없지만, 25.10.1을 유지하는 한 같은 조합이므로 [문서 11 11.11.1절](11-gpu-enablement.md)의 조치를 준비해 두는 편이 안전합니다. 정확한 증상·Workaround·해결 여부는 [공식 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)로 재확인하시기 바랍니다.
 
 ---
 

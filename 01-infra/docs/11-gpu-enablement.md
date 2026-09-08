@@ -145,24 +145,27 @@ GPU 스택은 호스트 VIB → 게스트 드라이버 → GPU Operator → 컨�
 - **규칙 2 — passthrough는 vGPU 인터락에서 자유.** passthrough 경로는 호스트 VIB가 없으므로 vGPU 브랜치 인터락이 없고, 대신 **GPU 아키텍처 ↔ 데이터센터 드라이버** 호환만 맞추면 됩니다(Blackwell은 580.x 계열부터).
 - **규칙 3 — 라이선스 서버(DLS) 선업그레이드.** vGPU 18.0+/NVAIE 6.0+ 환경에서 DLS가 3.3.x 이하이면 라이선스 획득이 실패합니다. **DLS를 3.4+로 먼저 올린 뒤** vGPU를 올립니다([라이선싱 트러블슈팅](https://docs.nvidia.com/vgpu/troubleshooting/latest/licensing.html)).
 - **규칙 4 — VKS의 vGPU 모드는 게스트 드라이버 이미지를 별도 빌드.** GPU Operator가 기본 설치하는 데이터센터 드라이버(예: 580.x)와 **호스트 vGPU 브랜치가 다르면** vGPU 모드에서 동작하지 않습니다. vGPU 모드에서는 호스트 vGPU 브랜치에 맞춘 게스트 드라이버 컨테이너 이미지를 빌드해 사설 레지스트리에 올려 Operator가 쓰게 합니다(§11.8.2).
-- **규칙 5 — GPU Operator는 플랫폼이 고정한 버전을 따른다.** PAIS 2.1은 GPU Operator를 특정 버전(아래 스냅샷)으로 고정합니다. 임의 상향 전 §11.2 매트릭스로 검증하십시오.
+- **규칙 5 — GPU Operator는 플랫폼이 고정한 버전을 따른다.** PAIS는 GPU Operator를 릴리스마다 검증한 버전(아래 스냅샷)으로 고정합니다. 2.1은 25.10.1 단일이고, 3.0은 25.10.1을 기본으로 두면서 26.3.1을 선택지로 제공합니다. 그 밖의 버전으로 임의 상향하기 전에 11.2절 매트릭스로 검증하십시오.
+- **규칙 6 — 추론 엔진의 CUDA 기본값이 드라이버 하한을 정한다.** PAIS 3.0의 vLLM 0.20.0은 CUDA 13.0을 기본으로 쓰며, 580 미만 드라이버를 지원하지 않습니다. 호스트 vGPU 브랜치가 580 미만이면 규칙 1(게스트는 호스트보다 높을 수 없음)과 충돌해 vGPU 모드에서는 엔드포인트가 뜨지 않습니다. 이 경우 호스트 VIB를 먼저 올려야 합니다.
 
-## 11.7 Known-good 스냅샷 (PAIS 2.1, 2026-05 GA 기준)
+## 11.7 Known-good 스냅샷 (PAIS 3.0, 2026-09 GA 기준)
 
-아래는 **PAIS 2.1 GA 시점에 검증된 조합의 스냅샷**입니다. 시점 고정 참고값이며 기준이 아닙니다 — 적용 전 §11.2 매트릭스로 재확인하십시오.
+아래는 **PAIS 3.0 GA 시점에 릴리스 노트가 명시한 조합의 스냅샷**입니다. 시점 고정 참고값이며 기준이 아닙니다. 적용 전 11.2절 매트릭스로 재확인하십시오. 2.1 환경을 유지하는 경우는 아래 표의 2.1 열을 보시면 됩니다.
 
-| 계층 | 검증 조합(스냅샷) | 근거 |
-|------|-------------------|------|
-| PAIS | 2.1 | PAIS 2.1 릴리스 노트 |
-| GPU Operator | 25.10.1 (PAIS 2.1 기본 탑재) | PAIS 릴리스 노트 |
-| Container Toolkit | v1.18.2 | Broadcom KB437128 / 릴리스 노트 |
-| 게스트 드라이버 | 580.x 계열 | GPU Operator 25.10.1 설치값 |
-| VKS | 3.5.0 이상 권장 | PAIS 릴리스 노트 |
-| Kubernetes | 1.33 | PAIS 릴리스 노트 |
-| 워커 노드 OS | Ubuntu 24.04 | PAIS 릴리스 노트 |
-| ESXi vGPU 소프트웨어 | vGPU 20.x (ESXi 9.0+; MIG-backed vGPU·일부 Blackwell GPU는 ESXi 9.0.1.0(9 U1)+ 필수) | NVIDIA vGPU 지원 매트릭스 |
+| 계층 | PAIS 3.0 (2026-09) | PAIS 2.1 (2026-05) | 근거 |
+|------|--------------------|--------------------|------|
+| GPU Operator | 25.10.1 기본, 26.3.1 선택 | 25.10.1 단일 | PAIS 릴리스 노트 |
+| 게스트 데이터센터 드라이버(passthrough, VKS 기본 설치) | 580.105.8 또는 580.126.20 | 580.x 계열 | PAIS 릴리스 노트 |
+| 게스트 vGPU 드라이버(NVAIE) | 580.105.8 | 580.x 계열 | PAIS 릴리스 노트 |
+| Container Toolkit | 릴리스 노트 미기재(확인 필요) | v1.18.2 | Broadcom KB437128 / 릴리스 노트 |
+| 추론 엔진 | vLLM 0.20.0(CUDA 13.0 기본), llama.cpp b9309, Infinity 0.0.76 | vLLM 0.11.2, llama.cpp b7739, Infinity 0.0.76 | PAIS 릴리스 노트 |
+| VKS | 3.7.x(VKr 1.33에서 1.36 지원) | 3.5.0 이상 권장 | PAIS 및 VKS 릴리스 노트 |
+| Kubernetes(VKr) | 1.34, ClusterClass builtin-generic-v3.5.0 | 1.33, builtin-generic-v3.2.0 | PAIS 릴리스 노트 |
+| 워커 노드 OS | Ubuntu 24.04 | Ubuntu 24.04 | PAIS 릴리스 노트 |
+| 컨트롤 플레인 VM 클래스 | best-effort-large 이상 | 명시 없음 | PAIS 릴리스 노트 |
+| ESXi vGPU 소프트웨어 | vGPU 20.x(580 브랜치)가 PAIS 고정값과 정합. NVAIE 8.2(vGPU 호스트 595.91.04)를 올리면 게스트 580이 한 브랜치 아래가 되어 규칙 1 범위 안 | vGPU 20.x (ESXi 9.0+; MIG-backed vGPU·일부 Blackwell GPU는 ESXi 9.0.1.0(9 U1)+ 필수) | NVIDIA vGPU 지원 매트릭스, NVAIE 8.2 support matrix |
 
-> **확인 필요:** GPU Operator 25.10.x는 NVIDIA 기준 이후 버전(26.x 계열)이 나오며 deprecated 단계로 들어갑니다. PAIS 2.1이 25.10.1을 고정값으로 쓰므로, **상위 Operator로 임의 교체하지 말고** PAIS가 지정·검증한 버전을 따르십시오. VCF 9.1 전용 ESXi 빌드번호와 PAIF 9.1의 전체 지원 GPU 목록은 [Broadcom 호환성 가이드](https://compatibilityguide.broadcom.com/)에서 확인합니다.
+> **확인 필요:** GPU Operator 25.10.x는 NVIDIA 기준 이후 버전(26.x 계열)이 나오며 deprecated 단계로 들어갑니다. PAIS 3.0이 26.3.1을 정식 선택지로 넣었으므로, 신규 구축은 26.3.1을, 25.10.1에서 CDI 조치(11.11.1절)를 적용해 둔 운영 환경은 회귀 테스트 후 전환을 검토하십시오. 어느 쪽이든 **PAIS가 지정·검증한 두 버전 밖으로 임의 교체하지 마십시오.** NVAIE 8.2 호스트 드라이버(595 브랜치)와 PAIS 3.0 게스트 드라이버(580 브랜치)의 조합은 규칙 1 범위 안이지만, 릴리스 노트가 직접 검증했다고 밝힌 조합은 아니므로 PoC에서 확인이 필요합니다. VCF 9.1.1 전용 ESXi 빌드번호(25714478)와 PAIF 9.1.x의 전체 지원 GPU 목록은 [Broadcom 호환성 가이드](https://compatibilityguide.broadcom.com/)에서 확인합니다.
 
 ## 11.8 3단계 — VKS에서 GPU Operator 구성
 
@@ -232,7 +235,7 @@ PAIS의 GPU 전제(드라이버·Operator·vGPU/MIG)는 §11.7 스냅샷을 따�
 
 ### 11.11.1 "CDI device injection failed"
 
-PoC에서 6단계(컨테이너 GPU 주입)가 막히는 대표 증상입니다. PAIS 2.1 + GPU Operator 25.10.1(CDI 기본 활성) + ESXi 위 containerd 조합에서 보고됩니다([Broadcom KB437128](https://knowledge.broadcom.com/external/article/437128/)).
+PoC에서 6단계(컨테이너 GPU 주입)가 막히는 대표 증상입니다. PAIS 2.1 + GPU Operator 25.10.1(CDI 기본 활성) + ESXi 위 containerd 조합에서 보고됩니다([Broadcom KB437128](https://knowledge.broadcom.com/external/article/437128/)). PAIS 3.0 릴리스 노트의 알려진 이슈 목록에는 이 항목이 없지만, 3.0에서도 25.10.1을 기본값으로 유지하므로 같은 조합이면 재현될 수 있다고 보고 아래 조치를 준비해 두는 편이 안전합니다. 26.3.1을 선택했다면 CDI 동작을 PoC 6단계에서 별도로 확인하십시오.
 
 ```
 failed to create containerd container: CDI device injection failed: unresolvable CDI devices

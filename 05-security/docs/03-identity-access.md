@@ -22,6 +22,7 @@ PAIS API는 OIDC를 인가 기반으로 사용하며, 대화형 클라이언트�
 | 인간 사용자 | VI Admin, MLOps, 앱 개발자, 감사자 | OIDC(Authorization Code + PKCE) + MFA | 세션 단위, 단기 토큰 |
 | 서비스 ID(M2M) | 백엔드 앱, 배치 작업 | OAuth2 Client Credentials | 단기 액세스 토큰, 회전 |
 | 에이전트 런타임 | Agent Builder 에이전트 | 네임스페이스 귀속 ID + 승인된 도구 스코프 | 위임된 단기 토큰 |
+| 인스턴스 간 연결(PAIS 3.0부터) | 다른 PAIS 인스턴스의 공유 모델을 쓰는 consumer, CLI 자동화 | 계정이 발급한 API 토큰(외부 OIDC 토큰은 인스턴스 간 접근 불가) | 장기 토큰, 정책 회전 |
 
 > 거버넌스 원칙: 인간용 흐름(PKCE+MFA)과 서비스용 흐름(Client Credentials)을 절대 섞지 마세요. 사람이 만든 개인 토큰으로 무인 자동화를 돌리면 퇴사·역할 변경 시 추적·회수가 끊깁니다.
 
@@ -67,6 +68,9 @@ curl 'https://pais.local/api/v1/compatibility/openai/v1/models' \
 | 인간 액세스 토큰 | 사용자 세션 | 분–1시간(단기) | 만료 + IdP 세션 종료 |
 | 서비스 액세스 토큰 | 서비스 계정 | 분–1시간(단기) | 만료 시 재발급, 리프레시 없음 |
 | 클라이언트 시크릿 | 서비스 계정 등록 | 정책상 정기 회전 | 노출 의심 시 즉시 폐기·재발급 |
+| API 토큰(PAIS 3.0부터) | VCF Automation 계정 또는 PAIS 로컬 계정 | 공식 만료 기간 미명시(확인 필요). 조직 정책으로 회전 주기 지정 | 발급 화면에서 폐기, 노출 의심 시 즉시 재발급 |
+
+PAIS 3.0은 OIDC 액세스 토큰과 별개로 계정이 직접 발급하는 **API 토큰**을 두었습니다(`vcfa-<org>-<값>` 또는 `pais-<인증공급자>-<값>`). 용도는 다른 인스턴스의 공유 모델 접근, VCF Consumption CLI 실행, PAIS API 인증이며, 외부 OIDC 공급자 토큰으로는 인스턴스 간 접근이 되지 않습니다. 이 토큰은 사용자 신원을 담지 않는 장기 자격증명이므로, 위 표의 단기 토큰 원칙에서 유일한 예외입니다. 그래서 두 가지를 강제해야 합니다. 첫째, 인스턴스 간 연결과 CLI 자동화 밖의 일반 앱 경로에는 쓰지 않습니다(사용자별 감사 추적이 끊기기 때문입니다). 둘째, 만료가 명시되지 않은 만큼 소유자, 용도, 발급일을 인벤토리에 남기고 정기 회전을 정책으로 둡니다. 사용 절차는 [③ 05 5.6절](../../03-serving-api/docs/05-auth-and-gateway.md)에 있습니다([Generate API Tokens, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/generate-api-tokens-for-local-accounts.html)).
 
 API 게이트웨이 정책은 OWASP API Security Top 10(2023)을 점검표로 삼습니다. 특히 API1:2023(BOLA)과 API2:2023(Broken Authentication)이 최우선입니다. 객체 ID를 받는 모든 엔드포인트는 호출자가 그 객체에 대한 권한이 있는지 객체 수준 인가를 검증해야 하고, 토큰은 발급자·대상(audience)·만료·서명·키 ID 같은 클레임을 전부 검증해야 합니다([OWASP API1:2023 BOLA](https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/), [OWASP API Security Project](https://owasp.org/www-project-api-security/)).
 
@@ -115,6 +119,8 @@ AI 플랫폼은 모델 레지스트리 접근 토큰, 벡터 DB·관계형 DB �
 | 벡터 DB / DB 자격증명 | 데이터 인덱싱·검색(RAG) | 정기 + 노출 의심 시 즉시 |
 | 데이터 소스 연결 비밀 | KB 인덱싱 커넥터 | 소스 정책에 종속, 정기 회전 |
 | OAuth2 클라이언트 시크릿 | 서비스 계정 M2M | 정기 회전, 누출 시 즉시 폐기 |
+| PAIS API 토큰(3.0부터) | 인스턴스 간 공유 모델 연결, CLI 자동화 | 정기 회전(만료 미명시이므로 정책으로 기간 지정), 누출 시 즉시 폐기 |
+| 원격 클라우드 모델 자격증명(3.0부터) | `InferenceGatewayRoute`가 참조하는 Secret(API 키, 서비스 계정 키) | 공급자 정책에 종속, 정기 회전. 외부 반출 경로의 열쇠이므로 최소 범위로 발급 |
 
 거버넌스 기준선은 다음과 같습니다.
 
@@ -138,6 +144,7 @@ AI 플랫폼은 모델 레지스트리 접근 토큰, 벡터 DB·관계형 DB �
 | 3 | BOLA 점검 | 사용자 A 토큰으로 사용자 B 소유 객체(모델·KB·에이전트) 접근 시도 | 객체 수준 인가로 차단 |
 | 4 | RBAC 최소 권한 | 앱 개발자 계정으로 MCP 등록 승인·인프라 변경 시도 | 권한 부족으로 거부 |
 | 5 | 직무 분리 | 감사자 계정으로 쓰기·삭제 시도 | 모두 거부, 읽기만 허용 |
+| 5-1 | API 토큰 범위(3.0부터) | 발급된 API 토큰 목록을 인벤토리와 대조하고, 일반 앱 경로에서 API 토큰으로 호출된 요청이 있는지 게이트웨이 로그 확인 | 인벤토리 밖 토큰 0건, 앱 경로의 API 토큰 사용 0건 |
 | 6 | MCP 승인 게이트 | 미승인 외부 MCP 도구를 에이전트에 결합 시도 | 승인 전 사용 불가 |
 | 7 | 도구 스코프 추적 | 도구 갤러리에서 도구별 사용 에이전트·승인 이력 확인 | 추적 체인 누락 0건 |
 | 8 | KB 권한 일치 | 원본 데이터 소스 권한 없는 사용자가 에이전트로 해당 KB 질의 | 우회 열람 불가 |

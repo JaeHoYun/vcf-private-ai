@@ -69,7 +69,7 @@ VCF 9.1 — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 | 모듈 | 무엇을 수행하나 | 무엇을 유지하나(상태) | 무엇을 요구하나(의존) | 무엇을 노출하나 |
 |------|----------------|---------------------|---------------------|----------------|
 | **Model Gallery** | 모델 아티팩트 보관·반입·버전관리·접근통제 | 모델 리비전·메타데이터(상태 보관소) | Harbor(OCI), Supervisor 서비스, 스토리지 | Runtime이 가져갈 **모델 리비전** (§2.4) |
-| **Model Runtime** | Gallery의 모델을 추론 엔진으로 실행, OpenAI 호환 API로 노출 | **stateless** — 요청 간 상태 없음 | Gallery(모델), VKS 워커 노드, **GPU**(completion), ML API Gateway | **Model Endpoint** = OpenAI 호환 추론 API (§2.5·[03](03-openai-compatible-endpoints.md)) |
+| **Model Runtime** | Gallery의 모델을 추론 엔진으로 실행, OpenAI 호환 API로 노출. 3.0부터는 다른 인스턴스의 공유 모델과 원격 클라우드 모델도 같은 Endpoint 형태로 연결 | **stateless** — 요청 간 상태 없음 | Gallery(모델), VKS 워커 노드, **GPU**(completion), ML API Gateway | **Model Endpoint** = OpenAI 호환 추론 API (§2.5·[03](03-openai-compatible-endpoints.md)) |
 | **Data Indexing & Retrieval** | 데이터 소스 파싱·청킹·임베딩·의미 검색 | Knowledge Base / 인덱스(pgvector에 영속) | **임베딩 Endpoint**(Runtime), DSM의 pgvector, 데이터 소스 커넥터 | **검색 API** / KB (§[04](04-agent-rag-api.md)) |
 | **Agent Builder** | 모델+KB+도구를 묶어 RAG·세션·도구호출 오케스트레이션 | **stateful** — `session_id` 기반 대화·세션 | Model Endpoint(LLM), KB(검색), MCP 도구 | **Agent API** (§2.6·[04](04-agent-rag-api.md)·[06](06-mcp-tools-api.md)) |
 
@@ -153,6 +153,18 @@ Model Runtime은 Gallery의 모델을 실제로 실행해 API로 노출하는 �
 
 > 엔진을 **언제 무엇을** 고르는지의 직관과, vLLM이 동시 요청을 처리하는 메커니즘(연속 배칭·PagedAttention)은 [00 §0.4·§0.6](00-serving-primer.md)에서, GGUF 양자화의 절감·품질 정량은 [⑥ GPU 사이징 §2.4](../../06-sizing-cost/docs/02-gpu-sizing.md)에서 다룹니다.
 
+### 2.5.1 모델 연결 세 가지 — 로컬, 공유, 원격 (PAIS 3.0부터)
+
+2.1까지 Model Endpoint는 "이 네임스페이스의 GPU에서 이 네임스페이스가 띄운 모델" 하나뿐이었습니다. 3.0부터 Model Runtime은 모델이 어디서 돌아가든 같은 OpenAI 호환 Endpoint로 앱에 보여 주는 세 가지 연결 방식을 갖습니다. 앱 코드 관점에서는 셋 다 `GET /models`에 나타나는 모델 하나이고 호출 경로도 같습니다.
+
+| 연결 방식 | 모델이 도는 곳 | 누가 설정하나 | 앱에 보이는 것 |
+|-----------|----------------|---------------|----------------|
+| 로컬 | 이 네임스페이스의 VKS 워커(GPU 또는 CPU) | MLOps가 Model Gallery에서 배포 | Model Endpoint |
+| 공유(3.0) | 다른 PAIS 인스턴스 또는 네임스페이스(provider)의 GPU | provider 관리자가 공유를 열고, consumer 관리자가 발급자 인증서와 API 토큰으로 연결 | 같은 Model Endpoint 형태. 지식베이스, 에이전트, 도구는 consumer 쪽에 남음 |
+| 원격 클라우드(3.0) | Google Gemini 네이티브 API, Gemini Enterprise Agent Platform(구 Vertex AI), Google OpenAI 호환 계층, 서드파티 OpenAI 호환 서비스 | 조직 관리자 또는 VI 관리자가 `InferenceGatewayRoute` 리소스로 연결(API base URL, 모델 식별자, 엔진 타입, TLS 검증 모드, 자격증명 Secret) | 같은 Model Endpoint 형태. completion은 Agent Builder에서, embedding은 지식베이스 인덱싱에서 사용. 토큰 사용량 추적 |
+
+공유는 "GPU를 한 곳에 모으고 격리는 유지한다"는 결정이고, 원격은 "이 모델은 사내에 두지 않는다"는 결정입니다. 전자의 운영 함의는 [① 06 6.4.1절](../../01-infra/docs/06-production.md), 설계 결정으로서의 위치는 [⑦ 03 3.4.1절](../../07-design/docs/03-compute-gpu-topology.md)에서 다룹니다. 후자는 데이터가 외부로 나가는 경로이므로 [⑤ 05 데이터 거버넌스](../../05-security/docs/05-data-governance.md)의 반출 경계 통제와 함께 읽어야 합니다. 인스턴스 간 접근에 쓰는 API 토큰은 [05 5.6절](05-auth-and-gateway.md)에 있습니다. ([근거: Connect to a Shared Model Running in Private AI Services](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/connect-to-shared-private-ai-services-models.html), [Connect to a Remote Model Running in the Cloud](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/connect-to-a-remote-model-running-in-the-cloud.html))
+
 ---
 
 ## 2.6 ML API Gateway — 모든 호출의 진입점
@@ -161,7 +173,7 @@ Model Runtime의 **ML API Gateway**는 사내 추론 API의 정문입니다. 공
 
 | 책임 | 의미 |
 |------|------|
-| **인증(Authentication)** | 들어오는 요청이 누구인지 검증 (OIDC Bearer 토큰 / mTLS → [05](05-auth-and-gateway.md)) |
+| **인증(Authentication)** | 들어오는 요청이 누구인지 검증 (OIDC Bearer 토큰 / mTLS / 3.0부터 API 토큰 → [05](05-auth-and-gateway.md)) |
 | **인가(Authorization)** | 그 사용자가 이 모델·에이전트를 호출할 권한이 있는지 |
 | **로드밸런싱** | 같은 모델의 여러 복제본(Replicas)에 요청 분산 |
 
@@ -203,6 +215,7 @@ Model Runtime의 **ML API Gateway**는 사내 추론 API의 정문입니다. 공
 PAIS는 VCF Automation의 **조직(Organization)·네임스페이스**(§2.1 토대) 위에서 동작합니다. API 관점에서 중요한 함의는 다음과 같습니다.
 
 - **격리** — 한 네임스페이스의 Model Endpoint·Agent·KB는 그 경계 안에서 관리됩니다. 토큰의 권한도 그 경계를 따릅니다.
+- **경계를 넘는 유일한 것, 공유 모델(3.0부터)** — 공유 모델 호스팅은 이 격리에서 모델 엔드포인트만 예외로 둡니다. provider 네임스페이스의 GPU에서 도는 모델을 consumer 네임스페이스가 자기 엔드포인트처럼 호출하되, consumer의 지식베이스와 에이전트와 도구는 여전히 consumer 안에 있습니다. 인스턴스 간 호출에는 provider가 발급한 API 토큰이 필요하고 외부 OIDC 토큰은 쓸 수 없습니다(2.5.1절, [05 5.6절](05-auth-and-gateway.md)).
 - **거버넌스 경계** — DEV/PROD를 네임스페이스로 분리하면, 민감한 도구(MCP)·데이터 소스를 PROD에만 허용하는 식의 통제가 가능합니다 → [06 MCP 거버넌스](06-mcp-tools-api.md).
 - **리소스 쿼터** — GPU·복제본 한도가 네임스페이스 단위로 걸리므로, API 스케일링도 그 한도 안에서 일어납니다. 구체적으로 **네임스페이스당 Model Endpoint 복제본은 최대 15개**이고, **각 복제본이 /24 CIDR 블록을 소비**합니다(더 늘리려면 Supervisor 서비스의 `vks.candidatePodCIDRs`로 대역을 키웁니다) → [07 운영](07-observability-ops.md). ([근거: VCF Blog — Minimal VCF 환경의 PAIS 배포](https://blogs.vmware.com/cloud-foundation/2025/12/17/deploy-vmware-private-ai-services-in-minimal-vmware-cloud-foundation-environments/). 한도 수치는 릴리스마다 달라질 수 있으니 적용 직전 공식 문서로 재확인하시기 바랍니다.)
 

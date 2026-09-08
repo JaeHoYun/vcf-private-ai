@@ -26,7 +26,10 @@ Model Endpoint는 단일 모델 API, Agent는 RAG·세션·(9.1)도구사용까�
 ① 외부 도구 연동 **MCP**, ② 에어갭 **Artifact Mirroring Tool**, ③ **CPU Completion 추론(llama.cpp)**, ④ **관측성**(모델·GPU 대시보드 + OTel), ⑤ **Enhanced DirectPath I/O**(NVAIE 없이 전용 GPU + vMotion), ⑥ **Blackwell GPU**, ⑦ 추론 엔진 대폭 상향(vLLM 0.11.2 등). ([문서 00](../docs/00-whats-new.md))
 
 **Q6. `pais` CLI는 Deprecated 아닌가요?**
-상태가 명확하지 않습니다. PAIF 9.1(NVIDIA) 릴리스 노트에는 `pais` CLI 1.0.0이 제공으로 표기되나, **PAIS 2.1 릴리스 노트에는 CLI 언급이 없습니다.** 따라서 9.0.x 가이드의 "제거 예정" 단정은 과하지만, "확정 제공"이라 단언하기도 어렵습니다. **모델 저장은 VCF Automation UI를 우선** 사용하고, CLI 사용 시 정확한 명칭·구문은 공식 문서로 확인하시기 바랍니다.
+단독 실행 파일 형태의 `pais` CLI는 DLVM 9.1 이미지에서 제거됐고, 그 자리를 VCF Consumption CLI의 `pais` 플러그인(`vcf pais models ...`, `vcf pais amt ...`)이 맡습니다. DLVM 9.1.1 이미지에는 VCF CLI 9.1.0과 확장된 플러그인이 동봉되고, PAIS 3.0은 CLI로 kubeconfig 조회와 지원 번들 수집을 더 쉽게 했습니다. 그래도 **모델 저장은 VCF Automation UI를 우선** 사용하고, CLI 구문은 적용 직전 공식 명령 레퍼런스로 확인하시기 바랍니다.
+
+**Q6-1. 9.1.1 / PAIS 3.0에서는 무엇이 바뀌었나요?**
+공유 모델 호스팅(중앙 인스턴스의 모델을 다른 인스턴스와 네임스페이스에서 참조), 원격 클라우드 모델 연결(Gemini, OpenAI 호환), API 토큰, 관측성 확장, 데이터 평면 모듈 on/off가 추가됐습니다. 엔진은 vLLM 0.20.0, llama.cpp b9309로 올라갔고 VKr 1.34, ClusterClass v3.5.0을 씁니다. non-chat completions API는 deprecated입니다. ([문서 00 0.7절](../docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga), 버전별 이력은 [0.8절](../docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30))
 
 **Q7. DirectPath I/O는 vMotion이 안 된다던데요?**
 9.1의 **Enhanced DirectPath I/O**는 NVAIE 없이 전용 GPU를 제공하면서 **vMotion 이점을 유지**합니다. 과거 "vMotion 제한" 서술은 폐기됐습니다. ([문서 02 §2.3](../docs/02-architecture.md#23-gpu-할당-방식-주의-91-변경))
@@ -82,27 +85,28 @@ kubectl logs <pod> -n <ns>
 
 ### A1.2.1 VCF / PAIF / PAIS
 
-| VCF | PAIF | PAIS | DLVM | 비고 |
-|-----|------|------|------|------|
-| 9.0 / 9.0.1 / 9.0.2 | 9.0 | 2.0.89 | 9.0.x | 이전 라인 |
-| **9.1** | **9.1** | **2.1** | VCF 9.1 호환 이미지 | **현재 권장** |
+| VCF | PAIF | PAIS | DLVM | DSM | 비고 |
+|-----|------|------|------|-----|------|
+| 9.0 / 9.0.1 / 9.0.2 | 9.0 | 2.0.89 (9.0.2는 2.1도 가능) | 9.0.x | 9.0.x | 이전 라인 |
+| 9.1 | 9.1 | 2.1 (2.1.2 권장) | 9.1 | 9.1 | 2026-05 GA. 2.1 기준 문서는 태그 `baseline-pais-2.1` |
+| **9.1.1** | **9.1.1** | **3.0** | 9.1.1 | 9.1.1 | **현재 권장** (2026-09-03 GA). PAIS 3.0은 VCF 9.1.x 호환 |
 
-### A1.2.2 주요 컴포넌트 (9.1 / PAIS 2.1)
+### A1.2.2 주요 컴포넌트 (9.1.1 / PAIS 3.0)
 
 | 컴포넌트 | 버전 | 비고 |
 |---------|------|------|
-| vLLM | 0.11.2 | completions + embeddings |
+| vLLM | 0.20.0 | completions + embeddings. CUDA 13.0 기본, 드라이버 580 이상 |
 | Infinity | 0.0.76 | embeddings |
-| llama.cpp | b7739 | CPU completions + embeddings |
-| VKr | 1.33 | ClusterClass builtin-generic-v3.2.0 |
-| VKS | 3.5.0+ 권장 | — |
-| GPU Operator | 25.10.1 | driver v580.x |
-| PostgreSQL / pgvector | 16.8 / 0.8.0 | DSM 제공 |
-| DLVM Conda | Miniforge3 24.3.0 | 9.0.x의 Miniconda 대체 |
+| llama.cpp | b9309 | CPU completions + embeddings |
+| VKr | 1.34 | ClusterClass builtin-generic-v3.5.0, Ubuntu 24.04 노드 이미지 |
+| VKS | 3.7.x | VKr 1.33에서 1.36까지 지원 |
+| GPU Operator | 25.10.1 기본, 26.3.1 선택 | DC 드라이버 580.105.8 / 580.126.20, vGPU 580.105.8 |
+| PostgreSQL / pgvector | 16.8 / 0.8.0 | PAIS 검증 조합. DSM 9.1.1 자체는 PostgreSQL 18.4까지 지원 |
+| DLVM | Ubuntu 26.04, 드라이버 595.71.05, Miniforge 26.1.1 | 9.1 이미지는 Ubuntu 24.04, 580.95.05, Miniforge 24.11.3 |
 
-### A1.2.3 9.0.x → 9.1 변경 요약
+### A1.2.3 버전 간 변경 요약
 
-[문서 00 §0.4](../docs/00-whats-new.md#04-버전-매트릭스-변경-90x--91) 참조.
+9.0.x → 9.1은 [문서 00 §0.4](../docs/00-whats-new.md#04-버전-매트릭스-변경-90x--91), 9.1 → 9.1.1 / PAIS 3.0은 [문서 00 0.7절](../docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga), 기능별 도입 버전은 [0.8절](../docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)을 참조하십시오.
 
 ---
 
@@ -166,7 +170,10 @@ kubectl logs <pod> -n <ns>
 
 ### 공식 문서
 - [VMware Cloud Foundation 9.1 Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes.html)
+- [VMware Cloud Foundation 9.1.1.0 Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html)
 - [VMware Private AI Foundation with NVIDIA 9.1 (TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)
+- [VMware Private AI Services Release Notes (3.0, 2.1.2, 2.1)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)
+- [VMware Deep Learning VM Image Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-deep-learning-vm-image-release-notes.html)
 - [Requirements for Deploying PAIF with NVIDIA (9.1)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html)
 - [NVIDIA NGC Catalog](https://catalog.ngc.nvidia.com/) · [vLLM Docs](https://docs.vllm.ai/) · [LangChain Docs](https://python.langchain.com/)
 

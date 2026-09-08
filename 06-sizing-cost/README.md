@@ -14,14 +14,14 @@
 
 ## 기반 버전 (Source of Truth)
 
-> 본 가이드는 **정량 사이징·비용**에 집중하며, 엔진·컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 단일 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이며 적용 전 공식 문서·견적으로 재확인하시기 바랍니다.
+> 본 가이드는 **정량 사이징·비용**에 집중하며, 엔진·컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 단일 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이고 2026-09에 VCF 9.1.1 / PAIS 3.0을 반영했으며, 적용 전 공식 문서·견적으로 재확인하시기 바랍니다.
 
 | 구분 | 버전 | 비고 |
 |------|------|------|
-| VMware Cloud Foundation / PAIF | 9.1 | GA 2026-05 |
-| Private AI Services (PAIS) | 2.1 | Agent Builder, Model Runtime, MCP, Artifact Mirroring Tool |
-| VKS (vSphere Kubernetes Service) | VCF 9.1 동반 | DRA 기반 GPU 스케줄링, 스케일 상향 |
-| PostgreSQL / pgvector (DSM: Data Services Manager 9.1) | 16.8 / 0.8.0 | PAIS 검증 조합 (②) |
+| VMware Cloud Foundation / PAIF | 9.1.1 | 9.1 GA 2026-05, 9.1.1 GA 2026-09 |
+| Private AI Services (PAIS) | 3.0 | Agent Builder, Model Runtime, MCP, Artifact Mirroring Tool. 3.0에서 공유 모델 호스팅(테넌트 간 모델 중복 배포 제거) 추가 |
+| VKS (vSphere Kubernetes Service) | 3.7.x | DRA 기반 GPU 스케줄링, 워커 노드 최대 250. PAIS 3.0은 VKr 1.34 고정 |
+| PostgreSQL / pgvector (DSM: Data Services Manager 9.1.1) | 16.8 / 0.8.0 | PAIS 검증 조합 (②) |
 
 > 본 가이드의 사이징 수치(GPU 메모리·처리량·노드 수 등)는 모두 **어림 기준이며 환경·릴리스별로 달라집니다. 적용 전 반드시 벤치마크·부하시험으로 실측 보정**하시기 바랍니다. 비용·라이선스 단가는 단정하지 않으며 공식 견적·구독 조건으로 확인하셔야 합니다.
 

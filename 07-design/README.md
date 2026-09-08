@@ -14,13 +14,13 @@
 
 ## 기반 버전 (Source of Truth)
 
-> 본 가이드는 **설계 의사결정**에 집중하며, 엔진·컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 단일 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이며 적용 전 공식 문서로 재확인하시기 바랍니다.
+> 본 가이드는 **설계 의사결정**에 집중하며, 엔진·컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 단일 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이고 2026-09에 VCF 9.1.1 / PAIS 3.0을 반영했으며, 적용 전 공식 문서로 재확인하시기 바랍니다.
 
 | 구분 | 버전 | 비고 |
 |------|------|------|
-| VMware Cloud Foundation / PAIF | 9.1 | GA 2026-05 |
-| Private AI Services (PAIS) | 2.1 | Agent Builder, Model Runtime, MCP, Artifact Mirroring Tool |
-| PostgreSQL / pgvector (DSM 9.1) | 16.8 / 0.8.0 | PAIS 검증 조합 (②) |
+| VMware Cloud Foundation / PAIF | 9.1.1 | 9.1 GA 2026-05, 9.1.1 GA 2026-09 |
+| Private AI Services (PAIS) | 3.0 | Agent Builder, Model Runtime, MCP, Artifact Mirroring Tool. 3.0에서 공유 모델 호스팅과 원격 클라우드 모델이 설계 선택지로 추가 |
+| PostgreSQL / pgvector (DSM 9.1.1) | 16.8 / 0.8.0 | PAIS 검증 조합 (②) |
 
 ## 이 가이드의 관점 — 조립이 아니라 설계
 

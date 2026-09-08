@@ -61,6 +61,7 @@
 
 - **선결:** 기존 VCF가 9.1 호환 버전인지 확인 → 미달이면 PAIF 추가 *전에* 먼저 업그레이드(아래 박스).
 - GPU 호스트 증설, NSX·스토리지(vSAN) 가용 용량 확인.
+- **기존 VKS 클러스터 점검(VCF 9.1.1 / VKS 3.7):** TanzuKubernetesCluster(TKC) API로 만든 구형 클러스터는 VKS 3.7에서 지원이 끝났고(VKr 1.32가 마지막), VKS 3.7은 VKr 1.32 자체를 지원하지 않습니다. 기존 VKS 클러스터가 있다면 ClusterClass 기반으로 전환하고 VKr 1.33 이상으로 올린 뒤에 PAIS 3.0을 얹습니다([문서 10 10.1.1절](10-operations.md)).
 
 ### (B) VCF 없이 vSphere만 운영 중 — 먼저 VCF로 편입
 

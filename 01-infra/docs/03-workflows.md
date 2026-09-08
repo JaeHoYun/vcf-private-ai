@@ -59,6 +59,8 @@ ssh vmware@<dlvm_ip>            # SSH 접속
 https://<dlvm_ip>:8888          # JupyterLab (토큰: 배포 시 설정)
 ```
 
+> **DLVM 이미지 버전 주의** — DLVM 9.1(2026-05)은 Ubuntu 24.04 기반이고 데이터센터 드라이버 580.95.05를 자동 설치하며 passthrough GPU를 지원합니다. DLVM 9.1.1(2026-09)은 Ubuntu 26.04 기반으로 드라이버 595.71.05, Docker 29.6.0, PyTorch 2.12.1(Python 3.14), VCF CLI 9.1.0과 helm, kubectl vSphere 플러그인을 동봉하고, TKG GPU 콘솔 컨테이너의 후속인 Deep Learning Container 이미지를 함께 제공합니다. DLVM 콘솔과 Miniforge는 9.1에서 deprecated가 예고됐으므로, 새 개발 환경은 JupyterLab과 컨테이너 기반으로 잡는 편이 안전합니다. 단독 `pais` CLI는 9.1 이미지부터 없으며 `vcf pais` 플러그인을 씁니다(Step 4). 이미지별 구성은 [DLVM 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-deep-learning-vm-image-release-notes.html)로 확인하십시오.
+
 ### Step 2 — 모델 다운로드
 
 ```bash

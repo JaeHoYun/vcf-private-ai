@@ -143,6 +143,8 @@ DSM에서는 HA를 클릭 한 번으로 활성화합니다. DSM이 자동으로 
 - Cross-Cluster HA 옵션을 통해 서로 다른 vSphere Cluster에 노드를 분산 배치하여 더 높은 수준의 가용성 확보
 - Failover 발생 시 DSM 컨트롤 플레인이 자동으로 메타데이터 업데이트 및 DNS 매핑 갱신
 
+DSM 9.1.1(2026-09)은 PostgreSQL에 읽기 복제(read replication)를 더했습니다. 벡터 검색은 읽기 비중이 압도적이므로, RAG 질의를 읽기 복제본으로 돌리고 인덱싱 쓰기는 primary에 남기는 분리가 가능해졌습니다. 같은 릴리스에서 Supervisor 위 DSM 데이터베이스의 크로스클러스터 HA와 VKS 3.7 연동도 들어왔습니다. 읽기 복제본을 PAIS Data Indexing이 직접 활용하는지는 공식 문서에 명시가 없으므로(확인 필요), 우선은 앱이 직접 pgvector를 질의하는 경로([05 5.2절](05-usage-rag.md))에서 검토하시기 바랍니다.
+
 #### 백업 및 복구
 
 수동 구성 시, pg_basebackup + WAL 아카이빙 설정 → S3/NFS 백업 스토리지 구성 → cron 기반 스케줄 백업 → PITR(Point-In-Time Recovery) 테스트의 과정이 필요합니다.

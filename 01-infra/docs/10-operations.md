@@ -34,12 +34,13 @@ PAIF/PAIS는 **여러 계층이 서로 의존**합니다(VCF 코어 → 관리 �
 | 순서 | 계층 | 대상 | 수행 위치 |
 |:---:|------|------|-----------|
 | 1 | **VCF 코어** | SDDC Manager → NSX → vCenter → ESX → vSAN | SDDC Manager 라이프사이클 관리 |
-| 2 | **VCF 관리 서비스** | VCF Operations · Automation · Identity Broker | 9.1에서 플릿(fleet) 라이프사이클로 전환(Operations 업그레이드 시 처리) |
-| 3 | **Kubernetes** | Supervisor, VKS(3.5.0+) / VKr(1.32 → 1.33) | Supervisor/VKS 업그레이드 |
-| 4 | **GPU 스택** | NVIDIA GPU Operator(24.9.0 → 25.10.1), 드라이버(v580.x) | PAISConfiguration / GPU Operator |
-| 5 | **PAIS** | Private AI Services 2.0.x → 2.1 (Supervisor Service) | "Supervisor Service를 새 버전으로 업그레이드" |
+| 2 | **VCF 관리 서비스** | VCF Operations · Automation · Identity Broker | 9.1에서 플릿(fleet) 라이프사이클로 전환(Operations 업그레이드 시 처리). 9.1.1 패치는 관리 서비스 fleet lifecycle을 9.1.1.0으로 먼저 올린 뒤 나머지 컴포넌트를 진행 |
+| 3 | **Kubernetes** | Supervisor, VKS(3.5.0+, 9.1.1은 3.7.x) / VKr(1.32 → 1.33, PAIS 3.0은 1.34) | Supervisor/VKS 업그레이드. VKS 3.7은 VKr 1.32를 지원하지 않으므로 1.33 이상으로 먼저 올린 뒤 진행 |
+| 4 | **GPU 스택** | NVIDIA GPU Operator(24.9.0 → 25.10.1, 3.0부터 26.3.1 선택), 드라이버(580.105.8 또는 580.126.20) | PAISConfiguration / GPU Operator |
+| 5 | **DSM** | Data Services Manager 9.1 → 9.1.1 | Avi Load Balancer와 NSX를 함께 쓰는 클러스터는 VCF를 9.1.0 이상으로 올리기 전에 DSM 9.1.1을 먼저 적용해야 데이터베이스 다운타임을 피함. PostgreSQL 12와 13 인스턴스는 사전 업그레이드 |
+| 6 | **PAIS** | Private AI Services 2.0.x → 2.1(2.1.2) → 3.0 (Supervisor Service) | "Supervisor Service를 새 버전으로 업그레이드" |
 
-> **순서의 핵심:** VCF 코어 자체의 순서는 **SDDC Manager가 가장 먼저**입니다(이후 컴포넌트 업그레이드를 SDDC Manager가 수행). 그 위에서 Kubernetes → GPU → PAIS 순으로 올라갑니다. GPU Operator·드라이버는 PAIS보다 먼저 올려 두어야 ModelRuntime이 정상 기동합니다.
+> **순서의 핵심:** VCF 코어 자체의 순서는 **SDDC Manager가 가장 먼저**입니다(이후 컴포넌트 업그레이드를 SDDC Manager가 수행). 그 위에서 Kubernetes → GPU → PAIS 순으로 올라갑니다. GPU Operator·드라이버는 PAIS보다 먼저 올려 두어야 ModelRuntime이 정상 기동합니다. DSM은 PAIS 지식베이스가 붙는 PostgreSQL을 제공하므로 PAIS보다 먼저 정리합니다.
 
 > **적용 전 확인:** VCF 코어 순서(SDDC Manager → NSX → vCenter → ESX → vSAN)와 9.1의 관리 서비스 플릿 라이프사이클 전환은 공식 문서 기준이나, **정확한 버전 경로·세부 단계는 적용 전 반드시 [공식 업그레이드 시퀀스 문서](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation.html)와 [업그레이드 시퀀스·이슈 KB](https://knowledge.broadcom.com/external/article/440630/upgrade-sequence-and-related-issues-for.html)로 재확인**하시기 바랍니다.
 
@@ -50,7 +51,7 @@ PAIF/PAIS는 **여러 계층이 서로 의존**합니다(VCF 코어 → 관리 �
 ```
 - SDDC Manager 라이프사이클 관리에서 Precheck 실행 → 오류 0 확인 후 진행
 - 하드웨어 호환성 BCG/HCL 재확인 (특히 Blackwell, ConnectX-7/BlueField-3)
-- 현재 버전 인벤토리 + 변경 영향 분석 → 문서 00 §0.6 (9.0.x→9.1 체크리스트) 연계
+- 현재 버전 인벤토리 + 변경 영향 분석 → 문서 00 §0.6 (9.0.x→9.1 체크리스트), 문서 00 0.9절 (9.1→9.1.1 / PAIS 2.1→3.0 체크리스트) 연계
 - 업그레이드 전 백업 선행 (VCF 구성, pgvector/DSM, PAIS 설정) → 문서 06 §6.3
 - 유지보수 창 공지 (특히 PAIS 단계는 다운타임 동반 — 10.1.3)
 ```
@@ -62,7 +63,10 @@ PAIF/PAIS는 **여러 계층이 서로 의존**합니다(VCF 코어 → 관리 �
 | 영향 | 내용 | 대비 |
 |------|------|------|
 | **PAIS 2.0.x → 2.1** | 모델 엔드포인트를 호스팅하는 **VKS 클러스터를 삭제·재생성** → 노드 재생성·모델 재다운로드 동안 다운타임 | 유지보수 창 + 모델 재다운로드 시간 산정, 사전 모델 캐시 |
-| **Model Endpoint 재배포 실패** | 업그레이드 후 메모리 부족으로 재배포 실패 가능(PAIS 2.1 알려진 이슈, [문서 02 §2.9](02-architecture.md)) | 리소스 여유 확보, 업그레이드 후 재배포 검증 |
+| **PAIS 2.1 → 3.0** | 릴리스 노트가 명시한 다운타임은 **레플리카가 하나뿐인 모델 엔드포인트**입니다. VKr가 1.33에서 1.34로 올라가므로 노드 재생성이 따를 수 있으나, 2.0.x → 2.1 때와 같은 클러스터 삭제·재생성은 공식 문서에 명시돼 있지 않습니다(확인 필요). Prometheus 메트릭 수집이 VKS 클러스터 가용 이후에 시작되도록 동작이 바뀌어, 업그레이드 직후 메트릭 공백이 알람으로 오인될 수 있습니다 | 중요 엔드포인트는 사전에 레플리카 2 이상, 유지보수 창 확보, 메트릭 공백 구간 알람 억제 |
+| **Model Endpoint 재배포 실패** | 업그레이드 후 메모리 부족으로 재배포 실패 가능(PAIS 2.1 알려진 이슈, [문서 02 §2.9](02-architecture.md)). 3.0은 vLLM 0.20.0(CUDA 13.0)으로 올라가므로 VRAM 요구량을 다시 산정 | 리소스 여유 확보, 업그레이드 후 재배포 검증 |
+| **API 폐기 사항(3.0)** | non-chat completions deprecated, 에이전트 API `completion_role` 제거, boolean 값 엄격 검증 → 기존 클라이언트가 실패할 수 있음 | 업그레이드 전 호출부 점검([③ 03](../../03-serving-api/docs/03-openai-compatible-endpoints.md)) |
+| **API 토큰 미활성(3.0 알려진 이슈)** | UI로 PAIS를 활성화하면 API 토큰 발급이 켜지지 않고, 로컬 계정의 기본 base URL도 UI에서 설정되지 않음 | 활성화 후 설정에서 API 토큰 발급을 켜고 base URL을 별도 설정 |
 | **GPU 드라이버 교체** | 드라이버(v580.x) 교체는 테넌트 GPU 워크로드에 영향([문서 07 §7.7](07-gpuaas.md)) | 유지보수 창, MIG 설정 회귀 테스트 |
 
 > ESX 호스트의 보안·버그 패치는 **라이브 패치**(§10.1.4)로 재부팅·VM 이전 없이 적용할 수 있습니다. 위 표의 다운타임은 주로 PAIS·GPU 계층에 해당합니다.

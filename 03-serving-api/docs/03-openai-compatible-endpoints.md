@@ -67,6 +67,8 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/embeddings' \
 
 핵심 추론 엔드포인트입니다. **OpenAI `chat/completions`와 동일한 형태**입니다.
 
+> **PAIS 3.0부터 — 레거시 completions 폐기 예고.** 메시지 배열 없이 프롬프트 문자열 하나를 보내는 non-chat `completions` 형태는 3.0에서 OpenAI 호환 API와 Agent Builder API 양쪽에서 deprecated로 표시됐습니다. 신규 코드는 `chat/completions`만 쓰고, 구형 SDK나 프레임워크 어댑터가 내부적으로 `completions`를 호출하는지(예: LangChain의 `OpenAI` 클래스 대 `ChatOpenAI` 클래스) 점검하십시오. 같은 릴리스에서 boolean 필드 검증이 엄격해져 `"stream": "true"` 같은 문자열 값은 거부됩니다.
+
 | 항목 | 값 |
 |------|----|
 | 경로 | `POST /compatibility/openai/v1/chat/completions` |
@@ -281,6 +283,7 @@ resp = client.chat.completions.create(
 | 모델 목록 | `GET /compatibility/openai/v1/models` |
 | 임베딩 생성 | `POST /compatibility/openai/v1/embeddings` |
 | 채팅 완성 | `POST /compatibility/openai/v1/chat/completions` |
+| (레거시) 완성 | `POST /compatibility/openai/v1/completions` — PAIS 3.0에서 deprecated, 신규 사용 금지 |
 
 `chat/completions`는 **같은 경로에 옵션을 실어** 동작을 바꿉니다. 각 옵션의 상세는 해당 절을 참고하십시오.
 

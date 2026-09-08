@@ -89,12 +89,12 @@ VMware Cloud Foundation 9.1 (코어 구독)
 
 ---
 
-## 1.5 PAIS가 제공하는 서비스 (2.1 기준)
+## 1.5 PAIS가 제공하는 서비스 (3.0 기준)
 
-| 모듈 | 역할 | 대상 사용자 | 9.1 / PAIS 2.1 정보 |
+| 모듈 | 역할 | 대상 사용자 | 9.1.x / PAIS 3.0 정보 |
 |------|------|------------|---------------------|
-| **Model Gallery** | Harbor 기반 ML 모델 저장소 (OCI 아티팩트) | MLOps Engineer | Harbor Registry, `pais` CLI 또는 UI |
-| **Model Runtime** | LLM/Embedding 모델을 API Endpoint로 자동 배포 | MLOps Engineer | **vLLM 0.11.2 / Infinity 0.0.76 / llama.cpp b7739(CPU)** |
+| **Model Gallery** | Harbor 기반 ML 모델 저장소 (OCI 아티팩트) | MLOps Engineer | Harbor Registry, VCF CLI의 `vcf pais` 플러그인 또는 UI |
+| **Model Runtime** | LLM/Embedding 모델을 API Endpoint로 자동 배포 | MLOps Engineer | **vLLM 0.20.0 / Infinity 0.0.76 / llama.cpp b9309(CPU)**. 3.0부터 다른 인스턴스의 공유 모델과 원격 클라우드 모델도 같은 API로 연결 |
 | **Data Indexing & Retrieval** | Knowledge Base 관리, 벡터 인덱싱 자동화 | Data Scientist | pgvector 0.8.0 (PostgreSQL 16.8), **+ Google Workspace 소스**, **MCP 도구로 통합 → agentic retrieval (2.1)** |
 | **Agent Builder** | RAG/에이전트 GUI 구성 + Playground | Data Scientist, MLOps | **+ MCP 도구 연동, Tool-calling** |
 | **MCP 통합** | 외부 데이터·도구 표준 연동 (거버넌스), **Tool Gallery로 MCP 서버 중앙 등록·관리**, **KB를 MCP 도구로 노출** | MLOps, Platform | **PAIS 2.1 신규** ([문서 05](05-agents-mcp.md)) |

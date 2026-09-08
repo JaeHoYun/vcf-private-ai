@@ -101,6 +101,8 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents' \
 
 > 위 `tools`의 `link_type`·`tool_id` 값 형식은 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)의 스키마와 제품 내 Sample Code로 정확히 확인하세요. KB 연결과 MCP 도구 연결의 표기가 다를 수 있습니다.
 
+> **PAIS 3.0에서 바뀐 것.** 에이전트 API의 `completion_role` 필드가 제거됐고 응답의 role은 항상 `assistant`입니다. 이 필드를 읽거나 설정하던 클라이언트는 수정이 필요합니다. 에이전트 API의 non-chat completions 형태도 deprecated로 표시됐으므로 에이전트 호출은 4.4절의 `chat/completions` 경로만 쓰십시오. boolean 필드는 3.0부터 엄격히 검증되어 `"true"` 문자열 같은 비정규 값은 거부됩니다.
+
 ---
 
 ## 4.4 에이전트 채팅 — `POST /agents/{id}/chat/completions`

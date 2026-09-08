@@ -88,18 +88,18 @@ docker login harbor.company.com -u <username> -p <password>
 sudo cp harbor-ca.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates
 
 cd ./llama-3.1-8b-instruct        # 주의 반드시 모델 폴더 안에서 실행
-pais models push \
+vcf pais models push \
   --modelName meta-llama/llama-3.1-8b-instruct \
   --modelStore harbor.company.com/models -t v1
 ```
 
-> **9.1 적용 전 확인:** 위 `pais models push`는 **예시이며 정확한 구문이 아닐 수 있습니다.** PAIF 9.1(NVIDIA) 릴리스 노트에는 pais CLI 제공이 명시되어 있으나 **PAIS 2.1 릴리스 노트에는 명시가 없습니다.** 정확한 CLI 명칭·하위 명령·인자는 [공식 CLI 문서](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)로 확인하시기 바랍니다. 신규 작업은 **VCF Automation UI**를 우선 권장합니다. 모델명은 DNS 명명 규칙(소문자, 공백 없음)을 따릅니다.
+> **CLI 형태 확인:** 모델 반입 CLI는 VCF Consumption CLI의 `pais` 플러그인(`vcf plugin install pais` 후 `vcf pais models ...`)입니다. 단독 실행 파일 형태의 `pais` CLI는 DLVM 9.1 이미지에서 제거됐고, DLVM 9.1.1 이미지에는 VCF CLI 9.1.0과 확장된 플러그인이 동봉됩니다. 위 인자 이름은 공식 명령 레퍼런스 기준이지만 릴리스마다 바뀔 수 있으니 적용 직전 [VCF CLI pais 명령 레퍼런스](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-consumption/latest/consumer-interfaces-in-vcf/installing-and-using-vcf-cli-v9/command-reference2/pais2.html)로 확인하시기 바랍니다. 신규 작업은 **VCF Automation UI**를 우선 권장합니다. 모델명은 DNS 명명 규칙(소문자, 공백 없음)을 따릅니다. PAIS 3.0부터는 같은 CLI로 kubeconfig 조회와 지원 번들 수집도 간단해졌습니다([문서 10](10-operations.md)).
 
 ### Step 5 — Model Endpoint 생성
 
 **방법 A: PAIS UI (권장)** — `VCF Automation > Build & Deploy > [네임스페이스] > Services > Private AI > Model Runtime > New Model Endpoint`에서 Endpoint 이름·Model URL·타입(Completion/Embedding)·엔진·VM Class·Replicas를 설정합니다.
 
-**방법 B: kubectl** — 주의 아래 매니페스트는 **구조 이해용 예시**입니다. 정확한 CRD `apiVersion`·필드명·`modelEngine` enum 값·VM Class 명칭은 PAIS 2.1 공식 문서/UI로 확인하세요(본 가이드에서 검증되지 않음).
+**방법 B: kubectl** — 주의 아래 매니페스트는 **구조 이해용 예시**입니다. 정확한 CRD `apiVersion`·필드명·`modelEngine` enum 값·VM Class 명칭은 PAIS 3.0 공식 문서/UI로 확인하세요(본 가이드에서 검증되지 않음). PAIS 3.0은 boolean 필드에 비정규 값("true" 문자열 등)을 보내면 거부하므로 매니페스트의 값 형식도 함께 점검하십시오.
 
 ```yaml
 apiVersion: pais.vcf.broadcom.com/v1alpha1   # 예시 — 실제 apiVersion 확인 필요

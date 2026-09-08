@@ -269,7 +269,7 @@ VCF 환경에서 pgvector 워크로드를 위한 아키텍처는 다음과 같�
 
 ### 3.3.1 VMware Private AI Services(PAIS)와 pgvector의 관계
 
-VMware Private AI Services(PAIS)는 프라이빗 클라우드에서 엔터프라이즈 AI를 구축하기 위한 통합 서비스 세트입니다. PAIS는 VCF 9.x 구독에 포함된 정식 서비스이며, 현재 PAIS 2.1 기준으로 UI 기반 셀프서비스 활성화와 폐쇄망(Air-gapped) 운영을 지원합니다. 추가 소프트웨어 구매 없이 활용할 수 있습니다.
+VMware Private AI Services(PAIS)는 프라이빗 클라우드에서 엔터프라이즈 AI를 구축하기 위한 통합 서비스 세트입니다. PAIS는 VCF 9.x 구독에 포함된 정식 서비스이며, 현재 PAIS 3.0 기준으로 UI 기반 셀프서비스 활성화, 폐쇄망(Air-gapped) 운영, 다른 인스턴스와의 공유 모델 호스팅, 원격 클라우드 모델 연결을 지원합니다. 추가 소프트웨어 구매 없이 활용할 수 있습니다.
 
 PAIS의 핵심 구성 요소와 pgvector의 위치를 정리하면 다음과 같습니다.
 

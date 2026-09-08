@@ -111,7 +111,7 @@ VKS는 Kubernetes Cluster Autoscaler 구현을 제공하며, 워크로드 수요
 | Supervisor당 VKS 클러스터 노드 총수 | 최대 **4,000** | VCF 9.1 / VKS 3.6 기준 |
 | vSphere Namespace당 vSphere Zone | 최대 3 (최소 1) | HA는 3-Zone 권장 |
 | 컨트롤 플레인 노드 | 1 또는 3 (홀수), VKS 3.7부터 5노드 선택 가능 | scale-in 불가 |
-| 단일 VKS 클러스터 워커 노드 수 | 최대 **250** (VKS 3.7부터, 이전 150) | VKS 3.7 릴리스 노트. 250노드 규모는 컨트롤 플레인 4vCPU/12GB 이상, etcd 4GB 이상, Pod CIDR /15 이상 권고 |
+| 단일 VKS 클러스터 워커 노드 수 | 최대 **250** (VKS 3.7부터, 이전 150) | VKS 3.7 릴리스 노트. 250노드 규모는 컨트롤 플레인 6 vCPU / 12 GiB 이상(Calico, Multus, Avi 조합 기준), etcd 4 GB 이상, Pod CIDR /15 이상 권고 |
 | PAIS 3.0 관리 클러스터 | VKr 1.34, ClusterClass builtin-generic-v3.5.0, 컨트롤 플레인 VM 클래스 best-effort-large 이상 | PAIS 3.0 릴리스 노트. PAIS가 만드는 클러스터는 이 값을 따르며 사용자가 임의로 바꾸지 않음 |
 
 VCF 9.1은 클러스터 수를 약 2.5배 늘려 **Supervisor 한 개당 최대 500 VKS 클러스터, 최대 4,000 VKS 클러스터 노드**를 지원합니다. 수평 확장을 위해 Supervisor를 여러 개 배포하지 않아도 되어 운영 부담이 줄어듭니다(출처: [Broadcom TechDocs — VMware vSphere Kubernetes Service Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-service-administration-and-development/9-0/release-notes/vmware-tanzu-kubernetes-grid-service-release-notes.html); [VCF Blog — Deploy Modern Apps Faster with VKS on VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/deploy-modern-apps-faster-scale-smarter-and-lower-your-tco-with-vks-on-vcf-9-1/)).

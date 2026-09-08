@@ -196,7 +196,7 @@ OTel Collector로 에이전트 요청을 단계별(RAG 검색 → MCP 도구 호
 | Grafana 예시 구성 | 조직이 배포한 Grafana에 올릴 예시 대시보드 제공 | 2.1의 "직접 배포" 전제는 유지되나 출발점이 생김 |
 | 트레이싱 범위 | LLM 상호작용 전체 트레이싱 | 에이전트 단계별 추적이 넓어짐 |
 | 임베딩 메트릭 | 문서 임베딩 진행과 품질 메트릭 개선 | 지식베이스 인덱싱 상태를 관측으로 확인 |
-| 원격 모델 토큰 추적 | 원격 클라우드 모델의 토큰 사용량 추적 | 실비이자 반출 증빙([⑤ 05 5.6절](../../05-security/docs/05-data-governance.md)) |
+| 원격 모델 토큰 추적 | 원격 클라우드 모델의 토큰 사용량 추적 | 실제 청구 비용인 동시에 반출 증빙([⑤ 05 5.6절](../../05-security/docs/05-data-governance.md)) |
 | 수집 시작 시점 변경 | Prometheus 수집이 PAIS 관리 VKS 클러스터 가용 이후 시작 | 설치와 업그레이드 직후 메트릭 공백 구간을 알람에서 유예([문서 10 10.2.4절](10-operations.md)) |
 | VCF Operations 9.1.1 | VKS 메트릭 OpenTelemetry 2초 간격 스트리밍, 멀티클러스터 VKS 뷰, Grafana 대시보드 임포트, AI Assistant | 인프라 관측과 AI 관측이 같은 표준(OTel)으로 맞춰지고, AI Assistant가 PAIS 모델을 백엔드로 진단을 도움([문서 10 10.4.4절](10-operations.md)) |
 

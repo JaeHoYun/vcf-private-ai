@@ -75,4 +75,4 @@ AI 레이어에서는 PAIS Model Runtime에 임베딩 모델(예: 다국어 모�
 두 워크로드가 같은 DSM PostgreSQL + pgvector 인스턴스에서 동작하되, 스키마와 인덱스로 분리하여 관리합니다. 제조 환경 특성상 데이터가 외부로 나갈 수 없으므로 온프레미스 VCF 구성이 필수적이며, 방산 등 보안 등급이 높은 환경은 PAIS 2.1 폐쇄망(Artifact Mirroring Tool) 구성을 적용합니다.
 
 ---
-[← 이전: 06 운영 (Day-2)](06-operations.md) · [목차](../README.md) · [다음: 08 PoC 가이드 →](08-poc-guide.md)
+[← 이전: 06 운영 (Day-2)](06-operations.md) | [목차](../README.md) | [다음: 08 PoC 가이드 →](08-poc-guide.md)

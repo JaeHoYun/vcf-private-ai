@@ -2,7 +2,7 @@
 
 > VCF DSM 기반 PostgreSQL + pgvector를 프로비저닝하고 PAIS에 연결하기까지의 실행 절차
 
-기준 버전: VCF 9.1 / DSM 9.1 / PAIS 2.1. 본 문서의 UI 경로·절차는 공식 문서와 공개 랩 가이드를 기반으로 하며, 릴리스에 따라 화면 명칭이 일부 달라질 수 있으므로 공식 문서를 함께 확인하시기 바랍니다.
+기준 버전: VCF 9.1 / DSM 9.1 / PAIS 2.1. 본 문서의 UI 경로와 절차는 공식 문서와 공개 랩 가이드를 기반으로 하며, 릴리스에 따라 화면 명칭이 일부 달라질 수 있으므로 공식 문서를 함께 확인하시기 바랍니다.
 
 ---
 
@@ -34,7 +34,7 @@
 - 가용성 수준: 동일 vSphere Cluster 내 분산(기본) 또는 Cross-Cluster Infrastructure Policy(더 높은 가용성)
 - 데이터 보호: vSAN FTT=1(RAID-5) 또는 FTT=2(RAID-6)
 - 암호화: VM Crypt 기반 선택적 암호화 또는 데이터스토어 전체 암호화
-- 소비 모델: DSM UI 직접 / VCFA 셀프서비스 카탈로그 / REST·K8s API
+- 소비 모델: DSM UI 직접 / VCFA 셀프서비스 카탈로그 / REST, K8s API
 - 사이징: 4.6 사이징 워크시트 참조
 
 ---
@@ -49,7 +49,7 @@
 3. Configure → Data Services Manager에서 초기 설정 및 VCFA 연결에 사용할 로컬 사용자 계정을 생성합니다.
    - 주의: 비밀번호 확인 입력란이 없으므로 오타에 유의합니다.
 4. Configure → Data Services Manager → Infrastructure Policies에서 DB가 배포될 VCFA Namespace를 선택합니다.
-   - Infrastructure Policy는 컴퓨트·스토리지·네트워크·VM 폴더 배치를 정의합니다. 데이터 스프롤 방지와 라이선스·비용 통제의 기준점입니다.
+   - Infrastructure Policy는 컴퓨트, 스토리지, 네트워크, VM 폴더 배치를 정의합니다. 데이터 스프롤 방지와 라이선스와 비용 통제의 기준점입니다.
 5. DSM Admin UI(DSM FQDN)에 로컬 계정으로 로그인하여 Versions & Upgrades → Postgres에서 사용할 PostgreSQL 버전을 활성화합니다.
    - 검증: 활성화한 버전이 프로비저닝 옵션에 노출되는지 확인
 
@@ -80,7 +80,7 @@ PostgreSQL 버전은 용도에 따라 고릅니다. PAIS Data Indexing이 붙는
 ### UI 경로 (개발자 셀프서비스)
 
 1. VCFA Tenant Portal 로그인 → Build & Deploy → (Namespace) → Services → Database
-2. Create 클릭, PostgreSQL 버전·리소스·Infrastructure Policy 선택
+2. Create 클릭, PostgreSQL 버전, 리소스, Infrastructure Policy 선택
 3. 배포 완료 후 Connection String 확보
 4. DB 접속 후 pgvector 활성화
 
@@ -141,7 +141,7 @@ HNSW 인덱스가 메모리에 상주해야 최적 성능이 나오므로, 메�
 
 ## 4.7 PAIS 연결 (RAG용 벡터 DB 등록)
 
-PAIS의 Data Indexing & Retrieval은 pgvector가 설치된 외부 PostgreSQL에 연결해 임베딩을 저장·검색합니다.
+PAIS의 Data Indexing & Retrieval은 pgvector가 설치된 외부 PostgreSQL에 연결해 임베딩을 저장과 검색합니다.
 
 1. 프로비저닝한 PostgreSQL의 CA 인증서를 확보합니다.
    - DSM Admin UI → Databases → Postgres → Summary → View CA(PEM 다운로드), 또는 kubectl로 시크릿에서 추출
@@ -152,7 +152,7 @@ kubectl get services    # pais-ingress-default 의 External IP 확인
 ```
 
 3. PAIS UI에서 Knowledge Base를 생성하고 외부 PostgreSQL(pgvector) 연결 정보(엔드포인트, 자격증명, CA 인증서)를 등록합니다.
-4. 데이터 소스(Google Drive, Confluence, SharePoint, S3)를 연결하고 청킹 전략·임베딩 모델·top-k·유사도 임계값을 설정합니다.
+4. 데이터 소스(Google Drive, Confluence, SharePoint, S3)를 연결하고 청킹 전략, 임베딩 모델, top-k, 유사도 임계값을 설정합니다.
 5. 인덱싱을 실행하고 갱신 정책(스케줄/온디맨드)을 지정합니다.
 
 버전 주의: PAIS Data Indexing & Retrieval이 검증한 PostgreSQL/pgvector 조합과 DSM 기본 번들 버전이 다를 수 있습니다. 연결 전 01 버전 호환표와 PAIS 릴리스 노트를 확인합니다.
@@ -182,4 +182,4 @@ kubectl get services    # pais-ingress-default 의 External IP 확인
 | DSM REST/K8s API | https://developer.broadcom.com/xapis/vmware-data-services-manager/latest/ |
 
 ---
-[← 이전: 03 VCF DSM 아키텍처](03-vcf-dsm-architecture.md) · [목차](../README.md) · [다음: 05 사용 및 RAG 구성 (Day-1 / Day-2) →](05-usage-rag.md)
+[← 이전: 03 VCF DSM 아키텍처](03-vcf-dsm-architecture.md) | [목차](../README.md) | [다음: 05 사용 및 RAG 구성 (Day-1 / Day-2) →](05-usage-rag.md)

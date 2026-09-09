@@ -1,7 +1,7 @@
 # 08 — 레퍼런스 구현
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
-> 아래 코드는 **최소 동작 예제**입니다. 경로·인증·필드는 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 확인 후 적용하세요. `{fqdn}`, `<...>` 는 환경값으로 치환합니다.
+> 아래 코드는 **최소 동작 예제**입니다. 경로, 인증, 필드는 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 확인 후 적용하세요. `{fqdn}`, `<...>` 는 환경값으로 치환합니다.
 
 앞 문서들의 내용을 **실제로 호출하는 코드**로 모았습니다. 핵심 메시지는 변하지 않습니다. **`base_url`만 사내 PAIS로 바꾸면 됩니다.**
 
@@ -24,7 +24,7 @@ curl -s -X POST "$BASE/chat/completions" \
        "messages":[{"role":"user","content":"한 문장으로 자기소개 해줘"}],
        "max_tokens":128}'
 
-# 3) 에이전트 호출 (RAG·세션 자동)
+# 3) 에이전트 호출 (RAG, 세션 자동)
 curl -s -X POST "$BASE/agents/hr-assistant/chat/completions" \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
   -d '{"messages":[{"role":"user","content":"연차 휴가는 며칠인가요?"}]}'
@@ -59,7 +59,7 @@ for chunk in client.chat.completions.create(
     print(chunk.choices[0].delta.content or "", end="", flush=True)
 ```
 
-> 기존에 외부 LLM API용으로 짜둔 코드라면, 위에서 바뀐 것은 `base_url`·`api_key`·`model` 세 가지뿐입니다. 호출 구조는 동일합니다.
+> 기존에 외부 LLM API용으로 짜둔 코드라면, 위에서 바뀐 것은 `base_url`, `api_key`, `model` 세 가지뿐입니다. 호출 구조는 동일합니다.
 
 ---
 
@@ -84,7 +84,7 @@ print("세션:", data.get("session_id"))            # 다음 턴에 이어 붙�
 print("출처:", data.get("index_context_info"))    # 답변 근거 문서 → UI에 표시
 ```
 
-> 응답의 `session_id`·`index_context_info`가 Model Endpoint 대비 추가되는 핵심입니다([04.4](04-agent-rag-api.md#44-에이전트-채팅--post-agentsidchatcompletions)).
+> 응답의 `session_id`, `index_context_info`가 Model Endpoint 대비 추가되는 핵심입니다([04.4](04-agent-rag-api.md#44-에이전트-채팅--post-agentsidchatcompletions)).
 
 ---
 
@@ -105,16 +105,16 @@ embeddings = OpenAIEmbeddings(
     base_url=BASE, api_key="<access-token>",
     model="<embedding-model-id>",
 )
-# 이후 체인·리트리버는 기존 코드 그대로. 추론·임베딩만 사내로 이동.
+# 이후 체인과 리트리버는 기존 코드 그대로. 추론과 임베딩만 사내로 이동.
 ```
 
-> 멀티홉·리랭킹 등 고급 검색이나 특수 벡터 DB가 필요할 때 이 패턴(서빙은 PAIS, RAG는 코드)을 씁니다. 표준 Q&A라면 8.3의 Agent API가 더 간단합니다.
+> 멀티홉과 리랭킹 등 고급 검색이나 특수 벡터 DB가 필요할 때 이 패턴(서빙은 PAIS, RAG는 코드)을 씁니다. 표준 Q&A라면 8.3의 Agent API가 더 간단합니다.
 
 ---
 
 ## 8.5 백엔드 중계(BFF, Backend For Frontend) 최소 골격
 
-프론트엔드가 PAIS를 직접 부르지 않도록, 백엔드가 토큰을 들고 중계합니다([05.3](05-auth-and-gateway.md#53-토큰-운영--만료갱신보관)).
+프론트엔드가 PAIS를 직접 부르지 않도록, 백엔드가 토큰을 들고 중계합니다([05.3](05-auth-and-gateway.md#53-토큰-운영--만료-갱신-보관)).
 
 ```python
 # FastAPI 예시 — 토큰은 서버에서만, 프론트는 이 엔드포인트만 호출
@@ -130,7 +130,7 @@ client = OpenAI(
 
 @app.post("/chat")
 def chat(body: dict):
-    # 여기서 앱 사용자 인증·권한·로깅·필터링을 수행(Gateway가 대신 안 해줌 → 05.4)
+    # 여기서 앱 사용자 인증, 권한, 로깅, 필터링을 수행(Gateway가 대신 안 해줌 → 05.4)
     resp = client.chat.completions.create(
         model=os.environ["MODEL_ID"],
         messages=body["messages"],
@@ -146,14 +146,14 @@ def chat(body: dict):
 ```
 - 토큰 발급 경로 확인        env.json → IdP 토큰 발급 (05)
 - 모델 목록 호출 성공         GET /models 200 OK
-- 단순 추론 성공             chat/completions 응답·usage 확인
-- (RAG 필요 시) KB·인덱스 구성  data-sources→KB→index→indexing (04)
-- 에이전트 호출·출처 확인      agents/{id}/chat/completions, index_context_info (04)
+- 단순 추론 성공             chat/completions 응답, usage 확인
+- (RAG 필요 시) KB, 인덱스 구성 data-sources→KB→index→indexing (04)
+- 에이전트 호출, 출처 확인     agents/{id}/chat/completions, index_context_info (04)
 - 스트리밍 동작 확인          stream=true, TTFT 체감 (03.5)
 - 백엔드 중계 구조            토큰 서버 보관, 프론트 비노출 (05.3)
 - 관측성                    usage 로깅, OTel 트레이스 수신 검증 (07)
-- 보안                      TLS, 인증/인가, (MCP 시) 승인·읽기우선 (06)
-- 모델 버전 관리             ConfigMap 분리, 카나리·롤백 경로 (07.5)
+- 보안                      TLS, 인증/인가, (MCP 시) 승인, 읽기우선 (06)
+- 모델 버전 관리             ConfigMap 분리, 카나리, 롤백 경로 (07.5)
 ```
 
 ---
@@ -162,7 +162,7 @@ def chat(body: dict):
 
 **OpenAI 호환 인터페이스** — `https://{fqdn}/api/v1/compatibility/openai/v1`
 
-| 동작 | 메서드·경로 |
+| 동작 | 메서드와 경로 |
 |------|------------|
 | 모델 목록 | `GET /models` |
 | 임베딩 생성 | `POST /embeddings` |
@@ -173,14 +173,14 @@ def chat(body: dict):
 
 **컨트롤 플레인** — `https://{fqdn}/api/v1/control`
 
-| 동작 | 메서드·경로 |
+| 동작 | 메서드와 경로 |
 |------|------------|
 | 데이터 소스 | `POST /data-sources`, `POST /data-sources/test-connection`, `DELETE /data-sources/{id}` |
 | 지식베이스 | `POST` / `GET /knowledge-bases`, `POST /knowledge-bases/{id}/data-sources`, `DELETE /knowledge-bases/{id}` |
 | 인덱스 | `POST /knowledge-bases/{id}/indexes`, `POST .../indexes/{id}/indexings`, `GET .../active-indexing`, `POST .../search` |
 | MCP | `POST /mcp-servers`, `GET /mcp-servers/tools`, `POST /mcp-servers/{id}/tools/{tid}/approval` |
 
-> 위 경로·필드는 작성 시점 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) 기준입니다. PAIS 버전에 따라 변경될 수 있으니 적용 직전 공식 레퍼런스로 확인하시기 바랍니다.
+> 위 경로와 필드는 작성 시점 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) 기준입니다. PAIS 버전에 따라 변경될 수 있으니 적용 직전 공식 레퍼런스로 확인하시기 바랍니다.
 
 ---
 
@@ -188,4 +188,4 @@ def chat(body: dict):
 
 ---
 
-[← 이전: 07 관측성·운영](07-observability-ops.md) · [목차](../README.md)
+[← 이전: 07 관측성과 운영](07-observability-ops.md) | [목차](../README.md)

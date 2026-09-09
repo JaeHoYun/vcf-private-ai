@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 이 문서는 **9.0.x에서 9.1로 올라오는 분**, **9.1 / PAIS 2.1을 운영하다가 9.1.1 / PAIS 3.0으로 올라오는 분**, **9.1.x를 처음 접하는 분** 모두를 위한 변경 요약입니다. 0.1절부터 0.6절까지는 9.0.x 대비 9.1의 변경, 0.7절부터 0.9절까지는 9.1 대비 9.1.1 / PAIS 3.0의 변경입니다. 어느 기능이 어느 버전에서 들어왔는지 한 표로 보려면 0.8절로 바로 가시면 됩니다.
 
-VCF 9.1은 2026년 5월 GA되었으며, "프로덕션 AI를 위한 안전하고 비용 효율적인 프라이빗 클라우드"를 표방했습니다. AI 관점에서는 PAIF 9.1 / **Private AI Services(PAIS) 2.1**이 함께 출시되며 **에이전트·외부 도구 연동(MCP)·에어갭·관측성**이 크게 보강됐습니다. 이어 2026년 9월 3일 VCF 9.1.1이 유지보수 릴리스로 GA됐고, 같은 날 PAIF 9.1.1과 **PAIS 3.0**이 나오면서 공유 모델 호스팅, 원격 클라우드 모델 연결, API 토큰이 추가됐습니다(0.7절).
+VCF 9.1은 2026년 5월 GA되었으며, "프로덕션 AI를 위한 안전하고 비용 효율적인 프라이빗 클라우드"를 표방했습니다. AI 관점에서는 PAIF 9.1 / **Private AI Services(PAIS) 2.1**이 함께 출시되며 **에이전트, 외부 도구 연동(MCP), 에어갭, 관측성**이 크게 보강됐습니다. 이어 2026년 9월 3일 VCF 9.1.1이 유지보수 릴리스로 GA됐고, 같은 날 PAIF 9.1.1과 **PAIS 3.0**이 나오면서 공유 모델 호스팅, 원격 클라우드 모델 연결, API 토큰이 추가됐습니다(0.7절).
 
 ---
 
@@ -13,13 +13,13 @@ VCF 9.1은 2026년 5월 GA되었으며, "프로덕션 AI를 위한 안전하고 
 |------|-------|-----|
 | 추론 엔진 | vLLM 0.6.5 / Infinity 0.0.43 | **vLLM 0.11.2 / Infinity 0.0.76 / llama.cpp b7739 (CPU)** |
 | CPU 전용 추론 | Embedding(Infinity)만 | **Completion도 CPU 가능 (llama.cpp)** |
-| 외부 도구 연동 | 커스텀 코드 필요 | **MCP 표준 연동 (Oracle·MS SQL·ServiceNow·GitHub·Slack·PostgreSQL 등)** |
+| 외부 도구 연동 | 커스텀 코드 필요 | **MCP 표준 연동 (Oracle, MS SQL, ServiceNow, GitHub, Slack, PostgreSQL 등)** |
 | 에어갭 | Harbor 수동 구성 | **Artifact Mirroring Tool로 풀 AI 기능 구동** |
-| 관측성 | 모호/수동 | **모델·GPU 메트릭 대시보드 + OpenTelemetry LLM 트레이싱** |
+| 관측성 | 모호/수동 | **모델과 GPU 메트릭 대시보드 + OpenTelemetry LLM 트레이싱** |
 | GPU 전용 패스스루 | DirectPath I/O = vMotion 제한 | **Enhanced DirectPath I/O = vMotion 유지, NVAIE(NVIDIA AI Enterprise) 불필요** |
 | 최신 GPU | B200 "테스트 중" | **Blackwell GA (HGX B200, RTX PRO 4500/6000)** |
 | K8s GPU 스케줄링 | 정적 할당 중심 | **Kubernetes AI Conformance (DRA 기반)** |
-| 데이터 소스 | MS Office·PDF 등 | **+ Google Workspace (Docs/Sheets/Slides)** |
+| 데이터 소스 | MS Office, PDF 등 | **+ Google Workspace (Docs/Sheets/Slides)** |
 | PAIS 활성화 | kubectl 중심 | **VCF Automation UI 셀프서비스 (네임스페이스 단위)** |
 | VKS 스케일 | — | **Supervisor당 최대 500 K8s 클러스터** |
 
@@ -31,33 +31,33 @@ PAIF는 VCF 위에서 동작하므로, 플랫폼 레벨 변화가 AI 운영에 �
 
 | 변화 | 내용 | AI 워크로드 관점 |
 |------|------|----------------|
-| **API-first 통합 모델** | SDDC Manager·vCenter·NSX·vSAN을 단일 API 계약으로 통합 | AI 인프라 프로비저닝/IaC 자동화 일관성 ↑ |
+| **API-first 통합 모델** | SDDC Manager, vCenter, NSX, vSAN을 단일 API 계약으로 통합 | AI 인프라 프로비저닝/IaC 자동화 일관성 ↑ |
 | **vCenter Quick Patch** | 변경된 바이너리만 패치 → 다운타임 초 단위/제로 | GPU 호스트 유지보수 창 최소화 |
 | **Enhanced NVMe Memory Tiering** | DRAM+NVMe 통합 메모리 모델, 콜드 페이지를 NVMe로 오프로드 | 메모리 바운드 AI/벡터 DB 워크로드 직접 대응 |
 | **VKS 스케일 확장** | Supervisor당 최대 500 클러스터, 배포 70%↑, 업그레이드 창 75%↓ | 대규모 AI 클러스터 운영 비용 절감 |
-| **Topology Aware Scheduling** | NUMA·가속기 로컬리티 고려 배치 | GPU/메모리 인접성 기반 추론 성능 ↑ |
+| **Topology Aware Scheduling** | NUMA, 가속기 로컬리티 고려 배치 | GPU/메모리 인접성 기반 추론 성능 ↑ |
 | **Native S3 Object Storage** | S3 호환 오브젝트 스토리지 (**9.1.x Tech Preview**) | 데이터 레이크/학습셋 저장 용도로 활용 전망 — **프로덕션 비적용** |
 | **CrowdStrike EDR 연동 복구** | 클린룸에서 복구 워크로드 스캔 후 운영 복귀 | AI 데이터/모델 자산 랜섬웨어 복구 강화 |
 
-> **Broadcom 발표 수치 (보수적 해석 필요):** 인텔리전트 메모리 티어링으로 서버비용 최대 약 40%↓, vSAN ESA 압축·중복제거로 스토리지 TCO 약 39%↓, 대규모 AI K8s 운영비 최대 약 46%↓. 모두 "up to"(최대) 값이며 **Broadcom 내부 추정·테스트(2026년 4월) 기준으로 변경될 수 있습니다.** **실제 효과는 워크로드·사용률·환경에 따라 달라지며 고객 실측 검증이 필요합니다.**
+> **Broadcom 발표 수치 (보수적 해석 필요):** 인텔리전트 메모리 티어링으로 서버비용 최대 약 40%↓, vSAN ESA 압축과 중복제거로 스토리지 TCO 약 39%↓, 대규모 AI K8s 운영비 최대 약 46%↓. 모두 "up to"(최대) 값이며 **Broadcom 내부 추정과 테스트(2026년 4월) 기준으로 변경될 수 있습니다.** **실제 효과는 워크로드, 사용률, 환경에 따라 달라지며 고객 실측 검증이 필요합니다.**
 
 ---
 
 ## 0.3 PAIF 9.1 / PAIS 2.1 — AI 핵심 변화
 
 ### (1) MCP(Model Context Protocol) 통합 — 가장 큰 변화
-에이전트를 **외부 데이터 소스·도구**에 표준 인터페이스를 통해 연결합니다. Oracle, Microsoft SQL Server, ServiceNow, GitHub, Slack, PostgreSQL 등을 **커스텀 커넥터 없이** 거버넌스 하에 연동합니다.
+에이전트를 **외부 데이터 소스와 도구**에 표준 인터페이스를 통해 연결합니다. Oracle, Microsoft SQL Server, ServiceNow, GitHub, Slack, PostgreSQL 등을 **커스텀 커넥터 없이** 거버넌스 하에 연동합니다.
 → 상세: [문서 05](05-agents-mcp.md)
 
 ### (2) Artifact Mirroring Tool — 에어갭 풀스택
-PAIS 2.1에 도입. VI 관리자가 **폐쇄망(air-gapped)** 환경에서 NVIDIA GPU 기반 Model Endpoint와 에이전트를 포함한 **완전한 Private AI 기능**을 설치·운영할 수 있습니다. 방산·금융·공공처럼 외부 반출이 불가한 환경의 핵심 기능입니다.
-→ 상세: [문서 06](06-production.md) · 산업 적용: [문서 08](08-industry.md)
+PAIS 2.1에 도입. VI 관리자가 **폐쇄망(air-gapped)** 환경에서 NVIDIA GPU 기반 Model Endpoint와 에이전트를 포함한 **완전한 Private AI 기능**을 설치하고 운영할 수 있습니다. 방산, 금융, 공공처럼 외부 반출이 불가한 환경의 핵심 기능입니다.
+→ 상세: [문서 06](06-production.md) | 산업 적용: [문서 08](08-industry.md)
 
 ### (3) CPU 추론 (llama.cpp)
-기존에는 Embedding만 CPU로 가능했으나, **llama.cpp(b7739)** 엔진 통합으로 **Completion 추론도 CPU 전용** 배포가 가능해졌습니다. 비용 절감·테스트·소규모 추론에 활용합니다.
+기존에는 Embedding만 CPU로 가능했으나, **llama.cpp(b7739)** 엔진 통합으로 **Completion 추론도 CPU 전용** 배포가 가능해졌습니다. 비용 절감, 테스트, 소규모 추론에 활용합니다.
 
 ### (4) 통합 관측성
-- **모델·GPU 메트릭 대시보드**: 캐시 활용률, 토큰 처리량, 지연시간, GPU 사용률·온도·전력을 VCF Operations 콘솔에서 통합 조회.
+- **모델과 GPU 메트릭 대시보드**: 캐시 활용률, 토큰 처리량, 지연시간, GPU 사용률, 온도, 전력을 VCF Operations 콘솔에서 통합 조회.
 - **OpenTelemetry 기반 LLM 트레이싱**: OTel Collector로 LLM 호출 추적.
 → 상세: [문서 06](06-production.md)
 
@@ -65,7 +65,7 @@ PAIS 2.1에 도입. VI 관리자가 **폐쇄망(air-gapped)** 환경에서 NVIDI
 9.0.x 가이드의 "DirectPath I/O는 vMotion 제한" 서술은 **9.1에서 폐기**됩니다. 9.1의 Enhanced DirectPath I/O는:
 - **NVAIE(NVIDIA AI Enterprise) 라이선스 없이** 전용(exclusive) GPU 액세스
 - **vSphere vMotion 이점 유지**
-- NVIDIA **ConnectX-7 / BlueField-3**와 결합해 GPUDirect RDMA·GPUDirect Storage, **멀티호스트 AI 학습** 지원
+- NVIDIA **ConnectX-7 / BlueField-3**와 결합해 GPUDirect RDMA, GPUDirect Storage, **멀티호스트 AI 학습** 지원
 
 ### (6) Blackwell GPU 지원
 NVIDIA **HGX B200**, **RTX PRO 4500 Blackwell Server Edition**, **RTX PRO 6000 Blackwell** 지원. HGX B300은 향후 예정. (세부 호환성은 [Broadcom Compatibility Guide](https://www.broadcom.com/support/vmware/product-compatibility)에서 매번 확인 필요.)
@@ -74,10 +74,10 @@ NVIDIA **HGX B200**, **RTX PRO 4500 Blackwell Server Edition**, **RTX PRO 6000 B
 VKS가 **Dynamic Resource Allocation(DRA)** 기반의 개방형 GPU 스케줄링을 지원해, 타 클라우드와 동일한 오픈 표준으로 ML/생성형 AI 워크로드를 실행할 수 있습니다.
 
 ### (8) 데이터 소스 확장
-기존 MS Office·PDF·Confluence·SharePoint·S3 등에 더해 **Google Workspace(Docs/Sheets/Slides)** 가 추가됐습니다.
+기존 MS Office, PDF, Confluence, SharePoint, S3 등에 더해 **Google Workspace(Docs/Sheets/Slides)** 가 추가됐습니다.
 
 ### (9) PAIS UI 셀프서비스
-조직 관리자가 **VCF Automation UI**에서 네임스페이스 단위로 PAIS를 활성화·관리하고, 사용자는 Model Endpoint·지식 베이스(KB)·Agent의 전체 라이프사이클을 UI에서 처리합니다.
+조직 관리자가 **VCF Automation UI**에서 네임스페이스 단위로 PAIS를 활성화하고 관리하고, 사용자는 Model Endpoint, 지식 베이스(KB), Agent의 전체 라이프사이클을 UI에서 처리합니다.
 
 ---
 
@@ -136,7 +136,7 @@ VKS가 **Dynamic Resource Allocation(DRA)** 기반의 개방형 GPU 스케줄링
 - [CPU 추론] llama.cpp 활용 가능 워크로드(소규모/테스트) 식별
 - [데이터] Google Workspace 등 신규 소스 연동 여부 검토
 - [에이전트] MCP로 대체 가능한 기존 커스텀 커넥터 식별 → 거버넌스 정책 수립
-- [관측성] 모델·GPU 메트릭 대시보드 + OTel 트레이싱 활성화
+- [관측성] 모델, GPU 메트릭 대시보드 + OTel 트레이싱 활성화
 - [에어갭] 폐쇄망 대상이면 Artifact Mirroring Tool 기반 재설계 검토
 - [검증] 기능/부하/장애/보안 테스트 후 프로덕션 전환
 ```
@@ -269,4 +269,4 @@ VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱�
 
 ---
 
-[목차](../README.md) · [다음: 01 핵심 개념 및 페르소나 →](01-concepts.md)
+[목차](../README.md) | [다음: 01 핵심 개념 및 페르소나 →](01-concepts.md)

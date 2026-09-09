@@ -1,8 +1,8 @@
 # Private AI를 위한 엔터프라이즈 vectorDB 가이드
 
-> **이 가이드를 읽기 전에** — 임베딩·벡터·토큰·RAG·쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 잡으시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
+> **이 가이드를 읽기 전에** — 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 잡으시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
 
-> PostgreSQL + pgvector. 상용 벡터 DB 추가 도입 없이 VCF 인프라에서 AI 워크로드를 배포·사용·관리하기 위한 실무 가이드
+> PostgreSQL + pgvector. 상용 벡터 DB 추가 도입 없이 VCF 인프라에서 AI 워크로드를 배포, 사용, 관리하기 위한 실무 가이드
 
 VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager)에 기본 포함된 PostgreSQL + pgvector를 즉시 활용할 수 있습니다. Pinecone, Milvus 같은 전용 벡터 DB를 별도로 도입하지 않아도 RAG, 의미 검색, 추천 시스템을 바로 구현할 수 있습니다.
 
@@ -10,7 +10,7 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 
 기준 버전: VCF 9.1.1 / DSM 9.1.1 / PAIF 9.1.1 / PAIS 3.0 (2026-09 반영, 상세는 [01 버전 호환 매트릭스](docs/01-version-compatibility.md))
 
-> **VCF Private AI 가이드 시리즈 — ② 데이터(VectorDB)** · 7부작 중 한 편입니다. [전체 7개 보기 — 시리즈 허브](../README.md) · 상위 전략 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)
+> **VCF Private AI 가이드 시리즈 — ② 데이터(VectorDB)**, 7부작 중 한 편입니다. [전체 7개 보기 — 시리즈 허브](../README.md), 상위 전략 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)
 
 ### 핵심 버전 호환 요약
 

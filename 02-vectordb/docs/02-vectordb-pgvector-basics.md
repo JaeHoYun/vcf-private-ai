@@ -12,7 +12,7 @@
 
 기존 관계형 데이터베이스(RDBMS)는 정형 데이터를 행과 열로 저장하고, **정확한 값 매칭(exact match)** 기반으로 검색합니다. "고객번호 = 10032"처럼 명확한 조건이 있어야 결과를 반환할 수 있습니다.
 
-AI/ML 워크로드에서는 텍스트·이미지·음성·영상 같은 **비정형(unstructured) 데이터**가 엔터프라이즈 데이터의 80% 이상을 차지하며, "의미적으로 유사한 것"을 찾는 검색 수요가 빠르게 늘고 있습니다. 예를 들어 "서버 장애 대응 절차"를 검색했을 때, "시스템 다운 복구 가이드"라는 문서도 함께 찾아주는 것이 **의미 기반 검색(semantic search)** 입니다.
+AI/ML 워크로드에서는 텍스트, 이미지, 음성, 영상 같은 **비정형(unstructured) 데이터**가 엔터프라이즈 데이터의 80% 이상을 차지하며, "의미적으로 유사한 것"을 찾는 검색 수요가 빠르게 늘고 있습니다. 예를 들어 "서버 장애 대응 절차"를 검색했을 때, "시스템 다운 복구 가이드"라는 문서도 함께 찾아주는 것이 **의미 기반 검색(semantic search)** 입니다.
 
 Vector Database는 이 문제를 해결하기 위해 설계된 데이터 저장/검색 시스템입니다.
 
@@ -184,28 +184,28 @@ pgvector의 두 가지 ANN 인덱스는 각기 다른 트레이드오프를 가�
 
 실무 권장: **대부분의 프로덕션 환경에서는 HNSW를 기본 선택**합니다. IVFFlat은 메모리가 제한되거나 배치 워크로드에서 보조적으로 활용합니다.
 
-#### HNSW 핵심 파라미터 튜닝 (recall · 지연 · 빌드시간 트레이드오프)
+#### HNSW 핵심 파라미터 튜닝 (recall, 지연, 빌드시간 트레이드오프)
 
-HNSW의 세 파라미터(`m`, `ef_construction`, `hnsw.ef_search`)는 recall과 지연·빌드시간을 맞바꾸는 핵심 조절 파라미터입니다. pgvector 공식 README 기준으로 `m`은 기본 16, `ef_construction`은 기본 64, `hnsw.ef_search`는 기본 40입니다. 공식 가이드는 "`ef_construction` 값이 높을수록 빌드/삽입 속도를 대가로 recall이 향상되고", `ef_search`도 "값이 높을수록 속도를 대가로 recall이 향상된다"고 명시합니다.
+HNSW의 세 파라미터(`m`, `ef_construction`, `hnsw.ef_search`)는 recall과 지연과 빌드시간을 맞바꾸는 핵심 조절 파라미터입니다. pgvector 공식 README 기준으로 `m`은 기본 16, `ef_construction`은 기본 64, `hnsw.ef_search`는 기본 40입니다. 공식 가이드는 "`ef_construction` 값이 높을수록 빌드/삽입 속도를 대가로 recall이 향상되고", `ef_search`도 "값이 높을수록 속도를 대가로 recall이 향상된다"고 명시합니다.
 
 | 파라미터 | 적용 시점 | 기본값 | 올릴 때 효과 | 올릴 때 비용 | 실무 시작 범위 |
 |---|---|---|---|---|---|
-| `m` | 인덱스 생성 | 16 | recall 향상, 그래프 연결성 강화 | 빌드 느려짐, 메모리·인덱스 크기 증가 | 16 (고차원·고recall 요구 시 24–48) |
-| `ef_construction` | 인덱스 생성 | 64 | 인덱스 품질·recall 향상 | 빌드 시간 증가(어느 지점 이후 효익 감소) | 64–200 |
+| `m` | 인덱스 생성 | 16 | recall 향상, 그래프 연결성 강화 | 빌드 느려짐, 메모리와 인덱스 크기 증가 | 16 (고차원과 고recall 요구 시 24–48) |
+| `ef_construction` | 인덱스 생성 | 64 | 인덱스 품질과 recall 향상 | 빌드 시간 증가(어느 지점 이후 효익 감소) | 64–200 |
 | `hnsw.ef_search` | 쿼리 실행 | 40 | recall 향상 | 쿼리 지연 증가 | 40–200, recall 목표로 조정 |
 
 권장 접근: 빌드 시점 파라미터(`m`, `ef_construction`)는 재생성 비용이 크므로 처음에 다소 넉넉히 잡고, 런타임 recall 미세조정은 세션 단위로 바꿀 수 있는 `hnsw.ef_search`로 수행합니다. recall 목표(예: Recall@10 95%)를 정한 뒤 `ef_search`를 단계적으로 올리며 지연과의 균형점을 찾습니다.
 
-> **빌드 시 메모리·병렬 워커 주의**: pgvector 공식 문서는 "그래프가 `maintenance_work_mem`에 들어갈 때 인덱스 빌드가 현저히 빨라진다"고 명시합니다. 빌드 전 `SET maintenance_work_mem = '8GB';`처럼 충분히 올리고(그래프가 메모리를 초과하면 경고가 발생하며 속도가 급락), `SET max_parallel_maintenance_workers = 7;`(기본 2)로 병렬 빌드를 활용합니다. 워커 수를 크게 잡으면 `max_parallel_workers`(기본 8)도 함께 상향해야 합니다. 단, **병렬 HNSW 빌드는 CVE-2026-3172 영향 경로**이므로(2.12 보안 주의 참조) DSM 번들 pgvector의 패치 적용 시점을 확인하시기 바랍니다.
+> **빌드 시 메모리와 병렬 워커 주의**: pgvector 공식 문서는 "그래프가 `maintenance_work_mem`에 들어갈 때 인덱스 빌드가 현저히 빨라진다"고 명시합니다. 빌드 전 `SET maintenance_work_mem = '8GB';`처럼 충분히 올리고(그래프가 메모리를 초과하면 경고가 발생하며 속도가 급락), `SET max_parallel_maintenance_workers = 7;`(기본 2)로 병렬 빌드를 활용합니다. 워커 수를 크게 잡으면 `max_parallel_workers`(기본 8)도 함께 상향해야 합니다. 단, **병렬 HNSW 빌드는 CVE-2026-3172 영향 경로**이므로(2.12 보안 주의 참조) DSM 번들 pgvector의 패치 적용 시점을 확인하시기 바랍니다.
 > 출처: [pgvector README (HNSW Index Options / Indexing Progress)](https://github.com/pgvector/pgvector/blob/master/README.md)
 
-### 2.2.6 임베딩 차원 · 타입 · 거리함수 결정 가이드
+### 2.2.6 임베딩 차원, 타입, 거리함수 결정 가이드
 
 벡터 컬럼을 설계할 때는 "차원 결정 → 타입 선택 → 거리함수 선택 → 정규화 여부"를 하나의 흐름으로 결정하면 됩니다. 모두 pgvector 공식 동작에 근거합니다.
 
-1. **임베딩 차원 결정**: 사용할 임베딩 모델이 차원을 결정합니다(예: text-embedding-3-small 1,536, bge-large 1,024, all-MiniLM-L6-v2 384). 차원이 클수록 표현력은 높지만 스토리지·메모리·검색 비용이 증가하므로, 모델이 차원 축소(Matryoshka 등)를 지원하면 품질이 허용되는 선에서 축소를 검토합니다.
+1. **임베딩 차원 결정**: 사용할 임베딩 모델이 차원을 결정합니다(예: text-embedding-3-small 1,536, bge-large 1,024, all-MiniLM-L6-v2 384). 차원이 클수록 표현력은 높지만 스토리지, 메모리, 검색 비용이 증가하므로, 모델이 차원 축소(Matryoshka 등)를 지원하면 품질이 허용되는 선에서 축소를 검토합니다.
 
-2. **타입 선택 (`vector` vs `halfvec`, 2,000차원 한계)**: pgvector에서 `vector` 타입은 **인덱싱 가능 차원이 2,000까지**입니다. 2,000을 초과하는 차원을 인덱싱하려면 공식 문서가 제시하는 대로 **`halfvec`(반정밀도, 최대 4,000차원 인덱싱)** 를 사용하거나, binary quantization(최대 64,000차원)을 적용합니다. 예를 들어 text-embedding-3-large(3,072차원)는 `vector`로는 인덱싱이 불가하므로 `halfvec(3072)`로 저장·인덱싱합니다. `halfvec`은 스토리지를 절반으로 줄이면서도 대부분의 유스케이스에서 recall 손실이 작습니다.
+2. **타입 선택 (`vector` vs `halfvec`, 2,000차원 한계)**: pgvector에서 `vector` 타입은 **인덱싱 가능 차원이 2,000까지**입니다. 2,000을 초과하는 차원을 인덱싱하려면 공식 문서가 제시하는 대로 **`halfvec`(반정밀도, 최대 4,000차원 인덱싱)** 를 사용하거나, binary quantization(최대 64,000차원)을 적용합니다. 예를 들어 text-embedding-3-large(3,072차원)는 `vector`로는 인덱싱이 불가하므로 `halfvec(3072)`로 저장하고 인덱싱합니다. `halfvec`은 스토리지를 절반으로 줄이면서도 대부분의 유스케이스에서 recall 손실이 작습니다.
 
 3. **거리함수 선택**: pgvector는 세 가지 주요 연산자와 대응 opclass를 제공합니다.
 
@@ -419,4 +419,4 @@ SET hnsw.ef_search = 100;  -- 기본 40, 높이면 recall 향상
 | DSM 9.1 릴리스 노트 | https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/release-notes/vmware-data-services-manager-91-release-notes.html |
 
 ---
-[← 이전: 01 버전 호환 매트릭스](01-version-compatibility.md) · [목차](../README.md) · [다음: 03 VCF DSM 아키텍처 →](03-vcf-dsm-architecture.md)
+[← 이전: 01 버전 호환 매트릭스](01-version-compatibility.md) | [목차](../README.md) | [다음: 03 VCF DSM 아키텍처 →](03-vcf-dsm-architecture.md)

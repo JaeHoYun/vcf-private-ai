@@ -33,7 +33,7 @@ Phase C: RAG/에이전트 구성 (Data Scientist)
   Data Source 연결 → Knowledge Base → Agent (+MCP 도구) → Playground 테스트
   [산출물] Agent API URL + 프롬프트 가이드
         ↓
-Phase D: 앱 개발·배포 (App Developer + DevOps)
+Phase D: 앱 개발, 배포 (App Developer + DevOps)
   API 연동 → Frontend/Backend → 컨테이너 → VKS 배포
   [산출물] 프로덕션 AI 애플리케이션
 ```
@@ -99,9 +99,9 @@ vcf pais models push \
 
 ### Step 5 — Model Endpoint 생성
 
-**방법 A: PAIS UI (권장)** — `VCF Automation > Build & Deploy > [네임스페이스] > Services > Private AI > Model Runtime > New Model Endpoint`에서 Endpoint 이름·Model URL·타입(Completion/Embedding)·엔진·VM Class·Replicas를 설정합니다.
+**방법 A: PAIS UI (권장)** — `VCF Automation > Build & Deploy > [네임스페이스] > Services > Private AI > Model Runtime > New Model Endpoint`에서 Endpoint 이름, Model URL, 타입(Completion/Embedding), 엔진, VM Class, Replicas를 설정합니다.
 
-**방법 B: kubectl** — 주의 아래 매니페스트는 **구조 이해용 예시**입니다. 정확한 CRD `apiVersion`·필드명·`modelEngine` enum 값·VM Class 명칭은 PAIS 3.0 공식 문서/UI로 확인하세요(본 가이드에서 검증되지 않음). PAIS 3.0은 boolean 필드에 비정규 값("true" 문자열 등)을 보내면 거부하므로 매니페스트의 값 형식도 함께 점검하십시오.
+**방법 B: kubectl** — 주의 아래 매니페스트는 **구조 이해용 예시**입니다. 정확한 CRD `apiVersion`, 필드명, `modelEngine` enum 값, VM Class 명칭은 PAIS 3.0 공식 문서/UI로 확인하세요(본 가이드에서 검증되지 않음). PAIS 3.0은 boolean 필드에 비정규 값("true" 문자열 등)을 보내면 거부하므로 매니페스트의 값 형식도 함께 점검하십시오.
 
 ```yaml
 apiVersion: pais.vcf.broadcom.com/v1alpha1   # 예시 — 실제 apiVersion 확인 필요
@@ -127,8 +127,8 @@ spec: { modelType: EMBEDDINGS, modelEngine: INFINITY, vmClass: best-effort-small
 spec: { modelType: COMPLETIONS, modelEngine: LLAMACPP, vmClass: best-effort-medium, replicas: 1 }
 ```
 
-> **비용 절감 (9.1, 검증됨):** Embedding은 물론, 소규모/테스트용 **Completion 추론도 llama.cpp로 CPU 배포**가 가능합니다(PAIS 2.1 릴리스 노트 "CPU-based inference and embeddings"). 대규모·실시간 추론은 GPU(vLLM)를 사용하세요.
-> 위 YAML의 `modelEngine` 값(VLLM/INFINITY/LLAMACPP)과 `vmClass`(best-effort-* 등)는 **예시 표기**입니다 — 실제 enum/명칭은 PAIS 2.1 UI·문서로 확인하세요.
+> **비용 절감 (9.1, 검증됨):** Embedding은 물론, 소규모/테스트용 **Completion 추론도 llama.cpp로 CPU 배포**가 가능합니다(PAIS 2.1 릴리스 노트 "CPU-based inference and embeddings"). 대규모와 실시간 추론은 GPU(vLLM)를 사용하세요.
+> 위 YAML의 `modelEngine` 값(VLLM/INFINITY/LLAMACPP)과 `vmClass`(best-effort-* 등)는 **예시 표기**입니다 — 실제 enum/명칭은 PAIS 2.1 UI, 문서로 확인하세요.
 
 ---
 
@@ -136,7 +136,7 @@ spec: { modelType: COMPLETIONS, modelEngine: LLAMACPP, vmClass: best-effort-medi
 
 ### Step 1 — Data Source 연결
 
-`Services > Private AI > Data Indexing & Retrieval > Data Sources > Add Data Source`. 지원 소스: Confluence · SharePoint · Google Drive · **Google Workspace(9.1)** · S3 · 로컬 파일.
+`Services > Private AI > Data Indexing & Retrieval > Data Sources > Add Data Source`. 지원 소스: Confluence, SharePoint, Google Drive, **Google Workspace(9.1)**, S3, 로컬 파일.
 
 ```
 Confluence 예시
@@ -166,7 +166,7 @@ PAIS가 자동으로 처리합니다: **수집 → 파싱 → 청킹 → 임베�
 | Similarity Cutoff | 0.6–0.8 |
 | Number of Chunks | 3–7 |
 | Chat History Length | 5–15 |
-| **MCP 도구 (9.1)** | 필요 시 외부 데이터·도구 연동 → [문서 05](05-agents-mcp.md) |
+| **MCP 도구 (9.1)** | 필요 시 외부 데이터와 도구 연동 → [문서 05](05-agents-mcp.md) |
 
 System Prompt 예시:
 
@@ -182,7 +182,7 @@ System Prompt 예시:
 
 Agent 생성 직후 **PAIS Playground**(Agent Builder 내장 테스트 UI)에서 즉시 대화형으로 검증하고, 검색된 청크를 확인하며 프롬프트를 반복 개선합니다. 화면에서 샘플 코드(curl 등)도 복사할 수 있습니다.
 
-> "PAIS Playground"(UI 기능) ≠ "AI 플레이그라운드"(개념적 영역). [문서 01 §1.4](01-concepts.md#14-용어-혼동-주의-ai-플레이그라운드-vs-pais-playground) 참조.
+> "PAIS Playground"(UI 기능) ≠ "AI 플레이그라운드"(개념적 영역). [문서 01 1.4절](01-concepts.md#14-용어-혼동-주의-ai-플레이그라운드-vs-pais-playground) 참조.
 
 ---
 
@@ -211,9 +211,9 @@ r = requests.post(f"{BASE_URL}/v1/agents/{AGENT}/chat",
 |-------|----------|-------------|----------------|-------|---------|--------|
 | A. 인프라 | VCF, PAIF WD, vGPU | PAIS 설치, 카탈로그 | - | - | - | - |
 | B. 모델 | - | - | 모델 평가/선택 | DLVM, Harbor Push, Endpoint | - | - |
-| C. RAG/에이전트 | - | - | KB·Agent·프롬프트 | Embedding EP, MCP 연동 | - | - |
+| C. RAG/에이전트 | - | - | KB, Agent, 프롬프트 | Embedding EP, MCP 연동 | - | - |
 | D. 앱 | - | - | - | API 정보 전달 | 앱 코드 | VKS 배포, CI/CD |
 
 ---
 
-[← 이전: 02 아키텍처 및 구축 순서](02-architecture.md) · [목차](../README.md) · [다음: 04 개발 시나리오 및 AI 앱 개발 →](04-dev-scenarios.md)
+[← 이전: 02 아키텍처 및 구축 순서](02-architecture.md) | [목차](../README.md) | [다음: 04 개발 시나리오 및 AI 앱 개발 →](04-dev-scenarios.md)

@@ -49,7 +49,7 @@ DSM 9.1.1 업그레이드 순서 주의: Avi Load Balancer와 NSX 네트워킹�
 
 ## 1.4 PAIS 연동 시 핵심 주의 (버전 불일치 가능성)
 
-PAIS의 Data Indexing & Retrieval 모듈은 pgvector 확장이 설치된 외부 PostgreSQL에 연결하여 임베딩을 저장·검색합니다. 이때 DSM이 프로비저닝하는 PostgreSQL 버전과 PAIS가 검증한 조합이 다를 수 있으므로 분리해서 확인해야 합니다.
+PAIS의 Data Indexing & Retrieval 모듈은 pgvector 확장이 설치된 외부 PostgreSQL에 연결하여 임베딩을 저장하고 검색합니다. 이때 DSM이 프로비저닝하는 PostgreSQL 버전과 PAIS가 검증한 조합이 다를 수 있으므로 분리해서 확인해야 합니다.
 
 | 사용 경로 | 권장 조합 | 비고 |
 |---|---|---|
@@ -88,4 +88,4 @@ DSM의 포함 관계는 환경에 따라 다를 수 있어 공식 자료와 구�
 | pgvector CHANGELOG | https://github.com/pgvector/pgvector/blob/master/CHANGELOG.md |
 
 ---
-[목차](../README.md) · [다음: 02 Vector Database & pgvector 기초 →](02-vectordb-pgvector-basics.md)
+[목차](../README.md) | [다음: 02 Vector Database & pgvector 기초 →](02-vectordb-pgvector-basics.md)

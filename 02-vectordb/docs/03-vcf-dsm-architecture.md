@@ -320,7 +320,7 @@ PAIS와 DSM을 결합하면 퍼블릭 클라우드의 RAG 서비스(AWS Bedrock 
 | 네트워크 지연 | 인터넷 경유 | **로컬 네트워크** |
 | 비용 모델 | 종량제 (예측 어려움) | 고정 인프라 비용 (예측 가능) |
 
-핵심 차별점: 데이터가 한 번도 조직의 네트워크 밖으로 나가지 않습니다. 문서 원본, 벡터 임베딩, LLM 추론 결과가 모두 온프레미스에서 처리됩니다. 이것은 금융감독원 규제, 개인정보보호법, 산업별 컴플라이언스를 준수해야 하는 한국 엔터프라이즈에 결정적인 요소입니다. PAIS 2.1의 폐쇄망(Air-gapped) 지원은 데이터 반출이 불가한 방산·금융·공공 환경에서도 RAG 전체 파이프라인을 외부 연결 없이 구성할 수 있게 합니다.
+핵심 차별점: 데이터가 한 번도 조직의 네트워크 밖으로 나가지 않습니다. 문서 원본, 벡터 임베딩, LLM 추론 결과가 모두 온프레미스에서 처리됩니다. 이것은 금융감독원 규제, 개인정보보호법, 산업별 컴플라이언스를 준수해야 하는 한국 엔터프라이즈에 결정적인 요소입니다. PAIS 2.1의 폐쇄망(Air-gapped) 지원은 데이터 반출이 불가한 방산, 금융, 공공 환경에서도 RAG 전체 파이프라인을 외부 연결 없이 구성할 수 있게 합니다.
 
 **성숙도 참고**: PAIS는 VCF 9.0(2025년 6월)에서 처음 도입된 서비스로, AWS Bedrock(2023년 GA)이나 Azure AI Search(2023년 GA) 대비 에코시스템과 서드파티 통합 측면에서 아직 확장 단계에 있습니다. 데이터 소스 커넥터 수, 지원되는 문서 포맷, 커뮤니티 사례 등이 분기별 업데이트로 확대되고 있습니다. 그러나 **데이터 주권, 네트워크 지연, 비용 예측 가능성** 측면에서의 구조적 우위는 퍼블릭 클라우드 대안이 따라올 수 없는 PAIS의 핵심 가치입니다.
 
@@ -387,4 +387,4 @@ DSM에서 pgvector로 시작하면 다음과 같은 점진적 확장 경로가 �
 | PAIS RAG 워크로드 배포 가이드 | https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-foundation-9-x/deploying-rag-workloads-in-private-ai-foundation-with-nvidia/deploy-a-vector-database-for-paif.html |
 
 ---
-[← 이전: 02 Vector Database & pgvector 기초](02-vectordb-pgvector-basics.md) · [목차](../README.md) · [다음: 04 배포 (Day-0 / Day-1) →](04-deployment.md)
+[← 이전: 02 Vector Database & pgvector 기초](02-vectordb-pgvector-basics.md) | [목차](../README.md) | [다음: 04 배포 (Day-0 / Day-1) →](04-deployment.md)

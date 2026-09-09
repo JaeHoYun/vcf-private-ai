@@ -122,7 +122,7 @@ PAIS는 모델 서빙(Model Runtime), 지식 기반 구축(Data Indexing & Retri
 1. Data Indexing & Retrieval에서 데이터 소스(Google Drive, Confluence, SharePoint, S3) 연결
 2. 문서 청킹 (500-1,000 토큰 권장, 구조에 따라 조정)
 3. Model Runtime의 임베딩 모델로 각 chunk 벡터화
-4. DSM이 관리하는 PostgreSQL + pgvector에 원문·메타데이터·벡터 저장
+4. DSM이 관리하는 PostgreSQL + pgvector에 원문, 메타데이터, 벡터 저장
 5. 갱신 정책 설정(스케줄/온디맨드 재인덱싱)
 
 ### Phase 2: 질의 응답 (실시간)
@@ -133,34 +133,34 @@ PAIS는 모델 서빙(Model Runtime), 지식 기반 구축(Data Indexing & Retri
 
 - 한국어 환경은 다국어 임베딩(bge-m3, multilingual-e5-large) 또는 한국어 대응 모델 검토
 - LLM은 vLLM, 임베딩은 Infinity 기반으로 서빙하며 NVIDIA NIM과 연동 가능
-- GPU 모델 추론·임베딩 시 NVIDIA AI Enterprise 라이선스와 GPU 하드웨어 필요. PoC 단계는 외부 API(OpenAI, Cohere)로 GPU 없이 검증 가능
+- GPU 모델 추론과 임베딩 시 NVIDIA AI Enterprise 라이선스와 GPU 하드웨어 필요. PoC 단계는 외부 API(OpenAI, Cohere)로 GPU 없이 검증 가능
 
 출처: Private AI Services Detailed Design(Broadcom TechDocs); Building your GenAI Agents on VCF with Private AI Services(VCF Blog).
 
 ### 지원 소스와 커스텀 인제스트 경계
 
-PAIS Data Indexing & Retrieval이 관리형(네이티브)으로 처리하는 범위와, 설계자가 별도 파이프라인을 구성해야 하는 범위를 구분합니다. 네이티브 데이터 소스 커넥터는 정확히 4종이며, 소스 유형은 지식 기반 생성 후 변경할 수 없습니다. 커넥터별 입력 정보는 Google Drive=폴더 URL과 서비스 계정 JSON 키, Confluence=사이트 URL과 스페이스 키 또는 페이지 ID, SharePoint=사이트 URL(하위 사이트·폴더 포함), S3=엔드포인트 URL과 자격증명, 버킷입니다. 관리형 파이프라인이 인식하는 문서 형식은 PDF, DOCX, PPTX, HTML, Markdown, CSV, Plaintext와 Google 네이티브 Docs/Sheets/Slides(2.1 신규)입니다.
+PAIS Data Indexing & Retrieval이 관리형(네이티브)으로 처리하는 범위와, 설계자가 별도 파이프라인을 구성해야 하는 범위를 구분합니다. 네이티브 데이터 소스 커넥터는 정확히 4종이며, 소스 유형은 지식 기반 생성 후 변경할 수 없습니다. 커넥터별 입력 정보는 Google Drive=폴더 URL과 서비스 계정 JSON 키, Confluence=사이트 URL과 스페이스 키 또는 페이지 ID, SharePoint=사이트 URL(하위 사이트와 폴더 포함), S3=엔드포인트 URL과 자격증명, 버킷입니다. 관리형 파이프라인이 인식하는 문서 형식은 PDF, DOCX, PPTX, HTML, Markdown, CSV, Plaintext와 Google 네이티브 Docs/Sheets/Slides(2.1 신규)입니다.
 
 | 소스/형식 | 관리형 커넥터 지원 | 비고 |
 |---|---|---|
 | Google Drive (폴더) | 지원 | 폴더 URL + 서비스 계정 JSON 키 |
 | Confluence (스페이스/페이지) | 지원 | 사이트 URL + 스페이스 키 또는 페이지 ID |
-| SharePoint (사이트) | 지원 | 사이트 URL(하위 사이트·폴더 포함) |
+| SharePoint (사이트) | 지원 | 사이트 URL(하위 사이트와 폴더 포함) |
 | S3 호환 스토리지 (버킷) | 지원 | 엔드포인트 URL + 자격증명 + 버킷 |
-| PDF / DOCX / PPTX / HTML / Markdown / CSV / Plaintext | 지원(위 4종 소스에 한함) | 관리형 파이프라인이 파싱·청킹·임베딩 |
+| PDF / DOCX / PPTX / HTML / Markdown / CSV / Plaintext | 지원(위 4종 소스에 한함) | 관리형 파이프라인이 파싱, 청킹, 임베딩 |
 | Google Docs / Sheets / Slides (네이티브) | 지원(2.1 신규) | Google Drive 커넥터 경유 |
 | 웹/URL 크롤 | 미지원(커스텀 경로) | 네이티브 크롤 커넥터 없음 |
 | 데이터베이스(RDB 등) | 미지원(커스텀 경로) | 네이티브 DB 커넥터 없음 |
 | 범용 파일 서버/직접 업로드 | 미지원(커스텀 경로) | 네이티브 파일 업로드 커넥터 없음 |
-| 레거시·기타 외부 시스템 | 미지원(커스텀 경로) | 4종 밖 소스 |
+| 레거시와 기타 외부 시스템 | 미지원(커스텀 경로) | 4종 밖 소스 |
 | 미지원 문서 형식 | 미지원(커스텀 경로) | 위 형식 목록 밖 |
 
 인덱스 갱신은 지식 기반별로 설정하며, 소스 변경 수집 주기를 정하는 자동 스케줄 모드 또는 GPU 자원 절약을 위한 수동 새로고침 중에서 선택합니다(구체적 주기 값은 공식 문서에 열거되어 있지 않습니다). 구축된 지식 기반은 MCP(Model Context Protocol) 서버로 노출되어, 에이전트가 검색 도구로 활용합니다.
 
 관리형 vs 커스텀 결정
 
-- 4종 관리형으로 충분한 경우: 지식 원천이 Google Drive·Confluence·SharePoint·S3 안에 있고, 문서가 위 지원 형식에 해당하며, 표준 갱신 주기로 운영 가능한 경우입니다. 별도 코드 없이 소스 연결·청킹·임베딩·저장·갱신이 제품 기능으로 처리됩니다.
-- 커스텀 파이프라인이 필요한 경우: 웹/URL 크롤, 데이터베이스, 범용 파일 서버, 레거시 외부 시스템 등 4종 밖 소스이거나, 지원 목록 밖 형식을 다뤄야 하는 경우입니다. 이때는 PAIS의 OpenAI 호환 임베딩 엔드포인트로 임베딩을 생성한 뒤, 직접 운영하는 pgvector에 자체 스키마로 적재하는 경로를 설계합니다. 커스텀 경로의 추출·청킹·적재 설계 상세는 시리즈 ④를 참조합니다([VCF RAG Reference Architecture — Ingestion & Indexing](../../04-rag/docs/02-ingestion-indexing.md)).
+- 4종 관리형으로 충분한 경우: 지식 원천이 Google Drive, Confluence, SharePoint, S3 안에 있고, 문서가 위 지원 형식에 해당하며, 표준 갱신 주기로 운영 가능한 경우입니다. 별도 코드 없이 소스 연결, 청킹, 임베딩, 저장, 갱신이 제품 기능으로 처리됩니다.
+- 커스텀 파이프라인이 필요한 경우: 웹/URL 크롤, 데이터베이스, 범용 파일 서버, 레거시 외부 시스템 등 4종 밖 소스이거나, 지원 목록 밖 형식을 다뤄야 하는 경우입니다. 이때는 PAIS의 OpenAI 호환 임베딩 엔드포인트로 임베딩을 생성한 뒤, 직접 운영하는 pgvector에 자체 스키마로 적재하는 경로를 설계합니다. 커스텀 경로의 추출, 청킹, 적재 설계 상세는 시리즈 ④를 참조합니다([VCF RAG Reference Architecture — Ingestion & Indexing](../../04-rag/docs/02-ingestion-indexing.md)).
 
 > 주의: 임베딩 엔드포인트는 제품 기능으로 존재하나, 직접 pgvector 적재 경로는 Broadcom 공식 문서가 규정한 제품 API가 아니라 설계자 책임의 아키텍처 패턴입니다(별도 표준 인제스트 REST API는 문서화되어 있지 않음).
 
@@ -177,7 +177,7 @@ PAIS Data Indexing & Retrieval이 관리형(네이티브)으로 처리하는 범
 - 필터 결합 시 Iterative Scan 활성화로 overfiltering 완화
 - 임베딩 모델 교체 시 전체 재임베딩 필요(06 운영 문서 재임베딩 전략 참조)
 
-품질·성능 측정 절차는 08 PoC 가이드의 검증 단계를 활용합니다.
+품질과 성능 측정 절차는 08 PoC 가이드의 검증 단계를 활용합니다.
 
 ---
 
@@ -192,4 +192,4 @@ PAIS Data Indexing & Retrieval이 관리형(네이티브)으로 처리하는 범
 | Building your GenAI Agents on VCF with PAIS | https://blogs.vmware.com/cloud-foundation/2025/08/26/vmware-private-ai-services-demo/ |
 
 ---
-[← 이전: 04 배포 (Day-0 / Day-1)](04-deployment.md) · [목차](../README.md) · [다음: 06 운영 (Day-2) →](06-operations.md)
+[← 이전: 04 배포 (Day-0 / Day-1)](04-deployment.md) | [목차](../README.md) | [다음: 06 운영 (Day-2) →](06-operations.md)

@@ -105,7 +105,7 @@ REX 도구는 생성 시 자동 승인되지만, 외부 MCP 서버의 도구는 
 
 KB(지식 베이스) 접근도 같은 원칙입니다. KB는 Google Drive, Confluence, SharePoint, S3 등 데이터 소스에 연결되어 벡터 DB에 인덱싱되며, PAIS 인스턴스의 네임스페이스에 귀속됩니다([Building GenAI Agents with PAIS, Broadcom VCF Blog](https://blogs.vmware.com/cloud-foundation/2025/08/26/vmware-private-ai-services-demo/)). 따라서 원본 데이터 소스의 접근 권한과 KB 소비 권한이 일치하도록 매핑하지 않으면, 에이전트를 통해 권한 없는 사용자가 민감 데이터를 우회 열람할 수 있습니다.
 
-> 거버넌스 원칙: "에이전트가 가진 권한 = 그 에이전트를 호출하는 사람의 권한"이 아닐 수 있습니다. 에이전트가 위임받은 도구와 KB 스코프가 호출자 권한을 초과하지 않도록 설계하고(권한 상승 방지), 도구별 최소 스코프와 승인 이력을 추적 가능하게 보관하세요.
+> 거버넌스 원칙: "에이전트가 가진 권한 = 그 에이전트를 호출하는 사람의 권한"이 아닐 수 있습니다. 에이전트가 위임받은 도구와 KB 스코프가 호출자 권한을 초과하지 않도록 설계하고(권한 상승 방지), 도구별 최소 스코프와 승인 이력을 추적 가능하게 보관하세요. 사용자 신원이 앱에서 PAIS를 거쳐 도구와 KB까지 어느 경계에서 끊기는지, 앱이 토큰 교환과 서명된 컨텍스트로 무엇을 대신하는지의 서비스 측 규약은 [앱 가이드 04 사용자 신원과 권한 전파](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/04-identity-propagation.md)에 있습니다.
 
 ---
 

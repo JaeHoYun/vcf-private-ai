@@ -36,7 +36,7 @@
 | 04 | [에어갭, 공급망, 모델 출처](docs/04-airgap-supply-chain.md) | Artifact Mirroring Tool, Harbor, 모델 서명, 스캔, SBOM |
 | 05 | [데이터 거버넌스와 프라이버시](docs/05-data-governance.md) | 문서 ACL 동기화, 검색단 인가, PII, 보존과 잔존 |
 | 06 | [앱 계층 가드레일](docs/06-app-guardrails.md) | 프롬프트 인젝션/출력 방어, 도구 사용 안전(④ 브리지) |
-| 07 | [감사, 로깅, 사고대응 + 컴플라이언스 체크리스트](docs/07-audit-compliance.md) | 추적성, 모델 행위 관측, 사고대응, 한국 규제 매핑, 통제 검증 총괄(C-01–C-18과 게이트) |
+| 07 | [감사, 로깅, 사고대응 + 컴플라이언스 체크리스트](docs/07-audit-compliance.md) | 추적성, 모델 행위 관측, 섀도 AI 후보 탐지, 사고대응, 한국 규제 매핑, 통제 검증 총괄(C-01–C-18과 게이트) |
 | 08 | [에이전트 보안 거버넌스](docs/08-agent-governance.md) | 에이전트 위협 ASI01–10, 비인간 신원, 자율성 상한과 위험 등급 매트릭스, 레지스트리, MCP 도구 공급망과 도구 오염, 샌드박스, 킬스위치, 도구 게이트웨이, 레드팀 |
 
 ## 빠른 시작
@@ -45,6 +45,7 @@
 - **"전체 그림부터"** → [01 위협 모델과 보안 아키텍처](docs/01-threat-model.md)
 - **"멀티테넌트/계열사 격리가 고민"** → [02 격리](docs/02-network-tenant-isolation.md) + [03 접근통제](docs/03-identity-access.md)
 - **"규제 대응과 감사 준비"** → [07 감사와 컴플라이언스 체크리스트](docs/07-audit-compliance.md)
+- **"플랫폼 밖에서 쓰이는 AI(섀도 AI)를 어떤 신호로 찾나"** → [07 7.2.3절](docs/07-audit-compliance.md) + [08 8.4절 레지스트리](docs/08-agent-governance.md)
 - **"RAG 앱이 인젝션에 안전한가"** → [06 앱 가드레일](docs/06-app-guardrails.md)
 - **"에이전트에 도구와 쓰기 권한을 주려는데 무엇을 통제하나"** → [08 에이전트 보안 거버넌스](docs/08-agent-governance.md)
 

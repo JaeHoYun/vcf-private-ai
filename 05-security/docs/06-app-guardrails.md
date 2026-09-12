@@ -72,6 +72,8 @@ LLM이 도구(파일 I/O, API, 명령 실행)에 접근하면 의도 범위를 �
 
 PAIS 2.1은 모델 게이트웨이(API Gateway)와 MCP Tools Registry를 플랫폼에 내장하여, 도구 등록, 인증, 인가를 플랫폼 계층에서 다룰 수 있는 지점을 제공합니다([Private AI Services, VCF 9.1 Blog](https://blogs.vmware.com/cloud-foundation/2025/06/19/private-ai-services-new-in-vmware-private-ai-foundation-with-nvidia-in-vcf-9-0/)). 다만 이 레지스트리가 **세분화된 도구 호출 화이트리스트와 휴먼인더루프 승인**을 네이티브로 강제하는지는 릴리스별로 다를 수 있어 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 **확인 필요**합니다. 플랫폼 제공 여부와 무관하게, 위 통제는 오케스트레이션 계층에서 독립적으로 두는 것을 권장합니다.
 
+이 절은 LLM06 한 항목의 정책 수준에 머뭅니다. 에이전트를 행위자로 보는 위협 목록(OWASP Agentic ASI01~10), 에이전트별 비인간 신원, 자율성 상한과 위험 등급의 매트릭스, 레지스트리, MCP 도구 오염과 제3자 서버 체크리스트, 코드 실행 샌드박스, 킬스위치, 도구 게이트웨이의 위치는 [08 에이전트 보안 거버넌스](08-agent-governance.md)가 정본입니다. 휴먼인더루프의 구현 패턴과 승인 큐는 [앱 가이드 07 7.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md)에 있습니다.
+
 ## 6.5 PAIS 네이티브 가드 기능과 플랫폼 경계
 
 PAIS 2.1 / VCF 9.1은 가드레일을 거는 데 활용할 수 있는 플랫폼 기능을 여럿 제공합니다. 다만 이 중 어느 것이 **LLM 콘텐츠 가드(인젝션 탐지, PII 마스킹, 출력 필터)를 네이티브로 수행**하는지는 단정하지 않고 공식 문서로 확인하는 것을 원칙으로 합니다.
@@ -85,7 +87,30 @@ PAIS 2.1 / VCF 9.1은 가드레일을 거는 데 활용할 수 있는 플랫폼 
 
 위 표의 네트워크와 자원 통제는 [VCF 9.1 Private AI Blog](https://blogs.vmware.com/cloud-foundation/2026/05/05/vcf-9-1-secure-cost-effective-private-cloud-platform-for-production-ai/)와 [Secure Private AI with Broadcom, Part 2](https://blogs.vmware.com/cloud-foundation/2026/04/30/guide-to-secure-private-ai-with-broadcom-part-2/)에서 확인됩니다. WAF, mTLS는 악성 입력, 데이터 유출, 외부 위협으로부터 AI 엔드포인트를 보호하지만, **프롬프트 인젝션의 의미적 판단이나 PII 마스킹 같은 콘텐츠 계층 가드를 대체하지 않습니다**. 따라서 본 문서의 입력측, 출력측, 도구측 가드는 플랫폼 보호와 **별개의 추가 계층**으로 두어야 합니다.
 
-결론: 플랫폼은 인증, 격리, 암호화, 자원 통제를 제공하고, 콘텐츠 가드레일은 앱(오케스트레이션/BFF) 계층 책임으로 둡니다. 네이티브 콘텐츠 가드 항목은 모두 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 **확인 필요**로 표기합니다.
+결론: 플랫폼은 인증, 격리, 암호화, 자원 통제를 제공하고, 콘텐츠 가드레일은 앱(오케스트레이션/BFF) 계층 책임으로 둡니다. 네이티브 콘텐츠 가드 항목은 모두 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 **확인 필요**로 표기합니다. PAIS 3.0 릴리스 노트에도 콘텐츠 가드레일 기능은 없으므로([Private AI Services 릴리스 노트, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)) 이 결론은 3.0에서도 유효합니다.
+
+**가드레일 삽입 지점 결정표** — "앱 계층 책임"이라는 결론 다음에 오는 질문은 앱의 어느 자리에 두느냐입니다. 선택지는 넷이며, [⑦ 06 D15](../../07-design/docs/06-decision-forks.md)의 설계 결정과 짝입니다.
+
+| 삽입 지점 | 모습 | 맞는 상황 | 감수하는 것 |
+|---|---|---|---|
+| 앱 오케스트레이션 안(라이브러리) | 규칙과 소형 분류기를 앱 코드에서 호출 | 첫 유스케이스, 단일 앱, 지연 민감 | 앱마다 재구현, 정책 표준화가 코드 리뷰에 의존 |
+| 1계층 AI 게이트웨이 훅 | 게이트웨이의 요청과 응답 훅에서 가드 호출 | 앱이 여럿이고 1계층 게이트웨이가 있음([③ 05 5.7절](../../03-serving-api/docs/05-auth-and-gateway.md)) | 검색 청크와 도구 결과 같은 앱 내부 컨텍스트는 게이트웨이가 보지 못함 |
+| 별도 가드 서비스 | 가드 모델을 독립 서비스로 서빙하고 앱과 게이트웨이가 호출 | 규제 심사, 균일 정책, 모델 급 판단 필요 | GPU 자원과 지연 추가, 가드 서비스 자체의 가용성 |
+| 결합 | 입력측은 게이트웨이, 검색 결과와 도구 결과 살균은 앱, 출력측은 가드 서비스 | 대기업, 다중 앱과 에이전트 | 정책이 세 곳에 나뉘므로 버전 관리(6.6)가 필수 |
+
+어느 지점이든 출력 가드는 생성 모델과 분리된 계층(6.3)이어야 하고, 검색 청크와 도구 결과의 살균은 그 컨텍스트를 보는 앱 안에서만 가능합니다.
+
+**가드 모델과 라이브러리 후보** — 온프레미스에서 자체 호스팅할 수 있는 공개 후보입니다. 릴리스, 라이선스, 한국어 성능은 도입 전 확인합니다.
+
+| 후보 | 역할 | 비고 |
+|---|---|---|
+| NVIDIA NeMo Guardrails와 NemoGuard NIM | 대화 흐름 정책, 주제 통제, 콘텐츠 안전과 탈옥 탐지 NIM | NVIDIA AI Enterprise가 있으면 NIM으로 배포([NeMo Guardrails 문서](https://docs.nvidia.com/nemo/guardrails/home)) |
+| Llama Guard 4 | 입력과 출력의 콘텐츠 안전 분류(멀티모달) | 12B 규모, 가드 서비스 배치에 적합([Hugging Face 모델 카드](https://huggingface.co/meta-llama/Llama-Guard-4-12B)) |
+| Prompt Guard 2 | 프롬프트 인젝션과 탈옥 탐지 소형 분류기 | 1억 파라미터 미만의 소형 모델이라 CPU 추론과 앱 안 라이브러리 배치에 적합 |
+| LLM Guard | 입력과 출력 스캐너 모음(비밀, PII, 인젝션, 유해) | 라이브러리 형태, 규칙과 분류기 혼합 |
+| Presidio | PII 식별과 마스킹 | 출력 마스킹과 로그 마스킹에 공통 사용 |
+
+후보는 앱 가이드가 서비스별로 고르며([앱 가이드 12 12.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md)), 이 문서는 플랫폼이 공용 가드 서비스로 제공할지의 결정과 정책 표준만 다룹니다.
 
 ## 6.6 가드레일 운영 — 정책 버전 관리, 적대적 테스트, 회귀 연계
 
@@ -134,6 +159,9 @@ PAIS 2.1 / VCF 9.1은 가드레일을 거는 데 활용할 수 있는 플랫폼 
 - [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
 - [④ RAG 가이드 03 3.6 입력 살균](../../04-rag/docs/03-retrieval-context.md#36-보안--프롬프트-인젝션-방어와-입력-살균)
 - [④ RAG 가이드 04 4.6 출력 가드레일](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일--민감정보와-출력-안전)
+- [NVIDIA NeMo Guardrails 문서](https://docs.nvidia.com/nemo/guardrails/home)
+- [Llama Guard 4 모델 카드 (Hugging Face)](https://huggingface.co/meta-llama/Llama-Guard-4-12B)
+- [Broadcom TechDocs, Private AI Services 릴리스 노트 (9.1 문서 경로)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)
 
 ---
 

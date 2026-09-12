@@ -45,6 +45,9 @@ Harbor 자체를 에어갭에 처음 세울 때는 "부트스트랩 문제"가 �
 1. **해시 검증** — 모델 파일의 해시 코드를 신뢰 소스가 공표한 체크섬과 대조해 무결성을 확인합니다.
 2. **악성코드와 역직렬화 공격 스캔** — pickle 등 역직렬화 기반 모델 포맷은 임의 코드 실행 위험이 있으므로 별도 스캔이 필요합니다. 가능하면 safetensors 등 안전 포맷을 우선합니다(확인 필요: 조직 표준 포맷 정책).
 3. **추론 기능 테스트 및 성능과 안전성 평가** — 격리 환경에서 동작과 안전성을 검증합니다.
+4. **라이선스 검토 통과** — 무결성과 별개로 **사용권**을 확인합니다. 가중치가 공개돼 있어도 커뮤니티 라이선스의 이용자 수 임계, 파생 모델 명명 의무, 비상업 한정, 학습 데이터셋의 별도 라이선스, 상용 약관(NIM과 NVIDIA AI Enterprise) 같은 조건이 붙습니다. 심사 항목은 [앱 가이드 10 10.8절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/10-models-serving.md)의 체크리스트를 쓰고, 결과는 법무와 지식재산 담당이 확정합니다([⑦ 09 9.2.1절](../../07-design/docs/09-roles-raci.md)). 임베딩, 리랭커, 가드 모델도 같은 게이트를 지납니다.
+
+`tag approved`는 네 게이트를 모두 지난 뒤에만 붙입니다. 반입 시점의 **모델 카드, 데이터셋 카드, 라이선스 원문 사본, 심사 결과**는 Revision 다이제스트와 함께 거버넌스 기록으로 보존합니다. 제공자가 나중에 모델 카드나 라이선스를 바꿔도 반입 당시의 조건을 증명할 수 있어야 하고, 바뀐 것을 발견하면 재심사합니다.
 
 출처(provenance) 보강: OWASP는 "현재 공개 모델에는 강한 출처 보증이 없다"는 점을 명시적 공급망 위험으로 지적합니다([OWASP Top 10 for LLM Applications 2025 — LLM03 Supply Chain](https://owasp.org/www-project-top-10-for-large-language-model-applications/assets/PDF/OWASP-Top-10-for-LLMs-v2025.pdf)). 따라서 조직은 모델 출처를 **자체 서명, 체크섬, 서명된 메타데이터**로 보강하고, Revision 다이제스트와 `tag approved` 승인 흐름을 거버넌스 기록으로 남겨야 합니다. Model Gallery의 불변 Revision은 이 추적의 기술적 기준점 역할을 합니다.
 
@@ -100,6 +103,7 @@ RAG/임베딩 파이프라인에서 특히 주의할 인입 지점과 통제는 
 | Artifact Mirroring Tool 미러링 무결성 | `vcf pais amt pull` 산출물(`pais-store`)의 다이제스트를 push 후 Harbor 매니페스트와 대조 | 다이제스트 일치 |
 | 모델 해시 게이트 | 반입 모델 해시를 신뢰 소스 공표값과 대조 | 불일치 시 업로드 차단 |
 | 모델 불변성 | 동일 모델 데이터 재push 시 Revision 수 | 신규 Revision 생성 안 됨(동일 다이제스트 1개) |
+| 라이선스 검토 기록 | `approved` 태그가 붙은 모델의 심사 결과, 라이선스 원문 사본, 모델 카드 보존 여부 확인 | 승인 모델 전부에 심사 결과와 사본 존재, 미심사 승인 0건 |
 | 컨테이너 scan-on-push | 임의 취약 이미지 push | 스캔 자동 실행과 결과 기록 |
 | 심각도 게이트 | Critical/High 초과 이미지 pull 시도 | pull 차단(Allowlist 예외만 통과) |
 | 콘텐츠 신뢰 | 서명 없는 이미지 pull 시도 | 차단됨 |

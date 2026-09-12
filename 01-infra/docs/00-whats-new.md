@@ -89,7 +89,7 @@ VKS가 **Dynamic Resource Allocation(DRA)** 기반의 개방형 GPU 스케줄링
 | Infinity | 0.0.43 (embedding) | 0.0.76 (embedding) | 0.0.76 | = |
 | llama.cpp | 없음 | b7739 (CPU completion+embedding) | **b9309** | 상향 |
 | VKr | 1.32 | 1.33 | **1.34** (Ubuntu 24.04 노드 이미지) | 상향 |
-| VKS | — | 3.5.0+ 권장 | **3.7.x** (VKr 1.33~1.36 지원, 1.32 종료) | 상향 |
+| VKS | — | 3.5.0+ 권장 | **3.7.x** (VKr 1.33–1.36 지원, 1.32 종료) | 상향 |
 | ClusterClass | builtin-generic-v3.2.0 | builtin-generic-v3.2.0 | **builtin-generic-v3.5.0** | 상향 |
 | GPU Operator | 24.9.0 | 25.10.1 (driver v580.x) | **25.10.1 기본 또는 26.3.1** (DC 드라이버 580.105.8 / 580.126.20, vGPU 580.105.8) | 선택지 추가 |
 | PostgreSQL (PAIS 검증) | 16.8 | 16.8 | 16.8 | = |
@@ -178,7 +178,7 @@ VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱�
 | vCenter | 컴퓨트 정책으로 VM-VM affinity / anti-affinity 규칙, 메모리 티어링 환경에서 HA admission control이 DRAM을 별도 추적, Secure Boot PK 자동 교정 | 모델 레플리카 VM을 호스트 분산하는 근거가 공식 기능이 됨 ([⑦ 04](../../07-design/docs/04-network-storage-availability.md)) |
 | VCF Automation | VLAN-backed VPC, 퍼블릭 클라우드 리소스 관리 deprecated, BYO Velero deprecated | VKS 백업은 Broadcom 제공 Velero 패키지로 |
 | DSM 9.1.1 | PostgreSQL 18 지원, 읽기 복제, set_user 확장, SQL Server 2025, VKS 3.7 연동, Supervisor 크로스클러스터 HA. Avi와 NSX를 함께 쓰는 클러스터는 VCF 9.1.0 이상으로 올리기 전에 DSM을 9.1.1로 먼저 올려야 DB 다운타임을 피함 | 벡터 DB 운영 ([② 06](../../02-vectordb/docs/06-operations.md)) |
-| VKS 3.7 | VKr 1.33~1.36, ClusterClass v3.7.0, 워커 노드 최대 250, 5노드 컨트롤 플레인, 네이티브 OIDC, Workload Identity Federation, 애드온 관리 프레임워크(지원 4단계), TKC API 종료 | 클러스터 사이징 상한과 ID 연동 ([⑥ 04](../../06-sizing-cost/docs/04-vks-cluster-sizing.md)) |
+| VKS 3.7 | VKr 1.33–1.36, ClusterClass v3.7.0, 워커 노드 최대 250, 5노드 컨트롤 플레인, 네이티브 OIDC, Workload Identity Federation, 애드온 관리 프레임워크(지원 4단계), TKC API 종료 | 클러스터 사이징 상한과 ID 연동 ([⑥ 04](../../06-sizing-cost/docs/04-vks-cluster-sizing.md)) |
 | Tech Preview | GitOps Service(Argo CD 내장), vSAN Object Storage(S3 호환) | 프로덕션 비적용 |
 | 인증 | vSphere 9.1이 NVIDIA-Certified Hypervisor 인증 획득 | GPU 워크로드 성능 근거 자료로 활용 가능 |
 

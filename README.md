@@ -101,7 +101,7 @@ flowchart TB
 
 플랫폼 엔지니어링이 AI 시대에 어떻게 진화하는지에 대한 업계 논의도 이 시리즈가 다루는 계층과 맞닿습니다.
 
-- [Platform Engineering 2.0: An Evolution for the AI Era](https://www.linkedin.com/pulse/time-platform-engineering-20-now-vmwarevcf-m3yfc/) — Broadcom, PlatformEngineering.org 공동 백서. 개발자 중심 플랫폼(1.0)이 AI 네이티브 플랫폼(GPU, 모델 서빙, MCP), 다중 페르소나, 내장 FinOps, 보안 기층화, 컴포저블 아키텍처의 다섯 축으로 확장된다는 프레임워크로, 본 시리즈 ①~⑦과 에이전트 가이드의 기술 토픽과 거의 1:1로 대응합니다.
+- [Platform Engineering 2.0: An Evolution for the AI Era](https://www.linkedin.com/pulse/time-platform-engineering-20-now-vmwarevcf-m3yfc/) — Broadcom, PlatformEngineering.org 공동 백서. 개발자 중심 플랫폼(1.0)이 AI 네이티브 플랫폼(GPU, 모델 서빙, MCP), 다중 페르소나, 내장 FinOps, 보안 기층화, 컴포저블 아키텍처의 다섯 축으로 확장된다는 프레임워크로, 본 시리즈 ①–⑦과 에이전트 가이드의 기술 토픽과 거의 1:1로 대응합니다.
 
 ## 기반 버전 (요약)
 

@@ -191,7 +191,8 @@ VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱�
 | AI Gateway(프롬프트 라우팅, 사용자 단위 토큰 제한, OIDC 기반 앱 인가) | 향후 릴리스 | 지금은 레이트리밋과 쿼터를 앱 또는 게이트웨이 계층에서 구현 ([③ 05](../../03-serving-api/docs/05-auth-and-gateway.md)) |
 | Secure Agent Framework(에이전트 코드 샌드박스, Agent Harness) | 향후 릴리스 | 콘텐츠 가드레일과 도구 권한은 앱 계층 책임 유지 |
 | Model Autoscaling(지연과 세션 임계 기반 자동 스케일) | 향후 릴리스 | 레플리카 수는 수동 설정 |
-| AgentMinder | 별도 제품 | PAIS 구성요소가 아님 |
+| AgentMinder | 별도 제품, 2026-08-31 GA | 에이전트를 기업 신원으로 다루고, 도구 호출을 게이트웨이에서 인증과 정책 평가 후 승인된 백엔드로만 보내며, OpenTelemetry로 감사하는 런타임 통제 제품. PAIS 구성요소가 아니며 VKS 등 Kubernetes에 배포 ([Broadcom 보도자료](https://www.globenewswire.com/news-release/2026/08/31/3353342/19933/en/broadcom-unveils-agentminder-an-enterprise-solution-for-ai-agent-governance-and-runtime-control.html)) |
+| vDefend와 Avi Load Balancer의 에이전틱 보안(MCP 서버와 LLM과 데이터스토어 자동 탐지, 섀도 AI 탐지, 미승인 MCP 도구 접근 차단, 자격증명과 PII 유출 방지) | 향후 릴리스(시점 미공개) | 보도자료가 전부 미래형으로 기술하며 버전과 시점이 없음 ([Broadcom 보도자료](https://www.globenewswire.com/news-release/2026/08/31/3353355/19933/en/broadcom-delivers-end-to-end-security-identity-and-observability-for-agentic-ai.html)). 지금은 [⑤ 02](../../05-security/docs/02-network-tenant-isolation.md)의 NSX와 vDefend 통제로 설계 |
 | VMware AI Factory, VMware Private AI Cloud | 프로그램과 브랜드 | AMD Instinct MI350 + ROCm, OEM AI ReadyNode, 베어메탈 자동화. 라이선스 패키징 미공개 |
 
 ---

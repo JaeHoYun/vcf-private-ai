@@ -9,7 +9,7 @@
 | 워크시트 | 무엇을 채우나 | 주 작성자 | 언제 | 채운 뒤 |
 |---|---|---|---|---|
 | [01 요구사항과 제약 시트](01-driver-sheet.md) | 요구사항, 제약을 수치, 등급으로 수집 | 아키텍트 + 업무, 보안, 예산 담당 | 설계 착수 전(요구사항 워크숍) | 설계 결정의 입력, 제안서 요구사항 절 |
-| [02 설계 결정 기록](02-design-decision-record.md) | D1–D12 선택 경로와 근거 | 아키텍트(이해관계자 합의) | 설계 결정을 내릴 때 | 설계 결정 기록, 리뷰(07), 구축 인계 자료 |
+| [02 설계 결정 기록](02-design-decision-record.md) | D1–D14 선택 경로와 근거 | 아키텍트(이해관계자 합의) | 설계 결정을 내릴 때 | 설계 결정 기록, 리뷰(07), 구축 인계 자료 |
 
 ## 사용법
 
@@ -29,7 +29,7 @@
 | 파일 | 용도 | 연계 문서 |
 |---|---|---|
 | [`01-driver-sheet.md`](01-driver-sheet.md) | 요구사항과 제약 수집 | [docs/01](../docs/01-design-process.md), [06.2 요구사항과 제약→설계 결정](../docs/06-decision-forks.md) |
-| [`02-design-decision-record.md`](02-design-decision-record.md) | D1–D12 결정과 근거 기록 | [docs/03–06](../docs/06-decision-forks.md), [07 리뷰](../docs/07-design-review.md) |
+| [`02-design-decision-record.md`](02-design-decision-record.md) | D1–D14 결정과 근거 기록 | [docs/03–06](../docs/06-decision-forks.md), [07 리뷰](../docs/07-design-review.md) |
 
 ## 중요(반드시 읽기)
 

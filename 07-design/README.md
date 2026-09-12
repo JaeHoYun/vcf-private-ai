@@ -39,12 +39,12 @@
 | 03 | [설계 결정: 컴퓨트, GPU, VKS 토폴로지](docs/03-compute-gpu-topology.md) | GPU 배치, VKS/Supervisor 토폴로지, 노드 풀 설계 |
 | 04 | [설계 결정: 네트워크, 스토리지, 가용성](docs/04-network-storage-availability.md) | NSX 설계, vSAN 스토리지 정책, 가용성과 DR |
 | 05 | [설계 결정: 멀티테넌시와 보안 설계](docs/05-tenancy-security.md) | 테넌트 격리 모델, security by design (⑤ 위임) |
-| 06 | [설계 결정 카탈로그](docs/06-decision-forks.md) | 13개 설계 결정 색인, 요구와 제약→설계 결정 매핑, 설계 결정 기록 템플릿 |
+| 06 | [설계 결정 카탈로그](docs/06-decision-forks.md) | 14개 설계 결정 색인, 요구와 제약→설계 결정 매핑, 설계 결정 기록 템플릿 |
 | 07 | [설계 리뷰 체크리스트와 검증 관문](docs/07-design-review.md) | 설계 리뷰 항목, 단계별 검증 관문 |
 | 08 | [브라운필드 통합 설계](docs/08-brownfield-integration.md) | 기존 온프렘 AI, MLOps의 PAIF 점진 통합, 퍼블릭 클라우드 처리 |
 | 09 | [역할과 책임 (RACI)](docs/09-roles-raci.md) | AI 플랫폼 수명주기 단계별 역할표(인프라/플랫폼/앱/보안/데이터) |
 | A1 | [부록](appendix/A1-reference.md) | 용어집, 참조 링크 |
-| 워크시트 | [채워넣기 워크시트](worksheet/README.md) | 결정 요인 시트 + 설계 결정 기록(D1–D13) 채워넣기 양식 |
+| 워크시트 | [채워넣기 워크시트](worksheet/README.md) | 결정 요인 시트 + 설계 결정 기록(D1–D14) 채워넣기 양식 |
 
 ## 빠른 시작
 

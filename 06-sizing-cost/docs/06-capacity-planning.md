@@ -24,7 +24,7 @@ GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 GPU WL
 | 물리 GPU | 전력과 온도 | DCGM 전력/온도 메트릭, VCF Operations GPU 메트릭 | 열과 전력 한계로 인한 실질 가용 한도 |
 | 가상화 | vGPU 사용률 | VCF Operations vGPU 메트릭 | 프로파일 분할 후의 테넌트별 실사용 |
 | 할당 | 쿼터 소진율 | 네임스페이스/프로젝트 쿼터 대비 사용량 | "물리는 남는데 정책상 못 쓰는" 구간 식별 |
-| 서비스 | 대기, 거부 요청, P95 지연 | VCF Operations AI 메트릭(TTFT, E2E 지연), 인퍼런스 게이트웨이 | 사용자 체감 한계. 용량 부족의 최종 증거 |
+| 서비스 | 대기, 거부 요청, P95 지연 | VCF Operations AI 메트릭(TTFT, E2E 지연), 인퍼런스 게이트웨이, AI 게이트웨이의 키와 팀별 토큰과 429 지표([③ 07 7.8절](../../03-serving-api/docs/07-observability-ops.md)) | 사용자 체감 한계. 용량 부족의 최종 증거 |
 
 DCGM 메트릭 정의와 단위는 [NVIDIA DCGM Feature Overview](https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/feature-overview.html)를, GPU 사용률, VRAM, SM 메트릭의 해석은 [DCGM 모니터링 개요](https://medium.com/@MetricFire/why-gpu-monitoring-matters-tracking-utilization-power-and-errors-with-dcgm-603de3c4742b)를 참조하세요. DCGM은 DCGM-Exporter를 통해 Prometheus 형식으로 메트릭을 노출할 수 있어 Grafana 대시보드와 연동됩니다. VCF 9.1의 AI 메트릭 대시보드 역시 Grafana 배포를 전제로 합니다([VCF 9.1 AI 워크로드 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/)).
 

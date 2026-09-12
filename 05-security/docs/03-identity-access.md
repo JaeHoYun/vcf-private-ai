@@ -97,6 +97,8 @@ REX 도구는 생성 시 자동 승인되지만, 외부 MCP 서버의 도구는 
 
 도구 갤러리(Tool Gallery)에서는 각 도구의 제공 MCP 서버, 현재 사용 중인 에이전트, 입력과 출력 스키마를 포함한 전체 설명을 확인할 수 있습니다([Explore MCP Tools, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html)). 도구는 네임스페이스 범위에서 동작하므로, 승인과 소비 권한도 네임스페이스 경계를 따릅니다.
 
+승인 게이트가 검토하는 대상은 도구의 설명문까지입니다. 도구 설명은 모델이 읽는 지시이므로 승인 뒤 서버 측에서 바뀌면 승인의 전제가 사라집니다. 승인 시점의 이름, 설명, 스키마 해시를 기록하고 바뀌면 재승인하는 통제, 그리고 MCP 사양의 인가 요구(2025-06-18 개정판의 OAuth 2.1과 RFC 8707 대상 표시, 2026-07-28 개정판의 발급자 검증과 HTTP+SSE 전송 폐기 예고)를 PAIS의 정적 토큰 방식과 어떻게 맞출지는 [08 8.5절](08-agent-governance.md)이 다룹니다. PAIS 3.0의 MCP 연결은 Streamable HTTP와 SSE 전송, 정적 토큰 헤더, CA 신뢰 번들을 지원하므로([Connect an MCP Server, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/connect-to-an-mcp-server.html)), 신규 서버는 Streamable HTTP로 만들고 기존 SSE 서버는 전환 계획을 둡니다. 에이전트 자체에 비인간 신원을 부여하고 자격증명을 사람이나 다른 에이전트와 분리하는 원칙은 [08 8.2절](08-agent-governance.md)에 있습니다.
+
 거버넌스 관점에서 권장하는 도구 권한 계층은 다음과 같습니다.
 
 - 등록(register): 외부 MCP 서버 연결과 도구 노출 — VI Admin/플랫폼 운영 책임자.

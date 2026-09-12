@@ -23,7 +23,7 @@
 |---|---|---|---|
 | 인증(Authentication) | 주체 ID, 시각, 인증 결과(성공/실패), 인증 방식(IdP/SSO), 출발지 | VCF Identity Broker / IdP | [03 — ID, 인증, 접근통제](./03-identity-access.md) |
 | 접근과 인가(Authorization) | 주체, 시각, 대상 리소스, 권한, 허용/거부 결과 | VCF / VKS RBAC | [03 — ID, 인증, 접근통제](./03-identity-access.md) |
-| 모델 호출(Inference) | 호출자 신원, 시각, 모델과 버전, 입력/출력 토큰 수, 지연, 결과 코드 | PAIF Serving(③) | [01 — 위협 모델](./01-threat-model.md), [04 — 에어갭, 공급망, 모델 출처](./04-airgap-supply-chain.md) |
+| 모델 호출(Inference) | 호출자 신원, 시각, 모델과 버전, 입력/출력 토큰 수, 지연, 결과 코드. 프롬프트와 완성문 본문의 보존 여부는 등급별 정책([05 5.10절](./05-data-governance.md))에 따름 | PAIF Serving(③) | [01 — 위협 모델](./01-threat-model.md), [04 — 에어갭, 공급망, 모델 출처](./04-airgap-supply-chain.md) |
 | 도구 호출(Tool/Agent) | 에이전트 세션, 시각, 호출 도구, 인자(민감정보 마스킹), 영향 리소스 | PAIS Agent / MCP | [06 — 앱 계층 가드레일](./06-app-guardrails.md) |
 | 데이터 접근(Data) | 주체, 시각, 데이터셋/벡터 스토어, 작업(읽기/쓰기), 행 수/범위 | 데이터와 RAG 계층 | [05 — 데이터 거버넌스와 프라이버시](./05-data-governance.md) |
 | 보호 문서 복호화(Decrypt) | 서비스 계정, 시각, 원본 문서 ID와 보호 정책 식별자, 승인 근거, 복호화 건수와 범위, 결과 | 복호화 전처리 존 | [05 — 5.9절](./05-data-governance.md) |

@@ -84,7 +84,7 @@ PAIS 3.0에서 이 원칙이 어디까지 구현되고 어디부터 앱과 게�
 | 상태와 게이트 이력 | PoC, 파일럿, 프로덕션, 퇴역과 각 게이트 통과일 | 게이트 심사 기록 |
 | 마지막 레드팀과 회귀 결과 | 일자, 도구, 임계값 통과 여부 | 8.9 |
 
-PAIS는 네임스페이스별 에이전트 목록과 Tool Gallery의 "이 도구를 사용 중인 에이전트" 표시를 제공하므로([Explore MCP Tools, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html)), 레지스트리의 절반은 여기서 자동으로 채울 수 있습니다. 나머지 절반(소유자, 등급, 자격증명, 게이트 이력)은 앱 팀과 심사 주체가 채웁니다. 첫 에이전트 한둘일 때는 스프레드시트 한 장이 레지스트리이고, 미등록 에이전트를 발견하면 금지가 아니라 등록과 등급 부여로 양성화합니다.
+PAIS는 네임스페이스별 에이전트 목록과 Tool Gallery의 "이 도구를 사용 중인 에이전트" 표시를 제공하므로([Explore MCP Tools, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html)), 레지스트리의 절반은 여기서 자동으로 채울 수 있습니다. 나머지 절반(소유자, 등급, 자격증명, 게이트 이력)은 앱 팀과 심사 주체가 채웁니다. 첫 에이전트 한둘일 때는 스프레드시트 한 장이 레지스트리이고, 미등록 에이전트를 발견하면 금지가 아니라 등록과 등급 부여로 양성화합니다. 미등록 에이전트와 플랫폼 밖 AI 사용을 찾는 신호는 [07 7.2.3절](07-audit-compliance.md)에, 등록 뒤 등급 판정과 등급별 처분의 순서는 [AX 방법론 10 10.4절](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/10-governance.md)에 있습니다.
 
 퇴역은 권한 회수로 끝나지 않습니다. 서비스 계정과 토큰 폐기, 도구 승인 해제, 지식베이스 연결 해제, 네트워크 정책 정리, 그리고 감사 로그와 게이트 기록의 보존까지가 절차입니다([앱 가이드 14](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/14-operations.md)).
 

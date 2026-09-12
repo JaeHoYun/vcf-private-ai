@@ -112,7 +112,7 @@ NIST AI RMF 1.0의 핵심은 Govern, Map, Measure, Manage 4개 기능으로, Gov
 | OWASP LLM06 Excessive Agency | 에이전트 권한 최소화 | [06 — 앱 계층 가드레일](./06-app-guardrails.md) |
 | OWASP LLM10 Unbounded Consumption | 자원 소비 한계 | 7.2, [02 — 네트워크, 테넌트, GPU 격리](./02-network-tenant-isolation.md) |
 
-OWASP 2025 갱신본은 System Prompt Leakage(LLM07)와 Vector and Embedding Weaknesses(LLM08)를 신규로 추가했습니다([TrojAI — 2025 OWASP Top 10 for LLMs](https://troj.ai/blog/the-2025-owasp-top-10-for-llms)). 에이전트 위험 목록(OWASP Agentic ASI01~10)의 통제 매핑은 [08 8.1절](./08-agent-governance.md)에 있습니다.
+OWASP 2025 갱신본은 System Prompt Leakage(LLM07)와 Vector and Embedding Weaknesses(LLM08)를 신규로 추가했습니다([TrojAI — 2025 OWASP Top 10 for LLMs](https://troj.ai/blog/the-2025-owasp-top-10-for-llms)). 에이전트 위험 목록(OWASP Agentic ASI01–10)의 통제 매핑은 [08 8.1절](./08-agent-governance.md)에 있습니다.
 
 ### 7.4.3 한국 규제와 지침 매핑
 
@@ -121,7 +121,7 @@ OWASP 2025 갱신본은 System Prompt Leakage(LLM07)와 Vector and Embedding Wea
 | 법령과 지침 | 설계에 닿는 요구 | 시리즈 ⑤와 형제 가이드의 통제 |
 |---|---|---|
 | 인공지능기본법 투명성(제31조) | AI 이용 사전 고지, 생성물 표시 | 표시의 화면 구현은 [앱 가이드 11 11.6절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/11-app-integration-ux.md), 표시 이력의 기록은 7.1.2 |
-| 인공지능기본법 고영향 AI(제33~35조) | 위험관리방안, 설명 방안, 사람의 관리와 감독, 이행 문서의 보관 | 위험관리는 [01](./01-threat-model.md)과 [08 8.3절](./08-agent-governance.md), 설명 근거는 7.1.2의 재생 가능한 추적, 사람의 감독은 [08 8.7절](./08-agent-governance.md), 문서 보관은 7.1.3의 보존 정책과 [05 5.10절](./05-data-governance.md) |
+| 인공지능기본법 고영향 AI(제33–35조) | 위험관리방안, 설명 방안, 사람의 관리와 감독, 이행 문서의 보관 | 위험관리는 [01](./01-threat-model.md)과 [08 8.3절](./08-agent-governance.md), 설명 근거는 7.1.2의 재생 가능한 추적, 사람의 감독은 [08 8.7절](./08-agent-governance.md), 문서 보관은 7.1.3의 보존 정책과 [05 5.10절](./05-data-governance.md) |
 | 금융분야 인공지능 가이드라인(통합 개정, 2026-06-22 시행) 보안성 원칙 | 데이터 오염, 모델 오염, 정보 유출, 프롬프트 인젝션, 탈옥을 AI 특유 위협으로 명시 | [04 4.4절](./04-airgap-supply-chain.md), [05](./05-data-governance.md), [06](./06-app-guardrails.md), [08 8.9절](./08-agent-governance.md) 레드팀 |
 | 같은 가이드라인의 거버넌스와 보조수단성 | 위험관리 조직의 독립, 위험 등급별 출시 심사, 최종 결정 책임은 사람 | [08 8.3절](./08-agent-governance.md) 자율성 상한, [00 0.4절](./00-where-to-start.md) 게이트, [⑦ 09](../../07-design/docs/09-roles-raci.md) 역할 |
 | 개인정보보호위원회 생성형 AI 개인정보 처리 안내서(2025-08-06) | 인덱싱 전 가명처리와 고유식별정보 제거, 접근통제와 사용자 인증, 응답 필터링, 기록 관리, 배포 전 레드팀 | [05 5.3절, 5.4절, 5.10절](./05-data-governance.md), [06 6.3절](./06-app-guardrails.md), [08 8.9절](./08-agent-governance.md) |

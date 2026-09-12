@@ -72,7 +72,7 @@ LLM이 도구(파일 I/O, API, 명령 실행)에 접근하면 의도 범위를 �
 
 PAIS 2.1은 모델 게이트웨이(API Gateway)와 MCP Tools Registry를 플랫폼에 내장하여, 도구 등록, 인증, 인가를 플랫폼 계층에서 다룰 수 있는 지점을 제공합니다([Private AI Services, VCF 9.1 Blog](https://blogs.vmware.com/cloud-foundation/2025/06/19/private-ai-services-new-in-vmware-private-ai-foundation-with-nvidia-in-vcf-9-0/)). 다만 이 레지스트리가 **세분화된 도구 호출 화이트리스트와 휴먼인더루프 승인**을 네이티브로 강제하는지는 릴리스별로 다를 수 있어 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 **확인 필요**합니다. 플랫폼 제공 여부와 무관하게, 위 통제는 오케스트레이션 계층에서 독립적으로 두는 것을 권장합니다.
 
-이 절은 LLM06 한 항목의 정책 수준에 머뭅니다. 에이전트를 행위자로 보는 위협 목록(OWASP Agentic ASI01~10), 에이전트별 비인간 신원, 자율성 상한과 위험 등급의 매트릭스, 레지스트리, MCP 도구 오염과 제3자 서버 체크리스트, 코드 실행 샌드박스, 킬스위치, 도구 게이트웨이의 위치는 [08 에이전트 보안 거버넌스](08-agent-governance.md)가 정본입니다. 휴먼인더루프의 구현 패턴과 승인 큐는 [앱 가이드 07 7.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md)에 있습니다.
+이 절은 LLM06 한 항목의 정책 수준에 머뭅니다. 에이전트를 행위자로 보는 위협 목록(OWASP Agentic ASI01–10), 에이전트별 비인간 신원, 자율성 상한과 위험 등급의 매트릭스, 레지스트리, MCP 도구 오염과 제3자 서버 체크리스트, 코드 실행 샌드박스, 킬스위치, 도구 게이트웨이의 위치는 [08 에이전트 보안 거버넌스](08-agent-governance.md)가 정본입니다. 휴먼인더루프의 구현 패턴과 승인 큐는 [앱 가이드 07 7.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md)에 있습니다.
 
 ## 6.5 PAIS 네이티브 가드 기능과 플랫폼 경계
 

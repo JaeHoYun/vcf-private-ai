@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 시리즈 ⑤의 착수 문서입니다. 01~08이 "무엇을 왜 어떻게 통제하는가"의 카탈로그라면, 이 문서는 그 카탈로그를 앞에 두고 자주 받는 세 질문에 답합니다. 보안 때문에 전체를 어떻게 그려야 하는가, 무엇부터 손대야 하는가, 첫 유스케이스를 올리기까지 무엇을 갖춰야 하는가. 통제 항목이 시리즈 전체에 70개를 넘다 보니 한꺼번에 들이려다 멈추는 조직이 많아서, 한 장 청사진, 90일 로드맵, 게이트별 최소 세트, 준비물, 흔한 실수로 좁혔습니다.
+이 문서는 시리즈 ⑤의 착수 문서입니다. 01–08이 "무엇을 왜 어떻게 통제하는가"의 카탈로그라면, 이 문서는 그 카탈로그를 앞에 두고 자주 받는 세 질문에 답합니다. 보안 때문에 전체를 어떻게 그려야 하는가, 무엇부터 손대야 하는가, 첫 유스케이스를 올리기까지 무엇을 갖춰야 하는가. 통제 항목이 시리즈 전체에 70개를 넘다 보니 한꺼번에 들이려다 멈추는 조직이 많아서, 한 장 청사진, 90일 로드맵, 게이트별 최소 세트, 준비물, 흔한 실수로 좁혔습니다.
 
 이 문서의 시점은 플랫폼 전체를 책임지는 보안팀과 플랫폼 팀입니다. 서비스 하나를 출시하는 앱 팀이 준비할 것은 [앱 가이드 12 서비스 보안 준비와 가드레일](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md)이 맡고, 전사 운영 모델과 규제 일정은 [AX 방법론 10 AI 거버넌스](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/10-governance.md)와 [부록 A2](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/appendix/A2-kr-regulatory-timeline.md)가 맡습니다. 기반 사실은 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0(2026-09-03 GA)이며, 발표만 된 기능은 설계 전제로 삼지 않습니다([① 00 0.7.4절](../../01-infra/docs/00-whats-new.md)).
 
@@ -66,16 +66,16 @@ flowchart LR
 
 ## 0.3 첫 90일 로드맵
 
-공개된 단계별 지침들은 출발 순서에서 일치합니다. NIST AI RMF는 Govern 기능을 다른 셋에 앞세우고([NIST AI RMF Core](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/)), CISA 지침은 즉시 조치로 권한 경계 감사와 에이전트별 신원과 샌드박스와 인젝션 필터를, 30~60일 안에 킬스위치와 추론 추적 로그를 꼽습니다([CISA, 2026-05-01](https://www.cisa.gov/resources-tools/resources/careful-adoption-agentic-ai-services)). 국가정보원의 국가 공공기관 AI 보안 가이드북(2025-12-10)은 15개 위협과 30개 대책과 57개 체크리스트를 두고, 에이전트에는 허용 목록 기반 도구 체계와 사람의 개입을 요구합니다([AI코리아, 가이드북 안내](https://www.aikorea.go.kr/web/board/brdDetail.do?menu_cd=000011&num=144)). 이를 합치면 순서는 하나입니다. 인벤토리와 등급 먼저, 자격증명과 세그멘테이션과 로그 두 번째, 가드레일과 레드팀 세 번째, 에이전트 확대 마지막.
+공개된 단계별 지침들은 출발 순서에서 일치합니다. NIST AI RMF는 Govern 기능을 다른 셋에 앞세우고([NIST AI RMF Core](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/)), CISA 지침은 즉시 조치로 권한 경계 감사와 에이전트별 신원과 샌드박스와 인젝션 필터를, 30–60일 안에 킬스위치와 추론 추적 로그를 꼽습니다([CISA, 2026-05-01](https://www.cisa.gov/resources-tools/resources/careful-adoption-agentic-ai-services)). 국가정보원의 국가 공공기관 AI 보안 가이드북(2025-12-10)은 15개 위협과 30개 대책과 57개 체크리스트를 두고, 에이전트에는 허용 목록 기반 도구 체계와 사람의 개입을 요구합니다([AI코리아, 가이드북 안내](https://www.aikorea.go.kr/web/board/brdDetail.do?menu_cd=000011&num=144)). 이를 합치면 순서는 하나입니다. 인벤토리와 등급 먼저, 자격증명과 세그멘테이션과 로그 두 번째, 가드레일과 레드팀 세 번째, 에이전트 확대 마지막.
 
 | 기간 | 목표 | 산출물 | 주 담당(⑦ 09의 역할) | 관련 문서 |
 |---|---|---|---|---|
-| 1~30일 최소 거버넌스와 현황 | 무엇이 어디서 돌고 있고 누가 책임지는지 알기 | AI 자산 인벤토리 초판(모델, 데이터 소스, 프롬프트, 도구와 MCP 서버, 에이전트, 외부 API. vDefend 트래픽 관측으로 섀도 AI 후보 식별). 유스케이스 위험 등급표. 책임자와 RACI(AI 위험관리 책임자를 개발 조직과 독립). 한 쪽짜리 정책(허용 모델 출처, 도구 승인 절차, 자율성 상한 L1, 로그 보존). 생성물 표시 의무의 적용 범위 판단 | 보안과 거버넌스(A), 플랫폼(R), 법무(C) | [01 1.1절](01-threat-model.md), [08 8.4절](08-agent-governance.md), [앱 가이드 02 2.9절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/02-use-cases.md), [⑦ 09](../../07-design/docs/09-roles-raci.md) |
-| 31~60일 플랫폼 기준선 | 첫 유스케이스가 올라갈 바닥 만들기 | 자격증명 분리(공유 키 폐기, PAIS API 토큰의 소유자와 용도 인벤토리, 앱과 에이전트별 서비스 계정). 세그멘테이션(NSX VPC, vDefend 분산 방화벽과 Antrea 정책의 기본 거부, 이그레스 허용 목록). 공급망(Harbor 서명 강제, safetensors 우선, Artifact Mirroring Tool 단일 반입 경로, VKS Pod Security Admission restricted). 로그(PAIS 추적과 앱 이벤트를 OTel 수집기로 중앙화, 보존 기간 적용). 소진 방어(Avi 속도 제한, GPU 쿼터, 토큰 사용량 알림) | 플랫폼(A, R), 인프라(R), 보안과 거버넌스(C) | [02](02-network-tenant-isolation.md), [03](03-identity-access.md), [04](04-airgap-supply-chain.md), [07 7.1절](07-audit-compliance.md) |
-| 61~90일 첫 유스케이스와 가드레일 | 읽기 전용 서비스 하나를 파일럿 게이트까지 | 읽기 전용 RAG 또는 L1 에이전트 1건. 권한 인지 검색(소스 승인, 검색단 필터, 인입 단 가명처리). 입력 가드와 출력 가드 배치(가드 모델 후보는 [06 6.5절](06-app-guardrails.md)). 출시 전 자동 레드팀과 임계값 문서화. 사고 대응 플레이북의 AI 항목(킬스위치, 인덱스와 메모리 롤백). 90일 보고 | 앱(A, R), 보안과 거버넌스(A: 게이트 심사), 데이터(R) | [05](05-data-governance.md), [06](06-app-guardrails.md), [08 8.9절](08-agent-governance.md), [앱 가이드 12](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md) |
+| 1–30일 최소 거버넌스와 현황 | 무엇이 어디서 돌고 있고 누가 책임지는지 알기 | AI 자산 인벤토리 초판(모델, 데이터 소스, 프롬프트, 도구와 MCP 서버, 에이전트, 외부 API. vDefend 트래픽 관측으로 섀도 AI 후보 식별). 유스케이스 위험 등급표. 책임자와 RACI(AI 위험관리 책임자를 개발 조직과 독립). 한 쪽짜리 정책(허용 모델 출처, 도구 승인 절차, 자율성 상한 L1, 로그 보존). 생성물 표시 의무의 적용 범위 판단 | 보안과 거버넌스(A), 플랫폼(R), 법무(C) | [01 1.1절](01-threat-model.md), [08 8.4절](08-agent-governance.md), [앱 가이드 02 2.9절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/02-use-cases.md), [⑦ 09](../../07-design/docs/09-roles-raci.md) |
+| 31–60일 플랫폼 기준선 | 첫 유스케이스가 올라갈 바닥 만들기 | 자격증명 분리(공유 키 폐기, PAIS API 토큰의 소유자와 용도 인벤토리, 앱과 에이전트별 서비스 계정). 세그멘테이션(NSX VPC, vDefend 분산 방화벽과 Antrea 정책의 기본 거부, 이그레스 허용 목록). 공급망(Harbor 서명 강제, safetensors 우선, Artifact Mirroring Tool 단일 반입 경로, VKS Pod Security Admission restricted). 로그(PAIS 추적과 앱 이벤트를 OTel 수집기로 중앙화, 보존 기간 적용). 소진 방어(Avi 속도 제한, GPU 쿼터, 토큰 사용량 알림) | 플랫폼(A, R), 인프라(R), 보안과 거버넌스(C) | [02](02-network-tenant-isolation.md), [03](03-identity-access.md), [04](04-airgap-supply-chain.md), [07 7.1절](07-audit-compliance.md) |
+| 61–90일 첫 유스케이스와 가드레일 | 읽기 전용 서비스 하나를 파일럿 게이트까지 | 읽기 전용 RAG 또는 L1 에이전트 1건. 권한 인지 검색(소스 승인, 검색단 필터, 인입 단 가명처리). 입력 가드와 출력 가드 배치(가드 모델 후보는 [06 6.5절](06-app-guardrails.md)). 출시 전 자동 레드팀과 임계값 문서화. 사고 대응 플레이북의 AI 항목(킬스위치, 인덱스와 메모리 롤백). 90일 보고 | 앱(A, R), 보안과 거버넌스(A: 게이트 심사), 데이터(R) | [05](05-data-governance.md), [06](06-app-guardrails.md), [08 8.9절](08-agent-governance.md), [앱 가이드 12](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md) |
 | 91일 이후 | 확대의 조건을 통제로 바꾸기 | L2 승격 시 계획 단위 승인 화면과 세션 감사. 새 MCP 서버는 제3자 체크리스트 통과 뒤 등록. 쓰기 도구가 생기거나 도구가 열 개를 넘거나 에이전트가 여럿이면 도구 게이트웨이 도입 검토. 신규 MCP 서버는 Streamable HTTP로 통일 | 보안과 거버넌스(A), 앱(R), 플랫폼(R) | [08 8.5절, 8.8절](08-agent-governance.md), [앱 가이드 07](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md) |
 
-로드맵의 기간은 기준이지 규정이 아닙니다. 다만 순서를 바꾸면 비용이 커집니다. 가드레일을 먼저 사고 인벤토리를 뒤로 미루면 무엇을 보호하는지 모른 채 통제를 사는 셈이고, 첫 유스케이스를 쓰기 권한 에이전트로 잡으면 61~90일의 산출물이 전부 두 배가 됩니다.
+로드맵의 기간은 기준이지 규정이 아닙니다. 다만 순서를 바꾸면 비용이 커집니다. 가드레일을 먼저 사고 인벤토리를 뒤로 미루면 무엇을 보호하는지 모른 채 통제를 사는 셈이고, 첫 유스케이스를 쓰기 권한 에이전트로 잡으면 61–90일의 산출물이 전부 두 배가 됩니다.
 
 ## 0.4 게이트별 최소 보안 세트
 
@@ -108,7 +108,7 @@ flowchart LR
 
 ## 0.6 흔한 실수 열 가지
 
-1. **모델 선정에 시간을 쓰고 자격증명 관리는 뒤로 미룬다.** 사고 조사에서 반복되는 원인은 모델이 아니라 공유 키와 장수 토큰입니다. 31~60일의 자격증명 분리가 모델 벤치마크보다 앞입니다.
+1. **모델 선정에 시간을 쓰고 자격증명 관리는 뒤로 미룬다.** 사고 조사에서 반복되는 원인은 모델이 아니라 공유 키와 장수 토큰입니다. 31–60일의 자격증명 분리가 모델 벤치마크보다 앞입니다.
 2. **도구 설명을 코드처럼 리뷰하지 않는다.** MCP 도구의 설명문은 모델이 읽는 명령이고, 여기에 숨긴 지시가 에이전트를 조종합니다(도구 오염, [08 8.5절](08-agent-governance.md)). 승인 시점의 설명 해시를 고정하고 바뀌면 재승인합니다.
 3. **벡터 DB를 캐시로 취급한다.** 임베딩은 원문을 상당 부분 복원할 수 있으므로 원문과 같은 등급으로 보호합니다([05 5.5절](05-data-governance.md)).
 4. **시스템 프롬프트로 접근통제를 대신한다.** "이 사용자는 A 부서 문서만 볼 수 있다"는 지시는 인젝션 한 번에 무너집니다. 권한은 검색 단계의 필터로 강제합니다([05 5.3절](05-data-governance.md)).

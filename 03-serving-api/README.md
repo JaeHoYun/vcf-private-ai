@@ -84,7 +84,7 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 4. **④ 통합(RAG)** — [엔드투엔드 RAG 레퍼런스 아키텍처](../04-rag/README.md) — ①②③을 묶는 RAG 레퍼런스
 5. **⑤ 보안과 거버넌스** — [Private AI 보안과 거버넌스 통합 가이드](../05-security/README.md) — 전 계층 보안, 거버넌스, 감사
 6. **⑥ 사이징, 용량, 비용** — [사이징, 용량, 비용(TCO) 가이드](../06-sizing-cost/README.md) — 워크로드, GPU, VKS 사이징, TCO
-7. **⑦ 통합 설계** — [VCF Private AI 통합 설계 가이드](../07-design/README.md) — ①~⑥의 설계 결정을 하나의 플랫폼 설계로 종합
+7. **⑦ 통합 설계** — [VCF Private AI 통합 설계 가이드](../07-design/README.md) — ①–⑥의 설계 결정을 하나의 플랫폼 설계로 종합
 
 ---
 

@@ -49,12 +49,14 @@ AI 워크로드는 자원 소비 패턴이 유형마다 크게 다릅니다. 사
 | 추론 — 단일 모델 | 1개 모델을 여러 요청에 서빙 | GPU 메모리 대역폭(decode), GPU 연산(prefill) | 모델 가중치 + KV 캐시 | 동시성↑ → KV 캐시 급증 |
 | 추론 — 멀티 모델 | 여러 모델을 한 인프라에서 서빙 | GPU 메모리(모델 수만큼 합산) | 높음 | MIG/vGPU 분할로 격리 검토 |
 | RAG(검색증강생성) | 추론 + 임베딩 + 벡터 검색 | 추론 GPU + 벡터DB(CPU, RAM, 스토리지) | 추론과 동일 + 임베딩 모델 | 지식은 모델 밖 벡터DB에 저장 |
+| 추론 — 배치(오프라인) | 대량 문서를 일괄 요약, 분류, 추출. 대화가 없고 지연 목표 대신 처리량과 완료 시한이 목표 | GPU 연산(prefill 비중 큼), 처리량 | 장문 입력으로 KV 캐시 큼, 동시성은 드라이버가 고정 | 온라인과 GPU를 분리하거나 야간 윈도우. 임베딩 인덱싱도 같은 유형 |
 | 파인튜닝(LoRA/QLoRA) | 어댑터만 학습, 가중치 동결 | GPU 메모리(옵티마이저와 그래디언트) | 풀 파인튜닝 대비 대폭 절감 | 배치성, 간헐적 부하 |
 | 학습/풀 파인튜닝 | 전체 가중치 갱신 | GPU 메모리와 다중 GPU 인터커넥트 | 매우 높음(가중치×수 배) | 다수 GPU, 노드 스케일아웃 |
 
 핵심 차이를 요약하면 다음과 같습니다.
 
 - **추론**은 GPU 메모리 안에 **모델 가중치 + KV 캐시 + 활성화 버퍼**가 모두 들어가야 합니다. KV 캐시는 동시 요청 수와 컨텍스트 길이에 비례해 커지며, 대형 모델에서는 가중치의 **2.5–5배**까지 커져 메모리 병목의 주원인이 될 수 있습니다. ([BentoML — GPU Memory for LLM Inference](https://www.bentoml.com/blog/what-is-gpu-memory-and-why-it-matters-for-llm-inference))
+- **배치 추론**은 온라인 추론과 같은 엔진을 쓰지만 목표가 다릅니다. 지연이 아니라 "이 윈도우 안에 문서 N건"이 목표이므로, 동시성을 드라이버가 고정해 GPU 가동률을 높게 유지할 수 있고 그만큼 토큰당 비용이 내려갑니다([07 7.7절](07-tco-cost-model.md)). 대신 온라인 서비스와 GPU를 나눠 쓰면 대화형의 첫 토큰 지연을 잡아먹으므로, 사이징에서는 배치 전용 풀을 둘지, 야간 유휴 용량으로 흡수할지를 먼저 정합니다([06 6.2절](06-capacity-planning.md)의 버스트 흡수와 [06 6.3절](06-capacity-planning.md)의 Reservation과 쿼터). 실행 경로와 우선순위 수단은 [③ 07 7.9절](../../03-serving-api/docs/07-observability-ops.md), 파이프라인 설계는 [앱 가이드 03 3.7절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/03-design-patterns.md)에 있습니다.
 - **RAG**는 지식을 모델 파라미터가 아닌 **벡터 데이터베이스**에 두므로, 추론 GPU 외에 임베딩 모델과 벡터DB(주로 CPU/RAM/스토리지)를 별도로 산정해야 합니다. 검색 단계로 쿼리당 지연이 추가됩니다. ([Glean — RAG vs Fine-Tuning](https://www.glean.com/blog/retrieval-augemented-generation-vs-fine-tuning))
 - **LoRA/QLoRA 파인튜닝**은 전체 파라미터의 극히 일부만 학습해 풀 파인튜닝 대비 메모리를 크게 줄입니다(예: QLoRA로 7B급을 24GB GPU 단일 장비에서 학습 가능). 다만 모든 수치는 모델, 시퀀스 길이, 배치에 따라 달라지므로 **실측이 필요**합니다. ([DigitalOcean — GPU Options for Finetuning](https://www.digitalocean.com/resources/articles/gpu-options-finetuning))
 

@@ -22,6 +22,9 @@
 **Q6. 폐쇄망에서도 됩니까?**
 PAIS(Private AI Services) 2.1의 Artifact Mirroring Tool(아티팩트 미러링 도구)로 모델과 아티팩트를 미러링해 폐쇄망에서 RAG를 자족 운용할 수 있습니다. 외부 임베딩 API 의존이 없는지만 확인하세요. ([07 7.5절](../docs/07-production-operations.md#75-에어갭폐쇄망))
 
+**Q7. 문서보안(DRM)이 걸린 문서도 RAG 소스로 쓸 수 있습니까?**
+쓸 수 있고, 금지된 일도 아닙니다. 검색엔진과 백업이 오래전부터 서버 측에서 권한을 가진 서비스 계정으로 복호화해 왔습니다. 다만 RAG는 청크, 임베딩, 캐시, 로그라는 파생 사본을 많이 만들므로 그 사본을 원문 등급으로 통제하는 것이 조건입니다. 전사 문서를 통째로 복호화하지 않고 등급과 저장소와 유스케이스로 선별하며, 복호화는 격리 존에서 서비스 신원으로 문서 단위 권한을 확인하며 수행합니다. 파이프라인 위치는 [02 2.1.2절](../docs/02-ingestion-indexing.md), 거버넌스는 [⑤ 05 5.9절](../../05-security/docs/05-data-governance.md), 범위 결정과 워크플로는 [앱 가이드 06](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/06-data-onboarding.md)을 보십시오.
+
 ## A1.2 용어
 
 | 용어 | 설명 |

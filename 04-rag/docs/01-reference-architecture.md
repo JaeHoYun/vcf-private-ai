@@ -47,10 +47,13 @@ flowchart TB
 
     subgraph INDEX["인덱싱 타임 — 배치 (02)"]
         direction TB
-        DOCS["사내 문서<br/>PDF, Office, 위키, 티켓"]
+        DOCS["사내 문서<br/>PDF, Office, 위키, 티켓, 보호 문서"]
+        DEC["보호 문서 복호화 존<br/>(격리, 서비스 신원, 문서 단위 권한 확인)"]
         LOAD["로딩, 청킹, 메타데이터/ACL 태깅"]
         EMB1["임베딩(배치)"]
-        DOCS --> LOAD --> EMB1
+        DOCS -->|"평문"| LOAD
+        DOCS -->|"암호문"| DEC --> LOAD
+        LOAD --> EMB1
     end
 
     subgraph PLATFORM["VCF 9.1, PAIS 2.1 플랫폼"]
@@ -93,6 +96,7 @@ flowchart TB
 | 검색과 오케스트레이션 | PAIS **Agent Builder** + Data Indexing, 또는 앱 직접 구현 | ③④ |
 | 외부 도구 연동 | PAIS **MCP Tools Registry** | ① 05 |
 | API 노출과 인증 | PAIS API Gateway (OpenAI 호환) | ③ |
+| 보호 문서 복호화 전처리 | 격리된 VKS 네임스페이스의 복호화 워커(NSX 분산 방화벽으로 격리), 앱과 데이터 팀 자산 | 02 2.1.2, ⑤ 05 5.9절, 앱 가이드 06 |
 
 > PAIS는 Model Gallery, Model Runtime, **Agent Builder**, **Data Indexing(RAG)**, API Gateway, MCP Tools Registry를 포함합니다. RAG에 필요한 조각이 플랫폼 안에 이미 있습니다.
 

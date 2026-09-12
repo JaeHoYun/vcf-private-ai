@@ -272,7 +272,7 @@ resp = client.chat.completions.create(
 - **복잡한 스키마 = 지연, 실패↑** — 깊게 중첩되거나 거대한 스키마는 제약 디코딩 비용을 키우고 모델이 채우기 어려워집니다. 필요한 필드만 두십시오.
 - **프롬프트도 함께** — 스키마를 줘도 시스템 프롬프트에 "지정한 형식으로만 답하라"를 함께 적으면 품질이 안정적입니다.
 
-**언제 쓰나** — 분류, 엔티티 추출, 의도 라우팅, 도구 파이프라인의 중간 산출처럼 **다운스트림이 코드로 소비**하는 단계. 에이전트가 도구 결과를 정형으로 받아 처리하는 패턴은 별도 최상위 [에이전트 가이드](https://github.com/JaeHoYun/vcf-private-ai-agents)와 함께 보면 좋습니다.
+**언제 쓰나** — 분류, 엔티티 추출, 의도 라우팅, 도구 파이프라인의 중간 산출처럼 **다운스트림이 코드로 소비**하는 단계. 에이전트가 도구 결과를 정형으로 받아 처리하는 패턴은 별도 최상위 [앱과 에이전트 서비스 가이드](https://github.com/JaeHoYun/vcf-private-ai-apps)와 함께 보면 좋습니다.
 
 > **PAIS 적용 — 확인 필요** — PAIS Model Runtime은 vLLM 기반이라 구조화 출력을 **엔진 차원에서 지원**합니다(작성 시점 vLLM 기준). 다만 PAIS의 OpenAI 호환 인터페이스가 `response_format`(특히 `json_schema`)과 `guided_*` 중 **무엇을, 어떤 필드까지 노출**하는지는 모델, 엔진, PAIS 버전에 따라 다를 수 있으므로, 적용 전 [공식 PAIS API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code, 대상 모델의 지원 여부를 확인하시기 바랍니다.
 

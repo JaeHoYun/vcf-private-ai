@@ -64,7 +64,7 @@ PAIS 2.1은 에이전트가 **외부 데이터와 도구(DB, ITSM(IT 서비스 �
 | **감사** | 도구 호출 추적 | 모든 tool call 로깅(누가, 언제, 무엇을, 결과) → [07](07-observability-ops.md) |
 | **데이터 유출 방지** | 외부로 나가는 컨텍스트 통제 | 입출력 필터링, 개인식별정보(PII) 마스킹, 쓰기 승인 게이트 |
 
-> **쓰기(Write) 작업 주의** — 티켓 생성, 메시지 전송, DB 갱신처럼 **부수효과가 있는 도구**는 별도 승인 게이트와 확인 절차를 두는 것을 강력히 권장합니다. 읽기 전용으로 시작해 점진적으로 권한을 확대하세요.
+> **쓰기(Write) 작업 주의** — 티켓 생성, 메시지 전송, DB 갱신처럼 **부수효과가 있는 도구**는 별도 승인 게이트와 확인 절차를 두는 것을 강력히 권장합니다. 읽기 전용으로 시작해 점진적으로 권한을 확대하세요. 승인 게이트의 구현 패턴과 승인 큐, 멱등 키와 다단계 실패의 보상 설계는 [앱 가이드 07 사내 시스템 연동과 쓰기 설계](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md)에서 다룹니다.
 
 > **에어갭 환경** — 외부 반출이 불가한 환경에서는 MCP 연동 대상을 **내부 시스템(사내 DB, 내부 ITSM)** 으로 한정하고, 외부 SaaS, 외부 MCP 서버 등록을 차단합니다(Artifact Mirroring Tool(아티팩트 미러링 도구)로 미러링한 폐쇄망과 결합 → [근거: PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html)).
 

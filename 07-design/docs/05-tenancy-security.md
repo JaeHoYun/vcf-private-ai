@@ -55,6 +55,8 @@
 
 **showback(사용량 가시화)** — Private AI Model, GPU Metrics가 GPU 활용률, 메모리 압박, 모델 수준 가시성을, AI 관측, 거버넌스가 time-to-first-token, 토큰 처리량 등을 전체 인프라와 동일 콘솔에서 노출합니다. 이 메트릭을 테넌트(Project, 네임스페이스) 단위로 집계하면 사업부별 사용량을 보여주는 showback의 토대가 됩니다. 다만 작성 시점(2026-06) 별도 차지백 과금 메커니즘은 공식 확인되지 않았고, VCF Automation 멀티테넌시 모드에서 vSphere Pod의 임시(ephemeral) 스토리지 소비가 네임스페이스 스토리지 쿼터에 집계되지 않는 알려진 제약이 있어, 차지백 정산보다는 **메트릭 기반 showback(가시화, 내부 배분)** 수준으로 설계하기를 권고합니다.
 
+**토큰 예산의 강제 지점** — 네임스페이스 쿼터는 GPU와 복제본이라는 용량의 상한이지 토큰 소비의 상한이 아닙니다([③ 05 5.5절](../../03-serving-api/docs/05-auth-and-gateway.md)). 테넌트별로 월 토큰 예산을 강제하려면 그 지점은 네임스페이스가 아니라 AI 게이트웨이 계층(D13, [③ 05 5.7절](../../03-serving-api/docs/05-auth-and-gateway.md))이며, 게이트웨이가 없으면 앱이 usage를 집계해 같은 규칙을 흉내 냅니다. 전사 확장에서는 GPU 쿼터(네임스페이스)와 토큰 예산(게이트웨이)을 같은 테넌트 단위로 맞춰 두어야 showback 대시보드가 하나로 합쳐집니다.
+
 > GPU 분할 모드(MIG, 타임슬라이싱, 하이브리드)의 정식 명칭과 지원 범위, 임시 스토리지 쿼터 집계, showback/차지백 기능 여부는 릴리스에 따라 다르므로 적용 전 공식 문서로 재확인하시기 바랍니다.
 
 관련: [⑤ 격리와 접근 통제](../../05-security/README.md) | [02 대(Scale) 블루프린트](02-reference-blueprints.md#24-대scale--regulated) | [3.1 토폴로지](03-compute-gpu-topology.md) | [06 결정 카탈로그](06-decision-forks.md)

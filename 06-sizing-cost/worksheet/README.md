@@ -91,7 +91,7 @@
 
 [라이선스, 총GPU] ─▶ TCO (가이드 07)
    라이선스 코어  = MAX(호스트코어, 소켓×최소수량) × 호스트수
-   NVAIE GPU    = 총GPU
+   NVAIE GPU    = 총GPU   (vGPU나 NIM을 쓰는 경우. DirectPath 전용 할당만 쓰면 0으로 본다, 07.2)
    비용         = 각 수량 × 견적 단가(노란 칸, A3)
 ```
 

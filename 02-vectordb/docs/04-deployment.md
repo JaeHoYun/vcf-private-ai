@@ -141,7 +141,7 @@ HNSW 인덱스가 메모리에 상주해야 최적 성능이 나오므로, 메�
 
 ## 4.7 PAIS 연결 (RAG용 벡터 DB 등록)
 
-PAIS의 Data Indexing & Retrieval은 pgvector가 설치된 외부 PostgreSQL에 연결해 임베딩을 저장과 검색합니다.
+PAIS의 Data Indexing & Retrieval은 pgvector가 설치된 외부 PostgreSQL에 연결해 임베딩을 저장하고 검색합니다.
 
 1. 프로비저닝한 PostgreSQL의 CA 인증서를 확보합니다.
    - DSM Admin UI → Databases → Postgres → Summary → View CA(PEM 다운로드), 또는 kubectl로 시크릿에서 추출

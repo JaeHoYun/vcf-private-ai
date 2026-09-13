@@ -85,7 +85,7 @@
 | vSAN / NSX | 분산 스토리지 / 네트워크 가상화 |
 | Harbor | 컨테이너와 모델 레지스트리(저장소) |
 | DSM (Data Services Manager) | DB 자동화(pgvector 등). VCF Advanced Service |
-| NVAIE (NVIDIA AI Enterprise) | NVIDIA의 GPU당 라이선스(드라이버와 NGC 컨테이너 사용) |
+| NVAIE (NVIDIA AI Enterprise) | NVIDIA의 GPU당 라이선스. vGPU로 GPU를 나눠 쓰거나 NIM, NGC 엔터프라이즈 컨테이너를 쓸 때 필요하고, GPU를 통째로 할당(DirectPath)하면 불필요 |
 | Artifact Mirroring Tool | 에어갭(망분리) 환경으로 아티팩트를 복제와 반입 |
 
 ### GPU 공유

@@ -22,7 +22,7 @@ TCO를 비교 가능하게 만들려면 먼저 "무엇을, 몇 년에 걸쳐" �
 
 TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다룹니다.
 
-1. 소프트웨어 라이선스/구독 — VCF 코어 구독(PAIF 포함), NVAIE(별도), DSM 사용 권한(entitlement)
+1. 소프트웨어 라이선스/구독 — VCF 코어 구독(PAIF 포함), NVAIE(vGPU나 NIM을 쓸 때 별도), DSM 사용 권한(entitlement)
 2. GPU 하드웨어 — CapEx 및 감가
 3. 서버, 스토리지, 네트워크 — GPU 외 인프라
 4. 운영비(OpEx) — 인력, 전력, 상면, 유지보수
@@ -38,7 +38,7 @@ TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다�
 | --- | --- | --- | --- |
 | VMware Private AI Foundation with NVIDIA(PAIF) | VCF 솔루션/코어 구독에 **포함** | VCF 코어 구독에 종속 | 별도 제품 구매가 아니라 VCF 구독 위에서 활성화됩니다. |
 | VCF 코어 구독 | Broadcom | **물리 코어당(per-core) 구독**, 코어 최소수량 적용 | 컴퓨트, 스토리지, 네트워크, 관리가 한 구독에 묶입니다. |
-| NVIDIA AI Enterprise(NVAIE) | **NVIDIA에서 별도 구매** | **GPU당(per-GPU)** 구독/영구 | ESX 호스트 드라이버 VIB, 게스트 OS 드라이버, NGC 컨테이너 이미지 사용에 필요합니다. |
+| NVIDIA AI Enterprise(NVAIE) | **NVIDIA에서 별도 구매** | **GPU당(per-GPU)** 구독/영구 | vGPU(ESX 호스트 vGPU Manager VIB, vGPU 게스트 드라이버)와 NIM, NGC 엔터프라이즈 컨테이너 사용에 필요합니다. GPU를 VM 하나에 통째로 할당(DirectPath)하고 오픈소스 추론 엔진만 쓰면 필요하지 않습니다. |
 | Data Services Manager(DSM) | VCF Advanced Service(**entitlement**) | VCF 구독에 종속 | VCF 구독자만 프로덕션 사용 가능. 일부 상위 서비스는 별도 조건일 수 있습니다(확인 필요). |
 
 근거: PAIF는 VCF 솔루션 라이선스로 제공되고 NVAIE 라이선스는 NVIDIA에서 별도 구매가 필요하다는 점([Broadcom TechDocs — NVIDIA DLS/CLS Design Considerations](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/1-0/private-ai-ready-infrastructure-for-vmware-cloud-foundation/detailed-design-for-private-ai-foundation-with-nvidia/nvidia-dls-cls-design-considerations.html)), VCF가 코어당 구독 모델이라는 점([Broadcom TechDocs — Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)), NVAIE가 GPU당 라이선스라는 점([NVIDIA AI Enterprise Licensing Guide](https://docs.nvidia.com/ai-enterprise/planning-resource/licensing-guide/latest/licensing.html)), DSM이 VCF Advanced Service라는 점([VMware DSM 9.1 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/vmware-data-services-manager-9-1-automating-the-modern-databases-that-drive-ai-and-private-cloud/)).
@@ -53,7 +53,7 @@ TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다�
 
 산정 주의(빈 단가와 규칙값을 견적으로 채우는 방법은 [부록 A3 견적 요청 체크리스트](../appendix/A3-rfq-quote-checklist.md) 참조):
 - **코어 최소수량(core minimum):** 코어 수가 적은 CPU에서도 물리 코어당 최소 수량이 적용되어 "장부상 코어"가 늘 수 있습니다. 사이징의 물리 코어 수를 그대로 쓰지 말고 최소수량 규칙을 반영합니다(실제 최소수량 값은 [부록 A3.1](../appendix/A3-rfq-quote-checklist.md#a31-소프트웨어-라이선스-견적-broadcom--nvidia)로 견적 확인)([Broadcom TechDocs — Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)).
-- **NVAIE는 설치된 모든 GPU 기준:** 호스트에 설치된 모든 GPU에 라이선스가 필요합니다. vGPU 분할을 하더라도 물리 GPU 수가 기준입니다([NVIDIA AI Enterprise Licensing Guide](https://docs.nvidia.com/ai-enterprise/planning-resource/licensing-guide/latest/licensing.html)).
+- **NVAIE가 필요한 경우와 아닌 경우:** GPU를 vGPU로 나눠 쓰거나 NIM 같은 NVAIE 소프트웨어를 쓰면 NVAIE가 필요하고, 이때는 그 서버에 설치된 모든 GPU가 라이선스 대상입니다. vGPU로 몇 조각을 내든 물리 GPU 수가 기준입니다([NVIDIA AI Enterprise Licensing Guide](https://docs.nvidia.com/ai-enterprise/planning-resource/licensing-guide/latest/licensing.html)). 반대로 GPU를 VM이나 쿠버네티스 노드 하나에 통째로 할당(DirectPath)하고 vLLM 같은 오픈소스 추론 엔진만 쓰면, PAIF 9.1부터 NVAIE 없이 운영할 수 있습니다([PAIF 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)). 할당 방식별로 어떤 소프트웨어에 접근할 수 있는지는 [Primer 04 4.3절](../../00-foundations/docs/04-ecosystem-101.md)에 정리돼 있습니다. 따라서 NVAIE 수량은 "총 GPU 수"가 아니라 "vGPU나 NIM을 쓰는 서버의 GPU 수"로 산정합니다.
 - **NVAIE 지원 등급/기간:** 구독, 소비형, 영구(영구는 5년 지원 서비스 필요) 중 무엇인지에 따라 연 환산이 달라집니다(확인 필요).
 - **이중 계상 금지:** PAIF는 VCF 구독에 포함이므로 별도 제품 비용으로 또 더하지 않습니다.
 
@@ -118,7 +118,7 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 | 비교 항목 | 온프레미스 PAIF | 퍼블릭 GPU 클라우드 |
 | --- | --- | --- |
 | 과금 구조 | CapEx + 구독(고정에 가까움) | 사용량 기반(가변, 시간당/토큰당) |
-| GPU 라이선스 | NVAIE per-GPU 별도 | 인스턴스 요금에 포함되는 경우 많음 |
+| GPU 라이선스 | vGPU나 NIM을 쓰면 NVAIE per-GPU 별도(DirectPath 전용 할당과 오픈소스 스택이면 불필요) | 인스턴스 요금에 포함되는 경우 많음 |
 | 사용률 민감도 | 낮은 사용률에서 단위비용 상승 | 켠 만큼 과금(유휴 시 끄면 절감) |
 | 데이터 이그레스 | 사내 트래픽 | 외부 전송 비용 발생 가능 |
 | 데이터 주권/규제 | 사내 통제(에어갭 가능, DLS) | 위치와 통제 정책 확인 필요 |
@@ -137,11 +137,12 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 
 | 항목 | 발생 | 근거 |
 |---|---|---|
-| NVAIE 라이선스 | 설치된 물리 GPU 전수(vGPU 분할과 무관) | 7.2 |
+| NVAIE 라이선스 | vGPU로 나눠 쓰거나 NIM을 쓰는 서버의 물리 GPU 전수. DirectPath 전용 할당과 오픈소스 스택만 쓰면 발생하지 않음 | 7.2 |
 | 전력과 냉각 | GPU 소비전력 × PUE | 7.5 |
 | 운영비 | 플랫폼과 운영 FTE | 7.5 |
 
-- "노는 GPU니 공짜"는 부정확합니다. 켜는 즉시 per-GPU 라이선스가 붙으므로, **활용도를 끌어올려 가치를 내야 이 한계비용(특히 per-GPU 라이선스)이 정당화됩니다**.
+- "노는 GPU니 공짜"는 부정확합니다. 전용 할당으로 라이선스를 피하더라도 전력과 운영비는 켜는 즉시 붙고, 여러 팀이 나눠 쓰려고 vGPU를 도입하면 per-GPU 라이선스가 더해집니다. **활용도를 끌어올려 가치를 내야 이 한계비용이 정당화됩니다**.
+- 라이선스를 아끼는 전용 할당과 여러 팀이 나눠 쓰는 vGPU 사이의 선택은 비용 문제이자 활용률 문제입니다. 전용 할당은 GPU 1장이 VM 1개에 묶여 유휴가 생기기 쉽고, vGPU는 라이선스 비용 대신 공유 밀도를 얻습니다.
 - 사용률이 낮으면 단위비용이 오르는 구조(7.6, 7.7)가 동일하게 적용됩니다. 따라서 기보유 자원을 먼저 채우는 "증설 전 회수"([06](06-capacity-planning.md) 6.2절)가 신규 구매보다 한계비용 측면에서 유리한 경우가 많습니다.
 - 전 과정 예제의 한계비용 표는 [09](09-reverse-sizing-scenario.md) 9.5절에 있습니다.
 
@@ -181,7 +182,7 @@ GPU 환경에서의 귀속은 GPU 점유(전용 vs vGPU 분할), 토큰 사용�
 | 검증 대상 | 실측 소스 | 방법 | 합격 기준(예시) |
 | --- | --- | --- | --- |
 | 라이선스 코어 수 | Broadcom 구독 명세서 | 워크시트의 코어 수(최소수량 반영) vs 청구 코어 수 | 일치(차이 시 최소수량 규칙 재확인) |
-| NVAIE GPU 라이선스 | NVIDIA 라이선싱 포털, NLS(NVIDIA License System, DLS/CLS) 사용 현황 | 설치 GPU 수 vs 라이선스 소비 수 | 설치 GPU 전수 라이선스 |
+| NVAIE GPU 라이선스 | NVIDIA 라이선싱 포털, NLS(NVIDIA License System, DLS/CLS) 사용 현황 | NVAIE 대상 서버(vGPU나 NIM 사용)의 설치 GPU 수 vs 라이선스 소비 수 | 대상 서버의 GPU 전수 라이선스 |
 | 하드웨어 감가 | 자산 대장 | 상각연수와 잔존가치 가정 vs 회계 정책 | 정책과 일치 |
 | 전력 실효비 | PDU/시설 계측, 전력 청구서 | 추정 kW × PUE vs 실측 소비량 | 추정-실측 오차 허용범위 내 |
 | 스토리지 효율 | vSAN 용량 리포트 | 가정한 압축과 중복제거율 vs 실측 절감률 | 가정이 실측보다 보수적 |

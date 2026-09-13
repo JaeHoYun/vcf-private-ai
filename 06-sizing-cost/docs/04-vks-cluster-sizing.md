@@ -29,6 +29,19 @@ VCF 9.1은 native Kubernetes HA의 현대적 표준으로 **3-Zone 배포 모델
 
 각 Zone은 vSAN, HA 정족수 유지를 위해 최소 3호스트가 필요합니다(출처: [VCF Blog — Architecting VKS on VCF](https://blogs.vmware.com/cloud-foundation/2026/06/09/architecting-vmware-vsphere-kubernetes-service-on-vcf-top-webinar-and-field-questions-answered/)).
 
+### 클러스터 배치 유형 — 통합형, 분리형, 다중 영역형
+
+컨트롤 플레인과 일반 워커를 어느 물리 호스트에 두느냐에 따라 물리 호스트 수와 라이선스 코어 수가 달라집니다. 공식 문서에는 컨트롤 플레인이나 일반 워커를 GPU가 없는 별도 호스트에 두라는 요건이나 권장이 없고, VCF 9.1의 PAIS 소비 블루프린트는 오히려 관리와 워크로드를 한 영역, 한 클러스터에 결합한 구성을 전제로 합니다([PAIS 소비 블루프린트](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/application-modernization/private-ai-services-blueprint(1).html)).
+
+| 유형 | 구성 | 최소 물리 호스트(GPU 워크로드 도메인 기준) | 맞는 경우 |
+|---|---|---|---|
+| 통합형(기본) | GPU 호스트 클러스터 하나(3대 이상)에 컨트롤 플레인, 일반 워커, GPU 워커를 함께 배치. 단일 영역 | GPU 호스트 3대 + 관리 구성 | PoC와 초기 운영, PAIS 블루프린트를 그대로 따를 때 |
+| 분리형 | 비GPU 클러스터(컨트롤 플레인, 일반 워커)와 GPU 클러스터(GPU 워커 풀)를 나눔 | GPU 호스트 3대 + 비GPU 클러스터 호스트 + 관리 구성 | GPU 호스트 유지보수와 장애가 제어부에 주는 영향을 줄이고 싶을 때, GPU 서버의 CPU와 메모리를 GPU VM에 온전히 쓰고 싶을 때, 일반 워크로드 비중이 클 때 |
+| 다중 영역형 | 클러스터 3개를 vSphere Zone 3개로 두고 컨트롤 플레인을 분산 | 클러스터 3개분 호스트 | 클러스터 단위 장애까지 견뎌야 하는 운영 |
+
+- PAIS는 단일 vSphere Zone에 접근하는 네임스페이스에서 활성화하도록 권장되며, 여러 영역에 걸쳐도 핵심 구성 요소가 단일 인스턴스라 영역 간 내결함성이 없습니다([PAIS 설계 요소](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/application-modernization/private-ai-services-blueprint(1)/design-elements-for-the-private-ai-services-blueprint.html)). 위 표의 3-Zone 권장은 VKS 클러스터 일반의 HA 기준이므로, PAIS를 쓸 때는 다중 영역형의 이점이 제한된다는 점을 함께 봅니다.
+- 분리형에서는 PAIF 요건 문구(워크로드 도메인 초기 클러스터에 GPU 탑재 호스트 3대)와 클러스터 생성 순서가 맞는지 설계 단계에서 확인합니다.
+
 ---
 
 ## 4.2 GPU 노드 풀 분리 (가장 중요한 설계 결정)
@@ -60,6 +73,26 @@ GPU 노드 풀의 노드 사양(노드당 GPU 수, vCPU, RAM)은 VM Class로 결
 | 빈 패킹(bin-packing) | 큰 작업에 유리 | 작은 추론 작업 다수에 유리 |
 
 **일반 지침**: 멀티 GPU 학습(분산 트레이닝)은 노드 내 GPU 다수 + 고속 인터커넥트가 유리하므로 few-large 쪽으로, 단일 GPU 추론(서빙)이 다수라면 활용도와 세밀한 스케일을 위해 many-small 쪽으로 기우는 것이 보통입니다. 다만 호스트당 물리 GPU 장착 수와 VM Class에서 패스스루/vGPU로 노출 가능한 GPU 수에 제약이 있으므로, 물리 서버 사양과 함께 결정해야 합니다. 호스트당 GPU 슬롯 수와 VM Class 정의는 환경마다 다르므로 도입 전 실제 환경에서 확인하시기 바랍니다. 고정 GPU 적재와 패킹 관점의 역산은 [02 2.9절 고정 GPU 적재와 패킹](02-gpu-sizing.md#29-고정-gpu-적재와-패킹-공급-제약)과 [09 역방향 사이징 시나리오](09-reverse-sizing-scenario.md)를 참조하세요.
+
+### 서비스 유형별 노드 구성
+
+"노드 하나에 GPU 몇 장"은 서비스 유형과 GPU 할당 방식으로 정해지며, 한 가지 규칙으로 통일할 수 없습니다. 아래 유형은 Broadcom VCF 9.1 설계 문서의 컴퓨트 모델([vGPU](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/vgpu-compute-model.html), [DirectPath](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/direct-path-io-gpus-compute-model.html))을 서비스 기준으로 묶은 것입니다.
+
+| 유형 | 대상 서비스 | 노드(VM)당 GPU | 할당 방식 | 노드 풀 기준 |
+|---|---|---|---|---|
+| N1 소형 모델 다수 | GPU 1장에 들어가는 모델 여러 개, 부서별 엔드포인트 | 1장 이하(분할) 또는 1장 | 시분할 vGPU(공유 밀도, vMotion) 또는 MIG 기반 vGPU(격리와 일관 성능, VM당 1개). 분할 없이 전용이면 DirectPath | 같은 GPU와 프로필의 VM Class로 풀 구성. 복제본 2 이상이 서로 다른 워커에 가도록 워커 2개 이상 |
+| N2 대형 모델 | 가중치와 KV 캐시가 GPU 1장을 넘는 모델 | 2, 4, 8장 | 프레임버퍼 전체를 할당한 vGPU 여러 개 또는 DirectPath. GPU 간 NVLink나 NVSwitch 필요 | 멀티 GPU 전용 풀. 복제본 2면 GPU 수도 2배 |
+| N3 RAG 보조 | 임베딩, 리랭커, 문서 인덱싱 | 0(CPU 임베딩)–1장 이하 | 리랭커는 MIG나 시분할로 공유. 벡터 DB는 워커가 아니라 DSM이 관리하는 PostgreSQL | GPU 없는 풀 또는 소형 분할 풀 |
+| N4 배치 추론과 파인튜닝 | 대량 오프라인 추론, 미세조정, 여러 호스트에 걸친 학습 | 작업 규모에 따라 1–8장 | DirectPath 또는 멀티 vGPU. 호스트 간 학습은 GPUDirect RDMA | 서빙 풀과 분리해 대화형 지연을 보호 |
+| N5 개발 환경(DLVM) | 데이터 과학자 실험 | 1장 이하(분할) 또는 1장 | 시분할 vGPU 또는 DirectPath | 쿠버네티스 노드 풀이 아닌 VM 단위 |
+| N6 공유 모델 호출 앱 | 다른 PAIS 인스턴스의 공유 모델만 호출하는 앱과 에이전트 | 0 | 없음 | GPU 없는 네임스페이스(PAIS 3.0 모델 공유, [02 2.5절](02-gpu-sizing.md#25-처리량과-지연-목표--gpu-수-replica-환산)) |
+
+판단 순서:
+
+1. 모델의 가중치와 KV 캐시가 GPU 1장 메모리에 들어가는가? 들어가면 N1, 넘으면 N2입니다(점검값은 가중치의 약 2.5배, [02 2.1절](02-gpu-sizing.md#21-vram-산정의-3대-구성요소)).
+2. N2라면 서버에 NVLink나 NVSwitch가 있는가? 없으면(예: PCIe GPU 서버) GPU를 묶어 대형 모델을 서빙하기 불리하므로 양자화나 한 단계 작은 모델 유형을 먼저 검토합니다.
+3. 처리량 확장은 복제본부터 늘립니다. Broadcom 설계는 가능한 경우 텐서 병렬보다 독립 복제본(데이터 병렬)을 권장합니다([가속기 설계 PAIF-ACC-RCMD-007](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/accelerator-detailed-design.html)).
+4. 격리와 일관 성능이 우선이면 MIG, 공유 밀도와 vMotion이 우선이면 시분할, 전용 성능이나 NVAIE 없이 시작하는 것이 우선이면 DirectPath를 고릅니다. MIG와 시분할 vGPU는 NVAIE가 필요합니다([07 7.2절](07-tco-cost-model.md#72-소프트웨어-라이선스구독-비용)).
 
 ### GPU Operator 데몬셋 오버헤드
 

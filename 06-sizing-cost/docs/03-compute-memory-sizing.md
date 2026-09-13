@@ -17,6 +17,7 @@ GPU가 추론을 수행하더라도, GPU를 굶기지 않으려면(GPU starvatio
 
 | 구분 | GPU당 권장(어림) | 근거와 비고 |
 | --- | --- | --- |
+| 출발값(공식 설계 권장) | vCPU 4–8개 / GPU | Broadcom VCF 9.1 설계 문서의 권장. 고정 비율이 아니라 출발값이며 CPU 사용률을 관측해 실제 병목에 따라 조정([가속기 설계 PAIF-ACC-RCMD-011](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/accelerator-detailed-design.html)) |
 | 추론 전용(서빙) 하한 | 물리 코어 3–4개 / GPU | d2l.ai는 GPU 2장에 4–6코어급 CPU를 권장하며 코어 수보다 단일 스레드 클럭을 우선합니다([d2l.ai, Selecting Servers and GPUs](https://d2l.ai/chapter_appendix-tools-for-deep-learning/selecting-servers-gpus.html)). 구체 비율(예: GPU당 3코어)은 환경별 상이 — 확인 필요 |
 | 에이전트와 RAG 혼합 | 6–8 vCPU / GPU 이상 | 전처리, 툴 호출, 임베딩이 CPU에 얹히면 상향. 실측 필요([Spheron, CPU-to-GPU Ratio](https://www.spheron.network/blog/cpu-to-gpu-ratio-agentic-ai-inference/)) |
 | 데이터 로더 워커 | 4–8 워커 / GPU | PyTorch DataLoader 전형값([AWS, Gluon data loader workers](https://aws.amazon.com/blogs/machine-learning/maximize-training-performance-with-gluon-data-loader-workers/)) |
@@ -30,6 +31,8 @@ GPU가 추론을 수행하더라도, GPU를 굶기지 않으려면(GPU starvatio
 ### 호스트 메모리
 
 호스트 RAM은 "vGPU에 할당된 vRAM 합계"가 아니라, **VM 게스트 메모리 + 서빙 프레임워크 작업 메모리 + CPU 측 KV/멀티모달 캐시 + ESXi 오버헤드**로 산정합니다. vLLM은 CPU RAM 부족 시 멀티모달 캐시를 `mm_processor_cache_gb`(기본 4GiB), CPU 백엔드 KV 캐시를 `VLLM_CPU_KVCACHE_SPACE`(기본 4GiB)로 제어합니다([vLLM, Conserving Memory](https://docs.vllm.ai/en/latest/configuration/conserving_memory/)). 구체적 게스트 메모리 합계는 워크로드별 실측이 필요합니다.
+
+출발값으로는 Broadcom VCF 9.1 설계 문서의 권장을 씁니다. 추론용 **VM이나 컨테이너 RAM은 GPU 메모리 합의 1–2배**, **물리 서버 RAM은 GPU 메모리 합의 2–3배**(하이퍼바이저 오버헤드와 부수 워크로드 포함)입니다([가속기 설계 PAIF-ACC-RCMD-008, 009](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/accelerator-detailed-design.html)). 예를 들어 80GB GPU 8장 서버(GPU 메모리 합 640GB)는 물리 RAM 약 1.3–1.9TB가 출발점입니다. GPU 가속 VM은 메모리 전체 예약이 필요하므로(3.7절) 이 값이 곧 호스트 밀도의 상한이 됩니다.
 
 ---
 

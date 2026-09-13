@@ -2,7 +2,7 @@
 
 > 금융/유통/제조 산업별 VCF DSM + pgvector 적용 시나리오
 
-기준 버전: VCF 9.1 / DSM 9.1 / PAIS 2.1. 아키텍처 배경은 [03 아키텍처](03-vcf-dsm-architecture.md), 배포 절차는 [04 배포](04-deployment.md)를 참조하시기 바랍니다.
+기준 버전: VCF 9.1.1 / DSM 9.1.1 / PAIS 3.0. 상세는 [01 버전 호환 매트릭스](01-version-compatibility.md)를 참조하시기 바랍니다. 아키텍처 배경은 [03 아키텍처](03-vcf-dsm-architecture.md), 배포 절차는 [04 배포](04-deployment.md)를 참조하시기 바랍니다.
 
 ---
 
@@ -22,7 +22,7 @@
 
 데이터 레이어에서는 DSM으로 PostgreSQL + pgvector HA 클러스터(3노드)를 프로비저닝하고, Cross-Cluster HA로 서로 다른 vSphere Cluster에 노드를 분산 배치합니다. 자동 백업 + PITR(Point-In-Time Recovery, 특정 시점 복구)을 활성화하여 RPO(Recovery Point Objective, 목표 복구 시점)를 분 단위로 유지합니다.
 
-AI 레이어에서는 PAIS Model Runtime에 임베딩 모델(예: 다국어 모델 bge-m3 또는 한국어 대응 가능한 multilingual-e5-large)과 LLM(예: Llama 3.1 70B 또는 한국어 특화 모델)을 vLLM/Infinity 기반으로 배포합니다. PAIS Data Indexing & Retrieval로 규정 문서 소스(SharePoint, 파일 서버)를 연결하고, 청킹 → 임베딩 → pgvector 저장을 자동화합니다. 규정 변경 감지 시 자동 재인덱싱을 스케줄링합니다. 데이터 반출이 불가한 경우 PAIS 2.1의 폐쇄망(에어갭, Artifact Mirroring Tool) 구성으로 외부 연결 없이 운영합니다.
+AI 레이어에서는 PAIS Model Runtime에 임베딩 모델(예: 다국어 모델 bge-m3 또는 한국어 대응 가능한 multilingual-e5-large)과 LLM(예: Llama 3.1 70B 또는 한국어 특화 모델)을 vLLM/Infinity 기반으로 배포합니다. PAIS Data Indexing & Retrieval로 규정 문서 소스(SharePoint, 또는 파일 서버 문서를 S3 호환 스토리지로 스테이징)를 연결하고, 청킹 → 임베딩 → pgvector 저장을 자동화합니다(관리형 커넥터의 지원 범위는 [05 지원 소스와 커스텀 인제스트 경계](05-usage-rag.md)). 규정 변경 감지 시 자동 재인덱싱을 스케줄링합니다. 데이터 반출이 불가한 경우 PAIS의 폐쇄망(에어갭, Artifact Mirroring Tool) 구성으로 외부 연결 없이 운영합니다.
 
 애플리케이션 레이어에서는 PAIS Agent Builder에서 "규정 검색 에이전트"를 구성하고, 기존 인트라넷 포털에 OpenAI 호환 API로 연동합니다.
 
@@ -72,7 +72,7 @@ AI 레이어에서는 PAIS Model Runtime에 임베딩 모델(예: 다국어 모�
 
 이상 탐지는 정상 운전 상태의 센서 패턴을 벡터로 학습하여 pgvector에 저장하고, 실시간 센서 데이터를 벡터화하여 정상 패턴과의 거리를 측정하여, 임계값 이상 이탈 시 이상 알림을 발생시킵니다.
 
-두 워크로드가 같은 DSM PostgreSQL + pgvector 인스턴스에서 동작하되, 스키마와 인덱스로 분리하여 관리합니다. 제조 환경 특성상 데이터가 외부로 나갈 수 없으므로 온프레미스 VCF 구성이 필수적이며, 방산 등 보안 등급이 높은 환경은 PAIS 2.1 폐쇄망(Artifact Mirroring Tool) 구성을 적용합니다.
+두 워크로드가 같은 DSM PostgreSQL + pgvector 인스턴스에서 동작하되, 스키마와 인덱스로 분리하여 관리합니다. 제조 환경 특성상 데이터가 외부로 나갈 수 없으므로 온프레미스 VCF 구성이 필수적이며, 방산 등 보안 등급이 높은 환경은 PAIS 폐쇄망(Artifact Mirroring Tool) 구성을 적용합니다.
 
 ---
 [← 이전: 06 운영 (Day-2)](06-operations.md) | [목차](../README.md) | [다음: 08 PoC 가이드 →](08-poc-guide.md)

@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 경로와 필드는 [공식 PAIS API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) 기준입니다.
 
-PAIS 2.1은 에이전트가 **외부 데이터와 도구(DB, ITSM(IT 서비스 관리 시스템), 메신저 등)** 를 표준 인터페이스(MCP)로 연동하도록 지원합니다. 이 문서는 그 연동을 **API로 등록, 승인, 통제**하는 방법을 다룹니다. MCP의 개념과 거버넌스 원칙은 형제 가이드 [05](../../01-infra/docs/05-agents-mcp.md)에 자세하며, 여기서는 API에 집중합니다.
+PAIS는 에이전트가 **외부 데이터와 도구(DB, ITSM(IT 서비스 관리 시스템), 메신저 등)** 를 표준 인터페이스(MCP)로 연동하도록 지원합니다(2.1부터). 이 문서는 그 연동을 **API로 등록, 승인, 통제**하는 방법을 다룹니다. MCP의 개념과 거버넌스 원칙은 [① 05](../../01-infra/docs/05-agents-mcp.md)에 자세하며, 여기서는 API에 집중합니다.
 
 ---
 
@@ -20,7 +20,7 @@ PAIS 2.1은 에이전트가 **외부 데이터와 도구(DB, ITSM(IT 서비스 �
  (조회)    (티켓)       (조회)      (조회/전송)
 ```
 
-> 연결 가능한 시스템의 정확한 목록, 커넥터, 버전은 적용 직전 [PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)에서 확인하시기 바랍니다. (여기서는 특정 제품을 단정하지 않고 분류로 설명합니다.)
+> 연결 가능한 시스템의 정확한 목록, 커넥터, 버전은 적용 직전 [PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)에서 확인하시기 바랍니다. (여기서는 특정 제품을 단정하지 않고 분류로 설명합니다.)
 
 ---
 
@@ -47,7 +47,7 @@ PAIS 2.1은 에이전트가 **외부 데이터와 도구(DB, ITSM(IT 서비스 �
 ④ 에이전트에 승인된 도구 연결  (에이전트 생성/수정 시 tools[]에 추가 → 04)
 ```
 
-> **승인(approval)이 별도 단계**라는 점이 핵심입니다. 서버를 등록한다고 모든 도구가 자동으로 에이전트에 노출되지 않습니다. `is_approved`를 명시적으로 켜야 사용 가능합니다 — 이것이 거버넌스의 1차 게이트입니다.
+> **승인(approval)이 별도 단계**라는 점이 핵심입니다. 서버를 등록한다고 모든 도구가 자동으로 에이전트에 노출되지 않습니다. `is_approved`를 명시적으로 켜야 사용 가능합니다 — 이것이 거버넌스의 1차 게이트입니다. UI 경로와 전송 요건(Streamable HTTP, SSE 폐기 예고)은 [앱 가이드 09 9.5절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/09-mcp-tools.md)을 참조하십시오.
 
 ---
 
@@ -86,6 +86,8 @@ PAIS 2.1은 에이전트가 **외부 데이터와 도구(DB, ITSM(IT 서비스 �
 ---
 
 ## 6.5 에이전트 도구 설계 권장 사항
+
+앱 측 설계(승인 운영, 보안 경계, 사내 MCP 서버 호스팅)는 [앱 가이드 09](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/09-mcp-tools.md)와 [앱 가이드 03 3.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/03-design-patterns.md)이 기준이며, 여기서는 API 관점의 요점만 둡니다.
 
 1. **읽기 우선, 쓰기 신중** — 부수효과 도구는 승인 게이트와 시험 실행(dry-run)으로 시작.
 2. **도구 최소화** — 한 에이전트에 도구가 너무 많으면 LLM의 도구 선택 정확도가 떨어집니다. 역할별로 분리.

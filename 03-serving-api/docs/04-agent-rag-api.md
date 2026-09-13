@@ -63,7 +63,7 @@ UI로 구성할 수도 있지만, GitOps, 자동화를 위해 API로 구성하�
 | 검색 | `POST .../indexes/{index-id}/search` (`text`, `top_k`, `similarity_cutoff`) |
 | 응답 | `chunks[]`(`text`, `score`, `document_id`, `origin_name`, `metadata`) |
 
-> `search`는 **Agent를 거치지 않고 검색 품질만 따로 점검**할 때 매우 유용합니다. 답이 이상하면 "검색이 문제인지(잘못된 청크가 올라옴) 생성이 문제인지(좋은 청크인데 답이 틀림)"를 이 엔드포인트로 분리 진단할 수 있습니다. 벡터 인덱스와 청크 튜닝의 상세는 형제 가이드 [vectorDB 편](../../02-vectordb/README.md) 참조.
+> `search`는 **Agent를 거치지 않고 검색 품질만 따로 점검**할 때 매우 유용합니다. 답이 이상하면 "검색이 문제인지(잘못된 청크가 올라옴) 생성이 문제인지(좋은 청크인데 답이 틀림)"를 이 엔드포인트로 분리 진단할 수 있습니다. 벡터 인덱스와 청크 튜닝의 상세는 [② vectorDB 가이드](../../02-vectordb/README.md) 참조.
 
 ---
 
@@ -170,7 +170,7 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents/hr-assista
 | 단순 요약과 분류 등 RAG 불필요 | Model Endpoint API |
 | 임베딩만 필요 | `embeddings` 엔드포인트 |
 
-> 패턴 선택의 더 넓은 맥락(관리형 엔드투엔드 vs 커스텀 RAG)은 형제 가이드 [04](../../01-infra/docs/04-dev-scenarios.md)를 참조하세요. 본 가이드는 그중 **API 호출 계층**을 구체화합니다.
+> 패턴 선택의 더 넓은 맥락(관리형 엔드투엔드 vs 커스텀 RAG)은 [① 04 4.2절](../../01-infra/docs/04-dev-scenarios.md)을 참조하세요. 본 가이드는 그중 **API 호출 계층**을 구체화합니다.
 
 ---
 

@@ -25,7 +25,7 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 | **Private AI Services (PAIS)** | **3.0** | 공유 모델 호스팅, 원격 클라우드 모델, API 토큰, OpenAI 호환 API 개선 추가. 2.1의 UI 셀프서비스, MCP, Artifact Mirroring Tool(아티팩트 미러링 도구, 에어갭 아티팩트 반입)은 유지. non-chat completions는 deprecated |
 | Private AI Services API | OpenAI 호환 (`/compatibility/openai/v1`) | [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) |
 
-> **추론 엔진 버전(vLLM, Infinity, llama.cpp 등)** 은 형제 가이드의 버전 단일 기준 문서를 따릅니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 본 가이드는 **API 계층**에 집중하며, 엔진 버전은 별도로 단정하지 않고 그 표를 기준선으로 삼습니다. 엔진 버전은 릴리스마다 변동되므로 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다.
+> **추론 엔진 버전(vLLM, Infinity, llama.cpp 등)** 은 ① 인프라 가이드의 버전 단일 기준 문서를 따릅니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 본 가이드는 **API 계층**에 집중하며, 엔진 버전은 별도로 단정하지 않고 그 표를 기준선으로 삼습니다. 엔진 버전은 릴리스마다 변동되므로 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다.
 
 ---
 
@@ -70,7 +70,7 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 | **Agent** | Model Endpoint + Knowledge Base(+MCP 도구)를 묶어 RAG, 세션까지 캡슐화한 API |
 | **API Gateway** | Model Runtime의 진입점 — 인증, 인가, 로드밸런싱 담당 |
 | **OpenAI 호환** | `/compatibility/openai/v1` 경로로 OpenAI SDK, 클라이언트를 그대로 사용 가능 |
-| **MCP** | Model Context Protocol — 에이전트가 외부 데이터와 도구를 표준으로 연동 (PAIS 2.1) |
+| **MCP** | Model Context Protocol — 에이전트가 외부 데이터와 도구를 표준으로 연동 (PAIS 2.1부터) |
 
 ---
 

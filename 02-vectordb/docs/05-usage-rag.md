@@ -2,7 +2,7 @@
 
 > pgvector 사용법과 PAIS 기반 RAG 파이프라인 구성
 
-기준 버전: DSM 9.1(pgvector 0.8.0 번들) / PAIS 2.1. pgvector 심층 개념은 02 기초 문서를 참조합니다.
+기준 버전: VCF 9.1.1 / DSM 9.1.1 / PAIS 3.0. 상세는 [01 버전 호환 매트릭스](01-version-compatibility.md)를 참조하시기 바랍니다. pgvector 심층 개념은 02 기초 문서를 참조합니다.
 
 ---
 
@@ -120,7 +120,7 @@ PAIS는 모델 서빙(Model Runtime), 지식 기반 구축(Data Indexing & Retri
 ### Phase 1: 지식 기반 구축 (오프라인, 주기적)
 
 1. Data Indexing & Retrieval에서 데이터 소스(Google Drive, Confluence, SharePoint, S3) 연결
-2. 문서 청킹 (500-1,000 토큰 권장, 구조에 따라 조정)
+2. 문서 청킹 (500–1,000 토큰 권장, 구조에 따라 조정)
 3. Model Runtime의 임베딩 모델로 각 chunk 벡터화
 4. DSM이 관리하는 PostgreSQL + pgvector에 원문, 메타데이터, 벡터 저장
 5. 갱신 정책 설정(스케줄/온디맨드 재인덱싱)
@@ -167,9 +167,9 @@ PAIS Data Indexing & Retrieval이 관리형(네이티브)으로 처리하는 범
 
 출처: [Add a Data Source for a Knowledge Base](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-context-to-model-responses-by-using-knowledge-bases/add-a-data-source-for-a-knowledge-base.html); [Create a Knowledge Base with Linked Data Sources](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-context-to-model-responses-by-using-knowledge-bases/create-a-knowledge-base-with-linked-data-sources.html); [Running Completion or Embedding Models by Using Model Endpoints](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/deploying-model-endpoints.html); [PAIS Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html).
 
----
-
 **PAIS 3.0에서 더해진 것** — 검색 결과에 인용 노드 ID(citation node ID)가 붙어 어느 청크가 답의 근거였는지를 앱이 안정적으로 추적할 수 있고, 지식베이스와 인덱스를 복제해 실험용 사본을 만들 수 있으며, 문서 임베딩 진행과 품질 메트릭이 개선됐습니다. 데이터 소스 연결에 TLS 검증 설정도 생겼습니다. 임베딩 모델로 원격 클라우드 모델을 지정할 수도 있지만 그 경우 문서 본문 전체가 사외로 나가므로 [⑤ 05 5.6절](../../05-security/docs/05-data-governance.md)의 허용 목록 안에서만 씁니다.
+
+---
 
 ## 5.4 검색 품질 점검
 

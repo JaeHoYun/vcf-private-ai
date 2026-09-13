@@ -12,15 +12,17 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 
 > **VCF Private AI 가이드 시리즈 — ② 데이터(VectorDB)**, 7부작 중 한 편입니다. [전체 7개 보기 — 시리즈 허브](../README.md), 상위 전략 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)
 
-### 핵심 버전 호환 요약
+---
+
+## 핵심 버전 호환 요약
 
 도입 전 반드시 확인하는 정보입니다. 상세는 [docs/01-version-compatibility.md](docs/01-version-compatibility.md) 참조.
 
 | 컴포넌트 | 기준 | 비고 |
 |---|---|---|
-| VCF / DSM / PAIF / PAIS | 9.1 / 9.1 / 9.1 / 2.1 | 2026-05 GA |
-| PostgreSQL (DSM 9.1) | 17.7 – 12.22 | 12/13은 9.1.0이 지원 마지막 |
-| pgvector | 0.8.0 번들 / 0.8.2 커뮤니티 | 0.8.2는 CVE-2026-3172 수정 |
+| VCF / DSM / PAIF / PAIS | 9.1.1 / 9.1.1 / 9.1.1 / 3.0 | 9.1.1과 3.0은 2026-09 GA(9.1과 2.1은 2026-05) |
+| PostgreSQL (DSM 9.1.1) | 18.4, 17.10, 16.14, 15.18, 14.23 | 12와 13은 9.1.1에서 제거 |
+| pgvector | 0.8.0 (DSM 9.1 번들, 9.1.1 번들은 릴리스 노트 미기재) / 0.8.2 커뮤니티 | 0.8.2는 CVE-2026-3172 수정 |
 | PAIS 연동 검증 | PostgreSQL 16.8 + pgvector 0.8.0 | 공식 문서 기준 조합이며 도입 환경에서 검증 권장 |
 
 ---
@@ -63,9 +65,9 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 
 - Vector Embedding, 근사 최근접 이웃(ANN, Approximate Nearest Neighbor) 검색, HNSW/IVFFlat 인덱스의 동작 원리
 - pgvector 0.8.x 핵심 기능: Iterative Index Scan, halfvec, sparsevec
-- VCF DSM 9.1 기반 PostgreSQL + pgvector HA 클러스터 아키텍처
+- VCF DSM 9.1.x 기반 PostgreSQL + pgvector HA 클러스터 아키텍처
 - DSM 프로비저닝부터 HA, 백업/PITR, 스케일까지 Day-0/1/2 절차
-- VMware Private AI Services(PAIS) 2.1과 pgvector의 RAG 파이프라인 통합
+- VMware Private AI Services(PAIS)와 pgvector의 RAG 파이프라인 통합
 - 모니터링, 트러블슈팅, 재임베딩, 보안 하드닝, 폐쇄망(Artifact Mirroring Tool) 운영
 - 금융 규정 검색, 유통 상품 추천, 제조 기술 문서 검색 시나리오
 - 4주 PoC 로드맵 및 성공 기준

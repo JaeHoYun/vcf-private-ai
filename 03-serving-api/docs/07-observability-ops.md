@@ -24,7 +24,7 @@ PAIS 3.0부터는 원격 클라우드 모델([02 2.5.1절](02-serving-api-archit
 
 ## 7.2 LLM 트레이싱 (OpenTelemetry)
 
-PAIS 2.1은 **OpenTelemetry(OTel) 기반 LLM 트레이싱**을 제공합니다. 에이전트 호출은 검색, 도구 호출, 추론 등 여러 단계를 거치므로, 단계별 추적이 디버깅, 성능, 비용 분석의 핵심입니다.
+PAIS는 **OpenTelemetry(OTel) 기반 LLM 트레이싱**을 제공합니다(2.1부터). 에이전트 호출은 검색, 도구 호출, 추론 등 여러 단계를 거치므로, 단계별 추적이 디버깅, 성능, 비용 분석의 핵심입니다.
 
 | 추적 대상 | 확인 가능한 것 |
 |----------|--------------|
@@ -41,7 +41,7 @@ PAIS 3.0은 트레이싱 범위를 "LLM 상호작용 전체"로 넓혔다고 밝
 
 ## 7.3 Grafana 기반 PAIS 관측성 — 모델 health, quality, behavior
 
-PAIS 2.1은 OTel 트레이싱과 더불어 **관측성 프레임워크로 AI 메트릭 대시보드**를 제공합니다. 에이전트에 사용되는 모델의 **health(가용성), quality(품질), behavior(동작)** 을 추적하도록 설계되어 있으며, 메트릭 시각화는 **Grafana**에 띄우는 것을 전제로 합니다. (VCF 9.1 블로그: "These AI Metrics dashboards require enterprises to deploy Grafana".)
+PAIS는 OTel 트레이싱과 더불어 **관측성 프레임워크로 AI 메트릭 대시보드**를 제공합니다(2.1부터). 에이전트에 사용되는 모델의 **health(가용성), quality(품질), behavior(동작)** 을 추적하도록 설계되어 있으며, 메트릭 시각화는 **Grafana**에 띄우는 것을 전제로 합니다. (VCF 9.1 블로그: "These AI Metrics dashboards require enterprises to deploy Grafana".)
 
 | 관측 축 | 무엇을 보는가 | 운영 판단 |
 |---------|--------------|----------|
@@ -108,7 +108,7 @@ AI 서비스 레벨 (PAIS)
 | 임베딩과 경량 추론 | 중간 | CPU 추론 엔진 활용 가능(Infinity, llama.cpp). 9.1에선 completion도 CPU(llama.cpp)로 가능 → 경량, PoC는 GPU 절약 |
 | 스토리지 | 작음 | Harbor 모델 이미지와 벡터 데이터 |
 
-> **유휴 복제본도 GPU를 점유하면 비용입니다.** 단, 복제본을 0으로 내리면 첫 응답이 느려집니다(Cold Start). 첫 응답 지연(TTFT)이 중요한 사용자 대면 서비스는 **최소 복제본 ≥ 1**, 배치, 내부 작업은 더 공격적으로 축소하는 식으로 워크로드별로 다르게 잡으세요. 상세 스케일링과 HA/DR은 형제 가이드 [06](../../01-infra/docs/06-production.md) 참조.
+> **유휴 복제본도 GPU를 점유하면 비용입니다.** 단, 복제본을 0으로 내리면 첫 응답이 느려집니다(Cold Start). 첫 응답 지연(TTFT)이 중요한 사용자 대면 서비스는 **최소 복제본 ≥ 1**, 배치, 내부 작업은 더 공격적으로 축소하는 식으로 워크로드별로 다르게 잡으세요. 상세 스케일링과 HA/DR은 [① 06 6.2절, 6.3절, 6.5절](../../01-infra/docs/06-production.md) 참조.
 
 ---
 

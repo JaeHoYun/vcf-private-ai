@@ -210,7 +210,7 @@
 |---|---|
 | 유형 | 오픈소스 (PostgreSQL License) |
 | 인덱스 알고리즘 | HNSW, IVFFlat |
-| 최대 차원 | 16,000 (HNSW), 2,000 (IVFFlat) |
+| 최대 차원 | 저장 16,000 / 인덱싱 2,000(vector), 4,000(halfvec) |
 | 거리 메트릭 | L2, Cosine, Inner Product, L1, Hamming, Jaccard |
 | 주요 기능 | SQL 기반 벡터 + 관계형 통합 쿼리, ACID 트랜잭션, Iterative Index Scan (0.8.0+), halfvec/sparsevec/bit 타입, pgvectorscale 확장(StreamingDiskANN, Statistical Binary Quantization) |
 | 가격 | 완전 무료 (PostgreSQL + pgvector 모두 오픈소스) |
@@ -223,7 +223,7 @@
 1. **80%의 실제 워크로드에 충분**: 대부분의 엔터프라이즈 AI 워크로드는 수십억 벡터가 아닌 수백만–수천만 벡터 규모이며, 이 범위에서 pgvector(+pgvectorscale)는 전용 벡터 DB와 경쟁력 있는 성능을 보입니다.
 2. **TCO 절감 60–80%**: 별도 벡터 DB를 운영하면 DB 구독료 + 기존 관계형 DB(메타데이터 저장용) + 동기화 인프라 + 운영 인력이 필요합니다. pgvector는 이 모든 것을 단일 PostgreSQL 인스턴스로 해결합니다. 실제 마이그레이션 사례에서 연간 TCO 60–80% 절감이 보고되고 있습니다.
 3. **운영 전문성 재활용**: PostgreSQL DBA를 찾는 데는 며칠이면 충분하지만, Weaviate나 Milvus 전문가를 찾기는 극히 어렵습니다. 백업, 모니터링, 보안, HA 등 30년간 축적된 PostgreSQL 운영 패턴을 그대로 적용할 수 있습니다.
-4. **실제 마이그레이션 트렌드**: Instacart(2025년 5월)가 Elasticsearch에서 PostgreSQL + pgvector로 전환하여 스토리지/인덱싱 비용 80% 절감, zero-result 검색 6% 감소를 달성. Firecrawl은 Pinecone에서 pgvector로, Berri AI는 별도 벡터 DB에서 PostgreSQL(Supabase/pgvector)로 전환하여 비용 절감과 운영 통합을 실현했습니다.
+4. **실제 마이그레이션 트렌드**: 한 온라인 식료품 유통사(2025년 5월)가 Elasticsearch에서 PostgreSQL + pgvector로 전환하여 스토리지/인덱싱 비용 80% 절감, zero-result 검색 6% 감소를 달성. 한 웹 크롤링 API 스타트업은 Pinecone에서 pgvector로, 한 LLM 게이트웨이 오픈소스 프로젝트는 별도 벡터 DB에서 PostgreSQL(Supabase/pgvector)로 전환하여 비용 절감과 운영 통합을 실현했습니다.
 
 ---
 
@@ -255,7 +255,7 @@
 | **기반 DB** | PostgreSQL | Oracle DB | MongoDB | Redis | Elasticsearch |
 | **라이선스** | PostgreSQL (OSS) | 상용 | 상용 (Atlas) | OSS + 상용 | AGPLv3 / SSPL / ELv2 (트리플) |
 | **인덱스** | HNSW, IVFFlat | IVF, HNSW | HNSW | FLAT, HNSW, SVS-VAMANA | HNSW (Lucene) |
-| **최대 차원** | 16,000 | 65,535 | 8,192 | 제한 없음 | 4,096+ |
+| **최대 차원** | 저장 16,000 / 인덱싱 2,000(vector), 4,000(halfvec) | 65,535 | 8,192 | 제한 없음 | 4,096+ |
 | **SQL/쿼리** | 표준 SQL | 표준 SQL + PL/SQL | Aggregation Pipeline | FT.SEARCH | DSL + knn |
 | **ACID** | 완전 지원 | 완전 지원 | 도큐먼트 레벨 | 미지원 | 미지원 |
 | **Hybrid Search** | SQL WHERE + 벡터 | SQL WHERE + 벡터 | $vectorSearch filter | Tag/Numeric/Geo 필터 | knn + BM25 |
@@ -292,7 +292,7 @@
 |---|---|---|---|---|
 | **pgvector + pgvectorscale** | 471 | 낮음 | 기준점 | Tiger Data (2025.05) |
 | Qdrant | 41 | 보통 | pgvectorscale 대비 11.4x 낮은 QPS | Tiger Data (2025.05) |
-| Pinecone (s1) | 기준 | 기준 대비 28x 높음 | pgvectorscale 대비 75% 더 비쌈 | Tiger Data (2024) |
+| Pinecone (s1) | pgvectorscale 대비 16x 낮은 QPS | 기준 대비 28x 높음 | pgvectorscale 대비 약 4배 비쌈(pgvectorscale 기준 75% 저렴) | Tiger Data (2024) |
 
 > **벤치마크 출처에 대한 참고**: 위 벤치마크의 출처인 Tiger Data(구 Timescale)는 pgvectorscale의 개발사이자 PostgreSQL 에코시스템 기업입니다. 벤치마크 코드와 데이터셋은 공개되어 재현 가능하지만, 출처의 이해관계를 인지하고 해석할 필요가 있습니다. 반드시 실제 워크로드 기반으로 자체 벤치마크를 수행하여 검증해야 합니다.
 

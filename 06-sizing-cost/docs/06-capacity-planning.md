@@ -99,7 +99,7 @@ VM Class는 관리자가 사전에 vGPU 프로파일을 골라 구성하며, 선
 
 ## 6.4 쇼백, 차지백의 용량, 비용 입력값
 
-용량 데이터는 그 자체로 과금의 원천입니다. 누가 얼마나 썼는지(사용량)와 무엇을 점유했는지(예약과 쿼터)가 곧 쇼백(showback, 사용량 가시화)와 차지백(chargeback, 실제 비용 청구)의 입력값이 됩니다.
+쇼백과 차지백의 목적은 부서별 비용 배분에 그치지 않습니다. 비용을 보여 줘 활용률을 끌어올리거나, 팀과 서비스별로 자원을 목적에 맞게 나눠 쓰고 그 사용을 추적하는 데도 씁니다(07 7.7절). 어느 목적이든 용량 데이터는 그 자체로 과금의 원천입니다. 누가 얼마나 썼는지(사용량)와 무엇을 점유했는지(예약과 쿼터)가 곧 쇼백(showback, 사용량 가시화)와 차지백(chargeback, 실제 비용 청구)의 입력값이 됩니다.
 
 VCF Operations 9.1은 애플리케이션 단위 쇼백과 차지백을 제공하며, VKS(VMware vSphere Kubernetes Service) 비용 상세를 포함해 모던 워크로드의 빌링, 쇼백, 차지백 분석을 개선했습니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)). 차지백과 빌링의 기본 모델은 [VCF Cost and Capacity Management 문서](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/cost-and-capacity-management.html)를 참조하세요.
 
@@ -125,17 +125,31 @@ VCF Operations 9.1은 애플리케이션 단위 쇼백과 차지백을 제공하
 
 | 단계 | 기간(예시) | 용량 목표 | 핵심 측정값 | 용량 산정 기준 |
 | --- | --- | --- | --- | --- |
-| PoC | 약 4주 | 기술 검증 | 단일 모델 사용률과 VRAM | 최소 GPU(1–2)로 동작과 적합성 확인 |
+| PoC | 검증 범위에 따라 다름 | 기술 검증 | 모델 적합성, VRAM, 단일 모델 성능 | PoC 형태(6.5.1)에 따라 GPU 서버 1대부터 PAIF 최소 구성까지 |
 | 파일럿 | 1–3개월 | 실사용 부하 측정 | 동시 사용자, P95 지연, 쿼터 소진 | 실측 부하로 사용자당 자원 단가 도출 |
 | 프로덕션 | 상시 | SLO 보장과 확장 | 전체 트리거 지표(6.2) | 헤드룸 포함 확보 용량 + 증설 트리거 운영 |
 
 단계별 용량 운영 권고입니다.
 
-- **PoC(약 4주)**: 목표는 "되는지"이지 "얼마나 크게"가 아닙니다. 최소 GPU로 모델 적합성과 VRAM 소요를 측정하고, 이 수치를 파일럿 산정의 기준선으로 삼습니다. 4주 PoC 진행은 본 시리즈의 PoC 절차와 연계해 운영합니다.
+- **PoC**: 목표는 "되는지"이지 "얼마나 크게"가 아닙니다. 모델 적합성과 VRAM 소요를 측정하고, 이 수치를 파일럿 산정의 기준선으로 삼습니다. 기간은 검증 범위에 따라 달라 고정하지 않으며, 무엇을 검증할 수 있는지는 PoC 형태가 정합니다(6.5.1).
 - **파일럿**: 처음으로 실사용 부하가 들어옵니다. **사용자당과 요청당 자원 소요**를 실측해 "사용자 N명 = GPU M개" 같은 환산식을 만듭니다. 이 환산식이 프로덕션 확보 용량 산정의 핵심입니다. 동시에 쿼터 소진과 대기 큐를 관찰해 증설 트리거 임계를 보정합니다.
 - **프로덕션**: 헤드룸을 포함한 확보 용량으로 출발하고, 6.2의 증설 트리거를 상시 가동합니다. VCF Operations의 용량, 비용 인사이트와 라이트사이징, 리클레임 권고로 "증설 전 회수"를 우선합니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)). 신규 하드웨어는 NVIDIA Blackwell 계열(예: HGX B200) 등 신규 GPU 지원을 고려해 증설 세대를 계획합니다([PAIF with NVIDIA 9.1 가이드](https://techdocs.broadcom.com/content/dam/broadcom/techdocs/us/en/pdf/vmware/private-ai/private-ai-nvidia/vmware-private-ai-foundation-with-nvidia-9-1.pdf)).
 
 점진 확장의 원칙은 "한 단계의 실측값이 다음 단계의 산정 입력이 된다"입니다. 단계를 건너뛰면 프로덕션 확보 용량이 추정에 머물러 과소와 과대 산정 위험이 커집니다.
+
+### 6.5.1 PoC 형태 — 형태가 검증 범위를 정한다
+
+같은 "PoC"라도 어떤 장비 구성으로 하느냐에 따라 확인할 수 있는 것이 크게 다릅니다. PAIF 공식 요건은 워크로드 도메인 초기 클러스터에 **GPU 탑재 ESX 호스트 최소 3대**이며([PAIF 9.1 요건](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html)), 이보다 작은 PoC용 축소 구성에 대한 공식 안내는 없습니다. 따라서 PoC 목적을 정할 때 형태를 함께 정합니다.
+
+| 형태 | 구성 | 검증할 수 있는 것 | 검증할 수 없는 것 |
+|---|---|---|---|
+| (가) 베어메탈 GPU 서버 1대 | 가상화 없이 GPU 서버 1대(GPU 1–8장) | 모델 품질과 업무 적합성, 단일 서버 추론 성능(첫 토큰 시간, 초당 토큰), 모델이 GPU 메모리에 들어가는지 | PAIF, PAIS, VKS 기능 전부(Model Gallery, 모델 공유, 셀프서비스, GPU 공유, 멀티테넌시), 가상화 환경의 운영 방식 |
+| (나) 단일 GPU 호스트 가상화 | ESX 호스트 1대에 DLVM(Deep Learning VM)이나 GPU VM(vGPU 또는 DirectPath) | (가)의 항목에 더해 vGPU나 DirectPath 동작, 게스트 드라이버, 가상화 오버헤드 | PAIF 공식 지원 구성이 아니므로 PAIS 전체 기능, 모델 엔드포인트 복제본 분산, 호스트 장애 대응 |
+| (다) PAIF 최소 공식 구성 | GPU 탑재 ESX 호스트 3대 이상의 워크로드 도메인과 관리 구성 | PAIS 전체(Model Gallery, Model Runtime, 지식 베이스, Agent Builder), 모델 공유, VCF Automation 셀프서비스, 복제본 2 이상 분산, GPU 사용량 관측 | 다중 영역 고가용성, 대규모 분산 학습, 운영 규모의 테넌트 격리 |
+
+- (가)와 (나)는 모델과 성능 검증에 빠르지만, 그 결과만으로는 플랫폼 운영 방식(셀프서비스, 공유, 격리)을 판단할 수 없습니다. PAIF와 PAIS 자체를 평가하려면 (다)가 필요합니다.
+- (나)에서 GPU를 VM 하나에 통째로 할당(DirectPath)하면 PAIF 9.1부터 NVAIE 없이 시작할 수 있습니다(07 7.2절).
+- PAIS 공식 구성 예시는 관리와 워크로드를 한 클러스터에 두는 최소 구성을 전제로 합니다([VCF 9.1 PAIS 소비 블루프린트](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/application-modernization/private-ai-services-blueprint(1).html)).
 
 ---
 

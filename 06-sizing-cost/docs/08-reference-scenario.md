@@ -155,7 +155,7 @@ GPU Operator 데몬셋 오버헤드(노드당 상시 vCPU, RAM)는 노드 가용
 | DSM(Data Services Manager) | VCF 포함 권한(벡터DB용 pgvector) | (조건 확인) |
 | GPU 하드웨어 | 약 3 GPU ÷ 상각연수 | (견적) |
 | 서버, 스토리지, 네트워크 | 물리 호스트 약 6대(GPU 호스트 3 + 일반 호스트 3) + vSAN 약 0.6TB | (견적) |
-| OpEx | 운영 FTE, 전력(GPU 소비전력 × PUE), 상면 | (사이트 데이터) |
+| OpEx | 전력(GPU 소비전력 × PUE), 상면, 운영 FTE(선택, 국내는 보통 제외) | (사이트 데이터) |
 
 산정 함정 점검([07.2](07-tco-cost-model.md#72-소프트웨어-라이선스구독-비용)):
 

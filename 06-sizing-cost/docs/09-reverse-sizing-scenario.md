@@ -31,6 +31,8 @@
 | **M(기본 예제)** | **3 서버 × 8 GPU** | **24** | 부서 단위 도입분. 프로덕션 VKS 최소 요건 충족 |
 | L | 최대 20 서버 × 8 GPU | 160 | 사업부와 전사 규모. 다중 클러스터 설계 대상([04 4.5절](04-vks-cluster-sizing.md#45-스케일-한도와-단일-대형-vs-다중-클러스터-설계)) |
 
+GPU가 비싸 **서버당 GPU를 2–4장만 단 PCIe 서버**(예: RTX PRO 6000 Blackwell Server Edition, L40S)로 도입한 경우도 있습니다. 같은 장수라도 서버 수가 늘어 프로덕션 최소 요건(GPU 호스트 3대)은 채우기 쉽지만, 이런 PCIe GPU는 NVIDIA의 vGPU P2P(GPU 간 직접 통신) 지원 목록에 없어 GPU 1장에 들어가지 않는 대형 모델을 여러 GPU로 나눠 서빙하기에는 불리합니다([NVIDIA AI Enterprise P2P](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/p2p.html), [02 2.6절](02-gpu-sizing.md)). 이 경우 9.3의 70B 공용 추론은 양자화로 크기를 줄이거나 중형 모델로 대체하는 쪽을 먼저 검토합니다.
+
 ---
 
 ## 9.1 단계 1 — 자원 인벤토리
@@ -149,7 +151,7 @@
 |---|---|---|
 | NVAIE(NVIDIA AI Enterprise) 라이선스 | **vGPU로 나눠 쓰거나 NIM을 쓰는 서버**의 물리 GPU 전수(vGPU 분할 수와 무관). GPU를 통째로 할당(DirectPath)하고 오픈소스 추론 엔진만 쓰면 발생하지 않음 | [07 7.2절](07-tco-cost-model.md#72-소프트웨어-라이선스구독-비용) |
 | 전력과 냉각 | 켜는 즉시. GPU 소비전력 × PUE | [07](07-tco-cost-model.md) 7.5절 |
-| 운영비 | 켜는 즉시. 플랫폼과 운영 FTE | [07](07-tco-cost-model.md) 7.5절 |
+| 운영비 | 켜는 즉시. 플랫폼과 운영 FTE(선택, 국내는 보통 제외) | [07](07-tco-cost-model.md) 7.5절 |
 
 위 9.3의 포트폴리오는 팀별 멀티모델과 임베딩에 MIG와 vGPU 분할을 쓰므로, 그 GPU가 있는 서버는 NVAIE 대상입니다. 반대로 vGPU 라이선스가 없는 브라운필드 조직은 GPU를 워크로드마다 통째로 할당하는 구성으로 먼저 시작하고, 나눠 쓸 필요가 커질 때 vGPU를 도입하는 순서도 가능합니다([Primer 04 4.3절](../../00-foundations/docs/04-ecosystem-101.md)). 이 경우 9.3의 분할 배분은 GPU 단위 배분으로 바뀌고, 장수가 같아도 담을 수 있는 워크로드 수는 줄어듭니다.
 

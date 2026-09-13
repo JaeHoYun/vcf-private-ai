@@ -61,7 +61,7 @@ VCF Private AI 가이드 시리즈 전반에서 쓰이는 용어를 한곳에 �
 | NGC (NVIDIA GPU Cloud) | NVIDIA의 컨테이너, 모델, 프레임워크 카탈로그. 엔터프라이즈(인증) 콘텐츠와 NIM은 NVAIE 라이선스가 필요하다. |
 | NVIDIA AI Enterprise (NVAIE) | GPU 소프트웨어 스택을 검증하고 인증해 묶고 상용 지원을 붙인 NVIDIA의 소프트웨어 구독. |
 | Harbor | VCF에서 컨테이너 이미지와 AI 아티팩트를 보관하는 사내 레지스트리. |
-| Artifact Mirroring Tool | 폐쇄망(air-gapped)에 모델과 이미지 등 AI 아티팩트를 들여 완전한 Private AI 기능을 구동하게 하는 PAIS 2.1 도구. |
+| Artifact Mirroring Tool | 폐쇄망(air-gapped)에 모델과 이미지 등 AI 아티팩트를 들여 완전한 Private AI 기능을 구동하게 하는 PAIS 도구(PAIS 2.1에서 도입). |
 | Model Gallery / Runtime / Endpoint | PAIS의 모델 흐름. 반입(Gallery) → 엔진 실행(Runtime) → OpenAI 호환 API 서빙(Endpoint). |
 
 ## VCF, 제품 계층

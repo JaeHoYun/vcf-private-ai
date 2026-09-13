@@ -5,7 +5,7 @@
 
 이 문서는 시리즈 ⑤(보안과 거버넌스)의 검증 총괄 문서입니다. 01–06과 08 문서에서 설계한 통제가 실제로 "증명 가능"하도록, (1) 무엇을 로그로 남기고 어떻게 무결성을 지킬 것인가, (2) 모델 행위를 어떻게 관측하고 이상을 탐지할 것인가, (3) AI 특유의 사고가 발생했을 때 어떻게 탐지, 대응, 복구할 것인가, (4) 통제를 어떤 일반 컴플라이언스 범주에 매핑하는가, 그리고 (5) 모든 통제를 한 표로 모아 각각의 검증 방법을 명시하는 **마스터 통제 체크리스트**를 다룹니다.
 
-기반 사실은 VCF 9.1 / PAIF(VMware Private AI Foundation with NVIDIA) 9.1 / PAIS(Private AI Services) 2.1이며, 관측성은 VCF Operations와 OpenTelemetry(OTel), Grafana를 연계하는 ③ 문서([③ 서빙 API](../../03-serving-api/README.md))를 따릅니다. GPU 가속 워크로드 도메인은 공식 용어 "GPU-Accelerated Workload Domain"(이하 GPU 워크로드 도메인)으로 표기합니다.
+기반 사실은 VCF 9.1.1 / PAIF(VMware Private AI Foundation with NVIDIA) 9.1.1 / PAIS(Private AI Services) 3.0이며, 관측성은 VCF Operations와 OpenTelemetry(OTel), Grafana를 연계하는 ③ 문서([③ 서빙 API](../../03-serving-api/README.md))를 따릅니다. GPU 가속 워크로드 도메인은 공식 용어 "GPU-Accelerated Workload Domain"(이하 GPU 워크로드 도메인)으로 표기합니다.
 
 > 규제 표현 주의: 이 문서는 특정 규제기관이나 실명 기업을 특정 행위와 결부하지 않습니다. 7.4.1과 7.4.2는 국제 프레임워크를, 7.4.3은 공개된 한국 법령과 가이드라인의 요구를 이 시리즈의 통제에 대응시킨 것이며, 시행일과 계도기간 같은 시효성 정보는 [AX 방법론 부록 A2](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/appendix/A2-kr-regulatory-timeline.md)가 단일 출처입니다. 조직별 적용 여부는 자체 법무와 컴플라이언스 검토로 확정합니다.
 

@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 VCF 9.1 / PAIF 9.1 / PAIS 2.1 기반 사설 AI 플랫폼에서, 모델, 검색, 도구가 결합된 LLM 애플리케이션의 **앱 계층 가드레일**을 거버넌스/운영 관점으로 통합합니다. 개별 RAG 구현의 인젝션과 출력 방어 절차는 시리즈 ④ RAG 레퍼런스 아키텍처에서 상세히 다루므로, 본 문서는 해당 절로 링크를 걸어 상세를 위임하고, 여기서는 플랫폼 전반에 걸친 가드레일 **정책, 운영, 검증**을 다룹니다.
+이 문서는 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 기반 Private AI 플랫폼에서, 모델, 검색, 도구가 결합된 LLM 애플리케이션의 **앱 계층 가드레일**을 거버넌스/운영 관점으로 통합합니다. 개별 RAG 구현의 인젝션과 출력 방어 절차는 시리즈 ④ RAG 레퍼런스 아키텍처에서 상세히 다루므로, 본 문서는 해당 절로 링크를 걸어 상세를 위임하고, 여기서는 플랫폼 전반에 걸친 가드레일 **정책, 운영, 검증**을 다룹니다.
 
 - 입력측 인젝션과 살균 상세: [④ RAG 가이드 03 3.6 — 프롬프트 인젝션 방어와 입력 살균](../../04-rag/docs/03-retrieval-context.md#36-보안--프롬프트-인젝션-방어와-입력-살균)
 - 출력측 가드레일 상세: [④ RAG 가이드 04 4.6 — 출력 가드레일, 민감정보, 출력 안전](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일--민감정보와-출력-안전)
@@ -70,13 +70,13 @@ LLM이 도구(파일 I/O, API, 명령 실행)에 접근하면 의도 범위를 �
 
 > 송금, 삭제, 외부 전송 같은 **비가역 행위는 제안과 초안 단계까지만 자동화하고 실행은 사람이 승인한다**는 원칙과 같은 방향입니다. 도구 화이트리스트는 이 원칙을 기술적으로 강제하는 1차 수단입니다.
 
-PAIS 2.1은 모델 게이트웨이(API Gateway)와 MCP Tools Registry를 플랫폼에 내장하여, 도구 등록, 인증, 인가를 플랫폼 계층에서 다룰 수 있는 지점을 제공합니다([Private AI Services, VCF 9.1 Blog](https://blogs.vmware.com/cloud-foundation/2025/06/19/private-ai-services-new-in-vmware-private-ai-foundation-with-nvidia-in-vcf-9-0/)). 다만 이 레지스트리가 **세분화된 도구 호출 화이트리스트와 휴먼인더루프 승인**을 네이티브로 강제하는지는 릴리스별로 다를 수 있어 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 **확인 필요**합니다. 플랫폼 제공 여부와 무관하게, 위 통제는 오케스트레이션 계층에서 독립적으로 두는 것을 권장합니다.
+PAIS는 모델 게이트웨이(API Gateway)와 MCP Tools Registry를 플랫폼에 내장하여, 도구 등록, 인증, 인가를 플랫폼 계층에서 다룰 수 있는 지점을 제공합니다([Private AI Services, VCF 9.1 Blog](https://blogs.vmware.com/cloud-foundation/2025/06/19/private-ai-services-new-in-vmware-private-ai-foundation-with-nvidia-in-vcf-9-0/)). 다만 이 레지스트리가 **세분화된 도구 호출 화이트리스트와 휴먼인더루프 승인**을 네이티브로 강제하는지는 릴리스별로 다를 수 있어 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 **확인 필요**합니다. 플랫폼 제공 여부와 무관하게, 위 통제는 오케스트레이션 계층에서 독립적으로 두는 것을 권장합니다.
 
 이 절은 LLM06 한 항목의 정책 수준에 머뭅니다. 에이전트를 행위자로 보는 위협 목록(OWASP Agentic ASI01–10), 에이전트별 비인간 신원, 자율성 상한과 위험 등급의 매트릭스, 레지스트리, MCP 도구 오염과 제3자 서버 체크리스트, 코드 실행 샌드박스, 킬스위치, 도구 게이트웨이의 위치는 [08 에이전트 보안 거버넌스](08-agent-governance.md)가 정본입니다. 휴먼인더루프의 구현 패턴과 승인 큐는 [앱 가이드 07 7.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md)에 있습니다.
 
 ## 6.5 PAIS 네이티브 가드 기능과 플랫폼 경계
 
-PAIS 2.1 / VCF 9.1은 가드레일을 거는 데 활용할 수 있는 플랫폼 기능을 여럿 제공합니다. 다만 이 중 어느 것이 **LLM 콘텐츠 가드(인젝션 탐지, PII 마스킹, 출력 필터)를 네이티브로 수행**하는지는 단정하지 않고 공식 문서로 확인하는 것을 원칙으로 합니다.
+PAIS와 VCF는 가드레일을 거는 데 활용할 수 있는 플랫폼 기능을 여럿 제공합니다. 다만 이 중 어느 것이 **LLM 콘텐츠 가드(인젝션 탐지, PII 마스킹, 출력 필터)를 네이티브로 수행**하는지는 단정하지 않고 공식 문서로 확인하는 것을 원칙으로 합니다.
 
 | 플랫폼 기능 | 확인된 역할 | 콘텐츠 가드 네이티브 제공 여부 |
 |---|---|---|
@@ -100,17 +100,14 @@ PAIS 2.1 / VCF 9.1은 가드레일을 거는 데 활용할 수 있는 플랫폼 
 
 어느 지점이든 출력 가드는 생성 모델과 분리된 계층(6.3)이어야 하고, 검색 청크와 도구 결과의 살균은 그 컨텍스트를 보는 앱 안에서만 가능합니다.
 
-**가드 모델과 라이브러리 후보** — 온프레미스에서 자체 호스팅할 수 있는 공개 후보입니다. 릴리스, 라이선스, 한국어 성능은 도입 전 확인합니다.
+**플랫폼이 공용 가드 서비스로 서빙할 후보** — 위 결정표의 "별도 가드 서비스"와 "결합" 지점에서 플랫폼 팀이 공용으로 호스팅할 만한 모델 급 후보만 적습니다. 릴리스, 라이선스, 한국어 성능은 도입 전 확인합니다.
 
 | 후보 | 역할 | 비고 |
 |---|---|---|
 | NVIDIA NeMo Guardrails와 NemoGuard NIM | 대화 흐름 정책, 주제 통제, 콘텐츠 안전과 탈옥 탐지 NIM | NVIDIA AI Enterprise가 있으면 NIM으로 배포([NeMo Guardrails 문서](https://docs.nvidia.com/nemo/guardrails/home)) |
 | Llama Guard 4 | 입력과 출력의 콘텐츠 안전 분류(멀티모달) | 12B 규모, 가드 서비스 배치에 적합([Hugging Face 모델 카드](https://huggingface.co/meta-llama/Llama-Guard-4-12B)) |
-| Prompt Guard 2 | 프롬프트 인젝션과 탈옥 탐지 소형 분류기 | 1억 파라미터 미만의 소형 모델이라 CPU 추론과 앱 안 라이브러리 배치에 적합 |
-| LLM Guard | 입력과 출력 스캐너 모음(비밀, PII, 인젝션, 유해) | 라이브러리 형태, 규칙과 분류기 혼합 |
-| Presidio | PII 식별과 마스킹 | 출력 마스킹과 로그 마스킹에 공통 사용 |
 
-후보는 앱 가이드가 서비스별로 고르며([앱 가이드 12 12.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md)), 이 문서는 플랫폼이 공용 가드 서비스로 제공할지의 결정과 정책 표준만 다룹니다.
+앱 안 라이브러리와 소형 분류기(입력 인젝션 탐지, 스캐너, PII 마스킹)까지 포함한 가드 기능별 후보 목록과 배치 위치의 기본값은 [앱 가이드 12 12.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md)이 정본이며 서비스별 선택도 그곳에서 합니다. 이 문서는 플랫폼이 공용 가드 서비스로 제공할지의 결정과 정책 표준만 다룹니다.
 
 ## 6.6 가드레일 운영 — 정책 버전 관리, 적대적 테스트, 회귀 연계
 
@@ -165,4 +162,4 @@ PAIS 2.1 / VCF 9.1은 가드레일을 거는 데 활용할 수 있는 플랫폼 
 
 ---
 
-[← 이전: 05 데이터 거버넌스와 프라이버시](05-data-governance.md) | [목차](../README.md) | [다음: 07 감사, 로깅, 사고대응 + 컴플라이언스 체크리스트 →](07-audit-compliance.md)
+[← 이전: 05 데이터 거버넌스와 프라이버시](05-data-governance.md) | [목차](../README.md) | [다음: 07 감사, 로깅, 사고대응 및 컴플라이언스 체크리스트 →](07-audit-compliance.md)

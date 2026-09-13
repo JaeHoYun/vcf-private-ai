@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 사내 폐쇄망(프라이빗) 환경에서 운영하는 생성형 AI 플랫폼의 데이터 거버넌스와 프라이버시 통제를 다룹니다. 기반 스택은 VMware Cloud Foundation(VCF) 9.1과 그 위에서 동작하는 VMware Private AI Foundation with NVIDIA(PAIF) 9.1, VMware Private AI Services(PAIS) 2.1입니다. 검색과 생성에 쓰이는 벡터 데이터 계층은 시리즈 ② 가이드에서 다룬 Data Services Manager(DSM) 기반 PostgreSQL + pgvector를 전제합니다. PAIF에서 벡터DB가 pgvector(PostgreSQL) 위에서 DSM으로 배포되고 관리된다는 점은 Broadcom TechDocs와 VCF 블로그에서 확인됩니다([Broadcom TechDocs: Deploy a Vector Database for PAIF](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-rag-workloads-in-private-ai-foundation-with-nvidia/deploy-a-vector-database-for-paif.html), [VCF Blog: Initial Availability of PAIF](https://blogs.vmware.com/cloud-foundation/2024/03/18/announcing-initial-availability-of-vmware-private-ai-foundation-with-nvidia/)).
+이 문서는 사내 폐쇄망(프라이빗) 환경에서 운영하는 생성형 AI 플랫폼의 데이터 거버넌스와 프라이버시 통제를 다룹니다. 기반 스택은 VMware Cloud Foundation(VCF) 9.1.1과 그 위에서 동작하는 VMware Private AI Foundation with NVIDIA(PAIF) 9.1.1, VMware Private AI Services(PAIS) 3.0입니다. 검색과 생성에 쓰이는 벡터 데이터 계층은 시리즈 ② 가이드에서 다룬 Data Services Manager(DSM) 기반 PostgreSQL + pgvector를 전제합니다. PAIF에서 벡터DB가 pgvector(PostgreSQL) 위에서 DSM으로 배포되고 관리된다는 점은 Broadcom TechDocs와 VCF 블로그에서 확인됩니다([Broadcom TechDocs: Deploy a Vector Database for PAIF](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-rag-workloads-in-private-ai-foundation-with-nvidia/deploy-a-vector-database-for-paif.html), [VCF Blog: Initial Availability of PAIF](https://blogs.vmware.com/cloud-foundation/2024/03/18/announcing-initial-availability-of-vmware-private-ai-foundation-with-nvidia/)).
 
 데이터 거버넌스는 "어떤 데이터가, 누구에게, 언제까지, 어디에서" 노출, 보존, 이동되는지를 규율하는 영역입니다. 본 문서는 인프라 계층(VCF/PAIF)과 데이터 계층(② 벡터DB)을 잇는 통제에 집중하며, 프롬프트 인젝션 방어와 출력 검열 같은 애플리케이션 런타임 가드레일은 06 문서의 범위로 명시적으로 분리합니다(아래 5.7 경계 정리 참조).
 
@@ -78,7 +78,7 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 - 사용자 신원은 앱 계층에서 검증한 인증 컨텍스트를 그대로 전달받습니다. 검색 계층이 신원을 추측하지 않습니다.
 - 기본값은 거부(deny-by-default): 권한 메타데이터가 없거나 매칭되지 않으면 노출하지 않습니다.
 - 필터 조건 자체가 사용자 입력으로 조작되지 않도록 서버 측에서 주입합니다(클라이언트가 보낸 권한 값을 신뢰하지 않음).
-- 검색 로그에 "누가, 어떤 필터로, 무엇을 받았는지"를 남겨 추적 가능성을 확보합니다(5.7 검증과 연계).
+- 검색 로그에 "누가, 어떤 필터로, 무엇을 받았는지"를 남겨 추적 가능성을 확보합니다(5.8 검증과 연계).
 
 규제 산업용 RAG 통제 가이드도 데이터 프라이버시, 접근통제, 인젝션 방어를 핵심 축으로 제시하며, 검색단 인가를 필수 통제로 봅니다([Secure RAG for Regulated Industries](https://www.blockchain-council.org/ai/secure-rag-for-regulated-industries-data-privacy-access-control-prompt-injection-defense/)).
 
@@ -158,7 +158,7 @@ VCF/PAIF는 인터넷 비연결(disconnected/air-gapped) 환경에서 RAG 워크
 
 | 통제 | 내용 | 관련 절 |
 |---|---|---|
-| 허용 목록 | 원격 모델 연결은 명시된 네임스페이스에만 만들고, 어떤 지식베이스와 에이전트가 원격 모델을 쓸 수 있는지를 5.1의 분류 등급으로 정합니다. 기본은 공개와 내부 등급만 허용하고 기밀과 제한 등급 지식베이스는 사내 모델로 고정 | 5.1, 5.2 |
+| 허용 목록 | 원격 모델 연결은 명시된 네임스페이스에만 만들고, 어떤 지식베이스와 에이전트가 원격 모델을 쓸 수 있는지를 5.1의 분류 등급으로 정합니다. 기본은 공개와 내부 등급만 허용하고 기밀과 제한 등급 지식베이스는 사내 모델로 고정. 보호 문서(5.9절)에서 파생된 지식베이스는 등급과 무관하게 사내 모델로 고정([⑦ 05 5.4절](../../07-design/docs/05-tenancy-security.md#54-보강-보호-문서-복호화-존의-배치)) | 5.1, 5.2, 5.9 |
 | 인입 단 마스킹 | 원격 모델이 허용된 지식베이스는 인입 단계에서 PII를 마스킹한 사본을 씁니다. 출력 단 마스킹만으로는 이미 나간 데이터를 되돌릴 수 없습니다 | 5.4 |
 | 전송 검증 | `InferenceGatewayRoute`의 TLS 검증 모드는 strict를 기본으로 하고, 사설 CA를 쓰는 서드파티 서비스만 caOnly로 둡니다. none은 시험 환경 밖에서 금지 | ③ 02 |
 | 자격증명 | 원격 서비스 API 키와 서비스 계정 키는 Secret으로만 참조하고 최소 범위로 발급, 정기 회전 | 03 3.5절 |
@@ -198,7 +198,7 @@ VCF/PAIF는 인터넷 비연결(disconnected/air-gapped) 환경에서 RAG 워크
 
 ## 5.8 검증 방법
 
-아래 항목으로 데이터 거버넌스 통제가 실제로 작동하는지 검증합니다. 모든 검증은 근거와 로그를 남겨 추적 가능해야 합니다.
+아래 항목으로 데이터 거버넌스 통제가 실제로 작동하는지 검증합니다. 모든 검증은 근거와 로그를 남겨 추적 가능해야 합니다. 뒤에 오는 5.9 보호 문서 거버넌스와 5.10 대화 데이터 수명주기의 검증 항목(11–13)도 이 표에 함께 둡니다.
 
 | # | 검증 항목 | 방법 | 합격 기준 |
 |---|---|---|---|

@@ -133,7 +133,7 @@ GPU를 테넌트 간에 공유할 때 어떤 방식을 쓰느냐가 격리 강�
 
 ### GPU Reservation
 
-GPU Reservation은 특정 워크로드/테넌트에 GPU 용량을 예약해, 다른 테넌트가 가용 GPU를 선점과 고갈시키는 것을 방지합니다. 쿼터가 상한이라면 Reservation은 하한(보장)에 해당하며, 둘을 함께 써서 자원 침범과 자원 굶주림(starvation)을 동시에 막습니다([vGPU 용량 블로그](https://blogs.vmware.com/cloud-foundation/2025/06/19/viewing-usage-capacity-for-virtual-gpus-in-vmware-cloud-foundation-9-0/)). 정확한 9.1 예약 동작은 배포 모드별 차이가 있어 구성 시 공식 문서 재확인이 필요합니다(확인 필요).
+GPU Reservation은 특정 워크로드/테넌트에 GPU 용량을 예약해, 다른 테넌트가 가용 GPU를 선점하고 고갈시키는 것을 방지합니다. 쿼터가 상한이라면 Reservation은 하한(보장)에 해당하며, 둘을 함께 써서 자원 침범과 자원 굶주림(starvation)을 동시에 막습니다([vGPU 용량 블로그](https://blogs.vmware.com/cloud-foundation/2025/06/19/viewing-usage-capacity-for-virtual-gpus-in-vmware-cloud-foundation-9-0/)). 정확한 9.1 예약 동작은 배포 모드별 차이가 있어 구성 시 공식 문서 재확인이 필요합니다(확인 필요).
 
 ---
 

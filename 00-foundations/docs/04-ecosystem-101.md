@@ -64,7 +64,7 @@
 
 ### 4.3.3 브라운필드 함의 — GPU는 있는데 vGPU 라이선스가 없다면
 
-- **추가 라이선스 없이 시작할 수 있습니다.** 9.1의 Enhanced DirectPath I/O 덕에 전용 passthrough로도 vMotion을 유지하며, PAIS의 추론 엔진(vLLM, llama.cpp, Infinity)은 오픈소스라 NVAIE 없이 동작합니다. 가진 GPU를 전용으로 붙여 Private AI를 시작하는 경로가 열려 있습니다.
+- **추가 라이선스 없이 시작할 수 있습니다.** 9.1의 Enhanced DirectPath I/O 덕에 전용 passthrough로도 vMotion을 유지할 수 있으며(장치별 지원 여부는 [① 11 GPU Enablement](../../01-infra/docs/11-gpu-enablement.md)와 Broadcom 호환성 가이드로 확인), PAIS의 추론 엔진(vLLM, llama.cpp, Infinity)은 오픈소스라 NVAIE 없이 동작합니다. 가진 GPU를 전용으로 붙여 Private AI를 시작하는 경로가 열려 있습니다.
 - **트레이드오프는 잘게 나눠 쓰는 유연성을 포기하는 것입니다.** 전용은 GPU 1장이 VM 1개에 묶입니다(단일 VM 안에서 MIG로 하드웨어 분할은 가능). 여러 팀과 테넌트가 한 GPU를 유연하게 나눠 써야 하거나, NVIDIA 인증 NIM, 엔터프라이즈 지원이 필요해지면 그때 vGPU(NVAIE)를 도입하면 됩니다.
 
 정확한 라이선스 SKU, 버전 인터락, VIB 설치, 라이선스 서버(DLS) 절차는 시리즈 ①(GPU enablement)이 다룹니다.
@@ -82,7 +82,7 @@
 컨테이너 이미지에 사내 레지스트리가 필요하듯, 모델과 이미지 같은 AI 아티팩트도 사내에 두고 관리할 저장소가 필요합니다.
 
 - **레지스트리(Harbor)** — VCF 환경에서 컨테이너 이미지와 아티팩트를 보관하는 사내 레지스트리입니다. 외부에서 받은 모델과 이미지를 사내에 들여 두는 저장소 역할을 합니다.
-- **폐쇄망(air-gapped) 반입** — 외부 인터넷이 차단된 환경에서는 외부 허브에 직접 닿을 수 없습니다. PAIS 2.1의 **Artifact Mirroring Tool** 은 이런 폐쇄망에 GPU 기반 Model Endpoint와 에이전트를 포함한 완전한 Private AI 기능을 들여 구동하게 해 주는 도구입니다. 방산, 금융, 공공처럼 외부 반출이 불가한 환경의 핵심입니다.
+- **폐쇄망(air-gapped) 반입** — 외부 인터넷이 차단된 환경에서는 외부 허브에 직접 닿을 수 없습니다. PAIS의 **Artifact Mirroring Tool**(PAIS 2.1에서 도입)은 이런 폐쇄망에 GPU 기반 Model Endpoint와 에이전트를 포함한 완전한 Private AI 기능을 들여 구동하게 해 주는 도구입니다. 방산, 금융, 공공처럼 외부 반출이 불가한 환경의 핵심입니다.
 
 멘탈모델은 "사내 패키지 미러와 아티팩트 저장소"입니다. 외부에서 가져온 것을 사내에 한 번 받아 두고, 그 안에서만 배포하는 구조입니다. 모델 공급망의 무결성, 서명, 취약점 검증은 시리즈 ⑤(보안)가 다룹니다.
 

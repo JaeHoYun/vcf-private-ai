@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 이 문서는 PAIF 9.1을 **한국 주요 산업군**에 적용하는 시나리오를 정리합니다. 일반 가이드(문서 01–06)를 산업 맥락으로 옮기는 다리 역할입니다.
 
-PAIF는 **데이터를 외부로 반출하지 않고**(온프레미스/에어갭), **기존 VMware 자산 위에서**(VM+컨테이너+AI 단일 플랫폼) AI를 운영할 수 있다는 점이 한국 시장에서 핵심 강점입니다. 9.1의 **Artifact Mirroring Tool(에어갭), Blackwell, MCP**가 이 강점을 직접 강화합니다.
+PAIF는 **데이터를 외부로 반출하지 않고**(온프레미스/에어갭), **기존 VMware 자산 위에서**(VM+컨테이너+AI 단일 플랫폼) AI를 운영할 수 있다는 점이 한국 시장에서 핵심 강점입니다. 9.1 라인의 **Artifact Mirroring Tool(에어갭, PAIS 2.1부터), Blackwell, MCP**가 이 강점을 직접 강화합니다.
 
 > **고지:** 본 문서는 산업군 **일반**의 적용 패턴을 다룹니다. **특정 기업과 고객사를 지칭하거나 그 도입 사실을 단언하지 않습니다.** 모든 시나리오는 가상의 일반 예시이며, 실제 적용은 각 조직의 환경, 규제, 데이터 실측을 전제로 검토하시기 바랍니다.
 
@@ -14,7 +14,7 @@ PAIF는 **데이터를 외부로 반출하지 않고**(온프레미스/에어갭
 | 9.1 기능 | 핵심 가치 | 특히 중요한 산업 |
 |---------|----------|----------------|
 | **Artifact Mirroring Tool (에어갭)** | 외부 반출 불가 환경에서 풀 AI 구동 | 방산, 금융, 공공, 일부 제조 |
-| **Enhanced DirectPath I/O + Blackwell** | NVAIE(NVIDIA AI Enterprise) 없이 전용 GPU + vMotion, 대규모 학습 | 제조(비전/학습), 콘텐츠(생성형) |
+| **Enhanced DirectPath I/O + Blackwell** | NVAIE(NVIDIA AI Enterprise) 없이 전용 GPU + vMotion(장치별 확인, [문서 11 11.5.2절](11-gpu-enablement.md)), 대규모 학습 | 제조(비전/학습), 콘텐츠(생성형) |
 | **MCP** | 사내 시스템(ERP, MES, ITSM, DB)과 표준 연동 | 전 산업 (특히 유통과 제조 업무 자동화) |
 | **CPU 추론(llama.cpp)** | GPU 없이 소규모 추론 비용 절감 | 전 산업 PoC/지점 단위 |
 | **관측성과 거버넌스** | 모델 품질, 비용, 감사 추적 | 금융, 공공 (규제 대응) |
@@ -39,7 +39,7 @@ PAIF는 **데이터를 외부로 반출하지 않고**(온프레미스/에어갭
 
 ## 8.3 방위산업
 
-**외부 반출 절대 불가** — 9.1 Artifact Mirroring Tool의 가장 직접적인 수혜 산업입니다.
+**외부 반출 절대 불가** — Artifact Mirroring Tool(PAIS 2.1부터)의 가장 직접적인 수혜 산업입니다.
 
 | 시나리오 | 내용 | PAIF 연계 |
 |---------|------|----------|
@@ -47,7 +47,7 @@ PAIF는 **데이터를 외부로 반출하지 않고**(온프레미스/에어갭
 | **기술문서 자동 생성** | 시방서와 제안서 초안 | 내부 KB + Agent (모델과 데이터 외부 반출 불가) |
 | **시뮬레이션 보조** | 무기체계 시뮬레이션 결과 분석 | GPU 워크로드, 내부 데이터만 |
 
-**도입 포인트:** 인터넷 연결 미러 호스트에서 **Artifact Mirroring Tool로 모델, 컨테이너, 드라이버를 미러링 후 오프라인 반입** → 내부 Harbor → GPU Model Endpoint, 에이전트 구동. **MCP는 내부 시스템으로만 한정**하고, 외부 SaaS 연동은 차단합니다 ([문서 06 6.9절](06-production.md#69-에어갭air-gapped-환경--artifact-mirroring-tool-91-신규)).
+**도입 포인트:** 인터넷 연결 미러 호스트에서 **Artifact Mirroring Tool로 모델, 컨테이너, 드라이버를 미러링 후 오프라인 반입** → 내부 Harbor → GPU Model Endpoint, 에이전트 구동. **MCP는 내부 시스템으로만 한정**하고, 외부 SaaS 연동은 차단합니다 ([문서 06 6.9절](06-production.md#69-에어갭air-gapped-환경--artifact-mirroring-tool-pais-21부터)).
 
 ---
 

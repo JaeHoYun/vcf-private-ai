@@ -43,7 +43,7 @@ VMware Cloud Foundation 9.1 (코어 구독)
 
 | 항목 | 포함 여부 | 비고 |
 |------|----------|------|
-| PAIF (cores) | 포함 — VCF 코어 구독 | 별도 구매 불필요 |
+| PAIF 코어 기능 계층 | 포함 — VCF 코어 구독 | 별도 구매 불필요 |
 | PAIS, DLVM 이미지 | 포함 — PAIF에 포함 | — |
 | 벡터 DB(pgvector) via DSM | 포함 — PAIS 사용분 한정 | DSM은 본래 별도 라이선스 Advanced Service이나, **PAIS가 벡터 DB용 DSM 사용 권한(entitlement)을 포함** |
 | **NVIDIA AI Enterprise (NVAIE)** | 미포함 — 별도 (NVIDIA 구매) | vGPU 드라이버, NIM, NeMo 등 |
@@ -100,15 +100,15 @@ VMware Cloud Foundation 9.1 (코어 구독)
 | **MCP 통합** | 외부 데이터와 도구 표준 연동 (거버넌스), **Tool Gallery로 MCP 서버 중앙 등록과 관리**, **KB를 MCP 도구로 노출** | MLOps, Platform | **PAIS 2.1 신규** ([문서 05](05-agents-mcp.md)) |
 | **관측성** | 모델과 GPU 메트릭 + LLM 트레이싱 | Platform, MLOps | **모델/GPU 대시보드 + OpenTelemetry** ([문서 06](06-production.md)) |
 
-> **PAIS 2.1 MCP 강화:** 외부 도구 연동에 더해, **Tool Gallery**(MCP 서버 중앙 등록과 관리 UI), **Knowledge Base의 MCP 노출**(KB-as-MCP-tool), **Data Indexing & Retrieval의 MCP 도구 통합**(에이전트가 검색 여부와 검색어를 스스로 결정하는 *agentic retrieval*)이 추가됐습니다 ([Broadcom TechDocs — PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html)). 상세는 [문서 05 5.3절](05-agents-mcp.md#53-mcpmodel-context-protocol란).
+> Tool Gallery, Knowledge Base의 MCP 노출, agentic retrieval 세 기능(PAIS 2.1에서 도입)의 상세와 공식 근거는 [문서 05 5.3절](05-agents-mcp.md#53-mcpmodel-context-protocol란)에 있습니다.
 
-### 추론 엔진 비교 (9.1)
+### 추론 엔진 비교 (PAIS 3.0 기준)
 
 | 엔진 | 버전 | 용도 | GPU 필요 |
 |------|------|------|:---:|
-| **vLLM** | 0.11.2 | Completion(+Embedding) 고성능 추론 | 필요 |
+| **vLLM** | 0.20.0 | Completion(+Embedding) 고성능 추론 | 필요 |
 | **Infinity** | 0.0.76 | Embedding 전용 | CPU 가능 |
-| **llama.cpp** | b7739 | Completion, Embedding **CPU 추론** | 불필요 (CPU) |
+| **llama.cpp** | b9309 | Completion, Embedding **CPU 추론** | 불필요 (CPU) |
 
 > 9.1부터는 소규모/테스트/비용 민감 워크로드의 **Completion 추론도 CPU(llama.cpp)** 로 가능합니다. 대규모와 실시간 추론은 여전히 GPU(vLLM)가 정석입니다.
 

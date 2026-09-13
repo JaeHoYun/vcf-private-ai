@@ -81,13 +81,14 @@
 | 2 | VCF 관리 서비스 | Operations, Automation, Identity Broker | [ ] |  |
 | 3 | Kubernetes | Supervisor, VKS / VKr | [ ] |  |
 | 4 | GPU 스택 | GPU Operator, 드라이버 | [ ] |  |
-| 5 | PAIS | Private AI Services(Supervisor Service) | [ ] |  |
+| 5 | DSM | Data Services Manager | [ ] |  |
+| 6 | PAIS | Private AI Services(Supervisor Service) | [ ] |  |
 
 ### 3. 다운타임 계획
 
 | 항목 | 계획값 |
 |------|--------|
-| [ ] PAIS 단계 다운타임 구간(VKS 재생성과 모델 재다운로드) 산정 |  |
+| [ ] PAIS 단계 다운타임 구간 산정(경로별: 2.0.x → 2.1은 VKS 재생성과 모델 재다운로드, 2.1 → 3.0은 단일 레플리카 엔드포인트 다운타임과 메트릭 공백, 10.1.3절) |  |
 | [ ] 사전 모델 캐시 준비 |  |
 | [ ] 영향 받는 테넌트와 서비스 공지 |  |
 | [ ] ESX 단계 라이브 패치 여부 반영(대상이면 호스트 재부팅과 VM 이전 없음 / 비대상은 재부팅 폴백) |  |

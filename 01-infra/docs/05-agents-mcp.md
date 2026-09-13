@@ -5,6 +5,8 @@
 
 단순 RAG Q&A를 넘어, 에이전트가 **외부 시스템(DB, 이슈트래커, 메신저, IT 서비스 관리(ITSM))을 직접 조회하고 실행**하고, 그 과정을 **거버넌스와 관측성**으로 통제하는 것이 9.1의 핵심 진전입니다.
 
+> **이 문서의 경계:** 플랫폼 관점의 개념(MCP가 무엇인지), PAIS가 제공하는 운영 기능, 거버넌스 축만 다룹니다. 구현 관점(Agent Builder에서 에이전트 만들기, MCP 도구 연결)은 [앱 가이드 08](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/08-agent-builder.md)과 [앱 가이드 09](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/09-mcp-tools.md)가, 에이전트 보안 통제 상세(신원, 자율성 상한, 레지스트리, 도구 게이트웨이)는 [⑤ 08 에이전트 보안 거버넌스](../../05-security/docs/08-agent-governance.md)가 기준입니다.
+
 ---
 
 ## 5.1 Model Endpoint vs Agent (복습)
@@ -48,7 +50,7 @@
 
 ## 5.3 MCP(Model Context Protocol)란?
 
-**MCP는 에이전트(LLM)와 외부 데이터와 도구를 잇는 산업 표준 인터페이스**입니다. 9.0.x에서는 외부 시스템을 붙이려면 시스템마다 커스텀 커넥터/코드를 만들어야 했지만, 9.1의 PAIS 2.1은 **MCP 표준으로 커스텀 커넥터 없이** 연동합니다.
+**MCP는 에이전트(LLM)와 외부 데이터와 도구를 잇는 산업 표준 인터페이스**입니다. 9.0.x에서는 외부 시스템을 붙이려면 시스템마다 커스텀 커넥터/코드를 만들어야 했지만, PAIS는 2.1부터 **MCP 표준으로 커스텀 커넥터 없이** 연동합니다.
 
 ```
             [ 에이전트 (LLM) ]
@@ -61,7 +63,7 @@
 
 > 비유하자면 MCP는 표준 포트와 같습니다. 도구마다 다른 케이블(커스텀 커넥터)을 만들 필요 없이, 하나의 표준 인터페이스로 다양한 시스템을 꽂습니다.
 
-### 지원 연동 (PAIS 2.1)
+### 지원 연동 (PAIS 2.1에서 도입)
 
 | 분류 | 예시 시스템 | 활용 |
 |------|------------|------|
@@ -70,11 +72,11 @@
 | 개발 | GitHub | 코드/이슈/PR 조회 |
 | 협업 | Slack | 메시지 조회와 전송 |
 
-> 위 목록은 Broadcom 발표 기준 대표 예시입니다. 지원 커넥터와 버전의 정확한 목록은 적용 직전 [PAIS 2.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)에서 확인하시기 바랍니다.
+> 위 목록은 Broadcom 발표 기준 대표 예시입니다. 지원 커넥터와 버전의 정확한 목록은 적용 직전 [PAIS 릴리스 노트(3.0, 2.1)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)에서 확인하시기 바랍니다.
 
-### PAIS 2.1에서 추가된 MCP 운영 기능
+### MCP 운영 기능 (PAIS 2.1에서 도입)
 
-PAIS 2.1은 MCP 연동에 **중앙 관리와 자동 검색** 기능을 더했습니다.
+PAIS는 2.1부터 MCP 연동에 **중앙 관리와 자동 검색** 기능을 갖췄습니다.
 
 | 기능 | 내용 |
 |------|------|
@@ -126,6 +128,8 @@ PAIS 2.1은 MCP 연동에 **중앙 관리와 자동 검색** 기능을 더했습
 | **감사** | 도구 호출 추적 | 모든 tool call 로깅(누가, 언제, 무엇을, 결과) |
 | **데이터 유출 방지** | 외부로 나가는 컨텍스트 통제 | 입출력 필터링, 개인식별정보(PII) 마스킹, 쓰기 작업 승인 게이트 |
 
+> 위 표는 플랫폼팀이 정의해야 할 축의 요약입니다. 에이전트 신원, 자율성 수준 상한, 에이전트 레지스트리, 도구 게이트웨이 같은 보안 통제의 상세는 [⑤ 08 에이전트 보안 거버넌스](../../05-security/docs/08-agent-governance.md)가 기준입니다.
+
 > **쓰기(Write) 작업 주의:** ServiceNow 티켓 생성, Slack 전송, DB 갱신 등 **부수효과가 있는 도구**는 별도 승인 게이트와 확인 절차를 두는 것을 강력히 권장합니다. 읽기 전용으로 시작해 점진적으로 권한을 확대하세요.
 
 > **에어갭 환경:** 방산, 금융, 공공처럼 외부 반출이 불가한 환경에서는 MCP 연동 대상도 **내부 시스템(사내 PostgreSQL, 내부 ITSM)** 으로 한정하고, Artifact Mirroring Tool(아티팩트 미러링 도구) 기반 폐쇄망 구성과 결합합니다 → [문서 06](06-production.md), [문서 08](08-industry.md).
@@ -134,7 +138,7 @@ PAIS 2.1은 MCP 연동에 **중앙 관리와 자동 검색** 기능을 더했습
 
 ## 5.6 에이전트 관측성 (LLM 트레이싱)
 
-PAIS 2.1은 **OpenTelemetry(OTel) Collector 기반 LLM 트레이싱**을 제공합니다. 에이전트 호출이 RAG 검색, 도구 호출, LLM 추론 등 여러 단계를 거치므로, 단계별 추적이 디버깅, 성능, 비용 분석의 핵심입니다.
+PAIS는 **OpenTelemetry(OTel) Collector 기반 LLM 트레이싱**을 제공합니다(2.1에서 도입, 3.0에서 범위 확장). 에이전트 호출이 RAG 검색, 도구 호출, LLM 추론 등 여러 단계를 거치므로, 단계별 추적이 디버깅, 성능, 비용 분석의 핵심입니다.
 
 | 추적 대상 | 확인 가능한 것 |
 |----------|--------------|
@@ -157,6 +161,8 @@ PAIS 2.1은 **OpenTelemetry(OTel) Collector 기반 LLM 트레이싱**을 제공�
 4. **RAG + 도구의 역할 구분** — 사실/문서는 KB(RAG), 실시간/정형 데이터는 MCP 도구.
 5. **트레이싱 상시 활성화** — 환각, 오작동, 비용 급증을 단계별로 추적.
 6. **거버넌스를 코드화(GitOps)** — 도구 등록과 권한 정책을 IaC(Infrastructure as Code, 코드형 인프라)로 관리해 재현과 감사 가능하게.
+
+> 위 항목 중 지시문 작성과 도구 선택(3번, 4번)은 앱 설계 영역이므로 구현 지침은 [앱 가이드 08 8.3절, 8.5절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/08-agent-builder.md)과 [앱 가이드 09 9.7절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/09-mcp-tools.md)이 기준입니다. 이 문서는 플랫폼이 강제할 수 있는 통제(도구 등록 승인, 네임스페이스 경계, 감사 로그)에 집중합니다.
 
 ---
 

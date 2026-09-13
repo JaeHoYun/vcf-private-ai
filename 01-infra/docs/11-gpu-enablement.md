@@ -4,7 +4,7 @@
 
 > **이 문서는 시리즈 표준보다 깊은 핸즈온/딥다이브 트랙입니다.** 도입 검토와 아키텍처 수준에서는 [문서 02 2.3절 GPU 할당 방식](02-architecture.md)과 [문서 07 GPUaaS](07-gpuaas.md)의 개념과 결정 설명으로 충분합니다. 이 문서는 PoC, 파일럿에서 **GPU를 실제로 물려 보는 엔지니어**를 위한 것입니다. 물리 GPU가 하이퍼바이저에 보이고, VM, 컨테이너에 할당되며, PAIS가 소비하기까지의 **수직 경로**와 그 길에서 가장 자주 막히는 지점을 단계로 정리합니다.
 
-> **정확도 주의:** 본 문서의 버전과 동작은 작성 시점(2026-06, VCF 9.1 / PAIF 9.1 / PAIS 2.1) 공식 문서와 검증 보고를 근거로 하고, 2026-09에 VCF 9.1.1 / PAIS 3.0 릴리스 노트로 스냅샷(11.7절)과 인터락 규칙을 갱신했습니다. GPU 드라이버, NVAIE, GPU Operator 버전은 빠르게 변하므로, **구체 버전 숫자는 반드시 11.2절의 공식 매트릭스로 재확인**하고, 본문은 숫자보다 **인터락 규칙**을 따르십시오. "확인 필요"로 표기한 항목은 공개 공식 문서에서 단정하지 못한 부분입니다.
+> **정확도 주의:** 본 문서의 버전과 동작은 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 릴리스 노트(2026-09)를 기준으로 하며, 초판(2026-06, VCF 9.1 / PAIS 2.1) 시점의 공식 문서와 검증 보고를 근거로 작성한 스냅샷(11.7절)과 인터락 규칙을 3.0 기준으로 갱신한 것입니다. GPU 드라이버, NVAIE, GPU Operator 버전은 빠르게 변하므로, **구체 버전 숫자는 반드시 11.2절의 공식 매트릭스로 재확인**하고, 본문은 숫자보다 **인터락 규칙**을 따르십시오. "확인 필요"로 표기한 항목은 공개 공식 문서에서 단정하지 못한 부분입니다.
 
 ---
 
@@ -163,13 +163,13 @@ GPU 스택은 호스트 VIB → 게스트 드라이버 → GPU Operator → 컨�
 | Kubernetes(VKr) | 1.34, ClusterClass builtin-generic-v3.5.0 | 1.33, builtin-generic-v3.2.0 | PAIS 릴리스 노트 |
 | 워커 노드 OS | Ubuntu 24.04 | Ubuntu 24.04 | PAIS 릴리스 노트 |
 | 컨트롤 플레인 VM 클래스 | best-effort-large 이상 | 명시 없음 | PAIS 릴리스 노트 |
-| ESXi vGPU 소프트웨어 | ESXi 9.x는 vGPU 20.x(R595 브랜치, NVAIE 8.x)만 지원하며 19.x(R580)는 ESXi 8.0까지입니다. 따라서 PAIS 3.0 게스트 vGPU 드라이버 580.105.8은 호스트보다 한 브랜치 아래가 되어 규칙 1 범위 안입니다. NVAIE 8.2 기준 호스트 vGPU Manager는 595.91.04 | vGPU 20.x (ESXi 9.0+; MIG-backed vGPU, 일부 Blackwell GPU는 ESXi 9.0.1.0(9 U1)+ 필수) | NVIDIA vGPU 지원 매트릭스, NVAIE 8.2 support matrix |
+| ESXi vGPU 소프트웨어 | ESXi 9.x는 vGPU 20.x(R595 브랜치, NVAIE 8.x)만 지원하며 19.x(R580)는 ESXi 8.0까지입니다(확인 필요: 19.x의 vSphere 9.0 지원 여부를 11.2절 NVIDIA vGPU 지원 매트릭스로 재확인). 따라서 PAIS 3.0 게스트 vGPU 드라이버 580.105.8은 호스트보다 한 브랜치 아래가 되어 규칙 1 범위 안입니다. NVAIE 8.2 기준 호스트 vGPU Manager는 595.91.04 | vGPU 20.x (ESXi 9.0+; MIG-backed vGPU, 일부 Blackwell GPU는 ESXi 9.0.1.0(9 U1)+ 필수) | NVIDIA vGPU 지원 매트릭스, NVAIE 8.2 support matrix |
 
 > **확인 필요:** GPU Operator 25.10.x는 NVIDIA 기준 이후 버전(26.x 계열)이 나오며 deprecated 단계로 들어갑니다. PAIS 3.0이 26.3.1을 정식 선택지로 넣었으므로, 신규 구축은 26.3.1을, 25.10.1에서 CDI 조치(11.11.1절)를 적용해 둔 운영 환경은 회귀 테스트 후 전환을 검토하십시오. 어느 쪽이든 **PAIS가 지정과 검증한 두 버전 밖으로 임의 교체하지 마십시오.** NVAIE 8.2 호스트 드라이버(595 브랜치)와 PAIS 3.0 게스트 드라이버(580 브랜치)의 조합은 규칙 1 범위 안이지만, 릴리스 노트가 직접 검증했다고 밝힌 조합은 아니므로 PoC에서 확인이 필요합니다. VCF 9.1.1 전용 ESXi 빌드번호와 PAIF 9.1.x의 전체 지원 GPU 목록은 [Broadcom 호환성 가이드](https://compatibilityguide.broadcom.com/)에서 확인합니다.
 
 ## 11.8 3단계 — VKS에서 GPU Operator 구성
 
-VKS(VCF Kubernetes Service)는 9.1에서 DRA(Dynamic Resource Allocation) 기반 GPU 스케줄링과 Kubernetes AI Conformance를 지원합니다([문서 02 2.3절](02-architecture.md)). GPU Operator가 노드의 드라이버, 컨테이너 런타임, 디바이스 플러그인, (MIG) 매니저를 자동화합니다.
+VKS(vSphere Kubernetes Service)는 9.1에서 DRA(Dynamic Resource Allocation) 기반 GPU 스케줄링과 Kubernetes AI Conformance를 지원합니다([문서 02 2.3절](02-architecture.md)). GPU Operator가 노드의 드라이버, 컨테이너 런타임, 디바이스 플러그인, (MIG) 매니저를 자동화합니다.
 
 ### 11.8.1 MIG 모드 — 전략 선택
 

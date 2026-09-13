@@ -5,7 +5,7 @@
 
 PAIS의 모델 추론은 **OpenAI 호환 인터페이스**로 노출됩니다. OpenAI가 정의한 `models`, `embeddings`, `chat/completions` 형태를 그대로 따르므로, OpenAI SDK, 클라이언트를 거의 수정 없이 씁니다.
 
-> **형제 가이드와의 경로 차이 안내** — 형제 가이드 [04](../../01-infra/docs/04-dev-scenarios.md)는 경로를 `/v1/agents/{name}/chat` 등으로 적되 "9.0.x에서 이어받은 **미검증 예시**"라고 명시합니다. 본 가이드의 경로(`/api/v1/compatibility/openai/v1/...`)는 **공식 API 레퍼런스 기준 검증값**으로, 두 가이드를 함께 보신다면 본 문서의 경로를 최신 기준으로 삼으시기 바랍니다.
+> **① 인프라 가이드와의 경로 차이 안내** — [① 04 4.7절](../../01-infra/docs/04-dev-scenarios.md)은 경로를 `/v1/agents/{name}/chat` 등으로 적되 "9.0.x에서 이어받은 **미검증 예시**"라고 명시합니다. 본 가이드의 경로(`/api/v1/compatibility/openai/v1/...`)는 **공식 API 레퍼런스 기준 검증값**으로, 두 가이드를 함께 보신다면 본 문서의 경로를 최신 기준으로 삼으시기 바랍니다.
 
 ---
 
@@ -61,7 +61,7 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/embeddings' \
   -d '{"model":"<embedding-model-id>","input":"사내 보안 정책 문서"}'
 ```
 
-> 임베딩 모델은 CPU 추론 엔진(Infinity, llama.cpp 등)으로도 서빙될 수 있어, GPU 없이도 비용 효율적으로 운영하는 경우가 많습니다. 9.1에서는 **completion 모델도 llama.cpp로 CPU 추론**이 가능하므로, 경량, PoC 워크로드는 GPU 없이 돌릴 수 있습니다([02.5](02-serving-api-architecture.md#25-model-runtime--추론-엔진과-멀티-액셀러레이터-91)). 어떤 엔진/리소스로 떠 있는지는 `GET /models`의 `model_engine`과 형제 가이드 인프라 편을 참조하세요.
+> 임베딩 모델은 CPU 추론 엔진(Infinity, llama.cpp 등)으로도 서빙될 수 있어, GPU 없이도 비용 효율적으로 운영하는 경우가 많습니다. 9.1에서는 **completion 모델도 llama.cpp로 CPU 추론**이 가능하므로, 경량, PoC 워크로드는 GPU 없이 돌릴 수 있습니다([02.5](02-serving-api-architecture.md#25-model-runtime--추론-엔진과-멀티-액셀러레이터-91)). 어떤 엔진/리소스로 떠 있는지는 `GET /models`의 `model_engine`과 [① 01 1.5절](../../01-infra/docs/01-concepts.md)의 추론 엔진 비교를 참조하세요.
 
 ---
 
@@ -130,7 +130,7 @@ for chunk in client.chat.completions.create(
 
 OpenAI 호환 인터페이스이므로, `chat/completions`에 **`tools`/`tool_choice`** 를 실어 모델이 외부 함수를 호출하도록 유도하고, 응답의 **`tool_calls`** 를 앱이 실행해 결과를 되돌려주는 표준 함수 호출 흐름을 그대로 따를 수 있습니다.
 
-> **PAIS의 tool calling과의 관계** — PAIS 2.1은 에이전트가 **MCP tool calling**을 수행하도록 설계되어 있습니다. 모델이 tool calling을 지원하지 않는 경우를 위해 PAIS는 `x-pais-force-static-tool-execution` 메타데이터 헤더로 정적 도구 실행(레거시 동작)을 강제하는 폴백을 제공합니다(헤더명과 세부 동작은 적용 전 공식 레퍼런스로 확인). 즉 **함수 호출은 ① 앱이 직접 `tools`를 정의해 Model Endpoint로 호출하는 방식**과, **② 에이전트가 등록된 MCP 도구를 호출하는 방식([06](06-mcp-tools-api.md))** 두 갈래로 나타납니다. 이 절은 ①(OpenAI 호환 인터페이스에서의 함수 호출)을 다룹니다. ([PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [OpenAI Function calling](https://developers.openai.com/api/docs/guides/function-calling))
+> **PAIS의 tool calling과의 관계** — PAIS는 에이전트가 **MCP tool calling**을 수행하도록 설계되어 있습니다(2.1부터). 모델이 tool calling을 지원하지 않는 경우를 위해 PAIS는 `x-pais-force-static-tool-execution` 메타데이터 헤더로 정적 도구 실행(레거시 동작)을 강제하는 폴백을 제공합니다(헤더명과 세부 동작은 적용 전 공식 레퍼런스로 확인). 즉 **함수 호출은 ① 앱이 직접 `tools`를 정의해 Model Endpoint로 호출하는 방식**과, **② 에이전트가 등록된 MCP 도구를 호출하는 방식([06](06-mcp-tools-api.md))** 두 갈래로 나타납니다. 이 절은 ①(OpenAI 호환 인터페이스에서의 함수 호출)을 다룹니다. ([PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [OpenAI Function calling](https://developers.openai.com/api/docs/guides/function-calling))
 
 **① 요청 — `tools`와 `tool_choice`**
 

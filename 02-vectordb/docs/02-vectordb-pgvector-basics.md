@@ -2,7 +2,7 @@
 
 > Vector DB 기초 개념부터 pgvector 심층 분석(아키텍처, 인덱스, 성능, 튜닝)까지
 
-기준 버전: DSM(Data Services Manager) 9.1 (pgvector 0.8.0 번들). 대상 독자: Private AI Foundation으로 AI Agent 서비스를 제공하려는 인프라/플랫폼 팀.
+기준 버전: VCF 9.1.1 / DSM(Data Services Manager) 9.1.1 / PAIS 3.0. 상세는 [01 버전 호환 매트릭스](01-version-compatibility.md)를 참조하시기 바랍니다. 대상 독자: Private AI Foundation으로 AI Agent 서비스를 제공하려는 인프라/플랫폼 팀.
 
 ---
 
@@ -92,9 +92,9 @@ LLM이 학습하지 않은 사내 문서, 규정, 매뉴얼 등을 벡터로 저
 | GitHub | https://github.com/pgvector/pgvector |
 | 라이선스 | PostgreSQL License (매우 관대한 오픈소스) |
 | 커뮤니티 최신 버전 | 0.8.2 (CVE-2026-3172 수정 포함) |
-| **DSM 9.1 번들 버전** | **0.8.0** (VMware Postgres 17.7 기준) |
+| **DSM 번들 버전** | **0.8.0** (DSM 9.1, VMware Postgres 17.7 기준). DSM 9.1.1 번들 버전은 릴리스 노트 미기재([01 1.3절](01-version-compatibility.md)) |
 | 지원 PostgreSQL (오픈소스) | 13 이상 (현재 18까지 빌드 가능) |
-| **지원 PostgreSQL (DSM 9.1)** | **12 – 17** (12.22, 13.23, 14.20, 15.15, 16.11, 17.7) |
+| **지원 PostgreSQL (DSM 9.1.1)** | **14 – 18** (14.23, 15.18, 16.14, 17.10, 18.4). 9.1은 12 – 17(12.22, 13.23, 14.20, 15.15, 16.11, 17.7) |
 | 개발 언어 | C (PostgreSQL 네이티브 확장) |
 | 플랫폼 | Linux, macOS, Windows, FreeBSD |
 | CPU 아키텍처 | x86-64, ARM64, i386, PowerPC, RISC-V |
@@ -103,7 +103,7 @@ LLM이 학습하지 않은 사내 문서, 규정, 매뉴얼 등을 벡터로 저
 pgvector의 가장 중요한 특징은 **PostgreSQL의 확장으로 동작**한다는 점입니다. 별도의 데이터베이스를 운영할 필요 없이, 기존 PostgreSQL 인프라 위에 `CREATE EXTENSION vector;` 한 줄로 활성화되며, SQL 문법 그대로 벡터 연산을 수행할 수 있습니다. 조직의 기존 PostgreSQL 운영 역량, 백업/복구 체계, 모니터링 도구, 보안 정책을 그대로 활용할 수 있습니다.
 
 > **DSM 기준 참고**: VCF DSM 9.1에서 프로비저닝되는 PostgreSQL에는 pgvector 0.8.0이 포함되어 있으며, Iterative Index Scan 등 0.8.0의 핵심 기능을 모두 사용할 수 있습니다. 커뮤니티 최신 버전 0.8.2의 개선 및 보안 수정(CVE-2026-3172)은 향후 VMware Postgres 번들 업데이트 시 반영될 예정이며, 반영 시점은 DSM 릴리스 노트로 확인이 필요합니다.
-> **PostgreSQL 12/13 지원 종료 예고**: DSM 9.1.0은 PostgreSQL 12/13을 지원하는 마지막 릴리스입니다(다음 maintenance 릴리스에서 제거 예정). 신규 배포는 PostgreSQL 15 이상을 권장합니다.
+> **PostgreSQL 12/13 지원 종료**: DSM 9.1.1에서 PostgreSQL 12와 13이 제거됐습니다. 해당 인스턴스는 9.1.1 배포 전에 14 이상으로 올립니다([01 1.2절](01-version-compatibility.md)). 신규 배포는 PostgreSQL 15 이상을 권장합니다.
 > 출처: [DSM 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/release-notes/vmware-data-services-manager-91-release-notes.html), [pgvector 0.8.2 릴리스](https://www.postgresql.org/about/news/pgvector-082-released-3245/)
 
 ### 2.2.2 버전 히스토리 및 주요 진화
@@ -113,7 +113,7 @@ pgvector의 가장 중요한 특징은 **PostgreSQL의 확장으로 동작**한�
 | 0.4.0 | 2023-01 | 최대 차원 1,024 → 16,000 확장, `avg` 집계 함수 | 0.4.4 (최초 도입) |
 | 0.5.0 | 2023-08 | **HNSW 인덱스 추가**, IVFFlat 병렬 빌드, `l1_distance` 함수 | — |
 | 0.6.0 | 2024-01 | HNSW 성능 대폭 개선, 메모리 사용량 감소, WAL 생성 감소 | — |
-| 0.7.0 | 2024-04 | **halfvec 타입**, **sparsevec 타입**, bit 벡터 인덱싱, binary_quantize 함수, Hamming/Jaccard 거리, CPU SIMD 디스패치 | 0.7.0 (PG 15.7/16.3~) |
+| 0.7.0 | 2024-04 | **halfvec 타입**, **sparsevec 타입**, bit 벡터 인덱싱, binary_quantize 함수, Hamming/Jaccard 거리, CPU SIMD 디스패치 | 0.7.0 (PG 15.7, 16.3 이상) |
 | 0.8.0 | 2024-10 | **Iterative Index Scan** (필터링 개선), HNSW 빌드/검색 성능 향상, 비용 추정 개선 | **0.8.0 (PG 17.7, DSM 9.1 현재 번들)** |
 | 0.8.1 | 2025-09 | on-disk HNSW 빌드 성능 개선, sparsevec 버그 수정 | DSM 미반영 |
 | 0.8.2 | 2026 | **병렬 HNSW 빌드 buffer overflow 수정 (CVE-2026-3172)** | DSM 미반영 (확인 필요) |
@@ -196,7 +196,7 @@ HNSW의 세 파라미터(`m`, `ef_construction`, `hnsw.ef_search`)는 recall과 
 
 권장 접근: 빌드 시점 파라미터(`m`, `ef_construction`)는 재생성 비용이 크므로 처음에 다소 넉넉히 잡고, 런타임 recall 미세조정은 세션 단위로 바꿀 수 있는 `hnsw.ef_search`로 수행합니다. recall 목표(예: Recall@10 95%)를 정한 뒤 `ef_search`를 단계적으로 올리며 지연과의 균형점을 찾습니다.
 
-> **빌드 시 메모리와 병렬 워커 주의**: pgvector 공식 문서는 "그래프가 `maintenance_work_mem`에 들어갈 때 인덱스 빌드가 현저히 빨라진다"고 명시합니다. 빌드 전 `SET maintenance_work_mem = '8GB';`처럼 충분히 올리고(그래프가 메모리를 초과하면 경고가 발생하며 속도가 급락), `SET max_parallel_maintenance_workers = 7;`(기본 2)로 병렬 빌드를 활용합니다. 워커 수를 크게 잡으면 `max_parallel_workers`(기본 8)도 함께 상향해야 합니다. 단, **병렬 HNSW 빌드는 CVE-2026-3172 영향 경로**이므로(2.12 보안 주의 참조) DSM 번들 pgvector의 패치 적용 시점을 확인하시기 바랍니다.
+> **빌드 시 메모리와 병렬 워커 주의**: pgvector 공식 문서는 "그래프가 `maintenance_work_mem`에 들어갈 때 인덱스 빌드가 현저히 빨라진다"고 명시합니다. 빌드 전 `SET maintenance_work_mem = '8GB';`처럼 충분히 올리고(그래프가 메모리를 초과하면 경고가 발생하며 속도가 급락), `SET max_parallel_maintenance_workers = 7;`(기본 2)로 병렬 빌드를 활용합니다. 워커 수를 크게 잡으면 `max_parallel_workers`(기본 8)도 함께 상향해야 합니다. 단, **병렬 HNSW 빌드는 CVE-2026-3172 영향 경로**이므로(2.2.12절 보안 주의 참조) DSM 번들 pgvector의 패치 적용 시점을 확인하시기 바랍니다.
 > 출처: [pgvector README (HNSW Index Options / Indexing Progress)](https://github.com/pgvector/pgvector/blob/master/README.md)
 
 ### 2.2.6 임베딩 차원, 타입, 거리함수 결정 가이드
@@ -290,7 +290,7 @@ Citus 등의 분산 확장 또는 파티셔닝을 활용한 샤딩. tenant_id, l
 
 | 벡터 규모 | 권장 접근법 |
 |---|---|
-| ~100만 | 단일 인스턴스 + HNSW, 대부분의 PoC/초기 서비스 |
+| 100만 이하 | 단일 인스턴스 + HNSW, 대부분의 PoC/초기 서비스 |
 | 100만 – 1,000만 | 수직 확장 + 파티셔닝 + Read Replica |
 | 1,000만 – 5,000만 | pgvectorscale(StreamingDiskANN) 도입 검토 |
 | 5,000만 이상 | 전용 Vector DB 또는 Citus 기반 분산 검토 |

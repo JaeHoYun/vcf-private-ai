@@ -13,11 +13,11 @@
 서빙 계층은 단독으로 존재하지 않습니다. PAIS의 모든 추론 API는 아래 토대 위에서 동작하며, **이 귀속 관계가 GPU, 격리, 스케일링이 어디서 결정되는지를 정합니다.**
 
 ```
-VCF 9.1 — PAIF Workload Domain (GPU 가속 워크로드 도메인)
+VCF 9.1.x — PAIF Workload Domain (GPU 가속 워크로드 도메인)
   └── Supervisor                              ← vSphere 위의 Kubernetes 제어면
         └── vSphere Namespace                 ← 격리 단위 (DEV/QA/STAGING/PROD)
               └── VKS (vSphere Kubernetes Service)
-                    └── PAIS 2.1              ← 여기서부터가 본 가이드의 범위
+                    └── PAIS 3.0(2.1 호환)    ← 여기서부터가 본 가이드의 범위
                           ├── Model Gallery (Harbor)
                           ├── Model Runtime (추론 엔진 + ML API Gateway)
                           ├── Data Indexing & Retrieval
@@ -71,7 +71,7 @@ VCF 9.1 — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 | **Model Gallery** | 모델 아티팩트 보관, 반입, 버전관리, 접근통제 | 모델 리비전과 메타데이터(상태 보관소) | Harbor(OCI), Supervisor 서비스, 스토리지 | Runtime이 가져갈 **모델 리비전** (2.4절) |
 | **Model Runtime** | Gallery의 모델을 추론 엔진으로 실행, OpenAI 호환 API로 노출. 3.0부터는 다른 인스턴스의 공유 모델과 원격 클라우드 모델도 같은 Endpoint 형태로 연결 | **stateless** — 요청 간 상태 없음 | Gallery(모델), VKS 워커 노드, **GPU**(completion), ML API Gateway | **Model Endpoint** = OpenAI 호환 추론 API (2.5절, [03](03-openai-compatible-endpoints.md)) |
 | **Data Indexing & Retrieval** | 데이터 소스 파싱, 청킹, 임베딩, 의미 검색 | Knowledge Base / 인덱스(pgvector에 영속) | **임베딩 Endpoint**(Runtime), DSM의 pgvector, 데이터 소스 커넥터 | **검색 API** / KB ([문서 04](04-agent-rag-api.md)) |
-| **Agent Builder** | 모델+KB+도구를 묶어 RAG, 세션, 도구호출 오케스트레이션 | **stateful** — `session_id` 기반 대화와 세션 | Model Endpoint(LLM), KB(검색), MCP 도구 | **Agent API** (2.6절, [04](04-agent-rag-api.md), [06](06-mcp-tools-api.md)) |
+| **Agent Builder** | 모델+KB+도구를 묶어 RAG, 세션, 도구호출 오케스트레이션 | **stateful** — `session_id` 기반 대화와 세션 | Model Endpoint(LLM), KB(검색), MCP 도구 | **Agent API** (2.7절, [04](04-agent-rag-api.md), [06](06-mcp-tools-api.md)) |
 
 읽는 법: **위에서 아래로 의존이 흐릅니다.** Gallery가 모델을 공급하고 → Runtime이 그걸 Endpoint로 띄우고 → Indexing이 그 임베딩 Endpoint를 써서 KB를 만들고 → Agent가 그 Endpoint와 KB와 도구를 묶습니다. 그래서 한 모듈이 막히면 그 아래가 함께 막힙니다(예: 임베딩 Endpoint가 없으면 KB 인덱싱이 안 됩니다).
 
@@ -84,9 +84,9 @@ VCF 9.1 — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 | **제어 평면** | 모델 반입과 Endpoint 생성/삭제, 복제본 조정, KB 구성 | 관리자/MLOps (UI, `vcf pais` CLI, REST) | VCF Automation UI / PAIS UI / kubectl |
 | **데이터 평면** | 실제 추론 요청과 응답(토큰) | 앱(런타임 트래픽) | ML API Gateway → Endpoint 파드 |
 
-이 분리가 중요한 이유: **앱이 쓰는 것은 데이터 평면 하나**(Gateway 단일 URL)뿐입니다. 모델을 새로 올리거나(제어 평면) 복제본을 늘려도, 앱 코드는 데이터 평면 경로를 그대로 두면 됩니다(2.7절에서 말한, 앱 변경 없이 스케일아웃을 흡수할 수 있는 이유가 여기에 있습니다).
+이 분리가 중요한 이유: **앱이 쓰는 것은 데이터 평면 하나**(Gateway 단일 URL)뿐입니다. 모델을 새로 올리거나(제어 평면) 복제본을 늘려도, 앱 코드는 데이터 평면 경로를 그대로 두면 됩니다(2.6절에서 말한, 앱 변경 없이 스케일아웃을 흡수할 수 있는 이유가 여기에 있습니다).
 
-> 추론 엔진의 정확한 버전(vLLM, Infinity, llama.cpp)은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)의 안내대로 형제 가이드 표를 기준선으로 삼고, 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다.
+> 추론 엔진의 정확한 버전(vLLM, Infinity, llama.cpp)은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)의 안내대로 ① README 버전표를 기준선으로 삼고, 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다.
 
 ---
 
@@ -109,8 +109,8 @@ VCF 9.1 — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 1. **준비 (PAIS 밖)** — 모델은 외부 출처(NVIDIA NGC, Hugging Face 등)에서 받거나, 사내에서 파인튜닝과 학습한 산출물입니다. **파인튜닝과 학습 자체는 PAIS 범위 밖**이며 DLVM이나 별도 학습 파이프라인(NeMo 등)에서 수행합니다(2.9절 경계 참조).
 2. **반입 (Model Gallery)** — 검증된 모델을 Harbor(OCI 레지스트리)에 올립니다. NIM은 JupyterLab 노트북으로 Harbor에 내려받고, 자체 모델은 `vcf pais models push`로 리비전을 등록합니다. Gallery는 이때 **버전, 접근권한(RBAC), 메타데이터**를 함께 관리합니다(2.4절).
 3. **배포 (Model Runtime)** — 관리자가 Gallery의 특정 모델 리비전을 골라 **Model Endpoint**를 만듭니다. Runtime은 그 모델을 적합한 추론 엔진(생성=vLLM/llama.cpp, 임베딩=Infinity 등) 컨테이너로 감싸 **VKS 워커 노드에 파드로 스케줄**하고, 그 파드가 **ESXi 호스트의 물리 GPU에 연결**됩니다. 가용성을 위해 서로 다른 워커 노드에 **복제본을 2개 이상** 둡니다.
-4. **노출 (ML API Gateway)** — 배포된 Endpoint는 개별 파드 IP가 아니라 **Gateway의 단일 진입 URL**로 노출됩니다. Gateway가 인증, 인가, 로드밸런싱을 그 뒤에서 처리합니다(2.7절).
-5. **소비 (앱/에이전트)** — 앱은 기존 OpenAI 코드의 `base_url`만 사내 PAIS로 바꿔 호출합니다([03](03-openai-compatible-endpoints.md), [08](08-reference-implementation.md)). Agent를 쓰면 그 위에 RAG, 세션, 도구가 얹힙니다(2.6절).
+4. **노출 (ML API Gateway)** — 배포된 Endpoint는 개별 파드 IP가 아니라 **Gateway의 단일 진입 URL**로 노출됩니다. Gateway가 인증, 인가, 로드밸런싱을 그 뒤에서 처리합니다(2.6절).
+5. **소비 (앱/에이전트)** — 앱은 기존 OpenAI 코드의 `base_url`만 사내 PAIS로 바꿔 호출합니다([03](03-openai-compatible-endpoints.md), [08](08-reference-implementation.md)). Agent를 쓰면 그 위에 RAG, 세션, 도구가 얹힙니다(2.7절).
 
 > **여기서 "GPU는 어디에 연결되나"의 답** — 프로덕션 추론에서 GPU는 개발용 DLVM이 아니라 **Endpoint 파드(VKS 워커 VM)가 ESXi 호스트의 물리 GPU에 직접 연결**되는 방식으로 쓰입니다. ([근거: VCF Blog — VKS 워커 VM 파드의 물리 GPU 연결](https://blogs.vmware.com/cloud-foundation/2025/12/17/deploy-vmware-private-ai-services-in-minimal-vmware-cloud-foundation-environments/)) DLVM의 역할은 2.9절에서 분리해 설명합니다.
 
@@ -155,7 +155,7 @@ Model Runtime은 Gallery의 모델을 실제로 실행해 API로 노출하는 �
 
 ### 2.5.1 모델 연결 세 가지 — 로컬, 공유, 원격 (PAIS 3.0부터)
 
-2.1까지 Model Endpoint는 "이 네임스페이스의 GPU에서 이 네임스페이스가 띄운 모델" 하나뿐이었습니다. 3.0부터 Model Runtime은 모델이 어디서 돌아가든 같은 OpenAI 호환 Endpoint로 앱에 보여 주는 세 가지 연결 방식을 갖습니다. 앱 코드 관점에서는 셋 다 `GET /models`에 나타나는 모델 하나이고 호출 경로도 같습니다.
+PAIS 2.1까지 Model Endpoint는 "이 네임스페이스의 GPU에서 이 네임스페이스가 띄운 모델" 하나뿐이었습니다. 3.0부터 Model Runtime은 모델이 어디서 돌아가든 같은 OpenAI 호환 Endpoint로 앱에 보여 주는 세 가지 연결 방식을 갖습니다. 앱 코드 관점에서는 셋 다 `GET /models`에 나타나는 모델 하나이고 호출 경로도 같습니다.
 
 | 연결 방식 | 모델이 도는 곳 | 누가 설정하나 | 앱에 보이는 것 |
 |-----------|----------------|---------------|----------------|
@@ -219,7 +219,7 @@ PAIS는 VCF Automation의 **조직(Organization), 네임스페이스**(2.1절 �
 - **거버넌스 경계** — DEV/PROD를 네임스페이스로 분리하면, 민감한 도구(MCP), 데이터 소스를 PROD에만 허용하는 식의 통제가 가능합니다 → [06 MCP 거버넌스](06-mcp-tools-api.md).
 - **리소스 쿼터** — GPU, 복제본 한도가 네임스페이스 단위로 걸리므로, API 스케일링도 그 한도 안에서 일어납니다. 구체적으로 **네임스페이스당 Model Endpoint 복제본은 최대 15개**이고, **각 복제본이 /24 CIDR 블록을 소비**합니다(더 늘리려면 Supervisor 서비스의 `vks.candidatePodCIDRs`로 대역을 키웁니다) → [07 운영](07-observability-ops.md). ([근거: VCF Blog — Minimal VCF 환경의 PAIS 배포](https://blogs.vmware.com/cloud-foundation/2025/12/17/deploy-vmware-private-ai-services-in-minimal-vmware-cloud-foundation-environments/). 한도 수치는 릴리스마다 달라질 수 있으니 적용 직전 공식 문서로 재확인하시기 바랍니다.)
 
-> **에어갭 반입 — Artifact Mirroring Tool(아티팩트 미러링 도구, PAIS 2.1 신규)** — 외부 반출이 불가한 폐쇄망(에어갭)에서는 PAIS 패키지와 NVIDIA GPU Operator 구성요소와 NGC 컨테이너 등 **아티팩트를 로컬 Harbor 레지스트리로 미러링**하는 도구입니다. 이를 통해 GPU 모델 엔드포인트와 에이전트를 포함한 풀 Private AI를 격리망에서 설치하고 운영하고, 외부 SaaS, 외부 MCP는 차단합니다. API 자체는 동일하되 **연동 대상이 내부로 제한**됩니다. 미러링은 pais CLI 플러그인의 **`vcf pais amt pull/push`** 명령으로 수행합니다(이 명령은 VCF CLI 명령 레퍼런스에는 누락돼 있고 Disconnected Environment 배포 문서에 명시). ([근거: PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [Disconnected 환경 구성요소 업로드](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/installing-and-configuring-private-ai-services/upload-the-private-ai-services-components-to-a-disconnected-environment.html). 상세 런북은 형제 가이드 [① 6.9절](../../01-infra/docs/06-production.md), [앱 가이드 10.4절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/10-models-serving.md))
+> **에어갭 반입 — Artifact Mirroring Tool(아티팩트 미러링 도구, PAIS 2.1 신규)** — 외부 반출이 불가한 폐쇄망(에어갭)에서는 PAIS 패키지와 NVIDIA GPU Operator 구성요소와 NGC 컨테이너 등 **아티팩트를 로컬 Harbor 레지스트리로 미러링**하는 도구입니다. 이를 통해 GPU 모델 엔드포인트와 에이전트를 포함한 풀 Private AI를 격리망에서 설치하고 운영하고, 외부 SaaS, 외부 MCP는 차단합니다. API 자체는 동일하되 **연동 대상이 내부로 제한**됩니다. 미러링은 pais CLI 플러그인의 **`vcf pais amt pull/push`** 명령으로 수행합니다(이 명령은 VCF CLI 명령 레퍼런스에는 누락돼 있고 Disconnected Environment 배포 문서에 명시). ([근거: PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [Disconnected 환경 구성요소 업로드](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/installing-and-configuring-private-ai-services/upload-the-private-ai-services-components-to-a-disconnected-environment.html). 상세 런북은 [① 06 6.9절](../../01-infra/docs/06-production.md), [앱 가이드 10.4절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/10-models-serving.md))
 
 ---
 

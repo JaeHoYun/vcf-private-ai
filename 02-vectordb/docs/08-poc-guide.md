@@ -2,7 +2,7 @@
 
 > 4주 PoC 로드맵, 최소 사양, 성공 기준, 핵심 인사이트
 
-기준 버전: VCF 9.1 / DSM 9.1. 사용과 운영 상세는 [05 사용](05-usage-rag.md), [06 운영](06-operations.md)을 참조하시기 바랍니다.
+기준 버전: VCF 9.1.1 / DSM 9.1.1 / PAIS 3.0. 상세는 [01 버전 호환 매트릭스](01-version-compatibility.md)를 참조하시기 바랍니다. 사용과 운영 상세는 [05 사용](05-usage-rag.md), [06 운영](06-operations.md)을 참조하시기 바랍니다.
 
 ---
 

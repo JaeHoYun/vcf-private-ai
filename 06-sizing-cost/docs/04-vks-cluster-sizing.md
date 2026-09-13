@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 02, 03에서 산정한 워크로드 요구량(GPU, vCPU, RAM)을 실제 **VKS(vSphere Kubernetes Service)** 클러스터 토폴로지로 환산하는 방법을 다룹니다. VKS는 VCF 위에서 동작하는 프로덕션용 GPU 가속 Kubernetes 서비스로, Supervisor 위에 vSphere 네임스페이스 단위로 클러스터를 프로비저닝하며, GPU는 DRA(Dynamic Resource Allocation) 기반으로 스케줄링됩니다. 본 문서가 다루는 GPU 가속 워크로드 도메인은 공식 용어로 "GPU-Accelerated Workload Domain"(이하 GPU 워크로드 도메인)이라 부릅니다.
+이 문서는 02, 03에서 산정한 워크로드 요구량(GPU, vCPU, RAM)을 실제 **VKS(vSphere Kubernetes Service)** 클러스터 토폴로지로 환산하는 방법을 다룹니다. VKS는 VCF 위에서 동작하는 프로덕션용 GPU 가속 Kubernetes 서비스로, Supervisor 위에 vSphere 네임스페이스 단위로 클러스터를 프로비저닝하며, GPU는 DRA(Dynamic Resource Allocation) 기반으로 스케줄링됩니다. 본 문서가 다루는 GPU 가속 워크로드 도메인은 공식 용어로 "GPU-Accelerated Workload Domain"(이하 시리즈 약칭 PAIF Workload Domain)이라 부릅니다.
 
 용어 풀이가 필요한 약어는 처음 등장할 때 풀어 씁니다. 모든 수치는 릴리스와 환경별로 상이할 수 있으므로 도입 전 공식 문서로 재확인하시기 바랍니다.
 

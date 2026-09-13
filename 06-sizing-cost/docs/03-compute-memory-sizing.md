@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-본 문서는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 GPU WLD)에서 **GPU 자체를 제외한 자원** — 호스트 vCPU, 메모리, NUMA, PCIe 배치, 데이터 파이프라인, CPU 추론 경로, 임베딩과 리랭커 같은 RAG 비-LLM 컴포넌트, 그리고 워크로드를 노드 수요로 환산하는 규칙 — 을 사이징합니다. GPU(vGPU 프로파일과 VRAM) 사이징은 [02 — GPU 사이징](./02-gpu-sizing.md)에서 다루며, 본 문서는 그 결과물을 입력으로 받습니다.
+본 문서는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 시리즈 약칭 PAIF Workload Domain)에서 **GPU 자체를 제외한 자원** — 호스트 vCPU, 메모리, NUMA, PCIe 배치, 데이터 파이프라인, CPU 추론 경로, 임베딩과 리랭커 같은 RAG 비-LLM 컴포넌트, 그리고 워크로드를 노드 수요로 환산하는 규칙 — 을 사이징합니다. GPU(vGPU 프로파일과 VRAM) 사이징은 [02 — GPU 사이징](./02-gpu-sizing.md)에서 다루며, 본 문서는 그 결과물을 입력으로 받습니다.
 
 아래 모든 수치는 공신력 출처를 인라인으로 표기했으나, 모델, 토크나이저, 배치 구성, 스토리지 성능에 따라 크게 달라집니다. 따라서 **모든 값은 출발점(어림)이며 실측이 필요합니다.** 불확실한 항목은 본문에 "확인 필요"로 명시했습니다.
 
@@ -49,7 +49,7 @@ GPU 노드 성능은 GPU 자체보다 **GPU, NIC, CPU가 같은 NUMA 도메인/P
 | Cores per Socket | 가상 소켓 수가 물리 NUMA 경계와 맞도록 설정 | [Frank Denneman](https://frankdenneman.ai/2022-10-25-vsphere-8-cpu-topology-device-assignment/) |
 | 멀티-GPU VM 배치 | 토폴로지 인식 배치로 NVLink/PCIe 인접 GPU를 묶기 | [Frank Denneman, Topology-Aware Multi-GPU VM Placement](https://frankdenneman.ai/2026-03-31-Topology-Aware-Multi-GPU-VM-Placement/) |
 
-PAIF 9.1 GPU WLD 전제로, 각 ESX 호스트에서 BIOS, 그래픽 디바이스의 **SR-IOV 활성화**와 vGPU 호스트 드라이버 설치가 요구되며, 초기 클러스터는 **최소 3개 GPU 탑재 호스트**로 구성합니다([Broadcom TechDocs, Requirements for Deploying Private AI Foundation with NVIDIA](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html)). 9.1 기준 세부 요구 사항은 [PAIF with NVIDIA 9.1 문서](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)로 재확인이 필요합니다.
+PAIF 9.1 PAIF Workload Domain 전제로, 각 ESX 호스트에서 BIOS, 그래픽 디바이스의 **SR-IOV 활성화**와 vGPU 호스트 드라이버 설치가 요구되며, 초기 클러스터는 **최소 3개 GPU 탑재 호스트**로 구성합니다([Broadcom TechDocs, Requirements for Deploying Private AI Foundation with NVIDIA](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html)). 9.1 기준 세부 요구 사항은 [PAIF with NVIDIA 9.1 문서](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)로 재확인이 필요합니다.
 
 ---
 
@@ -177,7 +177,7 @@ GPU 없이 **소형 모델과 임베딩**을 서빙해야 하는 경우(예: GPU
 
 ---
 
-> 다음 문서에서는 본 사이징 결과를 비용으로 환산합니다. 사이징 입력(노드 수, 자원)은 본 문서를, GPU 프로파일은 [02 — GPU 사이징](./02-gpu-sizing.md)을 참조하세요.
+> 다음 문서([04 — VKS 클러스터 사이징](./04-vks-cluster-sizing.md))에서는 본 사이징 결과를 VKS 클러스터 토폴로지로 환산합니다. 비용 환산은 [07 — TCO와 비용 모델](./07-tco-cost-model.md)입니다. 사이징 입력(노드 수, 자원)은 본 문서를, GPU 프로파일은 [02 — GPU 사이징](./02-gpu-sizing.md)을 참조하세요.
 
 ---
 [← 이전: 02 GPU 사이징](02-gpu-sizing.md) | [목차](../README.md) | [다음: 04 VKS 클러스터 사이징과 인프라 →](04-vks-cluster-sizing.md)

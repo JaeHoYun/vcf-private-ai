@@ -102,7 +102,7 @@
 
 ### 3.4.1 PAIS Model Runtime 안에서 모델을 어디에 두나 — 로컬 vs 중앙 공유 vs 원격 클라우드 (PAIS 3.0부터)
 
-경로 A(PAIS Model Runtime)를 골랐다면 3.0부터 한 단계 더 정할 것이 생깁니다. 모델이 도는 자리입니다. 2.1까지는 답이 하나(해당 네임스페이스의 GPU)였지만, 3.0은 세 가지를 같은 OpenAI 호환 엔드포인트로 노출합니다([③ 02 2.5.1절](../../03-serving-api/docs/02-serving-api-architecture.md)).
+경로 A(PAIS Model Runtime)를 골랐다면 3.0부터 한 단계 더 정할 것이 생깁니다. 모델이 도는 자리입니다. PAIS 2.1까지는 답이 하나(해당 네임스페이스의 GPU)였지만, 3.0은 세 가지를 같은 OpenAI 호환 엔드포인트로 노출합니다([③ 02 2.5.1절](../../03-serving-api/docs/02-serving-api-architecture.md)).
 
 - **경로 A-1 — 로컬**: 네임스페이스마다 자기 GPU에 모델을 띄움. 격리가 가장 단순하고 장애 범위가 좁으나, 같은 모델을 쓰는 테넌트 수만큼 GPU가 중복됨.
 - **경로 A-2 — 중앙 공유**: 한 provider 인스턴스가 공통 모델을 서빙하고 각 테넌트는 consumer 네임스페이스에서 참조. 지식베이스, 에이전트, 도구는 테넌트 안에 남고 모델 가중치와 GPU만 한 곳에 모임. API 토큰과 LoadBalancer 지원 Ingress가 전제.

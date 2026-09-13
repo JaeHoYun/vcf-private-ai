@@ -79,7 +79,7 @@
 | Supervisor | vSphere에 심은 쿠버네티스 제어부. VKS 클러스터를 프로비저닝 |
 | vSphere Namespace | 자원과 정책 경계(테넌트/프로젝트 단위) |
 | vSphere Zone | 물리 장애 도메인. 3-Zone으로 고가용성(HA) |
-| Workload Domain (GPU-Accelerated) | 워크로드를 담는 자원 묶음. GPU 가속용은 GPU WLD |
+| Workload Domain (GPU-Accelerated) | 워크로드를 담는 자원 묶음. GPU 가속용의 공식 표기는 GPU-Accelerated Workload Domain이며, 이 시리즈는 PAIF Workload Domain으로 약칭([① README 용어](../../01-infra/README.md)) |
 | ESX(i) host | 하이퍼바이저가 도는 물리 서버 1대 |
 | VM Class | 노드 1대의 vCPU, RAM, (v)GPU 사양 템플릿 |
 | vSAN / NSX | 분산 스토리지 / 네트워크 가상화 |

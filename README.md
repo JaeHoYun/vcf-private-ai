@@ -1,6 +1,6 @@
 # VCF Private AI 가이드 시리즈
 
-VMware Cloud Foundation(VCF) **9.1** 기반 **Private AI**를 다루는 공개 실무 가이드입니다(전 7편, 단일 저장소). 핵심 축인 **PAIF**(Private AI Foundation with NVIDIA)와 **PAIS**(Private AI Services)를 **인프라 → 데이터 → 서빙 → 통합(RAG)** 흐름으로 풀어냅니다. **보안, 거버넌스**와 **사이징, 용량, 비용**은 이 모든 계층을 가로지르고, **통합 설계**는 이 결정들을 하나의 일관된 플랫폼 설계로 묶습니다. 그 플랫폼 위에 올리는 **앱과 에이전트 서비스**는 시리즈의 번호 챕터가 아니라 별도 최상위 가이드에서 다룹니다(아래 '다음 단계').
+VMware Cloud Foundation(VCF) **9.1.x** 기반 **Private AI**를 다루는 공개 실무 가이드입니다(전 7편, 단일 저장소). 핵심 축인 **PAIF**(Private AI Foundation with NVIDIA)와 **PAIS**(Private AI Services)를 **인프라 → 데이터 → 서빙 → 통합(RAG)** 흐름으로 풀어냅니다. **보안, 거버넌스**와 **사이징, 용량, 비용**은 이 모든 계층을 가로지르고, **통합 설계**는 이 결정들을 하나의 일관된 플랫폼 설계로 묶습니다. 그 플랫폼 위에 올리는 **앱과 에이전트 서비스**는 시리즈의 번호 챕터가 아니라 별도 최상위 가이드에서 다룹니다(아래 '다음 단계').
 
 데이터가 사내를 벗어나지 않는 환경에서 LLM, RAG, 에이전트 서비스를 처음부터 끝까지 **구축, 운영, 보호, 산정**하려는 인프라팀, MLOps, 앱 개발자를 위한 현장 레퍼런스를 지향합니다. 모든 수치와 버전은 작성 시점(2026-06) Broadcom 공식 릴리스 노트를 기준선으로 하고, 2026-09에 VCF 9.1.1과 PAIS 3.0 GA 내용을 반영했으며, 적용 전 공식 문서 재확인을 권장합니다.
 
@@ -28,18 +28,16 @@ VMware Cloud Foundation(VCF) **9.1** 기반 **Private AI**를 다루는 공개 �
 
 Private AI의 본질적 질문은 "어떤 모델인가"가 아니라 **"그 모델을 사내 데이터센터 안에서 안전하고 효율적으로 돌릴 토대를 어떻게 만드는가"** 입니다. 그 토대는 다음 네 계층으로 이루어집니다.
 
-이 전제에 PAIS 3.0(2026-09)이 한 가지를 더했습니다. 모델을 사내 GPU에 두는 것 외에, 다른 인스턴스가 서빙하는 공유 모델과 Google Gemini 같은 원격 클라우드 모델을 같은 사내 API 뒤에 붙일 수 있게 됐습니다. 그래서 시리즈의 전제는 "모델은 언제나 사내에"가 아니라 **"모델을 어디에 둘지는 워크로드마다 고르고, 무엇이 밖으로 나가는지는 플랫폼이 추적하고 통제한다"** 로 넓어집니다. 기본값은 여전히 사내 모델이고, 원격 모델은 반출 정책이 허용한 데이터에만 씁니다. 그 결정 틀은 [⑦ 03 3.4.1절](07-design/docs/03-compute-gpu-topology.md), 반출 경계 통제는 [⑤ 05 5.6절](05-security/docs/05-data-governance.md)에 있습니다.
-
 - **VCF** — 프라이빗 클라우드 플랫폼. 컴퓨트, 스토리지, 네트워크와 쿠버네티스(VKS)를 묶는 기반 계층.
-- **PAIF** — VCF 위에서 GPU, 드라이버, 모델, RAG를 표준화하는 AI 인프라 계층.
+- **PAIF 코어 기능 계층** — VCF 위에서 GPU, 드라이버, 모델, RAG를 표준화하는 AI 인프라 계층. PAIF(솔루션)는 이 코어 기능 계층과 아래 PAIS를 합친 이름입니다.
 - **PAIS** — 모델 서빙, RAG, 에이전트(Agent Builder), MCP를 관리형으로 올리는 서비스 계층.
 - **Agents, MCP** — 모델이 사내 데이터와 도구와 표준 인터페이스로 연결되어 실제 일을 수행하는 실행 계층. 이 계층은 시리즈 본편이 아니라 별도 최상위 [앱과 에이전트 서비스 가이드](https://github.com/JaeHoYun/vcf-private-ai-apps)에서 다룹니다.
 
 ```mermaid
 flowchart TB
-    A["Agents, MCP<br/>추론, 도구 호출 실행 계층 &nbsp;｜&nbsp; 별도 에이전트 가이드"]
+    A["Agents, MCP<br/>추론, 도구 호출 실행 계층 &nbsp;｜&nbsp; 별도 앱과 에이전트 서비스 가이드"]
     P["PAIS — Private AI Services<br/>모델 서빙, RAG, Agent Builder, MCP (관리형) &nbsp;｜&nbsp; 시리즈 ③④"]
-    F["PAIF — Private AI Foundation with NVIDIA<br/>GPU, 드라이버, 모델, 벡터DB 표준화 &nbsp;｜&nbsp; 시리즈 ①②"]
+    F["PAIF 코어 기능 계층 — Private AI Foundation with NVIDIA<br/>GPU, 드라이버, 모델, 벡터DB 표준화 &nbsp;｜&nbsp; 시리즈 ①②"]
     V["VCF — VMware Cloud Foundation<br/>컴퓨트, 스토리지, 네트워크, 쿠버네티스(VKS) &nbsp;｜&nbsp; 시리즈 ①"]
     A --> P --> F --> V
     X["보안, 거버넌스 (⑤) &nbsp;｜&nbsp; 사이징, 용량, 비용 (⑥)<br/>— 전 계층을 가로지름 —"]
@@ -54,7 +52,9 @@ flowchart TB
     Y -.-> V
 ```
 
-> 위에서 아래로 **실행(에이전트) → 서비스(PAIS) → AI 인프라(PAIF) → 플랫폼(VCF)** 의 4계층이며, 보안과 비용(⑤⑥)이 전 계층을 가로지르고 통합 설계(⑦)가 이를 종합합니다.
+> 위에서 아래로 **실행(에이전트) → 서비스(PAIS) → AI 인프라(PAIF 코어 기능 계층) → 플랫폼(VCF)** 의 4계층이며, 보안과 비용(⑤⑥)이 전 계층을 가로지르고 통합 설계(⑦)가 이를 종합합니다.
+
+위 관점의 전제("모델은 사내에서 돌린다")에 PAIS 3.0(2026-09)이 한 가지를 더했습니다. 모델을 사내 GPU에 두는 것 외에, 다른 인스턴스가 서빙하는 공유 모델과 Google Gemini 같은 원격 클라우드 모델을 같은 사내 API 뒤에 붙일 수 있게 됐습니다. 그래서 시리즈의 전제는 "모델은 언제나 사내에"가 아니라 **"모델을 어디에 둘지는 워크로드마다 고르고, 무엇이 밖으로 나가는지는 플랫폼이 추적하고 통제한다"** 로 넓어집니다. 기본값은 여전히 사내 모델이고, 원격 모델은 반출 정책이 허용한 데이터에만 씁니다. 그 결정 틀은 [⑦ 03 3.4.1절](07-design/docs/03-compute-gpu-topology.md), 반출 경계 통제는 [⑤ 05 5.6절](05-security/docs/05-data-governance.md)에 있습니다.
 
 그래서 이 시리즈의 모든 편 — 데이터(VectorDB), 서빙, RAG, 보안, 거버넌스, 사이징, 비용 — 은 결국 **"Private AI를 떠받치는 기반을 어떻게 구축, 운영, 보호, 산정하는가"** 라는 하나의 질문으로 모입니다. ①–④는 그 토대를 쌓아 올리는 구축 흐름이고, ⑤, ⑥은 그 토대 전체를 가로지르는 보안과 비용 관점이며, ⑦은 이 모두를 하나로 종합하는 통합 설계 편입니다. 그 플랫폼 위에 앱과 에이전트 서비스를 구현하고 운영하는 일은 시리즈와 별개의 최상위 가이드에서 다룹니다(아래 '다음 단계').
 
@@ -64,7 +64,7 @@ flowchart TB
 
 | 편 | 폴더 | 계층 | 다루는 영역 |
 |----|------|------|-------------|
-| ① | [01-infra](01-infra/README.md) | 인프라와 운영 | PAIF/PAIS 구축, 개발, 운영 전반, GPU, 아키텍처, What's New(9.1), 산업 시나리오 |
+| ① | [01-infra](01-infra/README.md) | 인프라와 운영 | PAIF/PAIS 구축, 개발, 운영 전반, GPU, 아키텍처, What's New(9.1 / 9.1.1), 산업 시나리오 |
 | ② | [02-vectordb](02-vectordb/README.md) | 데이터 | RAG용 엔터프라이즈 벡터 DB (DSM PostgreSQL + pgvector), 배포와 운영 런북 |
 | ③ | [03-serving-api](03-serving-api/README.md) | 서빙 | OpenAI 호환 모델 서빙 API, 추론과 에이전트 엔드포인트, 인증, MCP, 관측성 |
 | ④ | [04-rag](04-rag/README.md) | 통합 | ②③을 하나로 꿰는 엔드투엔드 RAG 레퍼런스 아키텍처 |
@@ -81,7 +81,7 @@ flowchart TB
 - **앱 개발자다** → ③ + ④ 의 앱 통합 문서
 - **보안과 규제 대응이 우선이다** → ⑤ 전반 (①–④ 각 편과 교차 참조)
 - **규모와 예산을 산정한다** → ⑥ 전반 (특히 GPU, VKS 클러스터 사이징과 TCO)
-- **9.1로 올라간다** → ① 의 What's New(00)
+- **9.1.x로 올라간다** → ① 의 What's New(00)
 - **설계를 종합하고 결정을 내린다** → ⑦ (16개 설계 결정과 블루프린트, ①–⑥로 딥링크)
 - **앱이나 에이전트 서비스를 만든다** → 아래 '다음 단계'의 [앱과 에이전트 서비스 가이드](https://github.com/JaeHoYun/vcf-private-ai-apps) (서비스 수명주기 순서, Agent Builder, MCP, Model Runtime, ③④로 딥링크)
 
@@ -101,7 +101,7 @@ flowchart TB
 
 플랫폼 엔지니어링이 AI 시대에 어떻게 진화하는지에 대한 업계 논의도 이 시리즈가 다루는 계층과 맞닿습니다.
 
-- [Platform Engineering 2.0: An Evolution for the AI Era](https://www.linkedin.com/pulse/time-platform-engineering-20-now-vmwarevcf-m3yfc/) — Broadcom, PlatformEngineering.org 공동 백서. 개발자 중심 플랫폼(1.0)이 AI 네이티브 플랫폼(GPU, 모델 서빙, MCP), 다중 페르소나, 내장 FinOps, 보안 기층화, 컴포저블 아키텍처의 다섯 축으로 확장된다는 프레임워크로, 본 시리즈 ①–⑦과 에이전트 가이드의 기술 토픽과 거의 1:1로 대응합니다.
+- [Platform Engineering 2.0: An Evolution for the AI Era](https://www.linkedin.com/pulse/time-platform-engineering-20-now-vmwarevcf-m3yfc/) — Broadcom, PlatformEngineering.org 공동 백서. 개발자 중심 플랫폼(1.0)이 AI 네이티브 플랫폼(GPU, 모델 서빙, MCP), 다중 페르소나, 내장 FinOps, 보안 기층화, 컴포저블 아키텍처의 다섯 축으로 확장된다는 프레임워크로, 본 시리즈 ①–⑦과 앱과 에이전트 서비스 가이드의 기술 토픽과 거의 1:1로 대응합니다.
 
 ## 기반 버전 (요약)
 

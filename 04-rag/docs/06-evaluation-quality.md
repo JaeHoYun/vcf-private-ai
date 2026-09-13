@@ -35,7 +35,7 @@ RAG 품질은 **검색(retrieval)** 과 **생성(generation)** 으로 나눠 봐
 
 6.1의 지표를 손으로 재기는 비현실적입니다. RAG 전용 오픈소스 평가 프레임워크를 쓰면 LLM-as-judge 채점과 검색 지표 계산을 표준화할 수 있습니다.
 
-- **RAGAS**: faithfulness, answer relevancy, context recall, context precision를 핵심 지표로 제공하며, 각 지표는 **0–1(높을수록 좋음)** 스케일입니다([RAGAS Metrics](https://docs.ragas.io/en/v0.1.21/concepts/metrics/), [Faithfulness](https://docs.ragas.io/en/v0.1.21/concepts/metrics/faithfulness.html)). faithfulness는 "답변의 모든 주장이 주어진 컨텍스트에서 추론 가능한가"로 정의됩니다.
+- **RAGAS**: faithfulness, answer relevancy, context recall, context precision을 핵심 지표로 제공하며, 각 지표는 **0–1(높을수록 좋음)** 스케일입니다([RAGAS Metrics](https://docs.ragas.io/en/v0.1.21/concepts/metrics/), [Faithfulness](https://docs.ragas.io/en/v0.1.21/concepts/metrics/faithfulness.html)). faithfulness는 "답변의 모든 주장이 주어진 컨텍스트에서 추론 가능한가"로 정의됩니다.
 - **DeepEval**: 동일 계열 지표를 제공하고 **임계값 기반 통과/실패(pass/fail)** 와 CI/CD 통합이 깔끔합니다. 예를 들어 `ContextualRecallMetric(threshold=0.7)`, `AnswerRelevancyMetric(threshold=0.8)` 처럼 지표별 임계를 지정합니다([DeepEval Faithfulness](https://deepeval.com/docs/metrics-faithfulness), [Contextual Recall](https://deepeval.com/docs/metrics-contextual-recall), [RAG Evaluation](https://deepeval.com/guides/guides-rag-evaluation)).
 
 **정량 합격 임계 — 예시(반드시 환경별 조정)**

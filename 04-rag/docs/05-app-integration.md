@@ -2,7 +2,7 @@
 
 [← 목차로](../README.md)
 
-추론을 실제 사내 서비스로 감싸는 단계입니다. ③의 4-Tier 앱 구조를 RAG 시나리오에 맞춰 구체화합니다. 이 문서는 RAG 조립 관점의 골격 요약이며, 앱 팀이 실제로 정해야 하는 화면 명세(출처 카드, 폴백 문구, 신뢰도 표현, 진행 표시), 사람 이관, 피드백 이벤트 스키마, AI 생성 고지와 표시, 대화 데이터 거버넌스는 [앱 가이드 11 앱 통합과 신뢰 UX](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/11-app-integration-ux.md)가 정본입니다.
+추론을 실제 사내 서비스로 감싸는 단계입니다. [① 04 4.6절](../../01-infra/docs/04-dev-scenarios.md#46-ai-앱의-계층별-역할-4-tier)과 [앱 가이드 11 11.1절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/11-app-integration-ux.md)의 4-Tier 앱 구조를 RAG 시나리오에 맞춰 구체화합니다. 이 문서는 RAG 조립 관점의 골격 요약이며, 앱 팀이 실제로 정해야 하는 화면 명세(출처 카드, 폴백 문구, 신뢰도 표현, 진행 표시), 사람 이관, 피드백 이벤트 스키마, AI 생성 고지와 표시, 대화 데이터 거버넌스는 [앱 가이드 11 앱 통합과 신뢰 UX](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/11-app-integration-ux.md)가 정본입니다.
 
 ## 5.1 4-Tier 구조
 
@@ -36,7 +36,7 @@ PAIS가 OpenAI 호환이라, 이미 외부 LLM을 쓰던 앱은 **`base_url`과 
 
 문서 Q&A는 후속 질문("그럼 그건?")이 흔합니다.
 
-- **세션 상태**: 대화 이력을 BFF(Backend For Frontend, 프론트엔드 전용 백엔드)/오케스트레이션 계층에 보관. 경로 A(Agent)는 세션을 캡슐화할 수 있어 활용(④4.1).
+- **세션 상태**: 대화 이력을 BFF(Backend For Frontend, 프론트엔드 전용 백엔드)/오케스트레이션 계층에 보관. 경로 A(Agent)는 세션을 캡슐화할 수 있어 활용(4.1절).
 - **후속 질문 재작성(query rewriting)**: 대명사와 생략이 많은 후속 질문은 그대로 임베딩하면 검색이 빗나갑니다. 직전 맥락을 합쳐 **독립형 질문으로 재작성**한 뒤 검색하면 정밀도가 크게 오릅니다.
 - **컨텍스트 예산**: 이력 + 근거 + 질문이 윈도우를 넘지 않게 이력 요약/절단.
 

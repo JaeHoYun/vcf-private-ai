@@ -47,7 +47,7 @@ PAIS 3.0에서 이 원칙이 어디까지 구현되고 어디부터 앱과 게�
 | 최종 사용자 신원의 전파 | 서비스 토큰만 받으며 사용자 컨텍스트를 도구와 검색까지 전파한다는 근거 없음 | 헤더와 클레임 규약, 토큰 교환, 서명된 컨텍스트([앱 가이드 04 4.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/04-identity-propagation.md)) |
 | 에이전트에 기업 신원과 정책을 붙이는 별도 계층 | 없음. AgentMinder는 2026-08-31 GA된 별도 제품으로 에이전트 신원과 도구 호출 게이트웨이를 제공하며 PAIS 구성요소가 아님([Broadcom 보도자료](https://www.globenewswire.com/news-release/2026/08/31/3353342/19933/en/broadcom-unveils-agentminder-an-enterprise-solution-for-ai-agent-governance-and-runtime-control.html)) | 8.8절의 정책 집행 계층 선택 |
 
-워크로드 신원 표준인 SPIFFE/SPIRE와 토큰 교환을 결합해 에이전트에 단기 신원을 발급하는 구성은 Kubernetes 위에서 검증된 패턴입니다([Red Hat, Wiring zero trust identity for AI agents, 2026-06](https://next.redhat.com/2026/06/10/wiring-zero-trust-identity-for-ai-agents-spiffe-token-exchange-and-kagenti/)). VKS 워크로드에 적용할 때의 페더레이션은 [앱 가이드 04 4.4절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/04-identity-propagation.md)을 참조하십시오.
+워크로드 신원 표준인 SPIFFE/SPIRE와 토큰 교환을 결합해 에이전트에 단기 신원을 발급하는 구성은 Kubernetes 위에서 검증된 패턴입니다([Red Hat, Wiring zero trust identity for AI agents, 2026-06](https://next.redhat.com/2026/06/10/wiring-zero-trust-identity-for-ai-agents-spiffe-token-exchange-and-kagenti/)). VKS 워크로드에 적용할 때의 페더레이션은 [앱 가이드 04 4.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/04-identity-propagation.md)을 참조하십시오.
 
 ## 8.3 자율성 상한과 위험 등급의 매트릭스
 
@@ -214,4 +214,4 @@ PAIS 3.0의 MCP 클라이언트는 Streamable HTTP와 SSE 전송, 정적 토큰 
 
 ---
 
-[← 이전: 07 감사, 로깅, 사고대응 + 컴플라이언스 체크리스트](07-audit-compliance.md) | [목차](../README.md)
+[← 이전: 07 감사, 로깅, 사고대응 및 컴플라이언스 체크리스트](07-audit-compliance.md) | [목차](../README.md)

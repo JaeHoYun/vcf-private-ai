@@ -1,8 +1,9 @@
-# 01 — 위협 모델 및 보안 아키텍처 전경
+# 01 — 위협 모델과 보안 아키텍처 전경
+
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 PAIF(Private AI Foundation) 9.1 / PAIS(Private AI Services) 2.1 기반 Private AI 플랫폼의 **위협 모델**과 **보안 아키텍처 전경**(landscape)을 정리합니다. 개별 통제의 상세 설계는 02–08 문서로 위임하며, 본 문서는 "무엇을 왜 방어하는가"를 파악하는 출발점입니다. 착수 순서와 요청 경로 위의 청사진은 [00 어디서부터 시작하나](00-where-to-start.md)에 있습니다.
+이 문서는 VCF 9.1.1 / PAIF(Private AI Foundation) 9.1.1 / PAIS(Private AI Services) 3.0 기반 Private AI 플랫폼의 **위협 모델**과 **보안 아키텍처 전경**(landscape)을 정리합니다. 개별 통제의 상세 설계는 02–08 문서로 위임하며, 본 문서는 "무엇을 왜 방어하는가"를 파악하는 출발점입니다. 착수 순서와 요청 경로 위의 청사진은 [00 어디서부터 시작하나](00-where-to-start.md)에 있습니다.
 
 PAIF 9.1은 VCF(VMware Cloud Foundation) 9.1 위에 GPU 가속 컴퓨팅과 AI 중심 서비스를 얹은 플랫폼이며, AI 워크로드는 **GPU-Accelerated Workload Domain**(본 문서 약칭 PAIF Workload Domain)에 배치됩니다. Private AI Services는 이 도메인의 Supervisor 위에 설치되어 Model Gallery, Model Runtime, Vector Database, Data Indexing and Retrieval, AI Agent Builder 등을 제공합니다([Broadcom: Deploy a GPU-Accelerated Workload Domain](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)).
 

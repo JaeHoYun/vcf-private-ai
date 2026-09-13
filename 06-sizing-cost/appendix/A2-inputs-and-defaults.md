@@ -1,4 +1,4 @@
-# 부록 A2 — 입력값 환산, 기본값, 모델 선택 보조
+# A2 — 입력값 환산, 기본값, 모델 선택 보조
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
@@ -61,7 +61,7 @@
 
 | 지표 | 정의 | 기본값(출발) | 근거와 메모 |
 |---|---|---|---|
-| TTFT | 첫 토큰까지 시간 | 1–2초(대화형 상한 200ms~) | VMware는 200ms 목표 제시([출처](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/)); 사내 도구는 다소 완화 가능 |
+| TTFT | 첫 토큰까지 시간 | 1–2초(대화형 하한 200ms) | VMware는 200ms 목표 제시([출처](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/)); 사내 도구는 다소 완화 가능 |
 | TPOT/ITL | 토큰 간 지연 | 사람 읽기 속도(약 10–20 tok/s) 이상 | 체감 생성 속도 |
 | P95/P99 | 백분위 지연 | SLA는 평균이 아닌 P95/P99로 | 본문 [01.3](../docs/01-sizing-methodology.md#13-사이징-입력값-체크리스트) |
 | 가용성 | 다중화 수준 | 최소 N+1 | 노드 장애와 롤링 업데이트 흡수 |

@@ -80,7 +80,7 @@ TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다�
 
 ## 7.4 서버, 스토리지, 네트워크(GPU 외 인프라)
 
-GPU 외 인프라는 GPU-Accelerated Workload Domain(약칭: GPU 가속 워크로드 도메인)을 구성하고 운영하는 데 필요한 기반입니다.
+GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 시리즈 약칭 PAIF Workload Domain)을 구성하고 운영하는 데 필요한 기반입니다.
 
 | 항목 | 사이징 입력 | 비용 모델 | 단가(견적 입력) |
 | --- | --- | --- | --- |
@@ -89,7 +89,7 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(약칭: GPU 가속 워크�
 | 데이터 파이프라인 스토리지 | 데이터셋 크기 | 계층/티어별 단가 | (견적 확인) |
 | 백업과 DR | 보호 대상 용량 | 용량 × 단가 | (견적 확인) |
 
-메모: VCF 9는 vSAN(OSA/ESA) 3노드 또는 외부 스토리지(NFS/FC) 2노드 구성을 지원하므로([Broadcom TechDocs — Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)), 스토리지 아키텍처 선택이 노드 수와 라이선스 코어 수에 영향을 줍니다. 스토리지 효율(압축, 중복제거, 메모리 티어링) 기능은 실효 용량을 늘려 단위 용량당 비용을 낮출 수 있으나, 효과는 데이터 특성에 의존하므로 실측이 필요합니다(7.7 참조).
+메모: VCF 9는 vSAN(OSA/ESA) 3노드 또는 외부 스토리지(NFS/FC) 2노드 구성을 지원하므로([Broadcom TechDocs — Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)), 스토리지 아키텍처 선택이 노드 수와 라이선스 코어 수에 영향을 줍니다. 스토리지 효율(압축, 중복제거, 메모리 티어링) 기능은 실효 용량을 늘려 단위 용량당 비용을 낮출 수 있으나, 효과는 데이터 특성에 의존하므로 실측이 필요합니다(7.8 참조).
 
 ---
 

@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 GPU WLD)을 한 번 구축했다고 끝이 아닙니다. AI 워크로드는 모델 교체, 동시 사용자 증가, 신규 테넌트 온보딩에 따라 수요가 빠르게 변합니다. 본 문서는 "지금 용량이 충분한가, 언제 무엇을 증설해야 하는가, 그 비용은 누구에게 귀속되는가"라는 운영 단계의 질문에 답하기 위한 **용량 계획(capacity planning)** 관점을 다룹니다.
+GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 시리즈 약칭 PAIF Workload Domain)을 한 번 구축했다고 끝이 아닙니다. AI 워크로드는 모델 교체, 동시 사용자 증가, 신규 테넌트 온보딩에 따라 수요가 빠르게 변합니다. 본 문서는 "지금 용량이 충분한가, 언제 무엇을 증설해야 하는가, 그 비용은 누구에게 귀속되는가"라는 운영 단계의 질문에 답하기 위한 **용량 계획(capacity planning)** 관점을 다룹니다.
 
 - 인프라 구축과 GPUaaS 테넌시 모델의 상세는 [① 인프라 가이드](../../01-infra/README.md)를 참조하세요. 본 문서는 동일 주제를 "용량" 시점으로만 다룹니다.
 - 비용 모델(단가 산정, TCO, 과금 공식)의 상세는 본 시리즈 [07-tco-cost-model.md](./07-tco-cost-model.md)를 참조하세요. 본 문서는 용량이 비용에 어떤 "입력값"이 되는지까지만 다룹니다.
@@ -57,7 +57,7 @@ DCGM 메트릭 정의와 단위는 [NVIDIA DCGM Feature Overview](https://docs.n
 - **버스트 흡수**: 단기 피크는 증설보다 큐잉, 우선순위, MIG(Multi-Instance GPU, 단일 GPU를 격리된 여러 인스턴스로 분할)/vGPU 재분배로 흡수하고, **지속적, 구조적 증가**일 때만 물리 증설로 대응합니다. 순간 피크에 반응해 증설하면 곧 유휴가 됩니다.
 - **소진 속도 기반 예측**: 쿼터, VRAM, 용량의 "소진 속도"를 추세선으로 보면 "며칠 후 고갈"을 미리 알 수 있습니다. VCF Operations의 용량과 비용 인사이트가 이 추세 기반 권고를 제공합니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)).
 
-증설의 형태는 두 가지입니다. **GPU/노드 수평 증설**(GPU WLD에 호스트 추가)과 **활용 효율 개선**(리클레임과 라이트사이징으로 기존 자원 회수). VCF Operations 9.1의 리클레임 대시보드와 라이트사이징 권고는 "증설 전에 회수할 자원"을 먼저 식별하게 해줍니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)). 하드웨어 공급과 비용 부담이 큰 시기일수록 "증설하기 전에 먼저 회수"하는 것이 비용을 아끼는 첫 번째 조치입니다([VCF 9.1 출시 발표](https://www.broadcom.com/company/news/product-releases/64326)).
+증설의 형태는 두 가지입니다. **GPU/노드 수평 증설**(PAIF Workload Domain에 호스트 추가)과 **활용 효율 개선**(리클레임과 라이트사이징으로 기존 자원 회수). VCF Operations 9.1의 리클레임 대시보드와 라이트사이징 권고는 "증설 전에 회수할 자원"을 먼저 식별하게 해줍니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)). 하드웨어 공급과 비용 부담이 큰 시기일수록 "증설하기 전에 먼저 회수"하는 것이 비용을 아끼는 첫 번째 조치입니다([VCF 9.1 출시 발표](https://www.broadcom.com/company/news/product-releases/64326)).
 
 ### 역방향 진입 — 유휴, 사일로 자원 진단과 회수
 
@@ -143,7 +143,7 @@ VCF Operations 9.1은 애플리케이션 단위 쇼백과 차지백을 제공하
 
 용량 계획은 문서가 아니라 측정으로 검증됩니다. 아래 절차로 본 문서의 지표, 트리거, 로드맵이 실제 환경에서 성립하는지 확인합니다.
 
-1. **지표 수집 파이프라인 검증**: GPU WLD 호스트에서 DCGM(또는 DCGM-Exporter)이 `DCGM_FI_DEV_GPU_UTIL`, `DCGM_FI_DEV_FB_USED/FREE`, `DCGM_FI_PROF_SM_ACTIVE`를 노출하는지 확인합니다. VCF Operations에서 동일 GPU, vGPU 메트릭과 AI 메트릭(TTFT, E2E 지연)이 대시보드에 표시되는지 확인합니다. AI 메트릭 대시보드는 Grafana 배포가 전제입니다([VCF 9.1 AI 워크로드 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/), [DCGM Feature Overview](https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/feature-overview.html)).
+1. **지표 수집 파이프라인 검증**: PAIF Workload Domain 호스트에서 DCGM(또는 DCGM-Exporter)이 `DCGM_FI_DEV_GPU_UTIL`, `DCGM_FI_DEV_FB_USED/FREE`, `DCGM_FI_PROF_SM_ACTIVE`를 노출하는지 확인합니다. VCF Operations에서 동일 GPU, vGPU 메트릭과 AI 메트릭(TTFT, E2E 지연)이 대시보드에 표시되는지 확인합니다. AI 메트릭 대시보드는 Grafana 배포가 전제입니다([VCF 9.1 AI 워크로드 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/), [DCGM Feature Overview](https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/feature-overview.html)).
 2. **부하 시험으로 트리거 검증**: 합성 부하를 점증시키며 평균과 P95 사용률, VRAM, 대기 큐, P95 지연이 6.2 임계에서 의도대로 경보를 내는지 확인합니다. 오탐과 미탐이 있으면 관측 창, 임계를 보정합니다(확정 임계는 조직별 합의 필요).
 3. **예약과 쿼터 한계 검증**: GPU Reservation을 설정한 워크로드가 자원 압박 상황에서도 시작 자원을 확보하는지, 쿼터 소진 시 신규 요청이 정책대로 거부되는지 확인합니다([PAIF with NVIDIA 9.0.x 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-90-release-notes.html)).
 4. **쇼백과 차지백 수치 대사**: VCF Operations에서 테넌트별 GPU 사용량, 예약 점유, VKS 비용이 실제 사용량과 일치하는지 표본 대사(reconciliation)합니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)).

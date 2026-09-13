@@ -115,7 +115,7 @@ flowchart LR
 - 표준 RAG, PAIS Data Indexing 활용, 운영 단순화 → **DSM pgvector**
 - 초대규모 벡터, 고급 ANN, 샤딩, 특수 기능 → **외부 전용 벡터DB**(자가 운영 감수)
 
-**Agent Builder, RAG 파이프라인 영향** — PAIS의 Data Indexing, Retrieval과 Agent Builder의 Knowledge Base는 검증된 pgvector 스택을 전제로 한 관리형 통합입니다. 외부 전용 벡터DB를 택하면 이 관리형 경로 대신 임베딩, 적재, 검색 파이프라인을 직접 구성해야 합니다. PAIS 2.1에서는 검색이 MCP 도구로 노출되므로(④ 4.3 에이전틱 검색), 외부 벡터DB를 커스텀 MCP 검색 도구로 감싸 에이전트에 연결하는 구성은 가능합니다. 다만 이는 공식 제품 통합이 아닌 커스텀 경로이며, 관리형 Knowledge Base의 수명주기와 권한 통합 이점은 포기하게 됩니다.
+**Agent Builder, RAG 파이프라인 영향** — PAIS의 Data Indexing, Retrieval과 Agent Builder의 Knowledge Base는 검증된 pgvector 스택을 전제로 한 관리형 통합입니다. 외부 전용 벡터DB를 택하면 이 관리형 경로 대신 임베딩, 적재, 검색 파이프라인을 직접 구성해야 합니다. PAIS 2.1부터 검색이 MCP 도구로 노출되므로([④ 04 4.3절](../../04-rag/docs/04-inference-integration.md) 에이전틱 검색), 외부 벡터DB를 커스텀 MCP 검색 도구로 감싸 에이전트에 연결하는 구성은 가능합니다. 다만 이는 공식 제품 통합이 아닌 커스텀 경로이며, 관리형 Knowledge Base의 수명주기와 권한 통합 이점은 포기하게 됩니다.
 
 관련: [② VectorDB 가이드](../../02-vectordb/README.md) | [④ RAG 레퍼런스](../../04-rag/README.md)
 

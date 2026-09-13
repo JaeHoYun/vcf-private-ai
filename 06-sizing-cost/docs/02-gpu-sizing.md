@@ -197,12 +197,15 @@ GPU 선택의 1차 기준은 **HBM 용량**(2.2–2.4의 가중치+KV 캐시가 
 | A100 80GB | 80GB HBM2e | 약 2 TB/s | 이전 세대 |
 | H100 80GB | 80GB HBM3 | 약 3.35 TB/s | Hopper |
 | H200 | 141GB HBM3e | 약 4.8 TB/s | 대용량 메모리, 장문/대형 모델 유리 |
+| B200 | 180GB급 HBM3 | 확인 필요 | Blackwell. HGX 8장 서버로 공급. VCF 9.1부터 지원 |
+| RTX PRO 6000 Blackwell Server Edition | 96GB GDDR7 | 확인 필요 | PCIe 서버용. 서버당 GPU 수를 적게 두는 구성에 쓰임 |
 
 (출처: [RunPod H100](https://www.runpod.io/articles/guides/nvidia-h100), [RunPod H200](https://www.runpod.io/articles/guides/nvidia-h200-gpu) — 벤더 정리 자료이므로 공식 데이터시트 교차 확인 필요)
 
 선택 시 고려사항:
 - **메모리 우선**: 장문 컨텍스트, 고동시, 대형 모델은 HBM 용량이 큰 세대(예: H200 계열)가 단일 장 적재와 KV 캐시 여유 면에서 유리합니다.
 - **대역폭 우선**: 토큰 디코딩은 메모리 대역폭에 민감하므로, 동일 메모리라면 최신 세대가 지연과 처리량에서 유리합니다.
+- **서버 형태가 공유 방식을 제약합니다**: HGX B200과 B300은 vSphere에서 GPU 1장을 여러 VM이 나눠 쓰는 분할 vGPU를 지원하지 않고, VM당 GPU 1장이나 여러 장 할당만 지원합니다([NVIDIA AI Enterprise 8.2 지원 매트릭스](https://docs.nvidia.com/ai-enterprise/release-8/latest/support/support-matrix-8/8.2.html)). 여러 소형 모델을 GPU 한 장에 촘촘히 담는 용도(04 4.3절 서비스 유형 N1)에는 맞지 않습니다. 반대로 RTX PRO 6000, L40S 같은 PCIe GPU는 MIG와 시분할 공유가 가능하지만 vGPU P2P 지원 목록에 없어 여러 GPU로 대형 모델을 나눠 서빙하는 용도(N2)에는 불리합니다([NVIDIA AI Enterprise P2P](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/p2p.html)). NVSwitch를 갖춘 Blackwell HGX 플랫폼은 PAIF 9.1부터 지원되며([PAIF 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)), VCF는 호스트당 Blackwell GPU를 최대 16장까지 지원합니다([PAIF 9.1 물리 인프라](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/physical-infrastructure-options.html)).
 - **특정 제품 단정 금지**: 실제 도입 GPU는 PAIF 지원 매트릭스와 서버 벤더의 BCG(BIOS, 펌웨어)/HCL(하드웨어 호환성 목록), NVIDIA 공식 사양으로 확정해야 합니다. 본 문서의 표는 산정 감각을 위한 참고치입니다.
 
 ---

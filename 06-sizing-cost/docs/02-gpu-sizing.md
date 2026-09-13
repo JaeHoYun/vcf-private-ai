@@ -32,6 +32,8 @@ vLLM 공식 문서가 제시하는 전체 메모리 관계식은 다음과 같�
 
 여기서 `gpu_memory_utilization`은 vLLM이 모델 실행기에 할당하는 GPU 메모리 비율로, 기본값은 메인라인 vLLM 기준 0.9입니다(0–1 범위; vLLM-Omni 등 일부 배포판은 0.92). vLLM은 이 값을 기준으로 남는 메모리를 KV 캐시로 자동 환산합니다([vLLM cache config](https://docs.vllm.ai/en/stable/api/vllm/config/cache/)). 즉 **사용 가능한 KV 캐시 = (총 VRAM × gpu_memory_utilization) − 가중치 − 오버헤드** 가 실무상 핵심 가용량입니다.
 
+빠른 점검값으로, Broadcom VCF 9.1 설계 문서는 운영 워크로드의 GPU 메모리를 **가중치의 약 2.5배**로 잡는 것을 일반 지침으로 제시합니다(가중치에 목표 문맥 길이와 동시 요청 수만큼의 KV 캐시를 더한 값, [가속기 설계 PAIF-ACC-RCMD-001](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/accelerator-detailed-design.html)). 위 관계식으로 계산한 값이 이 점검값과 크게 다르면 동시성이나 문맥 길이 가정을 다시 확인합니다.
+
 ---
 
 ## 2.2 가중치 메모리 산정 (파라미터 × 정밀도)

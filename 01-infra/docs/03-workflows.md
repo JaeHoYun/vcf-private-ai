@@ -89,7 +89,7 @@ docker login harbor.company.com -u <username> -p <password>
 # Harbor CA 신뢰 (Linux)
 sudo cp harbor-ca.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates
 
-cd ./llama-3.1-8b-instruct        # 주의 반드시 모델 폴더 안에서 실행
+cd ./llama-3.1-8b-instruct        # 주의: 반드시 모델 폴더 안에서 실행
 vcf pais models push \
   --modelName meta-llama/llama-3.1-8b-instruct \
   --modelStore harbor.company.com/models -t v1
@@ -101,7 +101,7 @@ vcf pais models push \
 
 **방법 A: PAIS UI (권장)** — `VCF Automation > Build & Deploy > [네임스페이스] > Services > Private AI > Model Runtime > New Model Endpoint`에서 Endpoint 이름, Model URL, 타입(Completion/Embedding), 엔진, VM Class, Replicas를 설정합니다.
 
-**방법 B: kubectl** — 주의 아래 매니페스트는 **구조 이해용 예시**입니다. 정확한 CRD `apiVersion`, 필드명, `modelEngine` enum 값, VM Class 명칭은 PAIS 3.0 공식 문서/UI로 확인하세요(본 가이드에서 검증되지 않음). PAIS 3.0은 boolean 필드에 비정규 값("true" 문자열 등)을 보내면 거부하므로 매니페스트의 값 형식도 함께 점검하십시오.
+**방법 B: kubectl** — 주의: 아래 매니페스트는 **구조 이해용 예시**입니다. 정확한 CRD `apiVersion`, 필드명, `modelEngine` enum 값, VM Class 명칭은 PAIS 3.0 공식 문서/UI로 확인하세요(본 가이드에서 검증되지 않음). PAIS 3.0은 boolean 필드에 비정규 값("true" 문자열 등)을 보내면 거부하므로 매니페스트의 값 형식도 함께 점검하십시오.
 
 ```yaml
 apiVersion: pais.vcf.broadcom.com/v1alpha1   # 예시 — 실제 apiVersion 확인 필요
@@ -128,7 +128,7 @@ spec: { modelType: COMPLETIONS, modelEngine: LLAMACPP, vmClass: best-effort-medi
 ```
 
 > **비용 절감 (9.1, 검증됨):** Embedding은 물론, 소규모/테스트용 **Completion 추론도 llama.cpp로 CPU 배포**가 가능합니다(PAIS 2.1 릴리스 노트 "CPU-based inference and embeddings"). 대규모와 실시간 추론은 GPU(vLLM)를 사용하세요.
-> 위 YAML의 `modelEngine` 값(VLLM/INFINITY/LLAMACPP)과 `vmClass`(best-effort-* 등)는 **예시 표기**입니다 — 실제 enum/명칭은 PAIS 2.1 UI, 문서로 확인하세요.
+> 위 YAML의 `modelEngine` 값(VLLM/INFINITY/LLAMACPP)과 `vmClass`(best-effort-* 등)는 **예시 표기**입니다 — 실제 enum/명칭은 PAIS UI, 문서로 확인하세요.
 
 ---
 

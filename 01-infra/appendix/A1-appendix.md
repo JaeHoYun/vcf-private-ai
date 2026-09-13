@@ -9,7 +9,7 @@
 ### A1.1.1 기본 개념
 
 **Q1. PAIF와 PAIS의 관계는?**
-PAIS는 PAIF에 **포함된 관리형 AI 서비스 레이어**입니다. PAIF가 인프라(GPU, 네트워크, 스토리지)부터 서비스(Model Runtime, RAG, Agent, MCP)까지 전체를 묶고, 그중 서비스 부분이 PAIS(2.1)입니다.
+PAIS는 PAIF에 **포함된 관리형 AI 서비스 레이어**입니다. PAIF가 인프라(GPU, 네트워크, 스토리지)부터 서비스(Model Runtime, RAG, Agent, MCP)까지 전체를 묶고, 그중 서비스 부분이 PAIS입니다.
 
 **Q2. PAIF는 별도로 사야 하나요? (라이선스)**
 아니요. **PAIF는 VCF 코어 구독에 포함**됩니다(별도 구매 불필요). 단 **NVIDIA AI Enterprise(NVAIE)** 는 NVIDIA에서 별도 구매해야 하며 vGPU 드라이버, NIM, NeMo 등을 포함합니다. GPU 하드웨어도 별도입니다. 또한 벡터 DB는 DSM 기반입니다. **DSM 자체는 별도 라이선스(Advanced Service)이지만, PAIS가 벡터 DB용 사용 권한을 포함**하므로 RAG 벡터 DB를 위해 DSM을 따로 살 필요는 없습니다(일반 DBaaS 확장 시에는 별도). → 9.0.x 일부 자료의 "PAIF = VCF Add-on" 서술은 부정확합니다. ([문서 01 1.2절](../docs/01-concepts.md#12-라이선스-구조-정확히))
@@ -35,7 +35,7 @@ Model Endpoint는 단일 모델 API, Agent는 RAG, 세션, (9.1)도구사용까�
 9.1의 **Enhanced DirectPath I/O**는 NVAIE 없이 전용 GPU를 제공하면서 **vMotion 이점을 유지**합니다. 과거 "vMotion 제한" 서술은 폐기됐습니다. ([문서 02 2.3절](../docs/02-architecture.md#23-gpu-할당-방식-주의-91-변경))
 
 **Q8. CPU만으로 LLM 추론이 되나요?**
-9.1부터 **llama.cpp(b7739)** 로 **Completion 추론도 CPU**로 가능합니다(소규모, 테스트, 비용 절감). Embedding은 기존처럼 Infinity로 CPU 가능. 대규모와 실시간은 GPU(vLLM 0.11.2).
+9.1부터 **llama.cpp**(도입 시 b7739, 현재 b9309)로 **Completion 추론도 CPU**로 가능합니다(소규모, 테스트, 비용 절감). Embedding은 기존처럼 Infinity로 CPU 가능. 대규모와 실시간은 GPU(vLLM, 현재 0.20.0). 현재 버전은 A1.2.2절 표를 따릅니다.
 
 **Q9. MCP로 무엇을 붙일 수 있나요?**
 Oracle, MS SQL, PostgreSQL(DB), ServiceNow(ITSM), GitHub(코드), Slack(메신저) 등을 커스텀 커넥터 없이 표준 연동합니다. 거버넌스(권한, 범위, 감사)가 전제입니다. ([문서 05](../docs/05-agents-mcp.md))
@@ -106,7 +106,7 @@ kubectl logs <pod> -n <ns>
 
 ### A1.2.3 버전 간 변경 요약
 
-9.0.x → 9.1은 [문서 00 0.4절](../docs/00-whats-new.md#04-버전-매트릭스-변경-90x--91), 9.1 → 9.1.1 / PAIS 3.0은 [문서 00 0.7절](../docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga), 기능별 도입 버전은 [0.8절](../docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)을 참조하십시오.
+9.0.x → 9.1은 [문서 00 0.4절](../docs/00-whats-new.md#04-버전-매트릭스-변경-90x--91--911), 9.1 → 9.1.1 / PAIS 3.0은 [문서 00 0.7절](../docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga), 기능별 도입 버전은 [0.8절](../docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)을 참조하십시오.
 
 ---
 
@@ -183,7 +183,7 @@ kubectl logs <pod> -n <ns>
 - [Broadcom Announces VCF 9.1 — Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
 
 ### 호환성/지원
-- [Broadcom Compatibility Guide (BCG)](https://www.broadcom.com/support/vmware/product-compatibility) — GPU/하드웨어 호환성 매번 확인
+- [Broadcom Compatibility Guide (BCG)](https://compatibilityguide.broadcom.com/) — GPU/하드웨어 호환성 매번 확인
 - Broadcom Support Portal — KB, 기술 지원
 
 ---

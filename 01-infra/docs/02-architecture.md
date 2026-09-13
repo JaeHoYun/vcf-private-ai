@@ -12,7 +12,7 @@
 
 **PAIF(솔루션) = PAIF 코어 기능 계층 + PAIS 서비스 계층**
 
-이 둘은 한 솔루션의 두 부분이며, PAIS는 공식 문서상 *"a Supervisor service ... installed as a package, separately from the VMware Private AI Foundation with NVIDIA core functionality"* 로 코어 기능과 **별도 설치**됩니다 ([System Architecture of PAIF](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/system-architecture-of-vmware-private-ai-foundation-with-nvidia.html)). 아래는 무엇이 무엇 위에서 동작하는지의 **논리 계층**입니다.
+이 둘은 한 솔루션의 두 부분이며, PAIS는 코어 기능과 **별도 설치**되는 Supervisor 서비스 패키지입니다(정의와 공식 인용은 [문서 01 1.1절](01-concepts.md#11-용어-정의), 출처는 [System Architecture of PAIF](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/system-architecture-of-vmware-private-ai-foundation-with-nvidia.html)). 아래는 무엇이 무엇 위에서 동작하는지의 **논리 계층**입니다.
 
 ```
 [ 고객 AI 앱 ]  PAIF 밖 — PAIS API(OpenAI 호환) 소비
@@ -114,7 +114,7 @@ PAIS(Private AI Services 3.0)는 구성요소를 나열한 평면 박스가 아�
 
 ---
 
-## 2.3 GPU 할당 방식 (주의 9.1 변경)
+## 2.3 GPU 할당 방식 (주의: 9.1 변경)
 
 PAIF에서 GPU를 워크로드에 붙이는 방식은 **세 축**으로 나뉩니다 — 시간 분할 공유(vGPU), 하드웨어 분할 격리(MIG), 전용 패스스루(Enhanced DirectPath I/O). 어느 것을 쓰느냐로 격리 수준, 라이선스, 성능이 갈립니다. **9.1에서 DirectPath I/O 관련 서술이 바뀌었습니다.**
 
@@ -156,7 +156,7 @@ PAIF에서 GPU를 워크로드에 붙이는 방식은 **세 축**으로 나뉩�
 
 ## 2.5 OpenAI 호환 API
 
-PAIS의 ML API Gateway는 OpenAI 호환 인터페이스를 노출하므로 기존 OpenAI SDK로 Base URL, 모델 이름만 바꿔 연동할 수 있습니다. 실제 베이스 경로, 엔드포인트 표, curl 예시는 [문서 04 4.7절](04-dev-scenarios.md)이 기준입니다(경로는 버전에 따라 달라질 수 있으므로 PAIS 2.1 UI의 "Sample Code"로 확인).
+PAIS의 ML API Gateway는 OpenAI 호환 인터페이스를 노출하므로 기존 OpenAI SDK로 Base URL, 모델 이름만 바꿔 연동할 수 있습니다. 실제 베이스 경로, 엔드포인트 표, curl 예시는 [문서 04 4.7절](04-dev-scenarios.md)이 기준입니다(경로는 버전에 따라 달라질 수 있으므로 PAIS UI의 "Sample Code"로 확인).
 
 ---
 
@@ -167,7 +167,7 @@ Phase 1            Phase 2           Phase 3            Phase 4
 VCF 인프라         지원 서비스        PAIS 설치          개발/운영
 ┌─────────┐       ┌─────────┐       ┌─────────┐        ┌─────────┐
 │ VCF 9.1 │──────▶│ Harbor  │──────▶│  PAIS   │───────▶│  DLVM   │
-│ PAIF WD │       │ DSM     │       │ 2.1     │        │  VKS    │
+│ PAIF WD │       │ DSM     │       │ 3.0     │        │  VKS    │
 │Supervisor│      │         │       │ (UI/CLI)│        │  Apps   │
 └─────────┘       └─────────┘       └─────────┘        └─────────┘
 담당: VI Admin    VI Admin          Cloud/Org Admin    DevOps/DS
@@ -195,14 +195,14 @@ VCF 인프라         지원 서비스        PAIS 설치          개발/운영
 | NVIDIA HGX B300 | 예정 | 예정 | 향후 |
 | NVIDIA L40S | 지원 | 지원 | 비용 효율적 추론 |
 
-> GPU 모델별 세부 호환성과 드라이버(v580.x) 매트릭스는 반드시 [Broadcom Compatibility Guide](https://www.broadcom.com/support/vmware/product-compatibility)에서 최신 정보를 확인하시기 바랍니다. ConnectX-7 NIC / BlueField-3 DPU는 GPUDirect RDMA, Storage 및 멀티호스트 AI 학습에 활용됩니다.
+> GPU 모델별 세부 호환성과 드라이버(v580.x) 매트릭스는 반드시 [Broadcom Compatibility Guide](https://compatibilityguide.broadcom.com/)에서 최신 정보를 확인하시기 바랍니다. ConnectX-7 NIC / BlueField-3 DPU는 GPUDirect RDMA, Storage 및 멀티호스트 AI 학습에 활용됩니다.
 
 ### Phase 2: 지원 서비스 (VI Admin, 1일)
 
 ```
 [2.1] Harbor Registry 설치 (Supervisor Service) — 컨테이너 이미지 + Model Gallery, HTTPS 필수
 [2.2] VMware Data Services Manager(DSM) 설치 — pgvector PostgreSQL(PAIS 벡터 DB), S3 호환 스토리지 필요
-      ※ DSM은 별도 라이선스 Advanced Service이나, PAIS가 벡터 DB용 DSM 사용 권한을 포함 (문서 01 1.2절)
+      참고: DSM은 별도 라이선스 Advanced Service이나, PAIS가 벡터 DB용 DSM 사용 권한을 포함 (문서 01 1.2절)
 [2.3] VCF Automation 배포 (권장) — 셀프서비스 카탈로그, OIDC IdP 연동
 ```
 
@@ -214,7 +214,7 @@ harbor.company.com/
 └── app-images/    # 앱 컨테이너 이미지
 ```
 
-### Phase 3: PAIS 2.1 설치와 활성화 (Cloud/Org Admin, 1일)
+### Phase 3: PAIS 3.0 설치와 활성화 (Cloud/Org Admin, 1일)
 
 ```
 [3.1] PAIS Supervisor Service 설치 (Broadcom Support Portal YAML, OCI Registry 인증)
@@ -253,19 +253,19 @@ kubectl get services | grep pais-ingress # PAIS UI 접근 IP
 
 ## 2.7 DLVM 이미지 (9.1)
 
-VCF 9.1 호환 DLVM(Deep Learning VM, 딥러닝용 가상머신 이미지)은 신규 Ubuntu OS와 ML 라이브러리/프레임워크/툴킷으로 갱신됐고, 임베디드 Conda가 **Miniconda 24.3.0 → Miniforge3 24.3.0** 으로 변경됐습니다.
+VCF 9.1 호환 DLVM(Deep Learning VM, 딥러닝용 가상머신 이미지)은 신규 Ubuntu OS와 ML 라이브러리/프레임워크/툴킷으로 갱신됐고, 임베디드 Conda가 **Miniconda 24.3.0 → Miniforge3 24.11.3** 으로 변경됐습니다. 9.1.1 이미지(Ubuntu 26.04, 드라이버 595.71.05, Miniforge 26.1.1, VCF CLI 9.1.0)의 구성은 [README 버전표](../README.md#기반-버전-source-of-truth)와 [문서 03 Step 1](03-workflows.md)의 콜아웃을 참조하십시오.
 
 ```
 DLVM 기본 구성 (VCF 9.1)
 ├── OS: 갱신된 Ubuntu LTS
 ├── GPU Driver: NVIDIA vGPU Guest Driver (v580.x 계열)
 ├── Container Runtime: Docker + NVIDIA Container Toolkit
-├── Dev: JupyterLab, Python, CUDA Toolkit, Miniforge3 24.3.0
-├── CLI: pais CLI, Docker CLI
+├── Dev: JupyterLab, Python, CUDA Toolkit, Miniforge3 24.11.3
+├── CLI: VCF CLI(vcf pais 플러그인), Docker CLI
 └── Libraries(번들별): PyTorch, Transformers, LangChain 등
 ```
 
-> NGC 기반 vGPU 드라이버 다운로드 방식(Personal/Service API Key)은 9.0.1부터 유지됩니다. 정확한 DLVM 이미지 버전 문자열은 [DLVM 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)에서 확인하시기 바랍니다.
+> NGC 기반 vGPU 드라이버 다운로드 방식(Personal/Service API Key)은 9.0.1부터 유지됩니다. 정확한 DLVM 이미지 버전 문자열은 [DLVM 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-deep-learning-vm-image-release-notes.html)에서 확인하시기 바랍니다.
 
 ---
 
@@ -278,8 +278,8 @@ VCF 9.1
         ├── Harbor Registry ──▶ Model Gallery
         ├── DSM (PostgreSQL 16.8 + pgvector 0.8.0)
         └── VCF Automation (선택)
-              └── PAIS 2.1 Supervisor Service
-                    ├── Model Runtime (vLLM 0.11.2 / Infinity 0.0.76 / llama.cpp)
+              └── PAIS 3.0 Supervisor Service
+                    ├── Model Runtime (vLLM 0.20.0 / Infinity 0.0.76 / llama.cpp b9309)
                     ├── Agent Builder (+ MCP)
                     ├── Data Indexing & Retrieval
                     ├── 관측성 (모델, GPU 메트릭, OTel)

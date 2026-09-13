@@ -14,7 +14,7 @@ PAIF 기반 AI 서비스를 프로덕션에서 운영하기 위한 **HA, DR, 멀
 |---------|---------------|
 | 가용성 | Model Endpoint 다중 Replica, VKS HA |
 | 확장성 | 자동 스케일링, GPU 동적 할당(DRA, Dynamic Resource Allocation) |
-| 성능 | vLLM 0.11.2 최적화, 적정 모델 선택 |
+| 성능 | vLLM 0.20.0 최적화, 적정 모델 선택 |
 | 보안 | OIDC, NSX 마이크로세그멘테이션, vDefend(Add-on) |
 | 복구 | Harbor Replication, pgvector 백업, Artifact Mirroring Tool |
 | 감사 | API/도구 호출 로깅, VCF Operations 연동 |
@@ -202,13 +202,13 @@ OTel Collector로 에이전트 요청을 단계별(RAG 검색 → MCP 도구 호
 
 ---
 
-## 6.9 에어갭(Air-Gapped) 환경 — Artifact Mirroring Tool (9.1 신규)
+## 6.9 에어갭(Air-Gapped) 환경 — Artifact Mirroring Tool (PAIS 2.1부터)
 
-방산, 금융, 공공, 일부 제조처럼 **외부망 연결이 불가**한 환경을 위해 PAIS 2.1은 **Artifact Mirroring Tool**을 제공합니다.
+방산, 금융, 공공, 일부 제조처럼 **외부망 연결이 불가**한 환경을 위해 PAIS는 **Artifact Mirroring Tool**을 제공합니다(2.1에서 도입).
 
 ```
 [ 인터넷 연결 미러 호스트 ]                 [ 에어갭 환경 (내부망) ]
-  NGC/Harbor/모델/컨테이너   ──Artifact Mirroring Tool 미러──▶   내부 Harbor + PAIS 2.1
+  NGC/Harbor/모델/컨테이너   ──Artifact Mirroring Tool 미러──▶   내부 Harbor + PAIS
   아티팩트 다운로드, 패키징     (오프라인       → GPU 기반 Model Endpoint
                                 반입)          → 에이전트(MCP는 내부 시스템만)
 ```
@@ -223,7 +223,7 @@ OTel Collector로 에이전트 요청을 단계별(RAG 검색 → MCP 도구 호
 
 > **9.0.x 대비 핵심:** 과거에는 Harbor 수동 구성 수준의 air-gap 지원이었으나, 9.1 Artifact Mirroring Tool은 **GPU 기반 Model Endpoint와 에이전트를 포함한 풀 Private AI 기능**을 폐쇄망에서 구동합니다. 산업별 적용은 [문서 08](08-industry.md)을 참조하세요.
 
-> **버전 적용 범위:** Artifact Mirroring Tool은 PAIS(Private AI Services) 2.1 기능으로, **VCF 9.0.2와 9.1 모두에서 제공**됩니다. 따라서 본 절은 "9.1 신규"라기보다 "PAIS 2.1 기능"으로 이해하는 것이 정확하며, 9.1 고유 추가분은 VCF Automation UI 기반 PAIS 관리입니다 ([VMware Private AI Services Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html)).
+> **버전 적용 범위:** Artifact Mirroring Tool은 PAIS(Private AI Services) 2.1 기능으로, **VCF 9.0.2와 9.1 모두에서 제공**됩니다. 따라서 이 기능은 "9.1 신규"가 아니라 "PAIS 2.1부터 제공"으로 이해하는 것이 정확하며, 9.1 고유 추가분은 VCF Automation UI 기반 PAIS 관리입니다 ([VMware Private AI Services Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html)).
 
 ### 6.9.1 미러링 구조와 출처 레지스트리 (설계)
 
@@ -310,7 +310,7 @@ PAIS:     - Model Endpoint(Replicas≥2) - Embedding Endpoint - KB 인덱싱 - A
 3. **멀티테넌트** — Namespace 격리 + 리소스 쿼터
 4. **스케일링** — 자동 스케일링, Cold Start 대비 Min Replicas≥1, DRA 활용
 5. **관측성(9.1)** — 모델과 GPU 대시보드 + OTel LLM 트레이싱 기본 제공
-6. **에어갭(9.1)** — Artifact Mirroring Tool로 폐쇄망 풀 AI 구동
+6. **에어갭(PAIS 2.1부터)** — Artifact Mirroring Tool로 폐쇄망 풀 AI 구동
 7. **보안** — TLS, OIDC, RBAC + AI/MCP 특화 통제
 
 > PAIS를 활용하면 프로덕션 복잡성의 상당 부분을 플랫폼이 처리합니다. 인프라팀은 HA/DR/보안과 **거버넌스 정책**에 집중하고, 일상 운영은 PAIS 자동화와 관측성에 맡기세요.

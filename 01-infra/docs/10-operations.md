@@ -187,7 +187,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 
 > **무결성 점검은 별도 단계입니다:** Artifact Mirroring Tool이 서명, 매니페스트, 다이제스트를 자동 검증한다는 공식 근거는 확인되지 않았습니다. 반입 아티팩트의 무결성과 공급망 점검은 **운영자가 수행하는 별도 절차**로 보고, [문서 06 6.9.2절](06-production.md)의 보안 가이드 딥링크를 따르세요.
 
-> **미러 갱신:** 새 BOM(Bill of Materials)이나 갱신된 `pais.yml`을 기준으로 위 `pull` → 반입 → `push` 경로를 재실행합니다. 갱신 주기, 갱신, 운영 항목과 인접 가이드 딥링크는 [문서 06 6.9.2절](06-production.md)에 정리돼 있습니다.
+> **미러 갱신:** 새 BOM(Bill of Materials)이나 갱신된 `pais.yml`을 기준으로 위 `pull` → 반입 → `push` 경로를 재실행합니다. 갱신 주기, 운영 항목과 인접 가이드 딥링크는 [문서 06 6.9.2절](06-production.md)에 정리돼 있습니다.
 
 ---
 
@@ -290,7 +290,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 
 **PAIS Trust Bundle, 시크릿:**
 
-- PAIS **Trust Bundle = OIDC, Harbor, DSM 인증서**([문서 02 2.3절](02-architecture.md) Phase 3). 이들 인증서 갱신 시 Trust Bundle을 재구성합니다.
+- PAIS **Trust Bundle = OIDC, Harbor, DSM 인증서**([문서 02 2.6절](02-architecture.md) Phase 3). 이들 인증서 갱신 시 Trust Bundle을 재구성합니다.
 - 시크릿 = Harbor 레지스트리 자격증명, OIDC 클라이언트 시크릿, 서비스 계정 토큰([문서 06 6.10절](06-production.md)) → 정기 회전. PAIS 3.0부터는 API 토큰과 원격 클라우드 모델 자격증명 Secret도 회전 대상입니다([⑤ 03](../../05-security/docs/03-identity-access.md)).
 - **PAIS 3.0 Ingress 인증서 반입(BYO)**: 3.0부터 PAIS Ingress의 TLS 종단 인증서를 조직 CA가 발급한 것으로 바꿔 넣을 수 있고, OIDC 연결의 TLS 검증도 설정할 수 있습니다. 반입한 인증서는 플랫폼이 자동 갱신하지 않으므로 만료 추적과 교체를 이 절의 회전 일정에 넣습니다. 공유 모델의 consumer 쪽에 전달한 provider 발급자 인증서도 provider가 Ingress 인증서를 바꾸면 함께 갱신해야 합니다([문서 06 6.4.1절](06-production.md)).
 - **VCF Operations 9.1.1 인증서 관리 범위 확장**: 9.1.1부터 vSphere Supervisor, NSX Edge, 라이선스 서버, cloud proxy, VCF Automation의 인증서가 VCF Operations의 인증서 관리와 만료 알람 대상에 들어왔습니다. PAIS가 도는 Supervisor의 인증서를 별도 추적하던 절차는 이 관리 화면으로 합칩니다.
@@ -428,8 +428,8 @@ PAIF 스토리지는 **vSAN(플랫폼, VM, VKS 노드)** + **AI 자산 store(모
 | 새벽에 알람을 받았다(온콜) | 10.4.3절 → 10.2절 |
 | 네트워크가 느리다 / Edge, LB, Network Policy 점검 | 10.5.1절 네트워크 Day-2 |
 | 스토리지 용량과 성능 / vSAN 점검 | 10.5.2절 스토리지 Day-2 |
-| HA/DR 설계가 궁금하다 | [문서 06](06-production.md) 6.2절~6.3 |
-| GPU를 테넌트에 서비스로 제공과 운영 | [문서 07](07-gpuaas.md) 7.7절 Day-2 |
+| HA/DR 설계가 궁금하다 | [문서 06](06-production.md) 6.2–6.3절 |
+| GPU를 테넌트에 서비스로 제공하고 운영 | [문서 07](07-gpuaas.md) 7.7절 Day-2 |
 | 보안 운영(접근통제, 감사, 공급망) | [⑤ 보안과 거버넌스 가이드](../../05-security/README.md) |
 | 용량, 비용(사이징, 차지백) | [⑥ 사이징, 용량, 비용 가이드](../../06-sizing-cost/README.md) |
 

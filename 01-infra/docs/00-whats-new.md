@@ -1,7 +1,7 @@
 # 00 — What's New (VCF 9.1.x / PAIF 9.1.x / PAIS 2.1과 3.0)
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
-> 이 문서는 **9.0.x에서 9.1로 올라오는 분**, **9.1 / PAIS 2.1을 운영하다가 9.1.1 / PAIS 3.0으로 올라오는 분**, **9.1.x를 처음 접하는 분** 모두를 위한 변경 요약입니다. 0.1절부터 0.6절까지는 9.0.x 대비 9.1의 변경, 0.7절부터 0.9절까지는 9.1 대비 9.1.1 / PAIS 3.0의 변경입니다. 어느 기능이 어느 버전에서 들어왔는지 한 표로 보려면 0.8절로 바로 가시면 됩니다.
+> 이 문서는 **9.0.x에서 9.1로 올라오는 분**, **9.1 / PAIS 2.1을 운영하다가 9.1.1 / PAIS 3.0으로 올라오는 분**, **9.1.x를 처음 접하는 분** 모두를 위한 변경 요약입니다. 0.1절부터 0.6절까지는 9.0.x 대비 9.1의 변경, 0.7절부터 0.9절까지는 9.1 대비 9.1.1 / PAIS 3.0의 변경이며, 0.4절과 0.5절의 표는 세 버전을 함께 보여 줍니다. 어느 기능이 어느 버전에서 들어왔는지 한 표로 보려면 0.8절로 바로 가시면 됩니다.
 
 VCF 9.1은 2026년 5월 GA되었으며, "프로덕션 AI를 위한 안전하고 비용 효율적인 프라이빗 클라우드"를 표방했습니다. AI 관점에서는 PAIF 9.1 / **Private AI Services(PAIS) 2.1**이 함께 출시되며 **에이전트, 외부 도구 연동(MCP), 에어갭, 관측성**이 크게 보강됐습니다. 이어 2026년 9월 3일 VCF 9.1.1이 유지보수 릴리스로 GA됐고, 같은 날 PAIF 9.1.1과 **PAIS 3.0**이 나오면서 공유 모델 호스팅, 원격 클라우드 모델 연결, API 토큰이 추가됐습니다(0.7절).
 
@@ -61,14 +61,14 @@ PAIS 2.1에 도입. VI 관리자가 **폐쇄망(air-gapped)** 환경에서 NVIDI
 - **OpenTelemetry 기반 LLM 트레이싱**: OTel Collector로 LLM 호출 추적.
 → 상세: [문서 06](06-production.md)
 
-### (5) Enhanced DirectPath I/O (주의 기존 서술 정정)
+### (5) Enhanced DirectPath I/O (주의: 기존 서술 정정)
 9.0.x 가이드의 "DirectPath I/O는 vMotion 제한" 서술은 **9.1에서 폐기**됩니다. 9.1의 Enhanced DirectPath I/O는:
 - **NVAIE(NVIDIA AI Enterprise) 라이선스 없이** 전용(exclusive) GPU 액세스
 - **vSphere vMotion 이점 유지**
 - NVIDIA **ConnectX-7 / BlueField-3**와 결합해 GPUDirect RDMA, GPUDirect Storage, **멀티호스트 AI 학습** 지원
 
 ### (6) Blackwell GPU 지원
-NVIDIA **HGX B200**, **RTX PRO 4500 Blackwell Server Edition**, **RTX PRO 6000 Blackwell** 지원. HGX B300은 향후 예정. (세부 호환성은 [Broadcom Compatibility Guide](https://www.broadcom.com/support/vmware/product-compatibility)에서 매번 확인 필요.)
+NVIDIA **HGX B200**, **RTX PRO 4500 Blackwell Server Edition**, **RTX PRO 6000 Blackwell** 지원. HGX B300은 향후 예정. (세부 호환성은 [Broadcom Compatibility Guide](https://compatibilityguide.broadcom.com/)에서 매번 확인 필요.)
 
 ### (7) Kubernetes AI Conformance (DRA)
 VKS가 **Dynamic Resource Allocation(DRA)** 기반의 개방형 GPU 스케줄링을 지원해, 타 클라우드와 동일한 오픈 표준으로 ML/생성형 AI 워크로드를 실행할 수 있습니다.
@@ -81,7 +81,7 @@ VKS가 **Dynamic Resource Allocation(DRA)** 기반의 개방형 GPU 스케줄링
 
 ---
 
-## 0.4 버전 매트릭스 변경 (9.0.x → 9.1)
+## 0.4 버전 매트릭스 변경 (9.0.x → 9.1 → 9.1.1)
 
 | 컴포넌트 | 9.0.x (PAIS 2.0.89) | 9.1 (PAIS 2.1) | **9.1.1 (PAIS 3.0)** | 변경(2.1 대비) |
 |----------|---------------------|----------------|----------------------|:---:|
@@ -94,7 +94,7 @@ VKS가 **Dynamic Resource Allocation(DRA)** 기반의 개방형 GPU 스케줄링
 | GPU Operator | 24.9.0 | 25.10.1 (driver v580.x) | **25.10.1 기본 또는 26.3.1** (DC 드라이버 580.105.8 / 580.126.20, vGPU 580.105.8) | 선택지 추가 |
 | PostgreSQL (PAIS 검증) | 16.8 | 16.8 | 16.8 | = |
 | pgvector (PAIS 검증) | 0.8.0 | 0.8.0 | 0.8.0 | = |
-| DSM PostgreSQL 지원 범위 | 9.0.x | 9.1: 17.7 ~ 12.22 | **9.1.1: 18.4, 17.10, 16.14, 15.18, 14.23** (12, 13 제거) | 상향 |
+| DSM PostgreSQL 지원 범위 | 9.0.x | 9.1: 12.22–17.7 | **9.1.1: 18.4, 17.10, 16.14, 15.18, 14.23** (12, 13 제거) | 상향 |
 | DLVM 기본 OS | Ubuntu 22.04 | 9.1: Ubuntu 24.04 | **9.1.1: Ubuntu 26.04** | 상향 |
 | DLVM Conda | Miniconda 24.3.0 | Miniforge 24.11.3 (9.1 RN 기준) | Miniforge 26.1.1 (deprecated 예고) | 상향 |
 | DLVM NVIDIA 드라이버 | — | 580.95.05 | **595.71.05** | 상향 |
@@ -120,7 +120,7 @@ VKS가 **Dynamic Resource Allocation(DRA)** 기반의 개방형 GPU 스케줄링
 | **TanzuKubernetesCluster(TKC) API** | VKS 3.7에서 종료(VKr 1.32가 마지막) | 브라운필드 환경의 TKC 기반 클러스터는 ClusterClass 기반으로 전환 후 VKS 3.7 업그레이드 |
 | **VCF Automation 퍼블릭 클라우드 리소스 관리** | VCF Automation 9.1.1에서 deprecated, 기본 비활성 | AI 인프라 범위 밖이나 같은 VCF Automation을 쓰는 조직은 영향 확인 |
 
-> 위 deprecated 항목의 정확한 상태는 적용 직전 [PAIF 9.1 / PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)로 재확인하시기 바랍니다.
+> 위 deprecated 항목의 정확한 상태는 적용 직전 [PAIF 9.1 / 9.1.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)와 [PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)로 재확인하시기 바랍니다.
 
 ---
 
@@ -182,9 +182,9 @@ VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱�
 | Tech Preview | GitOps Service(Argo CD 내장), vSAN Object Storage(S3 호환) | 프로덕션 비적용 |
 | 인증 | vSphere 9.1이 NVIDIA-Certified Hypervisor 인증 획득 | GPU 워크로드 성능 근거 자료로 활용 가능 |
 
-### 0.7.4 발표됐으나 GA가 아닌 것
+### 0.7.4 발표됐으나 GA 전이거나 이 시리즈 범위 밖인 것
 
-2026년 8월 말 VMware Explore에서 발표된 항목 중 아래는 아직 릴리스 노트에 없습니다. 이 시리즈는 GA 문서로 확인된 것만 본문에 반영하므로, 아래는 이 절에서만 언급합니다.
+2026년 8월 말 VMware Explore에서 발표된 항목 중 아래는 아직 릴리스 노트에 없거나, GA됐더라도 PAIS 구성요소가 아니어서 이 시리즈 범위 밖입니다. 이 시리즈는 GA 문서로 확인된 것만 본문에 반영하므로, 아래는 이 절에서만 언급합니다.
 
 | 항목 | 상태 | 비고 |
 |------|------|------|
@@ -225,7 +225,7 @@ VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱�
 | 지식베이스와 인덱스 복제, 인용 노드 ID | 없음 | 없음 | 있음 | [④ 03](../../04-rag/docs/03-retrieval-context.md) |
 | embedding encoding_format, 모델 status 필드 | 없음 | 없음 | 있음 | [③ 03](../../03-serving-api/docs/03-openai-compatible-endpoints.md) |
 | non-chat completions | 있음 | 있음 | deprecated | [③ 03](../../03-serving-api/docs/03-openai-compatible-endpoints.md) |
-| 에이전트 API `completion_role` | 있음 | 있음 | 제거 | 에이전트 가이드 03 |
+| 에이전트 API `completion_role` | 있음 | 있음 | 제거 | [앱 가이드 08 8.8절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/08-agent-builder.md) |
 
 인프라 쪽 이력은 PAIS 버전과 별개로 VCF 라인을 따릅니다. Enhanced DirectPath I/O, Blackwell GPU, DRA, NVMe 메모리 티어링은 9.1부터이고, VM-VM anti-affinity 컴퓨트 정책, VCF Operations AI Assistant, VKS OTel 스트리밍은 9.1.1부터입니다(0.7.3절).
 

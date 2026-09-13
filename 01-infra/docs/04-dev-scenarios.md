@@ -24,7 +24,7 @@ PAIF를 구축하면 PAIS(관리형 AI 서비스)는 **포함되어 항상 가�
    DLVM   ──검증된 모델──▶   PAIS                  ──API──▶  VKS
    • 모델 평가   Harbor에     • Model Endpoint(서빙)          • Frontend/Backend Pod
    • 프롬프트     Push        • Knowledge Base / Agent        • PAIS Agent API 호출
-   • RAG 실험                • 관측성, MCP, 자동 스케일링
+   • RAG 실험                • 관측성, MCP, 레플리카 설정
 ```
 
 > 그래서 핵심 결정은 **프로덕션 RAG/앱을 만들 때 PAIS 관리형 서비스를 어디까지 쓸 것인가**입니다(4.2절). DLVM은 어느 패턴에서든 Data Scientist의 **개발 단계**에서 쓰입니다.
@@ -48,7 +48,7 @@ PAIF를 구축하면 PAIS(관리형 AI 서비스)는 **포함되어 항상 가�
 
 ### 패턴 1 — 관리형 엔드투엔드 (기본 권장)
 
-Model Endpoint + Knowledge Base + Agent Builder로 **코드 거의 없이** RAG/에이전트를 구성합니다. Agent 생성 시점에 이미 프로덕션 준비 완료(관측성, MCP, 자동 스케일링 기본). 표준 문서 Q&A, 에이전트의 대다수가 여기 해당합니다.
+Model Endpoint + Knowledge Base + Agent Builder로 **코드 거의 없이** RAG/에이전트를 구성합니다. Agent 생성 시점에 이미 프로덕션 준비 완료(관측성, MCP, 레플리카 설정 기본. 자동 스케일링의 현재 범위는 [문서 06 6.5절](06-production.md) 참조). 표준 문서 Q&A, 에이전트의 대다수가 여기 해당합니다.
 
 구성: ① Model Endpoint → ② Data Source → ③ Knowledge Base → ④ Agent(+MCP) → ⑤ Playground → ⑥ 앱 연동. (상세 [문서 03](03-workflows.md))
 
@@ -79,7 +79,7 @@ PAIS Model Endpoint가 지원하지 않는 추론 엔진, 프레임워크, 모�
 
 > **"직교"가 무슨 뜻인가요?** 한 축의 선택이 다른 축의 선택을 강제하지 않는다는 뜻입니다. 예컨대 *패턴 1(관리형 엔드투엔드)* 을 고르면서 동시에 *에어갭* 이고 *추론과 RAG 워크로드* 이며 *부서 규모* 일 수 있습니다. 패턴과 무관하게 각 축을 독립적으로 정하므로, 조합의 수만큼 현실 구성이 나옵니다. 그래서 "패턴 1–예외"와 아래 축들을 한 줄에 세워 비교하면 안 됩니다.
 
-### 축 ① 연결성 — 연결망 vs 에어갭
+### 4.3.1 연결성 — 연결망 vs 에어갭
 
 | | 연결망(Connected) | 에어갭(Air-gapped) |
 |---|---|---|
@@ -87,9 +87,9 @@ PAIS Model Endpoint가 지원하지 않는 추론 엔진, 프레임워크, 모�
 | 외부 데이터/도구 | SaaS, 외부 MCP 연동 가능 | **내부 시스템만** (외부 SaaS, MCP 차단) |
 | 대상 | 일반 기업 | 방산, 금융, 공공, 일부 제조 |
 
-→ 에어갭이어도 패턴(4.2절)은 그대로 고르되, 반입과 연동을 내부로 제한하고 Artifact Mirroring Tool로 구성합니다([문서 06 6.9절](06-production.md#69-에어갭air-gapped-환경--artifact-mirroring-tool-91-신규)).
+→ 에어갭이어도 패턴(4.2절)은 그대로 고르되, 반입과 연동을 내부로 제한하고 Artifact Mirroring Tool로 구성합니다([문서 06 6.9절](06-production.md#69-에어갭air-gapped-환경--artifact-mirroring-tool-pais-21부터)).
 
-### 축 ② 워크로드 유형 — 추론/RAG vs 파인튜닝 vs 에이전트
+### 4.3.2 워크로드 유형 — 추론/RAG vs 파인튜닝 vs 에이전트
 
 | 유형 | 내용 | 핵심 구성요소 |
 |------|------|--------------|
@@ -101,7 +101,7 @@ PAIS Model Endpoint가 지원하지 않는 추론 엔진, 프레임워크, 모�
 
 → 세 워크로드를 **언제** 고르는지(프롬프트 vs RAG vs 파인튜닝)의 의사결정과 LoRA/QLoRA 개념은 [문서 01 1.9절](01-concepts.md#19-프롬프트-vs-rag-vs-파인튜닝-선택)를 보십시오.
 
-### 축 ③ 성숙도와 규모 — PoC → 부서 → 그룹 플랫폼
+### 4.3.3 성숙도와 규모 — PoC → 부서 → 그룹 플랫폼
 
 | 단계 | 특징 | 구성 |
 |------|------|------|
@@ -136,6 +136,8 @@ PAIS Model Endpoint가 지원하지 않는 추론 엔진, 프레임워크, 모�
 ```
 
 > 대부분의 엔터프라이즈는 **패턴 1로 시작**해, 고급 검색이 필요한 일부 앱만 패턴 2로 분기하는 전략이 현실적입니다. 자체 추론 운영(예외)은 특수 요구가 분명할 때만 선택하세요.
+
+> **역할 경계:** 4.5절부터 4.10절까지는 플랫폼팀이 앱 개발자에게 넘길 경계(어디까지 PAIS가 제공하고 어디부터 앱이 구현하는가)를 잡기 위한 개요입니다. 앱 구조, 연동 코드, 컨테이너 배포, 앱 모니터링의 구현 상세는 [앱과 에이전트 서비스 가이드](https://github.com/JaeHoYun/vcf-private-ai-apps)가 기준이며, 앱 구조는 [앱 가이드 11](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/11-app-integration-ux.md), 앱 운영은 [앱 가이드 14](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/14-operations.md)를 참조하십시오.
 
 ---
 
@@ -242,7 +244,7 @@ PAIS Agent vs 앱 개발 영역
   O 세션 관리 (대화 히스토리)       O 대화 이력 저장 (DB)
   O OpenAI 호환 API                 O 사용량 추적/과금
   O 출처 정보 반환                  O 에러 처리
-  O 자동 스케일링                   O 로깅/모니터링 확장
+  O 레플리카 증감                   O 로깅/모니터링 확장
   X 사용자 관리                     O CI/CD 파이프라인
   X 비즈니스 규칙
   X 커스텀 UI
@@ -259,7 +261,7 @@ PAIS Agent vs 앱 개발 영역
 PAIS API 유형:
 
 ```
-PAIS API 비교  (경로는 예시 — 4.7절 상단 주의 참조)
+PAIS API 비교  (경로는 예시 — 아래 주의 참조)
 
   Model Endpoint API                Agent API
   POST /v1/chat/completions         POST /v1/agents/{name}/chat
@@ -286,7 +288,7 @@ PAIS API 비교  (경로는 예시 — 4.7절 상단 주의 참조)
 | Model Endpoint API | 단순 LLM 추론 | `/v1/chat/completions` |
 | Agent API | RAG 통합 추론(권장) | `/v1/agents/{name}/chat` |
 
-> 위 엔드포인트 경로는 **예시**입니다(9.0.x 문서에서 이어받음, PAIS 2.1에서 미검증). 실제 경로와 인증 파라미터는 PAIS UI의 Sample Code/공식 문서로 확인하세요. 아래 curl, 응답 JSON도 동일하게 예시입니다.
+> 위 엔드포인트 경로는 **예시**입니다(9.0.x 문서에서 이어받음, PAIS 3.0에서 미검증). 실제 경로와 인증 파라미터는 PAIS UI의 Sample Code/공식 문서로 확인하세요. 아래 curl, 응답 JSON도 동일하게 예시입니다.
 
 인증 흐름 (VCF OIDC 기반):
 
@@ -398,7 +400,7 @@ AI 앱 모니터링 영역 (3계층)
    • VKS 클러스터 리소스(CPU/Memory), Pod 상태, 재시작 횟수
 
 도구: VCF Operations(인프라 모니터링), Prometheus+Grafana(커스텀 메트릭),
-     앱 로그(ELK Stack, Loki 등). ※ 9.1은 모델, GPU 메트릭이 PAIS에 기본 제공 → 문서 06
+     앱 로그(ELK Stack, Loki 등)
 ```
 
 > **9.1:** 모델과 GPU 메트릭과 LLM 트레이싱이 PAIS에 기본 제공됩니다 → [문서 06 관측성](06-production.md).
@@ -424,7 +426,7 @@ AI 앱 비용 구성 요소
   GPU 리소스 비용 (가장 큰 비중)
    • Model Endpoint 실행에 GPU 필수, Replicas 수에 비례 증가, 유휴 할당 시에도 비용
    최적화: 적정 모델 크기(8B vs 70B), 자동 스케일링(최소 Replicas), 개발/테스트는 작은 모델,
-          Embedding은 CPU 전용 가능(Infinity)  ※ 9.1은 소규모 Completion도 CPU 가능(llama.cpp)
+          Embedding은 CPU 전용 가능(Infinity), 9.1부터 소규모 Completion도 CPU 가능(llama.cpp)
   스토리지 비용
    • Harbor: 모델 이미지(수십 GB/모델), pgvector: 벡터 데이터(문서 규모 비례)
    • 앱 데이터: 대화 이력, 사용자 데이터
@@ -440,7 +442,7 @@ AI 앱 비용 구성 요소
 | 영역 | 최적화 |
 |------|--------|
 | 응답 시간 | 스트리밍(SSE), 진행 상태 표시 |
-| 동시 처리 | Endpoint Replicas 증가, 자동 스케일링 |
+| 동시 처리 | Endpoint Replicas 증가 |
 | 검색 품질 | Chunk, Similarity Cutoff 튜닝 |
 | 대화 맥락 | Chat History Length 조정, 요약 기법 |
 | 첫 응답(Cold Start) | Min Replicas ≥ 1 유지 (상세: [문서 06 스케일링 절](06-production.md)) |
@@ -453,7 +455,7 @@ AI 앱 비용 구성 요소
 |------|------------|----------|
 | 배포 위치 | DLVM 직접 | VKS |
 | Replicas | 1 | 2+ (HA) |
-| 스케일링 | 수동 | 자동 |
+| 스케일링 | 레플리카 1 | 레플리카 증감(자동 스케일링의 현재 범위는 [문서 06 6.5절](06-production.md)) |
 | 모니터링 | 기본 로그 | 전체 스택 + 알림 |
 | 보안 | 내부망 | TLS, 인증 강화, 감사 |
 | 데이터 | 테스트 | 실데이터 + 백업 |
@@ -488,6 +490,8 @@ AI 앱 개발 핵심 요약
   5. 운영 고려사항 — 모니터링 3계층, 보안(인증, 프롬프트 인젝션, 감사),
      비용(GPU 핵심, 적정 크기), HA/DR 프로덕션 필수 (상세는 문서 06)
 ```
+
+> 4.5절부터 이 절까지의 앱 구현 상세(앱 구조, 연동 코드, 컨테이너 배포, 앱 모니터링)는 [앱 가이드 11](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/11-app-integration-ux.md)과 [앱 가이드 14](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/14-operations.md)가 기준입니다. 이 문서는 플랫폼팀이 앱 개발자에게 넘기는 경계까지만 다룹니다.
 
 ---
 

@@ -95,4 +95,4 @@
 > 단가는 본 문서가 제시하지 않습니다. 모든 빈칸은 공식 견적과 구독 조건으로 채우고, 채운 출처(견적번호와 일자)를 남기세요.
 
 ---
-[← 이전: A2 입력값 환산, 기본값, 모델 선택](A2-inputs-and-defaults.md) | [목차](../README.md)
+[← 이전: A2 입력값 환산, 기본값, 모델 선택](A2-inputs-and-defaults.md) | [목차](../README.md) | [다음: A4 AI FinOps 스코어카드 →](A4-ai-finops-scorecard.md)

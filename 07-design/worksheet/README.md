@@ -10,6 +10,8 @@
 |---|---|---|---|---|
 | [01 요구사항과 제약 시트](01-driver-sheet.md) | 요구사항, 제약을 수치, 등급으로 수집 | 아키텍트 + 업무, 보안, 예산 담당 | 설계 착수 전(요구사항 워크숍) | 설계 결정의 입력, 제안서 요구사항 절 |
 | [02 설계 결정 기록](02-design-decision-record.md) | D1–D16 선택 경로와 근거 | 아키텍트(이해관계자 합의) | 설계 결정을 내릴 때 | 설계 결정 기록, 리뷰(07), 구축 인계 자료 |
+| [03 AI 자산 현황 인벤토리](03-ai-estate-inventory.md) | 브라운필드의 현존 AI 자산을 9개 블록으로 실측 | 블록별 소유자(인프라, 플랫폼, 데이터, 클라우드 운영, 재무) | 브라운필드 통합 검토 착수 시 | 04 처분 판정, ⑥ A4 FinOps 스코어카드, ⑤ 거버넌스와 주권 갭의 입력 |
+| [04 자산 처분 결정 매트릭스](04-disposition-matrix.md) | 자산별 6R(잔류, 이전, 온프렘 회귀, 통합, 재구성, 폐기)과 근거 | 인프라 운영 책임자 + 재무, 보안 검토자 | 03을 1차 완료한 직후 | [08 8.6절](../docs/08-brownfield-integration.md) 통합 시퀀스, 02의 전제 |
 
 ## 사용법
 
@@ -17,6 +19,8 @@
 2. 본문 **03–05 설계 결정**을 읽으며 **02**에 결정을 적습니다. 각 결정의 근거는 [06 카탈로그](../docs/06-decision-forks.md)의 권고 트리거와 01에서 채운 요구사항과 제약입니다.
 3. 02를 [02 블루프린트](../docs/02-reference-blueprints.md)와 대조해, 어긋나는 결정만 조정합니다.
 4. [07 검증 관문](../docs/07-design-review.md)로 누락과 근거 없는 결정을 점검합니다.
+
+이미 운영 중인 AI 자산에서 출발하는 브라운필드라면 위 순서 앞에 **03과 04**를 먼저 채웁니다. 03으로 무엇이 어디에 얼마나 있는지를 세고, 04로 자산마다 남길지 옮길지를 정한 뒤, 그 결과를 01의 제약과 02의 전제로 가져옵니다([문서 08](../docs/08-brownfield-integration.md)). 03과 04는 AX 방법론 가이드에 있던 양식을 옮겨 온 것입니다.
 
 ## 이 워크시트가 쓸모 있으려면 (작성 원칙)
 
@@ -30,6 +34,8 @@
 |---|---|---|
 | [`01-driver-sheet.md`](01-driver-sheet.md) | 요구사항과 제약 수집 | [docs/01](../docs/01-design-process.md), [06.2 요구사항과 제약→설계 결정](../docs/06-decision-forks.md) |
 | [`02-design-decision-record.md`](02-design-decision-record.md) | D1–D16 결정과 근거 기록 | [docs/03–06](../docs/06-decision-forks.md), [07 리뷰](../docs/07-design-review.md) |
+| [`03-ai-estate-inventory.md`](03-ai-estate-inventory.md) | 브라운필드 현황 실측(9블록) | [08 8.1절](../docs/08-brownfield-integration.md) |
+| [`04-disposition-matrix.md`](04-disposition-matrix.md) | 자산별 6R 처분 결정과 근거 | [08 8.5절, 8.6절](../docs/08-brownfield-integration.md) |
 
 ## 중요(반드시 읽기)
 

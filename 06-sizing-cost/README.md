@@ -61,6 +61,7 @@
 | A1 | [1차 가정치 레퍼런스](appendix/A1-first-order-reference.md) | **예산 추정 전용** 처리량, 동시성, KV, 임베딩, 콜드스타트 출발 숫자(출처와 경고 포함) |
 | A2 | [입력값 환산, 기본값, 모델 선택](appendix/A2-inputs-and-defaults.md) | 사용자 수→동시성 환산, 워크로드 프리셋, SLA 기본값, 모델 선택 1차 가이드 |
 | A3 | [견적 요청(RFQ) 체크리스트](appendix/A3-rfq-quote-checklist.md) | 단가 칸을 채우려면 무엇을 물어야 하나(라이선스, HW, 시설, 기록 양식) |
+| A4 | [AI FinOps 스코어카드](appendix/A4-ai-finops-scorecard.md) | 이미 나가고 있는 AI 지출의 역방향 감사. 태깅, 단위경제, 가동률, 구매 방식, 모델 적정성, 이상 탐지의 여섯 점검축과 자산별 회수 판정 입력 |
 
 ### 계산 도구
 

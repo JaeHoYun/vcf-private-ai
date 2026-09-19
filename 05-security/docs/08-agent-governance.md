@@ -51,7 +51,7 @@ PAIS 3.0에서 이 원칙이 어디까지 구현되고 어디부터 앱과 게�
 
 ## 8.3 자율성 상한과 위험 등급의 매트릭스
 
-에이전트 통제의 무게는 두 축의 곱으로 정합니다. **위험 등급**은 다루는 일과 데이터가 얼마나 민감한가([앱 가이드 02 2.9절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/02-use-cases.md)), **자율성 수준**은 판단과 실행을 얼마나 맡겼는가입니다. 자율성은 Cloud Security Alliance가 정의한 L0(자율성 없음)부터 L5(완전 자율)까지 여섯 단계를 씁니다([CSA, Levels of Autonomy for Agentic AI, 2026-01-28](https://cloudsecurityalliance.org/blog/2026/01/28/levels-of-autonomy)). L1은 행동마다 사람의 승인, L2는 계획 단위 승인 뒤 범위 안 자율 실행, L3는 경계 안 자율과 경계 밖 상신, L4는 감시와 예외 처리로 물러난 사람, L5는 목표 설정까지 포함입니다. 각 단계의 정의는 [앱 가이드 02 2.10절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/02-use-cases.md)에 표로 있습니다.
+에이전트 통제의 무게는 두 축의 곱으로 정합니다. **위험 등급**은 다루는 일과 데이터가 얼마나 민감한가([앱 가이드 02 2.9절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/02-use-cases.md)), **자율성 수준**은 판단과 실행을 얼마나 맡겼는가입니다. 자율성은 Cloud Security Alliance가 정의한 L0(자율성 없음)부터 L5(완전 자율)까지 여섯 단계를 씁니다([CSA, Levels of Autonomy for Agentic AI, 2026-01-28](https://cloudsecurityalliance.org/blog/2026/01/28/levels-of-autonomy)). L1은 행동마다 사람의 승인, L2는 계획 단위 승인 뒤 범위 안 자율 실행, L3는 경계 안 자율과 경계 밖 상신, L4는 감시와 예외 처리로 물러난 사람, L5는 목표 설정까지 포함입니다. 각 단계의 정의는 [앱 가이드 02 2.10절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/02-use-cases.md)에 표로 있습니다. 전사 방법론이 쓰는 세 단계(보조, 위임 실행, 자율 판단, [AX 방법론 07 7.7절](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/07-organization-and-control.md))와는 L0–L1, L2–L3, L4–L5로 대응하며, 이 대응의 정본은 이 절입니다.
 
 | | 저위험, 가역(조회, 요약, 초안) | 중위험(내부 기록 변경, 티켓 생성) | 고위험, 비가역(대외 발송, 결제, 삭제, 배포) |
 |---|---|---|---|

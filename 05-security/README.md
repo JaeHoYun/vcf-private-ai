@@ -49,7 +49,7 @@
 - **"RAG 앱이 인젝션에 안전한가"** → [06 앱 가드레일](docs/06-app-guardrails.md)
 - **"에이전트에 도구와 쓰기 권한을 주려는데 무엇을 통제하나"** → [08 에이전트 보안 거버넌스](docs/08-agent-governance.md)
 
-서비스 하나를 출시하는 앱 팀의 준비물과 점검표는 [앱 가이드 12 서비스 보안 준비와 가드레일](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md)에, 전사 거버넌스 운영 모델과 국내 규제 일정은 [AX 방법론 10](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/10-governance.md)과 [부록 A2](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/appendix/A2-kr-regulatory-timeline.md)에 있습니다. 이 가이드는 플랫폼 통제의 정본이고, 그 둘은 이 가이드를 참조합니다.
+서비스 하나를 출시하는 앱 팀의 준비물과 점검표는 [앱 가이드 12 서비스 보안 준비와 가드레일](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md)에, 전사 거버넌스 운영 모델과 국내 규제 일정은 [AX 방법론 07](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/07-organization-and-control.md)과 [부록 A2](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/appendix/A2-kr-regulatory-timeline.md)에 있습니다. 이 가이드는 플랫폼 통제의 정본이고, 그 둘은 이 가이드를 참조합니다.
 
 ## 참고 자료
 

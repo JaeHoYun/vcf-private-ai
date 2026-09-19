@@ -95,7 +95,7 @@ flowchart TB
 
 이 시리즈는 Private AI를 떠받치는 **인프라와 구현**을 다룹니다. 그 위에서 "AI 전환(AX)을 조직 차원에서 어떻게 추진할 것인가"라는 **상위 전략과 방법론**은 다음 독립 가이드에서 다룹니다.
 
-- [기업용 AX(AI Transformation) 방법론 가이드](https://github.com/JaeHoYun/enterprise-ax-methodology) — DX 답습형 AX의 실패 진단, 증거 기반 점진적 전환이라는 대안, 그리고 검증된 유스케이스를 Private AI로 갖추는 구현 전략. Private AI 구현 경로로 본 시리즈를 참조합니다.
+- [기업용 AX(AI Transformation) 방법론 가이드](https://github.com/JaeHoYun/enterprise-ax-methodology) — AX 착수 전 단계에서 출발점을 가리고 문제를 정의하는 법, 검증 방식, 해결 경로와 실행 환경의 선택지를 안내합니다. 실행 환경으로 사내 구축을 선택한 경우의 구현 경로로 본 시리즈를 참조합니다.
 
 ### 업계 맥락 — 추가 읽기
 

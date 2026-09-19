@@ -5,7 +5,7 @@
 
 이 문서는 시리즈 ⑤의 착수 문서입니다. 01–08이 "무엇을 왜 어떻게 통제하는가"의 카탈로그라면, 이 문서는 그 카탈로그를 앞에 두고 자주 받는 세 질문에 답합니다. 보안 때문에 전체를 어떻게 그려야 하는가, 무엇부터 손대야 하는가, 첫 유스케이스를 올리기까지 무엇을 갖춰야 하는가. 통제 항목이 시리즈 전체에 70개를 넘다 보니 한꺼번에 들이려다 멈추는 조직이 많아서, 한 장 청사진, 90일 로드맵, 게이트별 최소 세트, 준비물, 흔한 실수로 좁혔습니다.
 
-이 문서의 시점은 플랫폼 전체를 책임지는 보안팀과 플랫폼 팀입니다. 서비스 하나를 출시하는 앱 팀이 준비할 것은 [앱 가이드 12 서비스 보안 준비와 가드레일](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md)이 맡고, 전사 운영 모델과 규제 일정은 [AX 방법론 10 AI 거버넌스](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/10-governance.md)와 [부록 A2](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/appendix/A2-kr-regulatory-timeline.md)가 맡습니다. 기반 사실은 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0(2026-09-03 GA)이며, 발표만 된 기능은 설계 전제로 삼지 않습니다([① 00 0.7.4절](../../01-infra/docs/00-whats-new.md)).
+이 문서의 시점은 플랫폼 전체를 책임지는 보안팀과 플랫폼 팀입니다. 서비스 하나를 출시하는 앱 팀이 준비할 것은 [앱 가이드 12 서비스 보안 준비와 가드레일](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md)이 맡고, 전사 운영 모델과 규제 일정은 [AX 방법론 07 조직, 정착, 통제](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/07-organization-and-control.md)와 [부록 A2](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/appendix/A2-kr-regulatory-timeline.md)가 맡습니다. 기반 사실은 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0(2026-09-03 GA)이며, 발표만 된 기능은 설계 전제로 삼지 않습니다([① 00 0.7.4절](../../01-infra/docs/00-whats-new.md)).
 
 ---
 
@@ -99,7 +99,7 @@ flowchart LR
 | 데이터 분류 체계와 등급 라벨의 출처(문서 관리 시스템, 보호 문서 정책 ID) | 정보보호와 데이터 오너 | 파생 사본(청크, 임베딩, 로그)에 등급을 상속시킬 수 없음 | [05 5.1절, 5.9절](05-data-governance.md) |
 | 로그 보존 기간과 프롬프트 본문 보존 여부(등급별) | 보안, 법무, 개인정보 보호 책임자 | 고영향 AI 문서 보관 의무 대응 불가 또는 과보존으로 인한 발췌본 축적 | [07 7.1절](07-audit-compliance.md), [05 5.10절](05-data-governance.md) |
 | 승인자 지정(외부 도구 승인자, 데이터 소스 승인자, 복호화 승인자, 게이트 심사 주체) | 거버넌스 위원회 | 승인 게이트가 병목이 되거나 형식으로 굳음 | [03 3.4절](03-identity-access.md), [05 5.9절](05-data-governance.md), [⑦ 09](../../07-design/docs/09-roles-raci.md) |
-| AI 자산 인벤토리 초판과 갱신 주기 | 플랫폼 팀 | 섀도 AI를 모른 채 통제를 설계 | [01 1.1절](01-threat-model.md), [08 8.4절](08-agent-governance.md), [AX 워크시트 AI 자산 인벤토리](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/worksheet/ai-estate-inventory.md) |
+| AI 자산 인벤토리 초판과 갱신 주기 | 플랫폼 팀 | 섀도 AI를 모른 채 통제를 설계 | [01 1.1절](01-threat-model.md), [08 8.4절](08-agent-governance.md), [AX 방법론 01 1.4절](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/01-starting-point.md) |
 | 유스케이스 위험 등급 필드와 자율성 상한의 판정 규칙 | AI 위험관리 책임자 | 통제의 무게를 정할 기준이 없어 모든 서비스가 같은 통제를 받음 | [앱 가이드 02 2.9절, 2.10절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/02-use-cases.md), [08 8.3절](08-agent-governance.md) |
 | 허용 모델 출처와 반입 경로, 라이선스 검토 주체 | 플랫폼, 보안, 법무 | 공급망 게이트가 비어 아무 모델이나 들어옴 | [04 4.2절](04-airgap-supply-chain.md) |
 | 생성물 표시 의무의 적용 범위 판단(대외 채널, 내부 전용) | 법무 | 대외 노출 채널에 표시가 빠짐 | [앱 가이드 11 11.6절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/11-app-integration-ux.md) |

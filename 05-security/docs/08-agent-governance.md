@@ -5,7 +5,7 @@
 
 [06 앱 계층 가드레일](06-app-guardrails.md)이 모델을 부품으로 보는 위험(프롬프트 인젝션, 민감정보 노출, 출력 처리)과 그 방어를 다뤘다면, 이 문서는 **행위자로서의 에이전트**가 만드는 위험을 다룹니다. 에이전트는 도구를 호출하고 레코드를 바꾸고 메시지를 보내는 주체이므로, 실패가 틀린 답이 아니라 부작용이 있는 행위로 나타납니다. 그래서 통제의 질문이 "무엇을 말하게 할 것인가"에서 "무엇을 하도록 허용할 것인가"로 바뀝니다.
 
-이 문서는 세 레포에 흩어져 있던 에이전트 보안의 정본입니다. 위협 목록, 신원, 자율성 상한, 레지스트리, MCP 도구 공급망, 실행 격리, 사람의 개입, 정책 집행 계층, 레드팀을 한 장에 모읍니다. 서비스 하나에 적용하는 점검표는 [앱 가이드 12](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md), 전사 운영 모델은 [AX 방법론 10 10.3절](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/10-governance.md)이 이 문서를 참조합니다. 기반 사실은 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0이며, PAIS에 없는 통제는 "앱과 게이트웨이 계층"으로 명시합니다.
+이 문서는 세 레포에 흩어져 있던 에이전트 보안의 정본입니다. 위협 목록, 신원, 자율성 상한, 레지스트리, MCP 도구 공급망, 실행 격리, 사람의 개입, 정책 집행 계층, 레드팀을 한 장에 모읍니다. 서비스 하나에 적용하는 점검표는 [앱 가이드 12](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md), 전사 운영 모델은 [AX 방법론 07 7.7절](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/07-organization-and-control.md)이 이 문서를 참조합니다. 기반 사실은 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0이며, PAIS에 없는 통제는 "앱과 게이트웨이 계층"으로 명시합니다.
 
 ---
 
@@ -68,7 +68,7 @@ PAIS 3.0에서 이 원칙이 어디까지 구현되고 어디부터 앱과 게�
 
 ## 8.4 에이전트 레지스트리와 인벤토리
 
-에이전트가 늘면 관리 단위가 모델 카탈로그에서 **에이전트 레지스트리**로 옮겨갑니다. 어떤 행위자가 어떤 권한으로 돌고 있고 누가 책임지는지를 답하는 장부입니다. AX 방법론이 정한 최소 네 항목(고유 신원, 책임자, 권한 범위와 만료, 퇴역 절차)에 이 플랫폼에서 채워야 하는 필드를 더하면 다음과 같습니다([AX 방법론 10 10.3.3절](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/10-governance.md)).
+에이전트가 늘면 관리 단위가 모델 카탈로그에서 **에이전트 레지스트리**로 옮겨갑니다. 어떤 행위자가 어떤 권한으로 돌고 있고 누가 책임지는지를 답하는 장부입니다. AX 방법론이 정한 최소 네 항목(고유 신원, 책임자, 권한 범위와 만료, 퇴역 절차)에 이 플랫폼에서 채워야 하는 필드를 더하면 다음과 같습니다([AX 방법론 07 7.7절](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/07-organization-and-control.md)).
 
 | 필드 | 내용 | 채우는 원천 |
 |---|---|---|
@@ -84,7 +84,7 @@ PAIS 3.0에서 이 원칙이 어디까지 구현되고 어디부터 앱과 게�
 | 상태와 게이트 이력 | PoC, 파일럿, 프로덕션, 퇴역과 각 게이트 통과일 | 게이트 심사 기록 |
 | 마지막 레드팀과 회귀 결과 | 일자, 도구, 임계값 통과 여부 | 8.9 |
 
-PAIS는 네임스페이스별 에이전트 목록과 Tool Gallery의 "이 도구를 사용 중인 에이전트" 표시를 제공하므로([Explore MCP Tools, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html)), 레지스트리의 절반은 여기서 자동으로 채울 수 있습니다. 나머지 절반(소유자, 등급, 자격증명, 게이트 이력)은 앱 팀과 심사 주체가 채웁니다. 첫 에이전트 한둘일 때는 스프레드시트 한 장이 레지스트리이고, 미등록 에이전트를 발견하면 금지가 아니라 등록과 등급 부여로 양성화합니다. 미등록 에이전트와 플랫폼 밖 AI 사용을 찾는 신호는 [07 7.2.3절](07-audit-compliance.md)에, 등록 뒤 등급 판정과 등급별 처분의 순서는 [AX 방법론 10 10.4절](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/10-governance.md)에 있습니다.
+PAIS는 네임스페이스별 에이전트 목록과 Tool Gallery의 "이 도구를 사용 중인 에이전트" 표시를 제공하므로([Explore MCP Tools, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html)), 레지스트리의 절반은 여기서 자동으로 채울 수 있습니다. 나머지 절반(소유자, 등급, 자격증명, 게이트 이력)은 앱 팀과 심사 주체가 채웁니다. 첫 에이전트 한둘일 때는 스프레드시트 한 장이 레지스트리이고, 미등록 에이전트를 발견하면 금지가 아니라 등록과 등급 부여로 양성화합니다. 미등록 에이전트와 플랫폼 밖 AI 사용을 찾는 신호는 [07 7.2.3절](07-audit-compliance.md)에, 등록 뒤 등급 판정과 등급별 처분의 순서는 [AX 방법론 07 7.6절](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/07-organization-and-control.md)에 있습니다.
 
 퇴역은 권한 회수로 끝나지 않습니다. 서비스 계정과 토큰 폐기, 도구 승인 해제, 지식베이스 연결 해제, 네트워크 정책 정리, 그리고 감사 로그와 게이트 기록의 보존까지가 절차입니다([앱 가이드 14](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/14-operations.md)).
 

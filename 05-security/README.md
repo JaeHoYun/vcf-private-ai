@@ -39,12 +39,14 @@
 | 07 | [감사, 로깅, 사고대응 및 컴플라이언스 체크리스트](docs/07-audit-compliance.md) | 추적성, 모델 행위 관측, 섀도 AI 후보 탐지, 사고대응, 한국 규제 매핑, 통제 검증 총괄(C-01–C-18과 게이트) |
 | 08 | [에이전트 보안 거버넌스](docs/08-agent-governance.md) | 에이전트 위협 ASI01–10, 비인간 신원, 자율성 상한과 위험 등급 매트릭스, 레지스트리, MCP 도구 공급망과 도구 오염, 샌드박스, 킬스위치, 도구 게이트웨이, 레드팀 |
 
+채워 쓰는 양식으로 [거버넌스와 데이터주권 갭 워크시트](worksheet/governance-sovereignty-gap.md)가 있습니다. 이미 운영 중인 AI 자산의 통제 격차를 자산대장 실측(A절), 한국 AI 기본법과 NIST AI RMF와 EU AI Act와 ISO 42001 대비 격차(B절), 규제 데이터의 외부 경유 소급 점검(C절)으로 되짚습니다. AX 방법론 가이드에 있던 양식을 옮겨 온 것입니다.
+
 ## 빠른 시작
 
 - **"보안 때문에 전체를 어떻게 설계하고 어디서부터 시작하나"** → [00 어디서부터 시작하나](docs/00-where-to-start.md)
 - **"전체 그림부터"** → [01 위협 모델과 보안 아키텍처](docs/01-threat-model.md)
 - **"멀티테넌트/계열사 격리가 고민"** → [02 격리](docs/02-network-tenant-isolation.md) + [03 접근통제](docs/03-identity-access.md)
-- **"규제 대응과 감사 준비"** → [07 감사와 컴플라이언스 체크리스트](docs/07-audit-compliance.md)
+- **"규제 대응과 감사 준비"** → [07 감사와 컴플라이언스 체크리스트](docs/07-audit-compliance.md) + [거버넌스와 데이터주권 갭 워크시트](worksheet/governance-sovereignty-gap.md)
 - **"플랫폼 밖에서 쓰이는 AI(섀도 AI)를 어떤 신호로 찾나"** → [07 7.2.3절](docs/07-audit-compliance.md) + [08 8.4절 레지스트리](docs/08-agent-governance.md)
 - **"RAG 앱이 인젝션에 안전한가"** → [06 앱 가드레일](docs/06-app-guardrails.md)
 - **"에이전트에 도구와 쓰기 권한을 주려는데 무엇을 통제하나"** → [08 에이전트 보안 거버넌스](docs/08-agent-governance.md)

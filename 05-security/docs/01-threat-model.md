@@ -3,9 +3,9 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 VCF 9.1.1 / PAIF(Private AI Foundation) 9.1.1 / PAIS(Private AI Services) 3.0 기반 Private AI 플랫폼의 **위협 모델**과 **보안 아키텍처 전경**(landscape)을 정리합니다. 개별 통제의 상세 설계는 02–08 문서로 위임하며, 본 문서는 "무엇을 왜 방어하는가"를 파악하는 출발점입니다. 착수 순서와 요청 경로 위의 청사진은 [00 어디서부터 시작하나](00-where-to-start.md)에 있습니다.
+이 문서는 VCF 9.1.1 / PAIF(Private AI Foundation) 9.1.1 / PAIS(Private AI Services) 3.0 기반 Private AI 플랫폼의 **위협 모델**과 **보안 아키텍처 전경**(landscape)을 정리합니다. 개별 통제의 상세 설계는 02–08 문서로 위임하며, 본 문서는 "무엇을 왜 방어하는가"를 파악하는 출발점입니다. 착수 순서와 요청 경로 청사진은 [00 어디서부터 시작하나](00-where-to-start.md)에 있습니다.
 
-PAIF 9.1은 VCF(VMware Cloud Foundation) 9.1 위에 GPU 가속 컴퓨팅과 AI 중심 서비스를 얹은 플랫폼이며, AI 워크로드는 **GPU-Accelerated Workload Domain**(본 문서 약칭 PAIF Workload Domain)에 배치됩니다. Private AI Services는 이 도메인의 Supervisor 위에 설치되어 Model Gallery, Model Runtime, Vector Database, Data Indexing and Retrieval, AI Agent Builder 등을 제공합니다([Broadcom: Deploy a GPU-Accelerated Workload Domain](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)).
+PAIF 9.1은 VCF(VMware Cloud Foundation) 9.1을 기반으로 GPU 가속 컴퓨팅과 AI 중심 서비스를 추가한 플랫폼이며, AI 워크로드는 **GPU-Accelerated Workload Domain**(본 문서 약칭 PAIF Workload Domain)에 배치됩니다. Private AI Services는 이 도메인의 Supervisor에 설치되어 Model Gallery, Model Runtime, Vector Database, Data Indexing and Retrieval, AI Agent Builder 등을 제공합니다([Broadcom: Deploy a GPU-Accelerated Workload Domain](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)).
 
 ## 1.1 보호 대상과 신뢰 가정
 
@@ -17,7 +17,7 @@ PAIF 9.1은 VCF(VMware Cloud Foundation) 9.1 위에 GPU 가속 컴퓨팅과 AI �
 | 자격증명 | 서비스 토큰, 레지스트리 키, MCP 자격 | 권한 상승, 측면 이동 |
 | 가용성 | 추론 엔드포인트, GPU 풀 | 서비스 거부, 비용 폭증 |
 
-신뢰 가정: 하이퍼바이저(ESX)와 vSphere 관리 평면은 신뢰 기반(root of trust)으로 두되, 그 위의 모든 테넌트, 앱, 외부 입력은 **기본 불신**(zero trust)으로 취급합니다.
+신뢰 가정: 하이퍼바이저(ESX)와 vSphere 관리 평면은 신뢰 기반(root of trust)으로 간주하되, 그 상위의 모든 테넌트, 앱, 외부 입력은 **기본 불신**(zero trust)으로 취급합니다.
 
 ## 1.2 AI 파이프라인 공격면 전수
 
@@ -36,11 +36,11 @@ PAIF 9.1은 VCF(VMware Cloud Foundation) 9.1 위에 GPU 가속 컴퓨팅과 AI �
 
 MITRE ATLAS는 2025–2026 갱신에서 RAG Poisoning, False RAG Entry Injection, LLM Prompt Crafting, AI Supply Chain Compromise 등 생성형 AI 공격기법을 대폭 확장했습니다(v5.1.0 기준 16 tactics / 84 techniques)([MITRE ATLAS](https://atlas.mitre.org/)).
 
-위 표의 6번 행(에이전트와 MCP)은 2026년에 별도 위험 목록으로 독립했습니다. OWASP는 LLM Top 10 2026 에디션(2026-08 공개)과 나란히 Top 10 for Agentic Applications 2026(2025-12-09 공개, ASI01 목표 탈취부터 ASI10 이탈 에이전트까지)을 두어 모델 단위 위험과 행위자 단위 위험을 분리했습니다([OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)). 에이전트 단계의 위협 표와 통제는 [08 에이전트 보안 거버넌스](08-agent-governance.md)가 정본이며, 이 표는 파이프라인 전체의 조감도로 유지합니다.
+위 표의 6번 행(에이전트와 MCP)은 2026년에 별도 위험 목록으로 독립했습니다. OWASP는 LLM Top 10 2026 에디션(2026-08 공개)과 나란히 Top 10 for Agentic Applications 2026(2025-12-09 공개, ASI01 목표 탈취부터 ASI10 이탈 에이전트까지)을 별도로 마련해 모델 단위 위험과 행위자 단위 위험을 분리했습니다([OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)). 에이전트 단계의 위협 표와 통제는 [08 에이전트 보안 거버넌스](08-agent-governance.md)가 정본이며, 이 표는 파이프라인 전체의 조감도로 유지합니다.
 
 ## 1.3 다층 방어(Defense-in-Depth) 계층 모델
 
-단일 통제에 의존하지 않고 계층별로 독립 방어선을 둡니다. 각 계층은 하위 계층이 뚫려도 상위 영향이 제한되도록 설계합니다.
+단일 통제에 의존하지 않고 계층별로 독립 방어선을 배치합니다. 각 계층은 하위 계층이 뚫려도 상위 영향이 제한되도록 설계합니다.
 
 | 계층 | 핵심 통제 | 대표 컴포넌트 | 상세 문서 |
 |---|---|---|---|
@@ -53,7 +53,7 @@ MITRE ATLAS는 2025–2026 갱신에서 RAG Poisoning, False RAG Entry Injection
 
 L2에서 vDefend Distributed Firewall은 하이퍼바이저에 내장된 소프트웨어 정의 L2-L7 스테이트풀 방화벽으로, 데이터센터 네트워크 재설계 없이 워크로드 NIC 단위 제로트러스트 마이크로세그멘테이션을 제공합니다([VMware vDefend Distributed Firewall](https://www.vmware.com/products/cloud-infrastructure/vdefend-distributed-firewall)).
 
-이 계층 모델은 "누가 무엇을 책임지는가"의 축이며, 한 요청이 실제로 지나는 순서와는 다릅니다. 요청은 경계(L2)에서 앱(L5)으로 들어와 플랫폼(L3)의 인증을 거쳐 데이터(L4)와 모델(L4)에 닿고, 그 전 과정이 운영(L6)에 기록됩니다. 그래서 설계 검토는 두 그림을 함께 씁니다. 계층 표로 책임 누락을 찾고, [00 0.2절](00-where-to-start.md)의 요청 경로 청사진(CP1 경계부터 CP10 감사까지)으로 "이 요청이 어디서 검사되는가"의 공백을 찾습니다.
+이 계층 모델은 "누가 무엇을 책임지는가"의 축이며, 한 요청이 실제로 지나는 순서와는 다릅니다. 요청은 경계(L2)에서 앱(L5)으로 들어와 플랫폼(L3)의 인증을 거쳐 데이터(L4)와 모델(L4)에 도달하고, 그 전 과정이 운영(L6)에 기록됩니다. 그래서 설계 검토는 두 가지 도식을 함께 활용합니다. 계층 표로 책임 누락을 찾고, [00 0.2절](00-where-to-start.md)의 요청 경로 청사진(CP1 경계부터 CP10 감사까지)으로 "이 요청이 어디서 검사되는가"의 공백을 찾습니다.
 
 ## 1.4 신뢰 경계(Trust Boundary)와 테넌트 격리 개요
 
@@ -71,7 +71,7 @@ PAIF는 에어갭 배치를 지원하며, Artifact Mirroring Tool(PAIS 2.1 신�
 
 ## 1.5 책임 분담 모델
 
-Private AI 보안은 단일 주체가 전담하지 않습니다. 계층별 책임 주체를 명확히 분리해야 통제 누락을 막을 수 있습니다.
+Private AI 보안은 단일 주체가 전담하지 않습니다. 계층별 책임 주체를 명확히 분리해야 통제 누락을 방지할 수 있습니다.
 
 | 책임 영역 | 플랫폼 제공(VCF/PAIF) | 플랫폼 운영자(인프라/보안팀) | 앱 개발자(데이터/MLOps) |
 |---|---|---|---|
@@ -104,11 +104,11 @@ Private AI 보안은 단일 주체가 전담하지 않습니다. 계층별 책�
 
 OWASP 2025 개정에서 시스템 프롬프트 유출(LLM07)과 벡터와 임베딩 약점(LLM08)이 신규 진입했으며, 프롬프트 인젝션(LLM01)은 직접과 간접 인젝션을 모두 포괄하도록 정의가 확장되었습니다([OWASP GenAI](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)). RAG 파이프라인을 다루는 앞 시리즈는 [④ RAG 레퍼런스](../../04-rag/README.md)를 참조하세요.
 
-2026 에디션은 항목의 뼈대를 유지한 채 실제 사고 데이터를 반영해 순위를 다시 매겼습니다. 민감정보 노출이 2위, 과도한 권한이 3위로 올라왔고, 무한 소비가 크게 상승했으며, 시스템 프롬프트 유출은 숨은 컨텍스트 노출(Hidden Context Exposure)로 이름이 바뀌었습니다([OWASP GenAI LLM Top 10 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/)). 위 표의 담당 문서는 그대로 유효하며, 순위 변화는 [1.7절](#17-위협-우선순위화-관점)의 우선순위에서 과도한 권한과 무한 소비를 한 단계 앞당기는 근거가 됩니다. 에이전트 전용 목록(ASI01–10)의 담당 절은 [08 8.1절](08-agent-governance.md)의 표에 있습니다.
+2026 에디션은 항목 구성을 유지한 채 실제 사고 데이터를 반영해 순위를 다시 매겼습니다. 민감정보 노출이 2위, 과도한 권한이 3위를 차지했고, 무한 소비의 순위가 크게 상승했으며, 시스템 프롬프트 유출은 숨은 컨텍스트 노출(Hidden Context Exposure)로 이름이 바뀌었습니다([OWASP GenAI LLM Top 10 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/)). 위 표의 담당 문서는 그대로 유효하며, 순위 변화는 [1.7절](#17-위협-우선순위화-관점)의 우선순위에서 과도한 권한과 무한 소비를 한 단계 앞당기는 근거입니다. 에이전트 전용 목록(ASI01–10)의 담당 절은 [08 8.1절](08-agent-governance.md)의 표에 있습니다.
 
 ## 1.7 위협 우선순위화 관점
 
-모든 위협을 동시에 막을 수는 없으므로, 자산 가치 × 발생 가능성 × 노출도로 우선순위를 둡니다.
+모든 위협을 동시에 차단할 수는 없으므로, 자산 가치 × 발생 가능성 × 노출도로 우선순위를 정합니다.
 
 - 즉시(P0): 교차테넌트 누수(LLM08), 공급망 변조(LLM03) — 격리와 서명이 깨지면 피해가 비가역적.
 - 단기(P1): 간접 프롬프트 인젝션(LLM01), 과도한 권한(LLM06) — RAG, 에이전트 도입 시 노출면 급증.

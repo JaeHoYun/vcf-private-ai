@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 환경의 GPU-Accelerated Workload Domain(이하 시리즈 약칭 PAIF Workload Domain) 위에서 추론 워크로드를 운영할 때, "모델 크기와 서비스 목표를 입력하면 GPU 메모리(VRAM)와 GPU 수량이 얼마나 필요한가"를 추정하는 방법을 다룹니다. vLLM, llama.cpp 등 추론 엔진을 전제로 합니다.
+이 문서는 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 환경의 GPU-Accelerated Workload Domain(이하 시리즈 약칭 PAIF Workload Domain)에서 추론 워크로드를 운영할 때, "모델 크기와 서비스 목표를 입력하면 GPU 메모리(VRAM)와 GPU 수량이 얼마나 필요한가"를 추정하는 방법을 다룹니다. vLLM, llama.cpp 등 추론 엔진을 전제로 합니다.
 
 아래의 모든 메모리, 처리량 수치는 아키텍처, 정밀도, 엔진 버전, 하드웨어에 따라 크게 달라지는 **어림**(approximation)이며, 배포 전 반드시 대상 환경에서 실측이 필요합니다. 산식은 "1차 사이징 가이드"로만 사용하시고, 확정 용량은 실측값으로 갈음하세요.
 
@@ -32,7 +32,7 @@ vLLM 공식 문서가 제시하는 전체 메모리 관계식은 다음과 같�
 
 여기서 `gpu_memory_utilization`은 vLLM이 모델 실행기에 할당하는 GPU 메모리 비율로, 기본값은 메인라인 vLLM 기준 0.9입니다(0–1 범위; vLLM-Omni 등 일부 배포판은 0.92). vLLM은 이 값을 기준으로 남는 메모리를 KV 캐시로 자동 환산합니다([vLLM cache config](https://docs.vllm.ai/en/stable/api/vllm/config/cache/)). 즉 **사용 가능한 KV 캐시 = (총 VRAM × gpu_memory_utilization) − 가중치 − 오버헤드** 가 실무상 핵심 가용량입니다.
 
-빠른 점검값으로, Broadcom VCF 9.1 설계 문서는 운영 워크로드의 GPU 메모리를 **가중치의 약 2.5배**로 잡는 것을 일반 지침으로 제시합니다(가중치에 목표 문맥 길이와 동시 요청 수만큼의 KV 캐시를 더한 값, [가속기 설계 PAIF-ACC-RCMD-001](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/accelerator-detailed-design.html)). 위 관계식으로 계산한 값이 이 점검값과 크게 다르면 동시성이나 문맥 길이 가정을 다시 확인합니다.
+빠른 점검값으로, Broadcom VCF 9.1 설계 문서는 운영 워크로드의 GPU 메모리를 **가중치의 약 2.5배**로 산정하는 것을 일반 지침으로 제시합니다(가중치에 목표 문맥 길이와 동시 요청 수만큼의 KV 캐시를 더한 값, [가속기 설계 PAIF-ACC-RCMD-001](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/accelerator-detailed-design.html)). 위 관계식으로 계산한 값이 이 점검값과 크게 다르면 동시성이나 문맥 길이 가정을 다시 확인합니다.
 
 ---
 
@@ -52,7 +52,7 @@ vLLM 공식 문서가 제시하는 전체 메모리 관계식은 다음과 같�
 | INT8 / FP8 | 1.0 | 약 7 GB | 약 13 GB | 약 70 GB |
 | INT4 | 0.5 | 약 3.5 GB | 약 6.5 GB | 약 35 GB |
 
-> 위 표는 가중치만 계산한 값입니다(KV 캐시와 오버헤드 제외). 실제로는 정밀도 변환 시 일부 텐서가 더 높은 정밀도로 남거나, 임베딩/LM head 등이 별도로 잡히므로 표값보다 5–20% 늘어나는 것이 일반적입니다. 어림이며 실측 필요.
+> 위 표는 가중치만 계산한 값입니다(KV 캐시와 오버헤드 제외). 실제로는 정밀도 변환 시 일부 텐서가 더 높은 정밀도로 남거나, 임베딩/LM head 등이 별도로 할당되므로 표값보다 5–20% 늘어나는 것이 일반적입니다. 어림이며 실측 필요.
 
 핵심 직관: **FP16 70B 모델의 가중치만 약 140GB**이므로, 80GB급 단일 GPU 한 장에는 들어가지 않습니다. 70B를 FP16로 서비스하려면 다중 GPU(텐서 병렬, 2.6 참조)나 양자화(2.4 참조)가 필요합니다.
 
@@ -60,7 +60,7 @@ vLLM 공식 문서가 제시하는 전체 메모리 관계식은 다음과 같�
 
 ## 2.3 KV 캐시 산정 (컨텍스트 × 동시성)
 
-KV 캐시는 "지금 처리 중인 토큰 수"에 비례해 늘어나는 가변 메모리로, 동시성이 높거나 컨텍스트가 길수록 가중치보다 더 큰 병목이 되기도 합니다.
+KV 캐시는 "지금 처리 중인 토큰 수"에 비례해 늘어나는 가변 메모리로, 동시성이 높거나 컨텍스트가 길수록 가중치보다 더 큰 병목으로 작용하기도 합니다.
 
 vLLM 커뮤니티가 정리한 토큰당 KV 캐시 어림식은 다음과 같습니다([vLLM Discussion #13803](https://github.com/vllm-project/vllm/discussions/13803)).
 
@@ -119,7 +119,7 @@ vLLM 커뮤니티가 정리한 토큰당 KV 캐시 어림식은 다음과 같습
 
 ## 2.5 처리량과 지연 목표 → GPU 수, Replica 환산
 
-용량 산정은 "메모리에 들어가는가"(2.2–2.4)와 "목표 처리량을 내는가"(이 절)의 두 축으로 봐야 합니다.
+용량 산정은 "메모리에 들어가는가"(2.2–2.4)와 "목표 처리량을 달성하는가"(이 절)의 두 축으로 검토해야 합니다.
 
 기본 환산 흐름:
 
@@ -137,11 +137,11 @@ vLLM 커뮤니티가 정리한 토큰당 KV 캐시 어림식은 다음과 같습
 | 평균 입력과 출력 토큰 | 요청당 작업량 | 출력 길이가 처리량을 크게 좌우 |
 | Replica당 처리량 | 1 인스턴스 실측 tokens/s | 반드시 대상 GPU에서 실측 |
 
-핵심 트레이드오프: 배치 크기를 키우면 GPU 활용률과 총 처리량은 오르지만 개별 요청 지연(TTFT/TPOT)은 나빠집니다. 지연 SLA가 빡빡할수록 Replica 수가 늘어나는 방향으로 사이징됩니다. Replica당 처리량은 산식으로 단정할 수 없으므로 **반드시 실측**이 필요합니다.
+핵심 트레이드오프: 배치 크기를 키우면 GPU 활용률과 총 처리량은 높아지지만 개별 요청 지연(TTFT/TPOT)은 나빠집니다. 지연 SLA가 빡빡할수록 Replica 수가 늘어나는 방향으로 사이징됩니다. Replica당 처리량은 산식으로 단정할 수 없으므로 **반드시 실측**이 필요합니다.
 
 ### 공유 모델로 테넌트 간 중복을 없애는 산정 (PAIS 3.0부터)
 
-PAIS 2.1까지는 같은 모델을 쓰는 테넌트가 N곳이면 위 환산을 테넌트마다 반복해 GPU를 N벌 잡았습니다. PAIS 3.0의 공유 모델 호스팅([① 06 6.4.1절](../../01-infra/docs/06-production.md))은 모델 한 벌을 중앙(provider)에서 서빙하고 테넌트는 참조만 하므로, 산정 단위가 "테넌트별 모델"에서 "모델별 합산 수요"로 바뀝니다.
+PAIS 2.1까지는 같은 모델을 사용하는 테넌트가 N곳이면 위 환산을 테넌트마다 반복해 GPU를 N벌 산정했습니다. PAIS 3.0의 공유 모델 호스팅([① 06 6.4.1절](../../01-infra/docs/06-production.md))은 모델 한 벌을 중앙(provider)에서 서빙하고 테넌트는 참조만 하므로, 산정 단위가 "테넌트별 모델"에서 "모델별 합산 수요"로 바뀝니다.
 
 ```
 PAIS 2.1 방식  총 GPU = Σ_테넌트 Σ_모델 ( Replica 수 × Replica당 GPU )
@@ -149,10 +149,10 @@ PAIS 3.0 공유  총 GPU = Σ_공유모델 ( ceil( Σ_테넌트 목표 QPS ÷ Re
                       + Σ_전용모델 ( 테넌트별 산정, PAIS 2.1 방식 그대로 )
 ```
 
-- **줄어드는 것** — 모델 가중치 메모리(2.2)와 최소 레플리카(HA용 2벌)의 테넌트별 중복. 8B 모델 FP16을 다섯 사업부가 각각 2레플리카로 띄우면 가중치만 10벌인데, 공유하면 합산 수요에 맞춘 레플리카 수만 남습니다.
-- **줄지 않는 것** — KV 캐시(2.3)는 동시성에 비례하므로 테넌트 수요를 합산하면 그대로 따라옵니다. 처리량도 합산 QPS로 산정해야 하므로 레플리카 수 자체는 늘 수 있습니다. 절감은 "가중치 중복과 유휴 레플리카"에서 나오지 "동시성"에서 나오지 않습니다.
-- **더해지는 것** — provider 엔드포인트가 단일 장애점이 되므로 HA 헤드룸(N+1)을 합산 수요 위에 다시 얹고, 한 테넌트의 피크가 다른 테넌트의 지연이 되지 않도록 피크 합산은 단순 합이 아니라 동시 피크 확률로 보정합니다(보정 계수는 자사 트래픽 실측으로 정합니다. 부록 A1과 A2에 공개 출처 기본값은 없습니다).
-- **공유하지 않는 것** — 사업부 전용 파인튜닝 모델과 규제로 분리된 테넌트의 모델은 PAIS 2.1 방식대로 테넌트별로 산정합니다. 어느 모델을 공유 풀에 올릴지는 [⑦ 03 3.4.1절](../../07-design/docs/03-compute-gpu-topology.md)의 결정을 따릅니다.
+- **줄어드는 것** — 모델 가중치 메모리(2.2)와 최소 레플리카(HA용 2벌)의 테넌트별 중복. 8B 모델 FP16을 다섯 사업부가 각각 2레플리카로 배포하면 가중치만 10벌인데, 공유하면 합산 수요에 맞춘 레플리카 수만 남습니다.
+- **줄지 않는 것** — KV 캐시(2.3)는 동시성에 비례하므로 테넌트 수요를 합산하면 그대로 반영됩니다. 처리량도 합산 QPS로 산정해야 하므로 레플리카 수 자체는 늘어날 수 있습니다. 절감은 "가중치 중복과 유휴 레플리카"에서 나오지 "동시성"에서 나오지 않습니다.
+- **더해지는 것** — provider 엔드포인트가 단일 장애점으로 작용하므로 HA 헤드룸(N+1)을 합산 수요에 다시 더하고, 한 테넌트의 피크가 다른 테넌트의 지연으로 이어지지 않도록 피크 합산은 단순 합이 아니라 동시 피크 확률로 보정합니다(보정 계수는 자사 트래픽 실측으로 정합니다. 부록 A1과 A2에 공개 출처 기본값은 없습니다).
+- **공유하지 않는 것** — 사업부 전용 파인튜닝 모델과 규제로 분리된 테넌트의 모델은 PAIS 2.1 방식대로 테넌트별로 산정합니다. 어느 모델을 공유 풀에 포함할지는 [⑦ 03 3.4.1절](../../07-design/docs/03-compute-gpu-topology.md)의 결정을 따릅니다.
 
 ---
 
@@ -165,10 +165,10 @@ PAIS 3.0 공유  총 GPU = Σ_공유모델 ( ceil( Σ_테넌트 목표 QPS ÷ Re
 | 텐서 병렬(TP) | 모델이 단일 GPU엔 안 들어가나 단일 노드 다중 GPU엔 들어감 | `tensor_parallel_size=4` (노드 내 4 GPU) |
 | 파이프라인 병렬(PP) | 모델이 단일 노드에도 안 들어감 → 노드 간 분산 | TP=노드당 GPU 수, PP=노드 수 |
 
-- 우선순위: **단일 노드 내에서는 TP를 먼저** 쓰고, 노드 경계를 넘어야 할 때 PP를 결합합니다(예: 2노드 × 8GPU → `tensor_parallel_size=8`, `pipeline_parallel_size=2`).
-- **왜 노드 내 TP를 먼저 쓰나** — 텐서 병렬은 한 모델을 여러 GPU에 쪼개므로, GPU들이 **토큰을 만들 때마다 중간 계산값을 주고받습니다**. 이 교환 속도가 곧 성능이며, 노드 안에서는 GPU 직결 고속 연결인 **NVLink**가 이를 받쳐 줍니다. 노드를 넘으면 일반 네트워크를 타 대역폭이 수 배 낮아지므로(통신이 병목), 같은 모델이라도 가능하면 한 노드 안에 묶고(TP) PP는 단일 노드에 안 들어갈 때만 씁니다. 그래서 NVLink로 묶인 8-GPU 단일 노드가 중, 대형 모델 TP의 기본 단위가 됩니다.
+- 우선순위: **단일 노드 내에서는 TP를 먼저** 사용하고, 노드 경계를 넘어야 할 때 PP를 결합합니다(예: 2노드 × 8GPU → `tensor_parallel_size=8`, `pipeline_parallel_size=2`).
+- **왜 노드 내 TP를 먼저 사용하나** — 텐서 병렬은 한 모델을 여러 GPU에 쪼개므로, GPU들이 **토큰을 만들 때마다 중간 계산값을 주고받습니다**. 이 교환 속도가 곧 성능이며, 노드 안에서는 GPU 직결 고속 연결인 **NVLink**가 이를 지원합니다. 노드를 넘으면 일반 네트워크를 거쳐 대역폭이 수 배 낮아지므로(통신이 병목), 같은 모델이라도 가능하면 한 노드 안에 배치하고(TP) PP는 단일 노드에 안 들어갈 때만 사용합니다. 그래서 NVLink로 연결된 8-GPU 단일 노드가 중, 대형 모델 TP의 기본 단위입니다.
 - 단일 노드는 Python 멀티프로세싱으로, 다중 노드는 Ray 런타임이 필요합니다.
-- 분산은 통신 오버헤드를 동반하므로, 메모리만 보고 GPU 수를 정한 뒤에는 분산 구성에서의 처리량을 다시 실측해야 합니다.
+- 분산은 통신 오버헤드를 동반하므로, 메모리만 기준으로 GPU 수를 정한 뒤에는 분산 구성에서의 처리량을 다시 실측해야 합니다.
 
 ---
 
@@ -183,7 +183,7 @@ PAIF에서 ESXi 호스트의 GPU는 vGPU 타임슬라이스, MIG, DirectPath I/O
 | DirectPath I/O(전용) | GPU 1장 전체 | 완전 전용 | 대형 모델, 최대 성능(대형 추론/사전학습) |
 
 - **MIG**는 단일 물리 GPU를 하드웨어로 쪼개 각 슬라이스를 다른 VM에 할당합니다. 예컨대 H100은 8개의 메모리 슬라이스(각 약 10GB)와 7개의 컴퓨트 슬라이스로 구성되며, `[compute]g.[memory]gb` 표기로 프로파일을 지정합니다(예: `3g.40gb` = 컴퓨트 3슬라이스와 VRAM 40GB). 프로파일은 1, 2, 3, 4, 7 슬라이스를 소비하며 합이 7 이하인 조합만 유효합니다([NVIDIA MIG User Guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-mig-profiles.html)).
-- **선택 가이드(용량 효율)**: 작은 모델을 강한 격리로 여러 개 돌릴 때는 MIG, 하나의 큰 모델로 최대 성능을 낼 때는 DirectPath I/O, 부하가 낮고 간헐적인 소형 워크로드가 많을 때는 vGPU 타임슬라이스가 일반적으로 효율적입니다.
+- **선택 가이드(용량 효율)**: 작은 모델을 강한 격리로 여러 개 운영할 때는 MIG, 하나의 큰 모델로 최대 성능이 필요할 때는 DirectPath I/O, 부하가 낮고 간헐적인 소형 워크로드가 많을 때는 vGPU 타임슬라이스가 일반적으로 효율적입니다.
 - 상세 아키텍처와 구성 절차는 시리즈 [① 인프라](../../01-infra/README.md)를 참조하세요.
 
 ---
@@ -198,14 +198,14 @@ GPU 선택의 1차 기준은 **HBM 용량**(2.2–2.4의 가중치+KV 캐시가 
 | H100 80GB | 80GB HBM3 | 약 3.35 TB/s | Hopper |
 | H200 | 141GB HBM3e | 약 4.8 TB/s | 대용량 메모리, 장문/대형 모델 유리 |
 | B200 | 180GB급 HBM3 | 확인 필요 | Blackwell. HGX 8장 서버로 공급. VCF 9.1부터 지원 |
-| RTX PRO 6000 Blackwell Server Edition | 96GB GDDR7 | 확인 필요 | PCIe 서버용. 서버당 GPU 수를 적게 두는 구성에 쓰임 |
+| RTX PRO 6000 Blackwell Server Edition | 96GB GDDR7 | 확인 필요 | PCIe 서버용. 서버당 GPU 수를 적게 장착하는 구성에 사용됨 |
 
 (출처: [RunPod H100](https://www.runpod.io/articles/guides/nvidia-h100), [RunPod H200](https://www.runpod.io/articles/guides/nvidia-h200-gpu) — 벤더 정리 자료이므로 공식 데이터시트 교차 확인 필요)
 
 선택 시 고려사항:
 - **메모리 우선**: 장문 컨텍스트, 고동시, 대형 모델은 HBM 용량이 큰 세대(예: H200 계열)가 단일 장 적재와 KV 캐시 여유 면에서 유리합니다.
 - **대역폭 우선**: 토큰 디코딩은 메모리 대역폭에 민감하므로, 동일 메모리라면 최신 세대가 지연과 처리량에서 유리합니다.
-- **서버 형태가 공유 방식을 제약합니다**: HGX B200과 B300은 vSphere에서 GPU 1장을 여러 VM이 나눠 쓰는 분할 vGPU를 지원하지 않고, VM당 GPU 1장이나 여러 장 할당만 지원합니다([NVIDIA AI Enterprise 8.2 지원 매트릭스](https://docs.nvidia.com/ai-enterprise/release-8/latest/support/support-matrix-8/8.2.html)). 여러 소형 모델을 GPU 한 장에 촘촘히 담는 용도(04 4.3절 서비스 유형 N1)에는 맞지 않습니다. 반대로 RTX PRO 6000, L40S 같은 PCIe GPU는 MIG와 시분할 공유가 가능하지만 vGPU P2P 지원 목록에 없어 여러 GPU로 대형 모델을 나눠 서빙하는 용도(N2)에는 불리합니다([NVIDIA AI Enterprise P2P](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/p2p.html)). NVSwitch를 갖춘 Blackwell HGX 플랫폼은 PAIF 9.1부터 지원되며([PAIF 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)), VCF는 호스트당 Blackwell GPU를 최대 16장까지 지원합니다([PAIF 9.1 물리 인프라](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/physical-infrastructure-options.html)).
+- **서버 형태가 공유 방식을 제약합니다**: HGX B200과 B300은 vSphere에서 GPU 1장을 여러 VM이 나눠 사용하는 분할 vGPU를 지원하지 않고, VM당 GPU 1장이나 여러 장 할당만 지원합니다([NVIDIA AI Enterprise 8.2 지원 매트릭스](https://docs.nvidia.com/ai-enterprise/release-8/latest/support/support-matrix-8/8.2.html)). 여러 소형 모델을 GPU 한 장에 촘촘히 담는 용도(04 4.3절 서비스 유형 N1)에는 맞지 않습니다. 반대로 RTX PRO 6000, L40S 같은 PCIe GPU는 MIG와 시분할 공유가 가능하지만 vGPU P2P 지원 목록에 없어 여러 GPU로 대형 모델을 나눠 서빙하는 용도(N2)에는 불리합니다([NVIDIA AI Enterprise P2P](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/p2p.html)). NVSwitch를 갖춘 Blackwell HGX 플랫폼은 PAIF 9.1부터 지원되며([PAIF 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)), VCF는 호스트당 Blackwell GPU를 최대 16장까지 지원합니다([PAIF 9.1 물리 인프라](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/physical-infrastructure-options.html)).
 - **특정 제품 단정 금지**: 실제 도입 GPU는 PAIF 지원 매트릭스와 서버 벤더의 BCG(BIOS, 펌웨어)/HCL(하드웨어 호환성 목록), NVIDIA 공식 사양으로 확정해야 합니다. 본 문서의 표는 산정 감각을 위한 참고치입니다.
 
 ---
@@ -216,7 +216,7 @@ GPU 선택의 1차 기준은 **HBM 용량**(2.2–2.4의 가중치+KV 캐시가 
 
 ### GPU 한 장의 적재 예산 (역산)
 
-2.1의 메모리 관계식을 "가용 KV"에 대해 풀면, 고정 GPU 한 장이 받칠 수 있는 동시성 상한이 나옵니다.
+2.1의 메모리 관계식을 "가용 KV" 기준으로 정리하면, 고정 GPU 한 장이 수용할 수 있는 동시성 상한이 나옵니다.
 
 ```
 가용 KV(GiB) = (물리 VRAM × gpu_memory_utilization) − 가중치 − 활성화, 오버헤드
@@ -227,11 +227,11 @@ GPU 선택의 1차 기준은 **HBM 용량**(2.2–2.4의 가중치+KV 캐시가 
 
 > 같은 80GB라도 GQA/MHA, 컨텍스트 길이, 양자화에 따라 이 상한이 크게 달라집니다(2.3, 2.4). 위 값은 출발점이며 실측이 필요합니다.
 
-> 이 동시성을 실제로 떠받치는 엔진 메커니즘(연속 배칭과 PagedAttention)은 [③ 서빙 가이드 0.6절](../../03-serving-api/docs/00-serving-primer.md)에서 개념으로 다룹니다. PagedAttention이 KV 캐시 낭비를 줄여 같은 VRAM에 더 많은 요청을 담는 것이 위 "최대 동시성"의 밑바탕입니다.
+> 이 동시성을 구현하는 엔진 메커니즘(연속 배칭과 PagedAttention)은 [③ 서빙 가이드 0.6절](../../03-serving-api/docs/00-serving-primer.md)에서 개념으로 다룹니다. PagedAttention이 KV 캐시 낭비를 줄여 같은 VRAM에 더 많은 요청을 담는 것이 위 "최대 동시성"의 밑바탕입니다.
 
 ### 큰 모델 1개 적재 — 텐서 병렬로 장수 역산
 
-단일 GPU에 안 들어가는 모델은 텐서 병렬(2.6)로 여러 장에 나눕니다. 고정 풀에서는 "몇 장을 묶어야 들어가는가"를 역산합니다.
+단일 GPU에 안 들어가는 모델은 텐서 병렬(2.6)로 여러 장에 나눕니다. 고정 풀에서는 "몇 장을 결합해야 들어가는가"를 역산합니다.
 
 | 모델 | 가중치(FP16) | 80GB GPU 최소 장수 | 권장(KV 헤드룸) |
 |---|---|---|---|
@@ -243,7 +243,7 @@ GPU 선택의 1차 기준은 **HBM 용량**(2.2–2.4의 가중치+KV 캐시가 
 
 ### 여러 모델 적재 — 합산 또는 MIG 분할
 
-작은 모델 여러 개를 한 장(또는 한 풀)에 담을 때는 두 길이 있습니다.
+작은 모델 여러 개를 한 장(또는 한 풀)에 담을 때는 두 방법이 있습니다.
 
 - **합산(soft)**: 한 GPU에 `Σ(가중치 + 요청당 KV × 동시성) ≤ 가용 VRAM`인 만큼 적재. 격리는 약합니다(같은 메모리 공간 공유).
 - **MIG 분할(hard)**: 80GB GPU를 슬라이스로 쪼개 각 모델을 격리 적재(2.7). 예측 가능한 SLA, 테넌트 격리에 유리하며, 프로파일 슬라이스 합이 7 이하인 조합만 유효합니다(2.7).
@@ -313,7 +313,7 @@ LoRA는 베이스 가중치를 동결하고 소형 어댑터만 학습하므로,
 
 1. **가중치 메모리 검증**: 대상 모델과 정밀도로 엔진을 기동해 로드 직후 VRAM 점유를 확인하고 2.2 표값과 대조합니다(차이 5–20%는 정상 범위).
 2. **KV 캐시와 동시성 검증**: vLLM 기동 로그의 KV 캐시 블록 수(또는 가용 토큰 수)를 확인하고, `gpu_memory_utilization`(메인라인 기본 0.9)을 조정해 가용 KV 캐시가 목표 동시성을 수용하는지 점검합니다([vLLM cache config](https://docs.vllm.ai/en/stable/api/vllm/config/cache/)).
-3. **처리량과 지연 측정**: 대표 입력/출력 토큰 분포로 부하 시험을 돌려 Replica당 QPS, tokens/s, TTFT, TPOT를 실측하고, 2.5의 Replica 환산식에 대입합니다.
+3. **처리량과 지연 측정**: 대표 입력/출력 토큰 분포로 부하 시험을 실행해 Replica당 QPS, tokens/s, TTFT, TPOT를 실측하고, 2.5의 Replica 환산식에 대입합니다.
 4. **양자화 영향 측정**: 후보 양자화(INT8/INT4, AWQ/GPTQ)별로 정확도(태스크 평가)와 지연을 함께 측정해 메모리 절감 대비 품질 손실을 비교합니다(2.4).
 5. **공유 방식 검증**: MIG 프로파일, vGPU, DirectPath I/O 각각에서 격리도와 실효 처리량을 확인하고, 워크로드 SLA에 맞는 방식을 선택합니다(2.7).
 6. **헤드룸 확정**: 피크 부하 + 단편화 여유(통상 20–30%)를 반영해 총 GPU 수를 올림 확정합니다(2.5).

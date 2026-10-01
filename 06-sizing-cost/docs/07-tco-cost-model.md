@@ -5,13 +5,13 @@
 
 이 문서는 시리즈 ⑥(사이징, 용량, 비용)의 마무리 문서로, 02–05에서 도출한 사이징 결과(GPU 수, 노드 수, 스토리지 용량)를 총소유비용(TCO) 항목으로 환산하는 모델과 워크시트를 제시합니다. 이 문서의 목적은 "얼마인지"를 단정하는 것이 아니라, "무엇을 어떤 구조로 더해야 하는지"를 빠짐없이 보여주는 데 있습니다.
 
-**중요(금액을 싣지 않는 이유):** 이 문서는 **무엇이 몇 개 필요한지**(물리 코어 수, GPU 장수, 스토리지 용량, 노드 수)까지 계산합니다. 금액은 그 수량에 견적 단가를 곱해 채웁니다. 라이선스, 서버, GPU, 전력 단가는 계약 조건, 수량, 시점에 따라 크게 달라 공개 문서에 고정해 두면 곧 틀린 숫자가 되기 때문에 워크시트의 단가 칸은 비워 두며, 무엇을 견적 받을지는 [부록 A3](../appendix/A3-rfq-quote-checklist.md)에 있습니다. 벤더가 발표한 TCO 절감 수치는 조건이 붙은 최대치이므로 간접 참고로 인용합니다(7.6).
+**중요(금액을 제시하지 않는 이유):** 이 문서는 **무엇이 몇 개 필요한지**(물리 코어 수, GPU 장수, 스토리지 용량, 노드 수)까지 계산합니다. 금액은 그 수량에 견적 단가를 곱해 채웁니다. 라이선스, 서버, GPU, 전력 단가는 계약 조건, 수량, 시점에 따라 크게 달라 공개 문서에 고정해 두면 곧 현실과 맞지 않는 숫자로 바뀌기 때문에 워크시트의 단가 칸은 비워 두며, 무엇을 견적 받을지는 [부록 A3](../appendix/A3-rfq-quote-checklist.md)에 있습니다. 벤더가 발표한 TCO 절감 수치는 조건이 붙은 최대치이므로 간접 참고로 인용합니다(7.6).
 
 ---
 
 ## 7.1 TCO 범위와 기간 설정
 
-TCO를 비교 가능하게 만들려면 먼저 "무엇을, 몇 년에 걸쳐" 더할지 합의해야 합니다. 같은 인프라라도 3년 상각과 5년 상각은 연 환산 비용이 크게 달라집니다.
+TCO를 비교 가능한 형태로 정리하려면 먼저 "무엇을, 몇 년에 걸쳐" 더할지 합의해야 합니다. 같은 인프라라도 3년 상각과 5년 상각은 연 환산 비용이 크게 달라집니다.
 
 | 결정 항목 | 권장 기본값 | 설명 |
 | --- | --- | --- |
@@ -22,7 +22,7 @@ TCO를 비교 가능하게 만들려면 먼저 "무엇을, 몇 년에 걸쳐" �
 
 TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다룹니다.
 
-1. 소프트웨어 라이선스/구독 — VCF 코어 구독(PAIF 포함), NVAIE(vGPU나 NIM을 쓸 때 별도), DSM 사용 권한(entitlement)
+1. 소프트웨어 라이선스/구독 — VCF 코어 구독(PAIF 포함), NVAIE(vGPU나 NIM을 사용할 때 별도), DSM 사용 권한(entitlement)
 2. GPU 하드웨어 — CapEx 및 감가
 3. 서버, 스토리지, 네트워크 — GPU 외 인프라
 4. 운영비(OpEx) — 전력, 상면, 유지보수, 인력(선택)
@@ -36,9 +36,9 @@ TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다�
 
 | 구성 요소 | 라이선스 출처 | 산정 단위 | 비고 |
 | --- | --- | --- | --- |
-| VMware Private AI Foundation with NVIDIA(PAIF) | VCF 솔루션/코어 구독에 **포함** | VCF 코어 구독에 종속 | 별도 제품 구매가 아니라 VCF 구독 위에서 활성화됩니다. |
-| VCF 코어 구독 | Broadcom | **물리 코어당(per-core) 구독**, 코어 최소수량 적용 | 컴퓨트, 스토리지, 네트워크, 관리가 한 구독에 묶입니다. |
-| NVIDIA AI Enterprise(NVAIE) | **NVIDIA에서 별도 구매** | **GPU당(per-GPU)** 구독/영구 | vGPU(ESX 호스트 vGPU Manager VIB, vGPU 게스트 드라이버)와 NIM, NGC 엔터프라이즈 컨테이너 사용에 필요합니다. GPU를 VM 하나에 통째로 할당(DirectPath)하고 오픈소스 추론 엔진만 쓰면 필요하지 않습니다. |
+| VMware Private AI Foundation with NVIDIA(PAIF) | VCF 솔루션/코어 구독에 **포함** | VCF 코어 구독에 종속 | 별도 제품 구매가 아니라 VCF 구독을 기반으로 활성화됩니다. |
+| VCF 코어 구독 | Broadcom | **물리 코어당(per-core) 구독**, 코어 최소수량 적용 | 컴퓨트, 스토리지, 네트워크, 관리가 한 구독에 포함됩니다. |
+| NVIDIA AI Enterprise(NVAIE) | **NVIDIA에서 별도 구매** | **GPU당(per-GPU)** 구독/영구 | vGPU(ESX 호스트 vGPU Manager VIB, vGPU 게스트 드라이버)와 NIM, NGC 엔터프라이즈 컨테이너 사용에 필요합니다. GPU를 VM 하나에 통째로 할당(DirectPath)하고 오픈소스 추론 엔진만 사용하면 필요하지 않습니다. |
 | Data Services Manager(DSM) | VCF Advanced Service(**entitlement**) | VCF 구독에 종속 | VCF 구독자만 프로덕션 사용 가능. 일부 상위 서비스는 별도 조건일 수 있습니다(확인 필요). |
 
 근거: PAIF는 VCF 솔루션 라이선스로 제공되고 NVAIE 라이선스는 NVIDIA에서 별도 구매가 필요하다는 점([Broadcom TechDocs — NVIDIA DLS/CLS Design Considerations](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/1-0/private-ai-ready-infrastructure-for-vmware-cloud-foundation/detailed-design-for-private-ai-foundation-with-nvidia/nvidia-dls-cls-design-considerations.html)), VCF가 코어당 구독 모델이라는 점([Broadcom TechDocs — Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)), NVAIE가 GPU당 라이선스라는 점([NVIDIA AI Enterprise Licensing Guide](https://docs.nvidia.com/ai-enterprise/planning-resource/licensing-guide/latest/licensing.html)), DSM이 VCF Advanced Service라는 점([VMware DSM 9.1 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/vmware-data-services-manager-9-1-automating-the-modern-databases-that-drive-ai-and-private-cloud/)).
@@ -52,8 +52,8 @@ TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다�
 | DSM 사용 범위 | VCF entitlement | (조건 확인) | (계산) |
 
 산정 주의(빈 단가와 규칙값을 견적으로 채우는 방법은 [부록 A3 견적 요청 체크리스트](../appendix/A3-rfq-quote-checklist.md) 참조):
-- **코어 최소수량(core minimum):** 코어 수가 적은 CPU에서도 물리 코어당 최소 수량이 적용되어 "장부상 코어"가 늘 수 있습니다. 사이징의 물리 코어 수를 그대로 쓰지 말고 최소수량 규칙을 반영합니다(실제 최소수량 값은 [부록 A3.1](../appendix/A3-rfq-quote-checklist.md#a31-소프트웨어-라이선스-견적-broadcom--nvidia)로 견적 확인)([Broadcom TechDocs — Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)).
-- **NVAIE가 필요한 경우와 아닌 경우:** GPU를 vGPU로 나눠 쓰거나 NIM 같은 NVAIE 소프트웨어를 쓰면 NVAIE가 필요하고, 이때는 그 서버에 설치된 모든 GPU가 라이선스 대상입니다. vGPU로 몇 조각을 내든 물리 GPU 수가 기준입니다([NVIDIA AI Enterprise Licensing Guide](https://docs.nvidia.com/ai-enterprise/planning-resource/licensing-guide/latest/licensing.html)). 반대로 GPU를 VM이나 쿠버네티스 노드 하나에 통째로 할당(DirectPath)하고 vLLM 같은 오픈소스 추론 엔진만 쓰면, PAIF 9.1부터 NVAIE 없이 운영할 수 있습니다([PAIF 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)). 할당 방식별로 어떤 소프트웨어에 접근할 수 있는지는 [Primer 04 4.3절](../../00-foundations/docs/04-ecosystem-101.md)에 정리돼 있습니다. 따라서 NVAIE 수량은 "총 GPU 수"가 아니라 "vGPU나 NIM을 쓰는 서버의 GPU 수"로 산정합니다.
+- **코어 최소수량(core minimum):** 코어 수가 적은 CPU에서도 물리 코어당 최소 수량이 적용되어 "장부상 코어"가 늘어날 수 있습니다. 사이징의 물리 코어 수를 그대로 적용하지 말고 최소수량 규칙을 반영합니다(실제 최소수량 값은 [부록 A3.1](../appendix/A3-rfq-quote-checklist.md#a31-소프트웨어-라이선스-견적-broadcom--nvidia)로 견적 확인)([Broadcom TechDocs — Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)).
+- **NVAIE가 필요한 경우와 아닌 경우:** GPU를 vGPU로 나눠 사용하거나 NIM 같은 NVAIE 소프트웨어를 사용하면 NVAIE가 필요하고, 이때는 그 서버에 설치된 모든 GPU가 라이선스 대상입니다. vGPU로 몇 조각으로 분할하든 물리 GPU 수가 기준입니다([NVIDIA AI Enterprise Licensing Guide](https://docs.nvidia.com/ai-enterprise/planning-resource/licensing-guide/latest/licensing.html)). 반대로 GPU를 VM이나 쿠버네티스 노드 하나에 통째로 할당(DirectPath)하고 vLLM 같은 오픈소스 추론 엔진만 사용하면, PAIF 9.1부터 NVAIE 없이 운영할 수 있습니다([PAIF 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)). 할당 방식별로 어떤 소프트웨어에 접근할 수 있는지는 [Primer 04 4.3절](../../00-foundations/docs/04-ecosystem-101.md)에 정리돼 있습니다. 따라서 NVAIE 수량은 "총 GPU 수"가 아니라 "vGPU나 NIM을 사용하는 서버의 GPU 수"로 산정합니다.
 - **NVAIE 지원 등급/기간:** 구독, 소비형, 영구(영구는 5년 지원 서비스 필요) 중 무엇인지에 따라 연 환산이 달라집니다(확인 필요).
 - **이중 계상 금지:** PAIF는 VCF 구독에 포함이므로 별도 제품 비용으로 또 더하지 않습니다.
 
@@ -72,9 +72,9 @@ TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다�
 | GPU 간 인터커넥트 | 토폴로지 의존 | 구성에 따라 별도 | (견적 확인) |
 
 감가 모델 메모:
-- **상각연수 일관성:** GPU와 서버의 상각연수를 다르게 두면 연 환산이 왜곡됩니다. 7.1의 분석 기간과 맞춥니다.
+- **상각연수 일관성:** GPU와 서버의 상각연수를 다르게 설정하면 연 환산이 왜곡됩니다. 7.1의 분석 기간과 맞춥니다.
 - **GPU 세대 교체 위험:** AI 가속기는 진부화가 빠릅니다. 보수적으로는 짧은 상각연수를, 회계 기준에 따라서는 자산 정책을 따릅니다(확인 필요).
-- **잔존가치:** 중고 재판매를 가정하면 TCO가 낮아지지만, 보수적 모델에서는 0으로 둡니다.
+- **잔존가치:** 중고 재판매를 가정하면 TCO가 낮아지지만, 보수적 모델에서는 0으로 설정합니다.
 
 ---
 
@@ -95,7 +95,7 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 
 ## 7.5 운영비(OpEx)와 도입/마이그레이션
 
-연속 지출(OpEx)과 일회성 전환 비용은 하드웨어와 라이선스에 가려 빠지기 쉽습니다.
+연속 지출(OpEx)과 일회성 전환 비용은 하드웨어와 라이선스에 가려 누락되기 쉽습니다.
 
 | OpEx 항목 | 산정 기준 | 비용 모델 | 단가(견적 입력) |
 | --- | --- | --- | --- |
@@ -114,23 +114,23 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 
 ## 7.6 퍼블릭 GPU 클라우드 vs 온프레미스 PAIF 비교 프레임
 
-"온프레미스가 싸다/비싸다"를 단정하지 않습니다. 동일 항목으로 정렬한 뒤, 손익분기를 **개념적으로** 따지는 틀만 제공합니다. 실제 우열은 워크로드와 사용률(utilization)에 의존하며 실측이 필요합니다.
+"온프레미스가 싸다/비싸다"를 단정하지 않습니다. 동일 항목으로 정렬한 뒤, 손익분기를 **개념적으로** 따지는 프레임워크만 제공합니다. 실제 우열은 워크로드와 사용률(utilization)에 의존하며 실측이 필요합니다.
 
 | 비교 항목 | 온프레미스 PAIF | 퍼블릭 GPU 클라우드 |
 | --- | --- | --- |
 | 과금 구조 | CapEx + 구독(고정에 가까움) | 사용량 기반(가변, 시간당/토큰당) |
-| GPU 라이선스 | vGPU나 NIM을 쓰면 NVAIE per-GPU 별도(DirectPath 전용 할당과 오픈소스 스택이면 불필요) | 인스턴스 요금에 포함되는 경우 많음 |
+| GPU 라이선스 | vGPU나 NIM을 사용하면 NVAIE per-GPU 별도(DirectPath 전용 할당과 오픈소스 스택이면 불필요) | 인스턴스 요금에 포함되는 경우 많음 |
 | 사용률 민감도 | 낮은 사용률에서 단위비용 상승 | 켠 만큼 과금(유휴 시 끄면 절감) |
 | 데이터 이그레스 | 사내 트래픽 | 외부 전송 비용 발생 가능 |
 | 데이터 주권/규제 | 사내 통제(에어갭 가능, DLS) | 위치와 통제 정책 확인 필요 |
 | 확장 탄력성 | 사전 조달 필요 | 즉시 확장 |
 
 손익분기 개념(수치 단정 금지):
-- 온프레미스는 고정비 비중이 커서 **사용률이 높을수록** 단위비용이 내려갑니다. 24/7 고부하 추론과 학습처럼 꾸준한 수요에 유리한 구조입니다.
+- 온프레미스는 고정비 비중이 커서 **사용률이 높을수록** 단위비용이 감소합니다. 24/7 고부하 추론과 학습처럼 꾸준한 수요에 유리한 구조입니다.
 - 퍼블릭은 **간헐적, 버스트성** 수요나 초기 불확실성이 클 때 유리한 구조입니다.
 - 따라서 손익분기점은 "사용률, 기간, 워크로드 패턴"의 함수이며, 특정 % 절감을 단정할 수 없습니다. 두 경우 모두 7.1에서 정한 동일 기간과 동일 항목으로 비교해야 공정합니다.
 
-**벤더 발표 수치(간접 참고):** Broadcom은 VCF 9.1 발표에서 서버 비용 최대 40% 절감, 스토리지 TCO 39% 절감, 쿠버네티스 운영비 최대 46% 절감, 퍼블릭 클라우드 대비 1X–2X TCO 개선을 제시했습니다. 이는 가장 좋은 조건에서 나온 최대치("up to")입니다([Broadcom 보도자료 — VCF 9.1](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1); [Virtualization Review — VCF 9.1](https://virtualizationreview.com/articles/2026/05/06/private-ai-not-public-cloud-broadcoms-message-with-vmware-cloud-foundation-9-1.aspx)). 그대로 옮기지 말고, 발표가 전제한 조건(통합 전 환경, 사용률, 비교 기간)과 자사 조건이 어디서 다른지 비교하는 간접 참고로 씁니다. 최종 판단의 숫자는 자사 실측과 견적에서 나와야 합니다.
+**벤더 발표 수치(간접 참고):** Broadcom은 VCF 9.1 발표에서 서버 비용 최대 40% 절감, 스토리지 TCO 39% 절감, 쿠버네티스 운영비 최대 46% 절감, 퍼블릭 클라우드 대비 1X–2X TCO 개선을 제시했습니다. 이는 가장 좋은 조건에서 산출된 최대치("up to")입니다([Broadcom 보도자료 — VCF 9.1](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1); [Virtualization Review — VCF 9.1](https://virtualizationreview.com/articles/2026/05/06/private-ai-not-public-cloud-broadcoms-message-with-vmware-cloud-foundation-9-1.aspx)). 그대로 인용하지 말고, 발표가 전제한 조건(통합 전 환경, 사용률, 비교 기간)과 자사 조건이 어디서 다른지 비교하는 간접 참고로 활용합니다. 최종 판단의 숫자는 자사 실측과 견적으로 도출해야 합니다.
 
 ### 한계비용 — 기보유(매몰) GPU 재활용
 
@@ -138,13 +138,13 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 
 | 항목 | 발생 | 근거 |
 |---|---|---|
-| NVAIE 라이선스 | vGPU로 나눠 쓰거나 NIM을 쓰는 서버의 물리 GPU 전수. DirectPath 전용 할당과 오픈소스 스택만 쓰면 발생하지 않음 | 7.2 |
+| NVAIE 라이선스 | vGPU로 나눠 사용하거나 NIM을 사용하는 서버의 물리 GPU 전수. DirectPath 전용 할당과 오픈소스 스택만 사용하면 발생하지 않음 | 7.2 |
 | 전력과 냉각 | GPU 소비전력 × PUE | 7.5 |
 | 운영비 | 플랫폼과 운영 FTE(선택, 국내는 보통 제외) | 7.5 |
 
-- "노는 GPU니 공짜"는 부정확합니다. 전용 할당으로 라이선스를 피하더라도 전력과 운영비는 켜는 즉시 붙고, 여러 팀이 나눠 쓰려고 vGPU를 도입하면 per-GPU 라이선스가 더해집니다. **활용도를 끌어올려 가치를 내야 이 한계비용이 정당화됩니다**.
-- 라이선스를 아끼는 전용 할당과 여러 팀이 나눠 쓰는 vGPU 사이의 선택은 비용 문제이자 활용률 문제입니다. 전용 할당은 GPU 1장이 VM 1개에 묶여 유휴가 생기기 쉽고, vGPU는 라이선스 비용 대신 공유 밀도를 얻습니다.
-- 사용률이 낮으면 단위비용이 오르는 구조(7.6, 7.7)가 동일하게 적용됩니다. 따라서 기보유 자원을 먼저 채우는 "증설 전 회수"([06](06-capacity-planning.md) 6.2절)가 신규 구매보다 한계비용 측면에서 유리한 경우가 많습니다.
+- "유휴 GPU니 공짜"는 부정확합니다. 전용 할당으로 라이선스를 피하더라도 전력과 운영비는 켜는 즉시 발생하고, 여러 팀이 나눠 사용하려고 vGPU를 도입하면 per-GPU 라이선스가 더해집니다. **활용도를 높여 가치를 창출해야 이 한계비용이 정당화됩니다**.
+- 라이선스를 아끼는 전용 할당과 여러 팀이 나눠 사용하는 vGPU 사이의 선택은 비용 문제이자 활용률 문제입니다. 전용 할당은 GPU 1장이 VM 1개에 고정 할당되어 유휴가 생기기 쉽고, vGPU는 라이선스 비용 대신 공유 밀도를 얻습니다.
+- 사용률이 낮으면 단위비용이 증가하는 구조(7.6, 7.7)가 동일하게 적용됩니다. 따라서 기보유 자원을 먼저 채우는 "증설 전 회수"([06](06-capacity-planning.md) 6.2절)가 신규 구매보다 한계비용 측면에서 유리한 경우가 많습니다.
 - 전 과정 예제의 한계비용 표는 [09](09-reverse-sizing-scenario.md) 9.5절에 있습니다.
 
 ---
@@ -165,17 +165,17 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 
 ### 비용 귀속(쇼백/차지백)
 
-VCF의 비용 관리 기능은 소유 비용(compute, storage, VM 직접비)을 VCF 도메인과 비용 동인(cost driver)별로 분해하고, CPU, 메모리, 스토리지 비용을 애플리케이션 팀으로 귀속(showback)할 수 있게 합니다([Broadcom TechDocs — Cost Overview](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/cost-and-capacity-management/business-management/cost-overview.html)).
+VCF의 비용 관리 기능은 소유 비용(compute, storage, VM 직접비)을 VCF 도메인과 비용 동인(cost driver)별로 분해하고, CPU, 메모리, 스토리지 비용을 애플리케이션 팀으로 귀속(showback)할 수 있도록 지원합니다([Broadcom TechDocs — Cost Overview](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/cost-and-capacity-management/business-management/cost-overview.html)).
 
-비용 귀속의 목적은 조직마다 다르고, 목적에 따라 쇼백으로 충분한지 차지백까지 갈지가 갈립니다.
+비용 귀속의 목적은 조직마다 다르고, 목적에 따라 쇼백으로 충분한지 차지백까지 적용할지가 달라집니다.
 
 - **부서별 비용 배분**: 공용 플랫폼 비용을 사용 부서에 나눕니다.
-- **활용률 끌어올리기**: 누가 무엇을 점유하는지 보여 줘 쓰지 않는 예약과 과대 할당의 반납을 유도합니다(06 6.4절).
-- **목적별 자유로운 배분**: 팀과 서비스 단위로 자원을 필요에 맞게 나눠 쓰게 하고, 그 사용을 추적합니다.
+- **활용률 높이기**: 누가 무엇을 점유하는지 보여 줘 사용하지 않는 예약과 과대 할당의 반납을 유도합니다(06 6.4절).
+- **목적별 자유로운 배분**: 팀과 서비스 단위로 자원을 필요에 맞게 나눠 할당하고, 그 사용을 추적합니다.
 
 | 모델 | 정의 | 적용 시점 |
 | --- | --- | --- |
-| 쇼백(showback) | 비용을 팀별로 **보여주되 청구는 안 함** | 초기 가시성 확보 단계 |
+| 쇼백(showback) | 비용을 팀별로 **보여주되 청구는 하지 않음** | 초기 가시성 확보 단계 |
 | 차지백(chargeback) | 비용을 팀별로 **실제 청구** | 비용 책임 내재화 단계 |
 
 GPU 환경에서의 귀속은 GPU 점유(전용 vs vGPU 분할), 토큰 사용량 등 추가 동인을 반영해야 합니다. 용량과 비용 동인의 연계는 [06-capacity-planning.md](06-capacity-planning.md)와 함께 운영하세요.
@@ -198,7 +198,7 @@ GPU 환경에서의 귀속은 GPU 점유(전용 vs vGPU 분할), 토큰 사용�
 
 실측 운영 권고:
 1. **분기별 재산정:** 사용률, 요금, 환율은 변하므로 분기마다 워크시트를 갱신합니다.
-2. **벤더 수치는 간접 참고:** Broadcom의 "up to" 수치는 발표 조건과 자사 조건을 비교하는 데 쓰고, 판단의 숫자는 자사 실측치와 견적으로 채웁니다.
+2. **벤더 수치는 간접 참고:** Broadcom의 "up to" 수치는 발표 조건과 자사 조건을 비교하는 데 활용하고, 판단의 숫자는 자사 실측치와 견적으로 채웁니다.
 3. **단가 확정 경로:** 모든 빈 단가 칸은 공식 견적과 구독 조건으로 채우고, 채운 출처(견적서 번호와 일자)를 기록해 추적 가능성을 유지합니다.
 4. **불확실 항목 표기:** 확정되지 않은 값은 "확인 필요"로 남겨 두고 추정 단정으로 바꾸지 않습니다.
 

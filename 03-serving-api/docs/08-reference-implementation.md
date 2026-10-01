@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 아래 코드는 **최소 동작 예제**입니다. 경로, 인증, 필드는 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 확인 후 적용하세요. `{fqdn}`, `<...>` 는 환경값으로 치환합니다.
 
-앞 문서들의 내용을 **실제로 호출하는 코드**로 모았습니다. 핵심 메시지는 변하지 않습니다. **`base_url`만 사내 PAIS로 바꾸면 됩니다.**
+앞 문서들의 내용을 **실제로 호출하는 코드**로 정리했습니다. 핵심 메시지는 변하지 않습니다. **`base_url`만 사내 PAIS로 바꾸면 됩니다.**
 
 ---
 
@@ -65,7 +65,7 @@ for chunk in client.chat.completions.create(
 
 ## 8.3 에이전트 호출 — RAG를 직접 안 짜는 경우
 
-에이전트의 OpenAI 호환 경로는 `agents/{id}` 하위에 놓입니다. 호출 방법은 두 가지입니다. SDK의 `base_url`을 에이전트 경로까지 포함하도록 지정하거나, 전체 경로를 직접 호출하면 됩니다.
+에이전트의 OpenAI 호환 경로는 `agents/{id}` 하위에 위치합니다. 호출 방법은 두 가지입니다. SDK의 `base_url`을 에이전트 경로까지 포함하도록 지정하거나, 전체 경로를 직접 호출하면 됩니다.
 
 ```python
 import httpx
@@ -108,13 +108,13 @@ embeddings = OpenAIEmbeddings(
 # 이후 체인과 리트리버는 기존 코드 그대로. 추론과 임베딩만 사내로 이동.
 ```
 
-> 멀티홉과 리랭킹 등 고급 검색이나 특수 벡터 DB가 필요할 때 이 패턴(서빙은 PAIS, RAG는 코드)을 씁니다. 표준 Q&A라면 8.3의 Agent API가 더 간단합니다.
+> 멀티홉과 리랭킹 등 고급 검색이나 특수 벡터 DB가 필요할 때 이 패턴(서빙은 PAIS, RAG는 코드)을 사용합니다. 표준 Q&A라면 8.3의 Agent API가 더 간단합니다.
 
 ---
 
 ## 8.5 백엔드 중계(BFF, Backend For Frontend) 최소 골격
 
-프론트엔드가 PAIS를 직접 부르지 않도록, 백엔드가 토큰을 들고 중계합니다([05.3](05-auth-and-gateway.md#53-토큰-운영--만료-갱신-보관)).
+프론트엔드가 PAIS를 직접 호출하지 않도록, 백엔드가 토큰을 보관하고 중계합니다([05.3](05-auth-and-gateway.md#53-토큰-운영--만료-갱신-보관)).
 
 ```python
 # FastAPI 예시 — 토큰은 서버에서만, 프론트는 이 엔드포인트만 호출

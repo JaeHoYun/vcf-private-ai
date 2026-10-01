@@ -3,9 +3,9 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 02, 03에서 산정한 워크로드 요구량(GPU, vCPU, RAM)을 실제 **VKS(vSphere Kubernetes Service)** 클러스터 토폴로지로 환산하는 방법을 다룹니다. VKS는 VCF 위에서 동작하는 프로덕션용 GPU 가속 Kubernetes 서비스로, Supervisor 위에 vSphere 네임스페이스 단위로 클러스터를 프로비저닝하며, GPU는 DRA(Dynamic Resource Allocation) 기반으로 스케줄링됩니다. 본 문서가 다루는 GPU 가속 워크로드 도메인은 공식 용어로 "GPU-Accelerated Workload Domain"(이하 시리즈 약칭 PAIF Workload Domain)이라 부릅니다.
+이 문서는 02, 03에서 산정한 워크로드 요구량(GPU, vCPU, RAM)을 실제 **VKS(vSphere Kubernetes Service)** 클러스터 토폴로지로 환산하는 방법을 다룹니다. VKS는 VCF에서 동작하는 프로덕션용 GPU 가속 Kubernetes 서비스로, Supervisor에서 vSphere 네임스페이스 단위로 클러스터를 프로비저닝하며, GPU는 DRA(Dynamic Resource Allocation) 기반으로 스케줄링됩니다. 본 문서가 다루는 GPU 가속 워크로드 도메인은 공식 용어로 "GPU-Accelerated Workload Domain"(이하 시리즈 약칭 PAIF Workload Domain)이라 부릅니다.
 
-용어 풀이가 필요한 약어는 처음 등장할 때 풀어 씁니다. 모든 수치는 릴리스와 환경별로 상이할 수 있으므로 도입 전 공식 문서로 재확인하시기 바랍니다.
+용어 풀이가 필요한 약어는 처음 등장할 때 전체 명칭을 함께 표기합니다. 모든 수치는 릴리스와 환경별로 상이할 수 있으므로 도입 전 공식 문서로 재확인하시기 바랍니다.
 
 ---
 
@@ -18,7 +18,7 @@ VKS 클러스터 한 개는 크게 두 층으로 구성됩니다.
 
 컨트롤 플레인 노드 수는 **반드시 홀수(1 또는 3)** 여야 합니다. 프로덕션과 HA 환경에서는 **3노드 컨트롤 플레인**이 표준입니다. 컨트롤 플레인은 scale-out(노드 추가)은 지원하나 scale-in(노드 축소)은 지원하지 않으므로, 처음부터 3노드로 설계하는 편이 안전합니다(출처: [Broadcom TechDocs — Manually Scale a Cluster Using Kubectl](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vsphere-supervisor-services-and-standalone-components/latest/managing-vsphere-kuberenetes-service-clusters-and-workloads/operating-tkg-service-clusters/manually-scale-a-cluster-using-kubectl.html)).
 
-VCF 9.1은 native Kubernetes HA의 현대적 표준으로 **3-Zone 배포 모델**(vSphere Zone 3개에 노드를 분산)을 권장합니다. 노드 풀을 vSphere Zone에 걸쳐 분산하면 단일 클러스터의 워커 노드가 물리 장애 도메인 여러 개에 걸치게 되어 진정한 HA를 확보할 수 있습니다(출처: [VCF Blog — Architecting VKS on VCF](https://blogs.vmware.com/cloud-foundation/2026/06/09/architecting-vmware-vsphere-kubernetes-service-on-vcf-top-webinar-and-field-questions-answered/)).
+VCF 9.1은 native Kubernetes HA의 현대적 표준으로 **3-Zone 배포 모델**(vSphere Zone 3개에 노드를 분산)을 권장합니다. 노드 풀을 vSphere Zone에 걸쳐 분산하면 단일 클러스터의 워커 노드가 물리 장애 도메인 여러 개에 걸쳐 배치되어 진정한 HA를 확보할 수 있습니다(출처: [VCF Blog — Architecting VKS on VCF](https://blogs.vmware.com/cloud-foundation/2026/06/09/architecting-vmware-vsphere-kubernetes-service-on-vcf-top-webinar-and-field-questions-answered/)).
 
 | 구성 요소 | 권장 (프로덕션) | 비고 |
 |---|---|---|
@@ -31,15 +31,15 @@ VCF 9.1은 native Kubernetes HA의 현대적 표준으로 **3-Zone 배포 모델
 
 ### 클러스터 배치 유형 — 통합형, 분리형, 다중 영역형
 
-컨트롤 플레인과 일반 워커를 어느 물리 호스트에 두느냐에 따라 물리 호스트 수와 라이선스 코어 수가 달라집니다. 공식 문서에는 컨트롤 플레인이나 일반 워커를 GPU가 없는 별도 호스트에 두라는 요건이나 권장이 없고, VCF 9.1의 PAIS 소비 블루프린트는 오히려 관리와 워크로드를 한 영역, 한 클러스터에 결합한 구성을 전제로 합니다([PAIS 소비 블루프린트](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/application-modernization/private-ai-services-blueprint(1).html)).
+컨트롤 플레인과 일반 워커를 어느 물리 호스트에 배치하느냐에 따라 물리 호스트 수와 라이선스 코어 수가 달라집니다. 공식 문서에는 컨트롤 플레인이나 일반 워커를 GPU가 없는 별도 호스트에 배치하라는 요건이나 권장이 없고, VCF 9.1의 PAIS 소비 블루프린트는 오히려 관리와 워크로드를 한 영역, 한 클러스터에 결합한 구성을 전제로 합니다([PAIS 소비 블루프린트](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/application-modernization/private-ai-services-blueprint(1).html)).
 
 | 유형 | 구성 | 최소 물리 호스트(GPU 워크로드 도메인 기준) | 맞는 경우 |
 |---|---|---|---|
 | 통합형(기본) | GPU 호스트 클러스터 하나(3대 이상)에 컨트롤 플레인, 일반 워커, GPU 워커를 함께 배치. 단일 영역 | GPU 호스트 3대 + 관리 구성 | PoC와 초기 운영, PAIS 블루프린트를 그대로 따를 때 |
-| 분리형 | 비GPU 클러스터(컨트롤 플레인, 일반 워커)와 GPU 클러스터(GPU 워커 풀)를 나눔 | GPU 호스트 3대 + 비GPU 클러스터 호스트 + 관리 구성 | GPU 호스트 유지보수와 장애가 제어부에 주는 영향을 줄이고 싶을 때, GPU 서버의 CPU와 메모리를 GPU VM에 온전히 쓰고 싶을 때, 일반 워크로드 비중이 클 때 |
-| 다중 영역형 | 클러스터 3개를 vSphere Zone 3개로 두고 컨트롤 플레인을 분산 | 클러스터 3개분 호스트 | 클러스터 단위 장애까지 견뎌야 하는 운영 |
+| 분리형 | 비GPU 클러스터(컨트롤 플레인, 일반 워커)와 GPU 클러스터(GPU 워커 풀)를 나눔 | GPU 호스트 3대 + 비GPU 클러스터 호스트 + 관리 구성 | GPU 호스트 유지보수와 장애가 제어부에 주는 영향을 줄이고 싶을 때, GPU 서버의 CPU와 메모리를 GPU VM에 온전히 할당하고 싶을 때, 일반 워크로드 비중이 클 때 |
+| 다중 영역형 | 클러스터 3개를 vSphere Zone 3개에 나눠 배치하고 컨트롤 플레인을 분산 | 클러스터 3개분 호스트 | 클러스터 단위 장애까지 견뎌야 하는 운영 |
 
-- PAIS는 단일 vSphere Zone에 접근하는 네임스페이스에서 활성화하도록 권장되며, 여러 영역에 걸쳐도 핵심 구성 요소가 단일 인스턴스라 영역 간 내결함성이 없습니다([PAIS 설계 요소](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/application-modernization/private-ai-services-blueprint(1)/design-elements-for-the-private-ai-services-blueprint.html)). 위 표의 3-Zone 권장은 VKS 클러스터 일반의 HA 기준이므로, PAIS를 쓸 때는 다중 영역형의 이점이 제한된다는 점을 함께 봅니다.
+- PAIS는 단일 vSphere Zone에 접근하는 네임스페이스에서 활성화하도록 권장되며, 여러 영역에 걸쳐도 핵심 구성 요소가 단일 인스턴스라 영역 간 내결함성이 없습니다([PAIS 설계 요소](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/application-modernization/private-ai-services-blueprint(1)/design-elements-for-the-private-ai-services-blueprint.html)). 위 표의 3-Zone 권장은 VKS 클러스터 일반의 HA 기준이므로, PAIS를 사용할 때는 다중 영역형의 이점이 제한된다는 점을 함께 고려합니다.
 - 분리형에서는 PAIF 요건 문구(워크로드 도메인 초기 클러스터에 GPU 탑재 호스트 3대)와 클러스터 생성 순서가 맞는지 설계 단계에서 확인합니다.
 
 ---
@@ -48,11 +48,11 @@ VCF 9.1은 native Kubernetes HA의 현대적 표준으로 **3-Zone 배포 모델
 
 GPU 워커 노드 풀과 일반 워커 노드 풀은 **반드시 별도 노드 풀로 분리**하는 것을 권장합니다. 이유는 다음과 같습니다.
 
-- **비용 격리**: GPU 노드는 단가가 매우 높습니다. CPU만 쓰는 시스템 파드(모니터링, 로깅, 인그레스 등)가 GPU 노드를 점유하면 GPU가 낭비됩니다.
+- **비용 격리**: GPU 노드는 단가가 매우 높습니다. CPU만 사용하는 시스템 파드(모니터링, 로깅, 인그레스 등)가 GPU 노드를 점유하면 GPU가 낭비됩니다.
 - **스케줄링 정확성**: GPU 노드에 `taint`를 걸고 GPU 워크로드에만 `toleration`을 부여하면, GPU가 필요 없는 파드는 GPU 노드에 배치되지 않습니다.
 - **오토스케일 분리**: GPU 노드 풀과 일반 노드 풀의 오토스케일 정책(min/max)을 독립적으로 운영할 수 있습니다.
 
-VKS 3.5+는 Kubernetes 1.34에서 **DRA(Dynamic Resource Allocation)가 stable로 승격**된 것을 통합했습니다. DRA에서는 관리자가 `DeviceClass`로 GPU 같은 하드웨어 자원을 분류하고, 워크로드는 `ResourceClaim`/`ResourceClaimTemplate`으로 특정 GPU 디바이스를 선언적으로 요청합니다. 단순 개수(count) 기반 요청보다 CEL(Common Expression Language) 기반 세밀한 필터링이 가능해 GPU 활용도가 올라가고, 여러 파드/컨테이너 간 GPU 공유도 지원합니다(출처: [VCF Blog — VKS 3.5 is Now Live](https://blogs.vmware.com/cloud-foundation/2025/10/29/build-deploy-and-scale-with-confidence-vsphere-kubernetes-service-3-5-is-now-live-with-24-month-support/)).
+VKS 3.5+는 Kubernetes 1.34에서 **DRA(Dynamic Resource Allocation)가 stable로 승격**된 것을 통합했습니다. DRA에서는 관리자가 `DeviceClass`로 GPU 같은 하드웨어 자원을 분류하고, 워크로드는 `ResourceClaim`/`ResourceClaimTemplate`으로 특정 GPU 디바이스를 선언적으로 요청합니다. 단순 개수(count) 기반 요청보다 CEL(Common Expression Language) 기반 세밀한 필터링이 가능해 GPU 활용도가 높아지고, 여러 파드/컨테이너 간 GPU 공유도 지원합니다(출처: [VCF Blog — VKS 3.5 is Now Live](https://blogs.vmware.com/cloud-foundation/2025/10/29/build-deploy-and-scale-with-confidence-vsphere-kubernetes-service-3-5-is-now-live-with-24-month-support/)).
 
 > 약어: DRA = Dynamic Resource Allocation(동적 자원 할당). GPU를 볼륨처럼 선언적으로 청구(claim)하는 Kubernetes 표준 메커니즘입니다.
 
@@ -72,15 +72,15 @@ GPU 노드 풀의 노드 사양(노드당 GPU 수, vCPU, RAM)은 VM Class로 결
 | 스케일 단위(granularity) | 큰 단위로만 증감 (낭비 가능) | 세밀한 증감 가능 |
 | 빈 패킹(bin-packing) | 큰 작업에 유리 | 작은 추론 작업 다수에 유리 |
 
-**일반 지침**: 멀티 GPU 학습(분산 트레이닝)은 노드 내 GPU 다수 + 고속 인터커넥트가 유리하므로 few-large 쪽으로, 단일 GPU 추론(서빙)이 다수라면 활용도와 세밀한 스케일을 위해 many-small 쪽으로 기우는 것이 보통입니다. 다만 호스트당 물리 GPU 장착 수와 VM Class에서 패스스루/vGPU로 노출 가능한 GPU 수에 제약이 있으므로, 물리 서버 사양과 함께 결정해야 합니다. 호스트당 GPU 슬롯 수와 VM Class 정의는 환경마다 다르므로 도입 전 실제 환경에서 확인하시기 바랍니다. 고정 GPU 적재와 패킹 관점의 역산은 [02 2.9절 고정 GPU 적재와 패킹](02-gpu-sizing.md#29-고정-gpu-적재와-패킹-공급-제약)과 [09 역방향 사이징 시나리오](09-reverse-sizing-scenario.md)를 참조하세요.
+**일반 지침**: 멀티 GPU 학습(분산 트레이닝)은 노드 내 GPU 다수 + 고속 인터커넥트가 유리하므로 few-large를, 단일 GPU 추론(서빙)이 다수라면 활용도와 세밀한 스케일을 위해 many-small을 택하는 것이 보통입니다. 다만 호스트당 물리 GPU 장착 수와 VM Class에서 패스스루/vGPU로 노출 가능한 GPU 수에 제약이 있으므로, 물리 서버 사양과 함께 결정해야 합니다. 호스트당 GPU 슬롯 수와 VM Class 정의는 환경마다 다르므로 도입 전 실제 환경에서 확인하시기 바랍니다. 고정 GPU 적재와 패킹 관점의 역산은 [02 2.9절 고정 GPU 적재와 패킹](02-gpu-sizing.md#29-고정-gpu-적재와-패킹-공급-제약)과 [09 역방향 사이징 시나리오](09-reverse-sizing-scenario.md)를 참조하세요.
 
 ### 서비스 유형별 노드 구성
 
-"노드 하나에 GPU 몇 장"은 서비스 유형과 GPU 할당 방식으로 정해지며, 한 가지 규칙으로 통일할 수 없습니다. 아래 유형은 Broadcom VCF 9.1 설계 문서의 컴퓨트 모델([vGPU](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/vgpu-compute-model.html), [DirectPath](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/direct-path-io-gpus-compute-model.html))을 서비스 기준으로 묶은 것입니다.
+"노드 하나에 GPU 몇 장"은 서비스 유형과 GPU 할당 방식으로 정해지며, 한 가지 규칙으로 통일할 수 없습니다. 아래 유형은 Broadcom VCF 9.1 설계 문서의 컴퓨트 모델([vGPU](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/vgpu-compute-model.html), [DirectPath](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/direct-path-io-gpus-compute-model.html))을 서비스 기준으로 정리한 것입니다.
 
 | 유형 | 대상 서비스 | 노드(VM)당 GPU | 할당 방식 | 노드 풀 기준 |
 |---|---|---|---|---|
-| N1 소형 모델 다수 | GPU 1장에 들어가는 모델 여러 개, 부서별 엔드포인트 | 1장 이하(분할) 또는 1장 | 시분할 vGPU(공유 밀도, vMotion) 또는 MIG 기반 vGPU(격리와 일관 성능, VM당 1개). 분할 없이 전용이면 DirectPath | 같은 GPU와 프로필의 VM Class로 풀 구성. 복제본 2 이상이 서로 다른 워커에 가도록 워커 2개 이상 |
+| N1 소형 모델 다수 | GPU 1장에 들어가는 모델 여러 개, 부서별 엔드포인트 | 1장 이하(분할) 또는 1장 | 시분할 vGPU(공유 밀도, vMotion) 또는 MIG 기반 vGPU(격리와 일관 성능, VM당 1개). 분할 없이 전용이면 DirectPath | 같은 GPU와 프로필의 VM Class로 풀 구성. 복제본 2 이상이 서로 다른 워커에 배치되도록 워커 2개 이상 |
 | N2 대형 모델 | 가중치와 KV 캐시가 GPU 1장을 넘는 모델 | 2, 4, 8장 | 프레임버퍼 전체를 할당한 vGPU 여러 개 또는 DirectPath. GPU 간 NVLink나 NVSwitch 필요 | 멀티 GPU 전용 풀. 복제본 2면 GPU 수도 2배 |
 | N3 RAG 보조 | 임베딩, 리랭커, 문서 인덱싱 | 0(CPU 임베딩)–1장 이하 | 리랭커는 MIG나 시분할로 공유. 벡터 DB는 워커가 아니라 DSM이 관리하는 PostgreSQL | GPU 없는 풀 또는 소형 분할 풀 |
 | N4 배치 추론과 파인튜닝 | 대량 오프라인 추론, 미세조정, 여러 호스트에 걸친 학습 | 작업 규모에 따라 1–8장 | DirectPath 또는 멀티 vGPU. 호스트 간 학습은 GPUDirect RDMA | 서빙 풀과 분리해 대화형 지연을 보호 |
@@ -90,7 +90,7 @@ GPU 노드 풀의 노드 사양(노드당 GPU 수, vCPU, RAM)은 VM Class로 결
 판단 순서:
 
 1. 모델의 가중치와 KV 캐시가 GPU 1장 메모리에 들어가는가? 들어가면 N1, 넘으면 N2입니다(점검값은 가중치의 약 2.5배, [02 2.1절](02-gpu-sizing.md#21-vram-산정의-3대-구성요소)).
-2. N2라면 서버에 NVLink나 NVSwitch가 있는가? 없으면(예: PCIe GPU 서버) GPU를 묶어 대형 모델을 서빙하기 불리하므로 양자화나 한 단계 작은 모델 유형을 먼저 검토합니다.
+2. N2라면 서버에 NVLink나 NVSwitch가 있는가? 없으면(예: PCIe GPU 서버) GPU를 결합해 대형 모델을 서빙하기 불리하므로 양자화나 한 단계 작은 모델 유형을 먼저 검토합니다.
 3. 처리량 확장은 복제본부터 늘립니다. Broadcom 설계는 가능한 경우 텐서 병렬보다 독립 복제본(데이터 병렬)을 권장합니다([가속기 설계 PAIF-ACC-RCMD-007](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/accelerator-detailed-design.html)).
 4. 격리와 일관 성능이 우선이면 MIG, 공유 밀도와 vMotion이 우선이면 시분할, 전용 성능이나 NVAIE 없이 시작하는 것이 우선이면 DirectPath를 고릅니다. MIG와 시분할 vGPU는 NVAIE가 필요합니다([07 7.2절](07-tco-cost-model.md#72-소프트웨어-라이선스구독-비용)).
 
@@ -118,7 +118,7 @@ VKS는 Kubernetes Cluster Autoscaler 구현을 제공하며, 워크로드 수요
 
 핵심 동작과 제약:
 
-- **scale-out / scale-in 모두 지원**하나, 특정 애플리케이션(로컬 스토리지 사용, PodDisruptionBudget 등)이 노드를 붙들면 scale-in이 일어나지 않을 수 있습니다.
+- **scale-out / scale-in 모두 지원**하나, 특정 애플리케이션(로컬 스토리지 사용, PodDisruptionBudget 등)이 노드 제거를 허용하지 않으면 scale-in이 일어나지 않을 수 있습니다.
 - **scale-from-zero / scale-to-zero**(노드 0개에서 시작과 축소)는 **VKS 3.3+ 및 VKr 1.31.4+** 에서 지원됩니다.
 - **버전 일치 요건**: VKr(vSphere Kubernetes release)의 마이너 버전과 Cluster Autoscaler 패키지의 마이너 버전이 일치해야 합니다.
 
@@ -127,7 +127,7 @@ VKS는 Kubernetes Cluster Autoscaler 구현을 제공하며, 워크로드 수요
 ### GPU 노드 오토스케일에서 특히 주의할 점
 
 - **스케일 지연(provisioning time)**: GPU 노드는 신규 VM 부팅 + 드라이버/GPU Operator 데몬셋 기동까지 시간이 걸려, 일반 CPU 노드보다 "준비 완료(Ready)"까지 지연이 큽니다. 추론 트래픽 급증(버스트)에 즉시 대응하려면 **최소 노드 수(min)에 헤드룸을 미리 확보**해 두는 편이 안전합니다.
-- **min/max 분리 운영**: GPU 노드 풀과 일반 노드 풀에 서로 다른 min/max를 두어, GPU는 약간의 상시 여유(warm pool 성격)를, 일반 노드는 공격적 scale-to-zero를 적용하는 식의 조합이 가능합니다.
+- **min/max 분리 운영**: GPU 노드 풀과 일반 노드 풀에 서로 다른 min/max를 설정해, GPU는 약간의 상시 여유(warm pool 성격)를, 일반 노드는 공격적 scale-to-zero를 적용하는 식의 조합이 가능합니다.
 - 노드 풀별 라벨과 테인트는 MachineDeployment 어노테이션(`capacity.cluster-autoscaler.kubernetes.io/labels`, `.../taints`)으로 오토스케일러에 전달됩니다.
 
 구체적 노드 풀별 min/max 상한 수치는 공식 문서에 단일 값으로 명시되어 있지 않으므로(환경과 릴리스별 상이), 4.6 실측과 함께 도입 전 공식 확인이 필요합니다.
@@ -157,11 +157,11 @@ VCF 9.1은 클러스터 수를 약 2.5배 늘려 **Supervisor 한 개당 최대 
 |---|---|---|
 | 자원 풀링 효율 | 높음(GPU를 한 풀에서 공유) | 낮음(클러스터마다 여유 분산) |
 | 격리(팀, 환경, 보안) | 약함(네임스페이스 격리에 의존) | 강함(클러스터 경계로 격리) |
-| 장애 영향 범위(blast radius) | 큼(컨트롤 플레인 장애 영향 광범위) | 작음 |
+| 장애 영향 범위(blast radius) | 넓음(컨트롤 플레인 장애 영향 광범위) | 좁음 |
 | 업그레이드 영향 | 한 번에 큰 영향 | 클러스터별 점진 가능 |
 | 한도 소진 | 단일 클러스터 노드 상한에 먼저 도달 | Supervisor 한도(500/4,000) 내 분산 |
 
-용량 관점 권장: GPU 풀 활용도 극대화가 최우선이고 격리 요구가 낮으면 큰 클러스터에 노드 풀을 다수 두는 방향이, 팀, 환경, 규제 격리가 중요하면 클러스터를 나누고 Supervisor 한도 내에서 다중 클러스터로 가는 방향이 유리합니다. 둘 다 Supervisor당 500 클러스터 / 4,000 노드 한도 안에서 환산해야 합니다.
+용량 관점 권장: GPU 풀 활용도 극대화가 최우선이고 격리 요구가 낮으면 큰 클러스터에 노드 풀을 다수 운영하는 방향이, 팀, 환경, 규제 격리가 중요하면 클러스터를 나누고 Supervisor 한도 내에서 다중 클러스터로 구성하는 방향이 유리합니다. 둘 다 Supervisor당 500 클러스터 / 4,000 노드 한도 안에서 환산해야 합니다.
 
 ---
 
@@ -200,7 +200,7 @@ VCF 9.1은 클러스터 수를 약 2.5배 늘려 **Supervisor 한 개당 최대 
 
 1. **노드 가용 자원 실측**: `kubectl describe node <gpu-node>` 로 Allocatable vs Capacity 차이(예약량)와 GPU Operator 데몬셋 파드의 requests를 확인해 노드당 실제 워크로드 가용 vCPU, RAM, GPU를 산출합니다.
 2. **GPU 노출과 DRA 확인**: `kubectl get resourceslices` / `kubectl get deviceclasses` 로 DRA가 GPU를 정상 노출하는지, ResourceClaim이 의도대로 바인딩되는지 점검합니다.
-3. **오토스케일 반응 시간 측정**: 부하 생성으로 scale-out을 유발하고, 신규 GPU 노드가 `Ready` 상태가 될 때까지(VM 부팅 + 드라이버/데몬셋 기동 포함) 걸린 시간을 기록해 헤드룸(min) 값을 보정합니다.
+3. **오토스케일 반응 시간 측정**: 부하 생성으로 scale-out을 유발하고, 신규 GPU 노드가 `Ready` 상태로 전환될 때까지(VM 부팅 + 드라이버/데몬셋 기동 포함) 걸린 시간을 기록해 헤드룸(min) 값을 보정합니다.
 4. **스케일 한도 대비 점검**: 현재 Supervisor의 클러스터 수, 노드 총수를 집계해 500 / 4,000 한도 대비 소진율을 모니터링합니다.
 5. **배치 검증**: 컨트롤 플레인 3노드와 GPU 워커 노드가 anti-affinity, Zone 정책대로 서로 다른 호스트/Zone에 분산되었는지 확인합니다.
 6. **공식 문서 재확인**: 위 한도와 동작 수치는 [Broadcom TechDocs(VKS/Supervisor)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vsphere-supervisor-services-and-standalone-components/latest/managing-vsphere-kubernetes-service/running-tkg-service-clusters/tkg-service-components.html)와 해당 릴리스의 Configuration Maximums로 도입 시점에 다시 확인합니다.

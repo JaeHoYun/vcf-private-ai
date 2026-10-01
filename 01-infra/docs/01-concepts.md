@@ -17,7 +17,7 @@
 | **VKS** | vSphere Kubernetes Service | 프로덕션용 GPU 가속 K8s 클러스터 | 프로덕션 서버팜 |
 | **DSM** | VMware Data Services Manager | 데이터베이스 서비스 (pgvector 포함) | 데이터베이스 관리 시스템 |
 
-> **PAIS는 별도 제품이 아니라 PAIF에 포함된 서비스 레이어입니다.** 그리고 "PAIF"는 두 가지로 쓰입니다 — 수식어 없이 **PAIF**라 하면 VCF가 제공하는 Private AI Foundation **솔루션 전체**(GPU 인프라부터 서비스까지)를 가리키고, 큰 구성요소를 가를 때의 GPU, 지원 인프라 부분(공식 용어 **PAIF core functionality**)은 **"PAIF 코어 기능 계층"**(GPU, 지원 인프라를 묶는 PAIF의 인프라와 관리 계층)으로 구분해 적습니다. 한 줄로: **PAIF(솔루션) = PAIF 코어 기능 계층 + PAIS 서비스 계층**. PAIS는 공식 문서상 *"a Supervisor service ... installed as a package, separately from the VMware Private AI Foundation with NVIDIA core functionality"* 로 코어 기능과 **별도 설치**됩니다. 둘 다 VCF 코어 구독에 포함됩니다(1.2절). 계층 그림은 [문서 02 2.1절](02-architecture.md#21-전체-계층-구조).
+> **PAIS는 별도 제품이 아니라 PAIF에 포함된 서비스 레이어입니다.** 그리고 "PAIF"는 두 가지 뜻으로 사용됩니다 — 수식어 없이 **PAIF**라 하면 VCF가 제공하는 Private AI Foundation **솔루션 전체**(GPU 인프라부터 서비스까지)를 가리키고, 큰 구성요소를 가를 때의 GPU, 지원 인프라 부분(공식 용어 **PAIF core functionality**)은 **"PAIF 코어 기능 계층"**(GPU, 지원 인프라를 포괄하는 PAIF의 인프라와 관리 계층)으로 구분해 적습니다. 한 줄로: **PAIF(솔루션) = PAIF 코어 기능 계층 + PAIS 서비스 계층**. PAIS는 공식 문서상 *"a Supervisor service ... installed as a package, separately from the VMware Private AI Foundation with NVIDIA core functionality"* 로 코어 기능과 **별도 설치**됩니다. 둘 다 VCF 코어 구독에 포함됩니다(1.2절). 계층 구조도는 [문서 02 2.1절](02-architecture.md#21-전체-계층-구조).
 
 ---
 
@@ -54,7 +54,7 @@ VMware Cloud Foundation 9.1 (코어 구독)
 > **자주 틀리는 부분 2:** "NVAIE도 VCF에 포함된다" → 틀립니다. NVAIE는 NVIDIA에서 별도 구매합니다. 도입 비용 산정 시 NVAIE 누락이 가장 흔한 실수입니다.
 > **자주 틀리는 부분 3 (DSM):** PAIS 벡터 DB는 **DSM(Data Services Manager)** 기반입니다. DSM은 원래 VCF 코어와 별도로 라이선스되는 Advanced Service이지만, **PAIS가 벡터 DB(pgvector) 용도의 DSM 사용 권한을 포함**하므로 RAG용 벡터 DB를 위해 DSM을 따로 구매할 필요는 없습니다. 단, DSM을 일반 DBaaS(다른 DB 운영 등)로 확장 사용하려면 별도 라이선스가 필요합니다.
 
-> **Enhanced DirectPath I/O 예외:** 9.1에서는 GPU를 VM/VKS 노드에 **전용 패스스루**로 줄 때 **NVAIE 라이선스 없이** 사용할 수 있고 vMotion 이점도 유지됩니다 ([문서 02](02-architecture.md#23-gpu-할당-방식-주의-91-변경)). 단, vGPU 분할 공유나 NIM/NeMo 사용 시에는 NVAIE가 필요합니다.
+> **Enhanced DirectPath I/O 예외:** 9.1에서는 GPU를 VM/VKS 노드에 **전용 패스스루**로 할당할 때 **NVAIE 라이선스 없이** 사용할 수 있고 vMotion 이점도 유지됩니다 ([문서 02](02-architecture.md#23-gpu-할당-방식-주의-91-변경)). 단, vGPU 분할 공유나 NIM/NeMo 사용 시에는 NVAIE가 필요합니다.
 
 ---
 
@@ -71,8 +71,8 @@ VMware Cloud Foundation 9.1 (코어 구독)
 ```
 
 **핵심:**
-- DLVM은 PAIS와 **독립적**으로 배포 가능 (vSphere 하이퍼바이저 위에 직접)
-- DLVM은 **모든 개발자가 쓰는 것이 아님** — 주로 Data Scientist, MLOps Engineer가 사용
+- DLVM은 PAIS와 **독립적**으로 배포 가능 (vSphere 하이퍼바이저에 직접)
+- DLVM은 **모든 개발자가 사용하는 것이 아님** — 주로 Data Scientist, MLOps Engineer가 사용
 - **App Developer는 DLVM 없이** PAIS API URL만으로 앱 개발 가능
 
 ---
@@ -190,10 +190,10 @@ App Developer가 MLOps/Data Scientist로부터 받는 것: **① PAIS Base URL �
 
 ## 1.9 프롬프트 vs RAG vs 파인튜닝 선택
 
-우리 모델을 사내 도메인과 데이터에 맞추는 길은 셋이고, 이것이 **Private AI 설계의 첫 분기**입니다. 무엇을 고르느냐가 인프라 요구(학습용 GPU 여부), 일정, 비용을 좌우하므로, 구현 패턴([문서 04](04-dev-scenarios.md))을 정하기 전에 먼저 정리해야 합니다.
+우리 모델을 사내 도메인과 데이터에 맞추는 방법은 세 가지이고, 이것이 **Private AI 설계의 첫 분기**입니다. 무엇을 고르느냐가 인프라 요구(학습용 GPU 여부), 일정, 비용을 좌우하므로, 구현 패턴([문서 04](04-dev-scenarios.md))을 정하기 전에 먼저 정리해야 합니다.
 
-- **프롬프트 엔지니어링** — 모델과 지식은 그대로 두고 **지시문(프롬프트)만** 다듬어 출력을 개선합니다. 가장 싸고 빠릅니다. 시스템 프롬프트로 역할, 규칙, 형식을 명시하고, 필요하면 예시 몇 개를 프롬프트에 넣습니다(예시를 주면 **few-shot**, 안 주고 바로 시키면 **zero-shot**). 추가 학습 없이 프롬프트 안에서만 유도하는 이 방식을 **인컨텍스트 러닝(in-context learning)** 이라 합니다.
-- **RAG** — 지식을 모델 밖(벡터 DB)에 두고 질문 시 검색해 프롬프트에 끼워 넣습니다. **자주 바뀌는 사내 지식, 출처 표기, 접근통제**가 중요할 때 적합합니다(상세 [④ RAG 레퍼런스](../../04-rag/README.md)).
+- **프롬프트 엔지니어링** — 모델과 지식은 바꾸지 않고 **지시문(프롬프트)만** 다듬어 출력을 개선합니다. 가장 싸고 빠릅니다. 시스템 프롬프트로 역할, 규칙, 형식을 명시하고, 필요하면 예시 몇 개를 프롬프트에 넣습니다(예시를 주면 **few-shot**, 안 주고 바로 시키면 **zero-shot**). 추가 학습 없이 프롬프트 안에서만 유도하는 이 방식을 **인컨텍스트 러닝(in-context learning)** 이라 합니다.
+- **RAG** — 지식을 모델 밖(벡터 DB)에 저장하고 질문 시 검색해 프롬프트에 끼워 넣습니다. **자주 바뀌는 사내 지식, 출처 표기, 접근통제**가 중요할 때 적합합니다(상세 [④ RAG 레퍼런스](../../04-rag/README.md)).
 - **파인튜닝(fine-tuning)** — 모델 **가중치 자체를 사내 데이터로 추가 학습**해 도메인 능력을 심습니다. 문체, 특수 형식, 고정된 전문 도메인이 필요하고 지식이 자주 안 바뀔 때입니다. 비용과 시간이 가장 큽니다.
   - **LoRA, QLoRA, 풀 파인튜닝** — 풀 파인튜닝은 전체 가중치를 갱신해 메모리와 비용이 최대입니다(다중 GPU). **LoRA**는 기존 가중치를 얼리고 작은 '어댑터'만 학습해 비용을 크게 줄이고, **QLoRA**는 거기에 양자화를 더해 단일 GPU로도 가능합니다. 대부분의 도메인 적응은 LoRA로 충분합니다.
 

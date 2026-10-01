@@ -2,15 +2,15 @@
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 
-앞 문서(01)에서 "왜 사내 추론 API인가"를 봤다면, 이 문서는 **그 API가 실제로 어떻게 만들어지고 노출되는가** — 모델 하나가 들어와서 앱이 호출 가능한 엔드포인트가 되기까지의 구조와 절차 — 를 다룹니다. PAIS의 어느 모듈이 무엇을 수행하고, 무엇에 의존하며, 서로 어떻게 연결되는지를 따라가면, 이후 문서(엔드포인트, 인증, 운영)에서 마주칠 설계가 왜 그렇게 생겼는지가 자연히 이해됩니다.
+앞 문서(01)에서 "왜 사내 추론 API인가"를 확인했다면, 이 문서는 **그 API가 실제로 어떻게 구성되고 노출되는가** — 모델 하나를 반입해 앱이 호출 가능한 엔드포인트로 노출하기까지의 구조와 절차 — 를 다룹니다. PAIS의 어느 모듈이 무엇을 수행하고, 무엇에 의존하며, 서로 어떻게 연결되는지를 따라가면, 이후 문서(엔드포인트, 인증, 운영)에서 마주칠 설계가 왜 그렇게 생겼는지가 자연히 이해됩니다.
 
-> **이 문서의 고도(altitude)와 경계** — 이 가이드는 **API 서빙 계층**을 다룹니다. 그 아래의 플랫폼 토대(VCF, Supervisor, VKS, GPU 할당, DLVM, 구축 순서)는 **[① 인프라 가이드 2절 아키텍처](../../01-infra/docs/02-architecture.md)** 가 기준이고, 토폴로지와 노드풀 같은 설계 결정은 **[⑦ 통합 설계 가이드](../../07-design/README.md)**, 용량과 비용 산정은 **[⑥ 사이징](../../06-sizing-cost/README.md)** 이 맡습니다. 이 문서는 그 토대를 **다시 쓰지 않고**, 그 위에 얹히는 서빙 계층의 그림과 흐름에 집중합니다. 본 문서에서 다루지 않는 것은 2.9절에 명시했습니다.
+> **이 문서의 고도(altitude)와 경계** — 이 가이드는 **API 서빙 계층**을 다룹니다. 서빙 계층이 의존하는 플랫폼 토대(VCF, Supervisor, VKS, GPU 할당, DLVM, 구축 순서)는 **[① 인프라 가이드 2절 아키텍처](../../01-infra/docs/02-architecture.md)** 가 기준이고, 토폴로지와 노드풀 같은 설계 결정은 **[⑦ 통합 설계 가이드](../../07-design/README.md)**, 용량과 비용 산정은 **[⑥ 사이징](../../06-sizing-cost/README.md)** 이 맡습니다. 이 문서는 그 토대를 **다시 설명하지 않고**, 이를 기반으로 동작하는 서빙 계층의 구조와 흐름에 집중합니다. 본 문서에서 다루지 않는 것은 2.9절에 명시했습니다.
 
 ---
 
-## 2.1 무엇 위에 얹히나 — 서빙 계층의 토대
+## 2.1 무엇을 기반으로 동작하나 — 서빙 계층의 토대
 
-서빙 계층은 단독으로 존재하지 않습니다. PAIS의 모든 추론 API는 아래 토대 위에서 동작하며, **이 귀속 관계가 GPU, 격리, 스케일링이 어디서 결정되는지를 정합니다.**
+서빙 계층은 단독으로 존재하지 않습니다. PAIS의 모든 추론 API는 아래 토대를 기반으로 동작하며, **이 귀속 관계가 GPU, 격리, 스케일링이 어디서 결정되는지를 정합니다.**
 
 ```
 VCF 9.1.x — PAIF Workload Domain (GPU 가속 워크로드 도메인)
@@ -25,13 +25,13 @@ VCF 9.1.x — PAIF Workload Domain (GPU 가속 워크로드 도메인)
   └── GPU 호스트(ESXi + vGPU / Enhanced DirectPath I/O)  ← Supervisor 직속 인프라
 ```
 
-핵심만 짚으면:
+핵심만 정리하면:
 
-- **GPU는 호스트(ESXi)에 물려 있고**, Model Endpoint 파드는 VKS 워커 노드(VM) 위에서 그 물리 GPU에 연결됩니다(2.3절). 즉 "모델에 GPU를 붙인다"는 곧 *Endpoint 파드를 GPU 호스트가 받치는 워커 노드에 스케줄한다*는 뜻입니다.
+- **GPU는 호스트(ESXi)에 장착되어 있고**, Model Endpoint 파드는 VKS 워커 노드(VM)에서 그 물리 GPU에 연결됩니다(2.3절). 즉 "모델에 GPU를 할당한다"는 곧 *Endpoint 파드를 GPU 호스트에서 실행되는 워커 노드에 스케줄한다*는 뜻입니다.
 - **격리와 쿼터는 vSphere Namespace 단위**입니다(2.8절). 어느 모델과 에이전트가 누구에게 보이고, 복제본을 몇 개까지 띄울 수 있는지가 여기서 결정됩니다.
-- **공유 인프라**(Harbor, DSM의 pgvector, VCF Automation, 관측성)는 네임스페이스들이 함께 씁니다.
+- **공유 인프라**(Harbor, DSM의 pgvector, VCF Automation, 관측성)는 네임스페이스들이 함께 사용합니다.
 
-> GPU 할당 방식(vGPU vs Enhanced DirectPath I/O), 구축 Phase, 의존성 다이어그램의 상세는 **[① 2.1절, 2.3절, 2.8절](../../01-infra/docs/02-architecture.md)** 에 있습니다. 본 문서는 "서빙이 이 위에 얹힌다"는 연결만 세웁니다.
+> GPU 할당 방식(vGPU vs Enhanced DirectPath I/O), 구축 Phase, 의존성 다이어그램의 상세는 **[① 2.1절, 2.3절, 2.8절](../../01-infra/docs/02-architecture.md)** 에 있습니다. 본 문서는 "서빙이 이 토대를 기반으로 동작한다"는 연결만 세웁니다.
 
 ---
 
@@ -71,20 +71,20 @@ VCF 9.1.x — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 | **Model Gallery** | 모델 아티팩트 보관, 반입, 버전관리, 접근통제 | 모델 리비전과 메타데이터(상태 보관소) | Harbor(OCI), Supervisor 서비스, 스토리지 | Runtime이 가져갈 **모델 리비전** (2.4절) |
 | **Model Runtime** | Gallery의 모델을 추론 엔진으로 실행, OpenAI 호환 API로 노출. 3.0부터는 다른 인스턴스의 공유 모델과 원격 클라우드 모델도 같은 Endpoint 형태로 연결 | **stateless** — 요청 간 상태 없음 | Gallery(모델), VKS 워커 노드, **GPU**(completion), ML API Gateway | **Model Endpoint** = OpenAI 호환 추론 API (2.5절, [03](03-openai-compatible-endpoints.md)) |
 | **Data Indexing & Retrieval** | 데이터 소스 파싱, 청킹, 임베딩, 의미 검색 | Knowledge Base / 인덱스(pgvector에 영속) | **임베딩 Endpoint**(Runtime), DSM의 pgvector, 데이터 소스 커넥터 | **검색 API** / KB ([문서 04](04-agent-rag-api.md)) |
-| **Agent Builder** | 모델+KB+도구를 묶어 RAG, 세션, 도구호출 오케스트레이션 | **stateful** — `session_id` 기반 대화와 세션 | Model Endpoint(LLM), KB(검색), MCP 도구 | **Agent API** (2.7절, [04](04-agent-rag-api.md), [06](06-mcp-tools-api.md)) |
+| **Agent Builder** | 모델+KB+도구를 결합해 RAG, 세션, 도구호출 오케스트레이션 | **stateful** — `session_id` 기반 대화와 세션 | Model Endpoint(LLM), KB(검색), MCP 도구 | **Agent API** (2.7절, [04](04-agent-rag-api.md), [06](06-mcp-tools-api.md)) |
 
-읽는 법: **위에서 아래로 의존이 흐릅니다.** Gallery가 모델을 공급하고 → Runtime이 그걸 Endpoint로 띄우고 → Indexing이 그 임베딩 Endpoint를 써서 KB를 만들고 → Agent가 그 Endpoint와 KB와 도구를 묶습니다. 그래서 한 모듈이 막히면 그 아래가 함께 막힙니다(예: 임베딩 Endpoint가 없으면 KB 인덱싱이 안 됩니다).
+읽는 법: **표의 순서대로 의존이 흐릅니다.** Gallery가 모델을 공급하고 → Runtime이 그걸 Endpoint로 띄우고 → Indexing이 그 임베딩 Endpoint를 사용해 KB를 만들고 → Agent가 그 Endpoint와 KB와 도구를 결합합니다. 그래서 한 모듈이 중단되면 그 모듈에 의존하는 후속 모듈도 함께 중단됩니다(예: 임베딩 Endpoint가 없으면 KB 인덱싱이 안 됩니다).
 
 ### 제어 평면(control plane)과 데이터 평면(data plane)
 
-같은 모듈을 두 가지 시선으로 봐야 그림이 또렷해집니다.
+같은 모듈을 두 가지 관점으로 구분해야 구조가 명확해집니다.
 
 | 평면 | 무엇이 흐르나 | 누가 다루나 | 경로 |
 |------|-------------|-----------|------|
 | **제어 평면** | 모델 반입과 Endpoint 생성/삭제, 복제본 조정, KB 구성 | 관리자/MLOps (UI, `vcf pais` CLI, REST) | VCF Automation UI / PAIS UI / kubectl |
 | **데이터 평면** | 실제 추론 요청과 응답(토큰) | 앱(런타임 트래픽) | ML API Gateway → Endpoint 파드 |
 
-이 분리가 중요한 이유: **앱이 쓰는 것은 데이터 평면 하나**(Gateway 단일 URL)뿐입니다. 모델을 새로 올리거나(제어 평면) 복제본을 늘려도, 앱 코드는 데이터 평면 경로를 그대로 두면 됩니다(2.6절에서 말한, 앱 변경 없이 스케일아웃을 흡수할 수 있는 이유가 여기에 있습니다).
+이 분리가 중요한 이유: **앱이 사용하는 것은 데이터 평면 하나**(Gateway 단일 URL)뿐입니다. 모델을 새로 배포하거나(제어 평면) 복제본을 늘려도, 앱 코드는 데이터 평면 경로를 그대로 유지하면 됩니다(2.6절에서 말한, 앱 변경 없이 스케일아웃을 흡수할 수 있는 이유가 여기에 있습니다).
 
 > 추론 엔진의 정확한 버전(vLLM, Infinity, llama.cpp)은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)의 안내대로 ① README 버전표를 기준선으로 삼고, 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다.
 
@@ -92,7 +92,7 @@ VCF 9.1.x — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 
 ## 2.3 모델 한 개의 생애주기 — 반입에서 호출까지
 
-아키텍처를 "정지 화면"이 아니라 "절차"로 보면 가장 빨리 이해됩니다. 모델 하나가 사내 추론 API가 되기까지는 다음 다섯 단계를 거칩니다.
+아키텍처를 "정지 화면"이 아니라 "절차"로 따라가면 가장 빨리 이해됩니다. 모델 하나가 사내 추론 API가 되기까지는 다음 다섯 단계를 거칩니다.
 
 ```
  [준비]            [반입]              [배포]                    [노출]         [소비]
@@ -107,20 +107,20 @@ VCF 9.1.x — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 ```
 
 1. **준비 (PAIS 밖)** — 모델은 외부 출처(NVIDIA NGC, Hugging Face 등)에서 받거나, 사내에서 파인튜닝과 학습한 산출물입니다. **파인튜닝과 학습 자체는 PAIS 범위 밖**이며 DLVM이나 별도 학습 파이프라인(NeMo 등)에서 수행합니다(2.9절 경계 참조).
-2. **반입 (Model Gallery)** — 검증된 모델을 Harbor(OCI 레지스트리)에 올립니다. NIM은 JupyterLab 노트북으로 Harbor에 내려받고, 자체 모델은 `vcf pais models push`로 리비전을 등록합니다. Gallery는 이때 **버전, 접근권한(RBAC), 메타데이터**를 함께 관리합니다(2.4절).
-3. **배포 (Model Runtime)** — 관리자가 Gallery의 특정 모델 리비전을 골라 **Model Endpoint**를 만듭니다. Runtime은 그 모델을 적합한 추론 엔진(생성=vLLM/llama.cpp, 임베딩=Infinity 등) 컨테이너로 감싸 **VKS 워커 노드에 파드로 스케줄**하고, 그 파드가 **ESXi 호스트의 물리 GPU에 연결**됩니다. 가용성을 위해 서로 다른 워커 노드에 **복제본을 2개 이상** 둡니다.
-4. **노출 (ML API Gateway)** — 배포된 Endpoint는 개별 파드 IP가 아니라 **Gateway의 단일 진입 URL**로 노출됩니다. Gateway가 인증, 인가, 로드밸런싱을 그 뒤에서 처리합니다(2.6절).
-5. **소비 (앱/에이전트)** — 앱은 기존 OpenAI 코드의 `base_url`만 사내 PAIS로 바꿔 호출합니다([03](03-openai-compatible-endpoints.md), [08](08-reference-implementation.md)). Agent를 쓰면 그 위에 RAG, 세션, 도구가 얹힙니다(2.7절).
+2. **반입 (Model Gallery)** — 검증된 모델을 Harbor(OCI 레지스트리)에 업로드합니다. NIM은 JupyterLab 노트북으로 Harbor에 내려받고, 자체 모델은 `vcf pais models push`로 리비전을 등록합니다. Gallery는 이때 **버전, 접근권한(RBAC), 메타데이터**를 함께 관리합니다(2.4절).
+3. **배포 (Model Runtime)** — 관리자가 Gallery의 특정 모델 리비전을 골라 **Model Endpoint**를 만듭니다. Runtime은 그 모델을 적합한 추론 엔진(생성=vLLM/llama.cpp, 임베딩=Infinity 등) 컨테이너로 감싸 **VKS 워커 노드에 파드로 스케줄**하고, 그 파드가 **ESXi 호스트의 물리 GPU에 연결**됩니다. 가용성을 위해 서로 다른 워커 노드에 **복제본을 2개 이상** 배치합니다.
+4. **노출 (ML API Gateway)** — 배포된 Endpoint는 개별 파드 IP가 아니라 **Gateway의 단일 진입 URL**로 노출됩니다. Gateway가 인증, 인가, 로드밸런싱을 일괄 처리합니다(2.6절).
+5. **소비 (앱/에이전트)** — 앱은 기존 OpenAI 코드의 `base_url`만 사내 PAIS로 바꿔 호출합니다([03](03-openai-compatible-endpoints.md), [08](08-reference-implementation.md)). Agent를 사용하면 여기에 RAG, 세션, 도구가 추가됩니다(2.7절).
 
-> **여기서 "GPU는 어디에 연결되나"의 답** — 프로덕션 추론에서 GPU는 개발용 DLVM이 아니라 **Endpoint 파드(VKS 워커 VM)가 ESXi 호스트의 물리 GPU에 직접 연결**되는 방식으로 쓰입니다. ([근거: VCF Blog — VKS 워커 VM 파드의 물리 GPU 연결](https://blogs.vmware.com/cloud-foundation/2025/12/17/deploy-vmware-private-ai-services-in-minimal-vmware-cloud-foundation-environments/)) DLVM의 역할은 2.9절에서 분리해 설명합니다.
+> **여기서 "GPU는 어디에 연결되나"의 답** — 프로덕션 추론에서 GPU는 개발용 DLVM이 아니라 **Endpoint 파드(VKS 워커 VM)가 ESXi 호스트의 물리 GPU에 직접 연결**되는 방식으로 사용됩니다. ([근거: VCF Blog — VKS 워커 VM 파드의 물리 GPU 연결](https://blogs.vmware.com/cloud-foundation/2025/12/17/deploy-vmware-private-ai-services-in-minimal-vmware-cloud-foundation-environments/)) DLVM의 역할은 2.9절에서 분리해 설명합니다.
 
 ---
 
 ## 2.4 Model Gallery — 무엇을 저장하고 무엇을 하는가
 
-Model Gallery는 단순 파일 창고가 아니라 **"무엇을 서빙해도 되는가"의 출처와 거버넌스 관문**입니다. **Harbor**(OCI 호환 컨테이너 레지스트리)를 기반으로 Supervisor 서비스로 배포되며, 모델을 프로젝트와 리포지토리 단위로 보관하고 리포지토리별 쓰기 권한을 관리합니다. (CLI, 일부 인자에서는 내부적으로 `model-store`라는 용어도 함께 쓰입니다.)
+Model Gallery는 단순 파일 창고가 아니라 **"무엇을 서빙해도 되는가"의 출처와 거버넌스 관문**입니다. **Harbor**(OCI 호환 컨테이너 레지스트리)를 기반으로 Supervisor 서비스로 배포되며, 모델을 프로젝트와 리포지토리 단위로 보관하고 리포지토리별 쓰기 권한을 관리합니다. (CLI, 일부 인자에서는 내부적으로 `model-store`라는 용어도 함께 사용됩니다.)
 
-**무엇을 저장하나** — OCI 레지스트리이므로 단일 형식에 묶이지 않습니다.
+**무엇을 저장하나** — OCI 레지스트리이므로 단일 형식에 한정되지 않습니다.
 
 | 저장 대상 | 설명 |
 |----------|------|
@@ -144,10 +144,10 @@ Model Runtime은 Gallery의 모델을 실제로 실행해 API로 노출하는 �
 |------|--------|--------|--------------|
 | **vLLM** | Completion(생성형 LLM) | GPU | 고처리량 생성. `GET /models`의 `model_engine`로 식별 |
 | **Infinity** | Embedding | CPU/GPU | 임베딩 전용. GPU 없이도 운영 가능 |
-| **llama.cpp** | Completion, Embedding | **CPU** | **GPU 없이 CPU만으로** 추론. GGUF(llama.cpp 계열이 쓰는 단일 파일 모델 형식) 사용 |
+| **llama.cpp** | Completion, Embedding | **CPU** | **GPU 없이 CPU만으로** 추론. GGUF(llama.cpp 계열이 사용하는 단일 파일 모델 형식) 사용 |
 
-- **CPU Completion 추론(llama.cpp)** — VCF 9.1에서 Model Runtime이 llama.cpp 엔진을 통합해 **CPU 기반 추론**을 지원합니다. GPU가 필요 없는 테스트, PoC, 경량 워크로드를 GPU 없이 돌려 총소유비용(TCO)을 낮출 수 있습니다. 모델은 GGUF 형식으로 제공됩니다. ([VCF 9.1 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/), [PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html))
-- **멀티 액셀러레이터(AMD/NVIDIA)** — VCF 9.1은 **AMD, NVIDIA 양쪽 GPU 선택지**와 AMD, Intel CPU 플랫폼을 아우르는 혼합 컴퓨트를 지원합니다. 즉 같은 OpenAI 호환 API를 유지한 채, 그 뒤의 가속기를 조직 사정에 맞게 고를 수 있습니다. ([Broadcom 9.1 발표](https://www.broadcom.com/company/news/product-releases/64326))
+- **CPU Completion 추론(llama.cpp)** — VCF 9.1에서 Model Runtime이 llama.cpp 엔진을 통합해 **CPU 기반 추론**을 지원합니다. GPU가 필요 없는 테스트, PoC, 경량 워크로드를 GPU 없이 실행해 총소유비용(TCO)을 낮출 수 있습니다. 모델은 GGUF 형식으로 제공됩니다. ([VCF 9.1 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/), [PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html))
+- **멀티 액셀러레이터(AMD/NVIDIA)** — VCF 9.1은 **AMD, NVIDIA 양쪽 GPU 선택지**와 AMD, Intel CPU 플랫폼을 아우르는 혼합 컴퓨트를 지원합니다. 즉 같은 OpenAI 호환 API를 유지한 채, 백엔드 가속기를 조직 사정에 맞게 고를 수 있습니다. ([Broadcom 9.1 발표](https://www.broadcom.com/company/news/product-releases/64326))
 
 > **API 관점의 결론** — 앱 코드는 엔진과 가속기 종류를 구분하지 않아도 됩니다. 어느 엔진(vLLM/Infinity/llama.cpp)이 어느 가속기(GPU/CPU, AMD/NVIDIA)에서 떠 있든, 호출은 동일한 `…/compatibility/openai/v1/...` 경로로 이루어집니다. 실제 엔진, 버전, 가속기 매핑은 `GET /models`의 `model_engine`과 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다(엔진 버전은 릴리스마다 변동).
 
@@ -155,15 +155,15 @@ Model Runtime은 Gallery의 모델을 실제로 실행해 API로 노출하는 �
 
 ### 2.5.1 모델 연결 세 가지 — 로컬, 공유, 원격 (PAIS 3.0부터)
 
-PAIS 2.1까지 Model Endpoint는 "이 네임스페이스의 GPU에서 이 네임스페이스가 띄운 모델" 하나뿐이었습니다. 3.0부터 Model Runtime은 모델이 어디서 돌아가든 같은 OpenAI 호환 Endpoint로 앱에 보여 주는 세 가지 연결 방식을 갖습니다. 앱 코드 관점에서는 셋 다 `GET /models`에 나타나는 모델 하나이고 호출 경로도 같습니다.
+PAIS 2.1까지 Model Endpoint는 "이 네임스페이스의 GPU에서 이 네임스페이스가 띄운 모델" 하나뿐이었습니다. 3.0부터 Model Runtime은 모델이 어디서 실행되든 같은 OpenAI 호환 Endpoint로 앱에 보여 주는 세 가지 연결 방식을 갖습니다. 앱 코드 관점에서는 셋 다 `GET /models`에 나타나는 모델 하나이고 호출 경로도 같습니다.
 
-| 연결 방식 | 모델이 도는 곳 | 누가 설정하나 | 앱에 보이는 것 |
+| 연결 방식 | 모델이 실행되는 곳 | 누가 설정하나 | 앱에 보이는 것 |
 |-----------|----------------|---------------|----------------|
 | 로컬 | 이 네임스페이스의 VKS 워커(GPU 또는 CPU) | MLOps가 Model Gallery에서 배포 | Model Endpoint |
 | 공유(3.0) | 다른 PAIS 인스턴스 또는 네임스페이스(provider)의 GPU | provider 관리자가 공유를 열고, consumer 관리자가 발급자 인증서와 API 토큰으로 연결 | 같은 Model Endpoint 형태. 지식베이스, 에이전트, 도구는 consumer 쪽에 남음 |
 | 원격 클라우드(3.0) | Google Gemini 네이티브 API, Gemini Enterprise Agent Platform(구 Vertex AI), Google OpenAI 호환 계층, 서드파티 OpenAI 호환 서비스 | 조직 관리자 또는 VI 관리자가 `InferenceGatewayRoute` 리소스로 연결(API base URL, 모델 식별자, 엔진 타입, TLS 검증 모드, 자격증명 Secret) | 같은 Model Endpoint 형태. completion은 Agent Builder에서, embedding은 지식베이스 인덱싱에서 사용. 토큰 사용량 추적 |
 
-공유는 "GPU를 한 곳에 모으고 격리는 유지한다"는 결정이고, 원격은 "이 모델은 사내에 두지 않는다"는 결정입니다. 전자의 운영 함의는 [① 06 6.4.1절](../../01-infra/docs/06-production.md), 설계 결정으로서의 위치는 [⑦ 03 3.4.1절](../../07-design/docs/03-compute-gpu-topology.md)에서 다룹니다. 후자는 데이터가 외부로 나가는 경로이므로 [⑤ 05 데이터 거버넌스](../../05-security/docs/05-data-governance.md)의 반출 경계 통제와 함께 읽어야 합니다. 인스턴스 간 접근에 쓰는 API 토큰은 [05 5.6절](05-auth-and-gateway.md)에 있습니다. ([근거: Connect to a Shared Model Running in Private AI Services](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/connect-to-shared-private-ai-services-models.html), [Connect to a Remote Model Running in the Cloud](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/connect-to-a-remote-model-running-in-the-cloud.html))
+공유는 "GPU를 한 곳에 통합하고 격리는 유지한다"는 결정이고, 원격은 "이 모델은 사내에서 운영하지 않는다"는 결정입니다. 전자의 운영 함의는 [① 06 6.4.1절](../../01-infra/docs/06-production.md), 설계 결정으로서의 위치는 [⑦ 03 3.4.1절](../../07-design/docs/03-compute-gpu-topology.md)에서 다룹니다. 후자는 데이터가 외부로 나가는 경로이므로 [⑤ 05 데이터 거버넌스](../../05-security/docs/05-data-governance.md)의 반출 경계 통제와 함께 읽어야 합니다. 인스턴스 간 접근에 사용하는 API 토큰은 [05 5.6절](05-auth-and-gateway.md)에 있습니다. ([근거: Connect to a Shared Model Running in Private AI Services](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/connect-to-shared-private-ai-services-models.html), [Connect to a Remote Model Running in the Cloud](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/connect-to-a-remote-model-running-in-the-cloud.html))
 
 ---
 
@@ -177,13 +177,13 @@ Model Runtime의 **ML API Gateway**는 사내 추론 API의 정문입니다. 공
 | **인가(Authorization)** | 그 사용자가 이 모델과 에이전트를 호출할 권한이 있는지 |
 | **로드밸런싱** | 같은 모델의 여러 복제본(Replicas)에 요청 분산 |
 
-> 따라서 앱은 개별 추론 파드의 IP를 알 필요가 없습니다. **Gateway의 단일 진입 URL**(`https://{fqdn}/api/v1/...`)로 호출하면 인증과 분산이 그 뒤에서 처리됩니다. 스케일아웃(복제본 증가)도 앱 코드 변경 없이 흡수됩니다(2.2절 데이터 평면). 복제본 수의 네임스페이스 한도는 2.8절을, 레이트리밋, 쿼터, 재시도는 [05](05-auth-and-gateway.md)를 보십시오.
+> 따라서 앱은 개별 추론 파드의 IP를 알 필요가 없습니다. **Gateway의 단일 진입 URL**(`https://{fqdn}/api/v1/...`)로 호출하면 Gateway가 인증과 분산을 처리합니다. 스케일아웃(복제본 증가)도 앱 코드 변경 없이 흡수됩니다(2.2절 데이터 평면). 복제본 수의 네임스페이스 한도는 2.8절을, 레이트리밋, 쿼터, 재시도는 [05](05-auth-and-gateway.md)를 참조하십시오.
 
 ---
 
 ## 2.7 Model Endpoint vs Agent — 무엇이 무엇을 호출하나
 
-[01.3](01-why-serving-api.md#13-두-종류의-api--endpoint와-agent)에서 소비 관점으로 둘을 비교했습니다. 여기서는 **무엇이 무엇을 호출하는지**(아키텍처 관점)를 봅니다.
+[01.3](01-why-serving-api.md#13-두-종류의-api--endpoint와-agent)에서 소비 관점으로 둘을 비교했습니다. 여기서는 **무엇이 무엇을 호출하는지**(아키텍처 관점)를 정리합니다.
 
 ```
 앱 → Model Endpoint API           앱 → Agent API
@@ -212,10 +212,10 @@ Model Runtime의 **ML API Gateway**는 사내 추론 API의 정문입니다. 공
 
 ## 2.8 멀티테넌시와 네임스페이스 경계
 
-PAIS는 VCF Automation의 **조직(Organization), 네임스페이스**(2.1절 토대) 위에서 동작합니다. API 관점에서 중요한 함의는 다음과 같습니다.
+PAIS는 VCF Automation의 **조직(Organization), 네임스페이스**(2.1절 토대)를 기반으로 동작합니다. API 관점에서 중요한 함의는 다음과 같습니다.
 
 - **격리** — 한 네임스페이스의 Model Endpoint, Agent, KB는 그 경계 안에서 관리됩니다. 토큰의 권한도 그 경계를 따릅니다.
-- **경계를 넘는 유일한 것, 공유 모델(3.0부터)** — 공유 모델 호스팅은 이 격리에서 모델 엔드포인트만 예외로 둡니다. provider 네임스페이스의 GPU에서 도는 모델을 consumer 네임스페이스가 자기 엔드포인트처럼 호출하되, consumer의 지식베이스와 에이전트와 도구는 여전히 consumer 안에 있습니다. 인스턴스 간 호출에는 provider가 발급한 API 토큰이 필요하고 외부 OIDC 토큰은 쓸 수 없습니다(2.5.1절, [05 5.6절](05-auth-and-gateway.md)).
+- **경계를 넘는 유일한 것, 공유 모델(3.0부터)** — 공유 모델 호스팅은 이 격리에서 모델 엔드포인트만 예외로 처리합니다. provider 네임스페이스의 GPU에서 실행되는 모델을 consumer 네임스페이스가 자기 엔드포인트처럼 호출하되, consumer의 지식베이스와 에이전트와 도구는 여전히 consumer 안에 있습니다. 인스턴스 간 호출에는 provider가 발급한 API 토큰이 필요하고 외부 OIDC 토큰은 사용할 수 없습니다(2.5.1절, [05 5.6절](05-auth-and-gateway.md)).
 - **거버넌스 경계** — DEV/PROD를 네임스페이스로 분리하면, 민감한 도구(MCP), 데이터 소스를 PROD에만 허용하는 식의 통제가 가능합니다 → [06 MCP 거버넌스](06-mcp-tools-api.md).
 - **리소스 쿼터** — GPU, 복제본 한도가 네임스페이스 단위로 걸리므로, API 스케일링도 그 한도 안에서 일어납니다. 구체적으로 **네임스페이스당 Model Endpoint 복제본은 최대 15개**이고, **각 복제본이 /24 CIDR 블록을 소비**합니다(더 늘리려면 Supervisor 서비스의 `vks.candidatePodCIDRs`로 대역을 키웁니다) → [07 운영](07-observability-ops.md). ([근거: VCF Blog — Minimal VCF 환경의 PAIS 배포](https://blogs.vmware.com/cloud-foundation/2025/12/17/deploy-vmware-private-ai-services-in-minimal-vmware-cloud-foundation-environments/). 한도 수치는 릴리스마다 달라질 수 있으니 적용 직전 공식 문서로 재확인하시기 바랍니다.)
 
@@ -229,7 +229,7 @@ PAIS는 VCF Automation의 **조직(Organization), 네임스페이스**(2.1절 �
 
 | 주제 | 왜 여기가 아닌가 | 기준 문서 |
 |------|----------------|----------|
-| **DLVM (Deep Learning VM)** | 서빙 평면이 아니라 **개발과 실험 평면**. 데이터 과학자와 MLOps의 개인 GPU 워크스테이션 VM으로 모델 평가, 프로토타이핑, 검증에 쓰며, 프로덕션 상시 서빙 대상이 아님. App Developer는 DLVM 없이 PAIS API URL만으로 개발 | [① 1.3절](../../01-infra/docs/01-concepts.md), [① 2.7절](../../01-infra/docs/02-architecture.md), 라이프사이클 [① 4.1절](../../01-infra/docs/04-dev-scenarios.md) |
+| **DLVM (Deep Learning VM)** | 서빙 평면이 아니라 **개발과 실험 평면**. 데이터 과학자와 MLOps의 개인 GPU 워크스테이션 VM으로 모델 평가, 프로토타이핑, 검증에 사용하며, 프로덕션 상시 서빙 대상이 아님. App Developer는 DLVM 없이 PAIS API URL만으로 개발 | [① 1.3절](../../01-infra/docs/01-concepts.md), [① 2.7절](../../01-infra/docs/02-architecture.md), 라이프사이클 [① 4.1절](../../01-infra/docs/04-dev-scenarios.md) |
 | **GPU 할당 방식 / 구축 순서** | 플랫폼 토대(vGPU vs DirectPath I/O, Phase별 구축) | [① 2.3절, 2.6절](../../01-infra/docs/02-architecture.md) |
 | **컴퓨트, GPU, VKS 토폴로지 설계** | 노드풀과 배치 같은 설계 결정 | [⑦ 3절](../../07-design/docs/03-compute-gpu-topology.md) |
 | **용량, 복제본, GPU 사이징(정량)** | 수식과 산정은 본 가이드 범위 밖 | [⑥ 2절](../../06-sizing-cost/docs/02-gpu-sizing.md) |

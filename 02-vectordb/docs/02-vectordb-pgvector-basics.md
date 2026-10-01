@@ -58,7 +58,7 @@ LLM이 학습하지 않은 사내 문서, 규정, 매뉴얼 등을 벡터로 저
 사용자 행동이나 상품 속성을 벡터화하여 유사 상품/콘텐츠를 추천합니다. 유통, 미디어, 이커머스 분야에서 활용됩니다.
 
 **이상 탐지 (Anomaly Detection)**
-정상 패턴을 벡터로 학습한 뒤, 새로운 데이터가 정상 벡터 군집에서 벗어나는 정도를 측정하여 이상을 탐지합니다. 금융 이상거래, IoT 센서 모니터링 등에 적용됩니다.
+정상 패턴을 벡터로 학습한 뒤, 새로운 데이터가 정상 벡터 군집에서 이탈하는 정도를 측정하여 이상을 탐지합니다. 금융 이상거래, IoT 센서 모니터링 등에 적용됩니다.
 
 **이미지/멀티모달 검색**
 이미지를 벡터화하여 유사 이미지를 검색하거나, 텍스트로 이미지를 검색하는 크로스모달 검색에 활용됩니다.
@@ -73,7 +73,7 @@ LLM이 학습하지 않은 사내 문서, 규정, 매뉴얼 등을 벡터로 저
 | **KNN (K-Nearest Neighbor)** | 정확한 최근접 이웃 탐색. 완벽한 정확도, 느린 속도 |
 | **ANN (Approximate Nearest Neighbor)** | 근사 최근접 이웃 탐색. 약간의 정확도를 포기하고 속도를 획득 |
 | **Recall** | 검색 정확도 지표. 실제 최근접 이웃 중 몇 %를 찾았는가 (99%면 매우 우수) |
-| **HNSW** | Hierarchical Navigable Small World. 그래프 기반 ANN 알고리즘. 현재 가장 널리 쓰이는 고성능 인덱스 |
+| **HNSW** | Hierarchical Navigable Small World. 그래프 기반 ANN 알고리즘. 현재 가장 널리 사용되는 고성능 인덱스 |
 | **IVFFlat** | Inverted File Flat. 벡터를 클러스터로 분할 후 탐색하는 ANN 알고리즘. 빌드 빠르고 메모리 적음 |
 | **Distance Function** | 두 벡터 간 거리를 측정하는 함수. L2(유클리드), Cosine, Inner Product 등 |
 | **RAG** | Retrieval-Augmented Generation. 외부 지식을 검색하여 LLM 응답을 강화하는 기법 |
@@ -100,10 +100,10 @@ LLM이 학습하지 않은 사내 문서, 규정, 매뉴얼 등을 벡터로 저
 | CPU 아키텍처 | x86-64, ARM64, i386, PowerPC, RISC-V |
 | SIMD 최적화 | AVX, F16C, FMA, AVX-512 런타임 디스패치 (CPU가 지원하는 최적의 SIMD 명령어를 자동으로 선택하여 실행) |
 
-pgvector의 가장 중요한 특징은 **PostgreSQL의 확장으로 동작**한다는 점입니다. 별도의 데이터베이스를 운영할 필요 없이, 기존 PostgreSQL 인프라 위에 `CREATE EXTENSION vector;` 한 줄로 활성화되며, SQL 문법 그대로 벡터 연산을 수행할 수 있습니다. 조직의 기존 PostgreSQL 운영 역량, 백업/복구 체계, 모니터링 도구, 보안 정책을 그대로 활용할 수 있습니다.
+pgvector의 가장 중요한 특징은 **PostgreSQL의 확장으로 동작**한다는 점입니다. 별도의 데이터베이스를 운영할 필요 없이, 기존 PostgreSQL 인프라에서 `CREATE EXTENSION vector;` 한 줄로 활성화되며, SQL 문법 그대로 벡터 연산을 수행할 수 있습니다. 조직의 기존 PostgreSQL 운영 역량, 백업/복구 체계, 모니터링 도구, 보안 정책을 그대로 활용할 수 있습니다.
 
 > **DSM 기준 참고**: VCF DSM 9.1에서 프로비저닝되는 PostgreSQL에는 pgvector 0.8.0이 포함되어 있으며, Iterative Index Scan 등 0.8.0의 핵심 기능을 모두 사용할 수 있습니다. 커뮤니티 최신 버전 0.8.2의 개선 및 보안 수정(CVE-2026-3172)은 향후 VMware Postgres 번들 업데이트 시 반영될 예정이며, 반영 시점은 DSM 릴리스 노트로 확인이 필요합니다.
-> **PostgreSQL 12/13 지원 종료**: DSM 9.1.1에서 PostgreSQL 12와 13이 제거됐습니다. 해당 인스턴스는 9.1.1 배포 전에 14 이상으로 올립니다([01 1.2절](01-version-compatibility.md)). 신규 배포는 PostgreSQL 15 이상을 권장합니다.
+> **PostgreSQL 12/13 지원 종료**: DSM 9.1.1에서 PostgreSQL 12와 13이 제거됐습니다. 해당 인스턴스는 9.1.1 배포 전에 14 이상으로 업그레이드합니다([01 1.2절](01-version-compatibility.md)). 신규 배포는 PostgreSQL 15 이상을 권장합니다.
 > 출처: [DSM 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/release-notes/vmware-data-services-manager-91-release-notes.html), [pgvector 0.8.2 릴리스](https://www.postgresql.org/about/news/pgvector-082-released-3245/)
 
 ### 2.2.2 버전 히스토리 및 주요 진화
@@ -131,7 +131,7 @@ pgvector는 다양한 정밀도와 희소성 수준의 벡터 타입을 지원�
 | `sparsevec` | 32-bit float (희소) | 16,000 | 8×nonzero + 16 bytes | 1,000 (비영 요소) | 희소 임베딩 (BM25, SPLADE 등) |
 | `bit` | 1-bit (바이너리) | — | dim/8 bytes | 64,000 | Binary Quantization, 초저비용 검색 |
 
-실무 Tip: OpenAI text-embedding-3-small (기본 1,536차원)을 사용할 경우, `vector(1536)` 타입을 쓰면 행당 약 6KB를 소비합니다. 500만 벡터 기준 약 30GB 테이블이 필요하며, HNSW 인덱스(m=16 기준)는 테이블의 약 2배 수준인 60GB 이상이 될 수 있습니다. 정확한 인덱스 크기는 m, ef_construction 값과 데이터 특성에 따라 달라지므로 실측이 필요합니다. halfvec으로 전환하면 스토리지를 절반으로 줄이면서도 대부분의 유스케이스에서 recall 손실이 미미합니다.
+실무 Tip: OpenAI text-embedding-3-small (기본 1,536차원)을 사용할 경우, `vector(1536)` 타입으로 저장하면 행당 약 6KB를 소비합니다. 500만 벡터 기준 약 30GB 테이블이 필요하며, HNSW 인덱스(m=16 기준)는 테이블의 약 2배 수준인 60GB 이상에 이를 수 있습니다. 정확한 인덱스 크기는 m, ef_construction 값과 데이터 특성에 따라 달라지므로 실측이 필요합니다. halfvec으로 전환하면 스토리지를 절반으로 줄이면서도 대부분의 유스케이스에서 recall 손실이 미미합니다.
 
 ### 2.2.4 거리 함수 (Distance Functions)
 
@@ -152,10 +152,10 @@ pgvector의 두 가지 ANN 인덱스는 각기 다른 트레이드오프를 가�
 
 #### HNSW (Hierarchical Navigable Small World)
 
-다층 그래프 구조를 사용하는 ANN 알고리즘입니다. 상위 레이어에서 대략적인 위치를 찾고, 하위 레이어로 내려가며 정밀 탐색합니다.
+다층 그래프 구조를 사용하는 ANN 알고리즘입니다. 상위 레이어에서 대략적인 위치를 찾고, 하위 레이어로 이동하며 정밀 탐색합니다.
 
 - 장점: 검색 속도-recall 트레이드오프가 우수, 데이터 없이도 인덱스 생성 가능, 실시간 삽입/삭제 가능
-- 단점: 빌드 시간이 길고 메모리 사용량이 큼
+- 단점: 빌드 시간이 길고 메모리 사용량이 많음
 - 주요 파라미터:
   - `m` (기본 16): 레이어당 최대 연결 수. 높을수록 recall 향상, 빌드 느려짐
   - `ef_construction` (기본 64): 빌드 시 후보 리스트 크기. 높을수록 정밀
@@ -188,15 +188,15 @@ pgvector의 두 가지 ANN 인덱스는 각기 다른 트레이드오프를 가�
 
 HNSW의 세 파라미터(`m`, `ef_construction`, `hnsw.ef_search`)는 recall과 지연과 빌드시간을 맞바꾸는 핵심 조절 파라미터입니다. pgvector 공식 README 기준으로 `m`은 기본 16, `ef_construction`은 기본 64, `hnsw.ef_search`는 기본 40입니다. 공식 가이드는 "`ef_construction` 값이 높을수록 빌드/삽입 속도를 대가로 recall이 향상되고", `ef_search`도 "값이 높을수록 속도를 대가로 recall이 향상된다"고 명시합니다.
 
-| 파라미터 | 적용 시점 | 기본값 | 올릴 때 효과 | 올릴 때 비용 | 실무 시작 범위 |
+| 파라미터 | 적용 시점 | 기본값 | 높일 때 효과 | 높일 때 비용 | 실무 시작 범위 |
 |---|---|---|---|---|---|
 | `m` | 인덱스 생성 | 16 | recall 향상, 그래프 연결성 강화 | 빌드 느려짐, 메모리와 인덱스 크기 증가 | 16 (고차원과 고recall 요구 시 24–48) |
 | `ef_construction` | 인덱스 생성 | 64 | 인덱스 품질과 recall 향상 | 빌드 시간 증가(어느 지점 이후 효익 감소) | 64–200 |
 | `hnsw.ef_search` | 쿼리 실행 | 40 | recall 향상 | 쿼리 지연 증가 | 40–200, recall 목표로 조정 |
 
-권장 접근: 빌드 시점 파라미터(`m`, `ef_construction`)는 재생성 비용이 크므로 처음에 다소 넉넉히 잡고, 런타임 recall 미세조정은 세션 단위로 바꿀 수 있는 `hnsw.ef_search`로 수행합니다. recall 목표(예: Recall@10 95%)를 정한 뒤 `ef_search`를 단계적으로 올리며 지연과의 균형점을 찾습니다.
+권장 접근: 빌드 시점 파라미터(`m`, `ef_construction`)는 재생성 비용이 크므로 처음에 다소 넉넉히 설정하고, 런타임 recall 미세조정은 세션 단위로 바꿀 수 있는 `hnsw.ef_search`로 수행합니다. recall 목표(예: Recall@10 95%)를 정한 뒤 `ef_search`를 단계적으로 높이며 지연과의 균형점을 찾습니다.
 
-> **빌드 시 메모리와 병렬 워커 주의**: pgvector 공식 문서는 "그래프가 `maintenance_work_mem`에 들어갈 때 인덱스 빌드가 현저히 빨라진다"고 명시합니다. 빌드 전 `SET maintenance_work_mem = '8GB';`처럼 충분히 올리고(그래프가 메모리를 초과하면 경고가 발생하며 속도가 급락), `SET max_parallel_maintenance_workers = 7;`(기본 2)로 병렬 빌드를 활용합니다. 워커 수를 크게 잡으면 `max_parallel_workers`(기본 8)도 함께 상향해야 합니다. 단, **병렬 HNSW 빌드는 CVE-2026-3172 영향 경로**이므로(2.2.12절 보안 주의 참조) DSM 번들 pgvector의 패치 적용 시점을 확인하시기 바랍니다.
+> **빌드 시 메모리와 병렬 워커 주의**: pgvector 공식 문서는 "그래프가 `maintenance_work_mem`에 들어갈 때 인덱스 빌드가 현저히 빨라진다"고 명시합니다. 빌드 전 `SET maintenance_work_mem = '8GB';`처럼 충분히 높이고(그래프가 메모리를 초과하면 경고가 발생하며 속도가 급락), `SET max_parallel_maintenance_workers = 7;`(기본 2)로 병렬 빌드를 활용합니다. 워커 수를 크게 설정하면 `max_parallel_workers`(기본 8)도 함께 상향해야 합니다. 단, **병렬 HNSW 빌드는 CVE-2026-3172 영향 경로**이므로(2.2.12절 보안 주의 참조) DSM 번들 pgvector의 패치 적용 시점을 확인하시기 바랍니다.
 > 출처: [pgvector README (HNSW Index Options / Indexing Progress)](https://github.com/pgvector/pgvector/blob/master/README.md)
 
 ### 2.2.6 임베딩 차원, 타입, 거리함수 결정 가이드
@@ -217,7 +217,7 @@ HNSW의 세 파라미터(`m`, `ef_construction`, `hnsw.ef_search`)는 recall과 
 
    `<#>`는 PostgreSQL이 `ASC` 정렬만 지원하므로 **음수 내적(negative inner product)** 을 반환한다는 점에 유의합니다.
 
-4. **정규화 여부**: 공식 가이드는 "**벡터가 길이 1로 정규화되어 있으면(OpenAI 임베딩처럼) 최고 성능을 위해 inner product를 사용**"하도록 권장합니다. 즉 임베딩을 사전 정규화한다면 `<#>` + `vector_ip_ops` 조합이 가장 빠르고, 정규화를 보장하기 어렵다면 크기에 둔감한 Cosine(`<=>` + `vector_cosine_ops`)을 기본값으로 사용하는 것이 안전합니다. 인덱스 opclass는 실제 쿼리에 쓰는 연산자와 반드시 일치해야 인덱스가 사용됩니다.
+4. **정규화 여부**: 공식 가이드는 "**벡터가 길이 1로 정규화되어 있으면(OpenAI 임베딩처럼) 최고 성능을 위해 inner product를 사용**"하도록 권장합니다. 즉 임베딩을 사전 정규화한다면 `<#>` + `vector_ip_ops` 조합이 가장 빠르고, 정규화를 보장하기 어렵다면 크기에 둔감한 Cosine(`<=>` + `vector_cosine_ops`)을 기본값으로 사용하는 것이 안전합니다. 인덱스 opclass는 실제 쿼리에 사용하는 연산자와 반드시 일치해야 인덱스가 사용됩니다.
 
 > 출처: [pgvector README (Vector Types / Indexing / Distances)](https://github.com/pgvector/pgvector/blob/master/README.md)
 
@@ -278,7 +278,7 @@ pgvector 단독(HNSW 인덱스)의 경우, 대규모 데이터셋에서 전용 V
 pgvector는 PostgreSQL의 스케일링 방식을 그대로 따릅니다.
 
 **수직 확장 (Scale Up)**
-메모리, CPU, 스토리지 증설. HNSW 인덱스가 shared_buffers에 올라가야 최적 성능을 발휘하므로, 인덱스 크기의 110% 이상의 메모리를 확보해야 합니다. 인덱스가 메모리에 올라가지 못하면 성능이 10–100배 저하됩니다.
+메모리, CPU, 스토리지 증설. HNSW 인덱스가 shared_buffers에 적재되어야 최적 성능을 발휘하므로, 인덱스 크기의 110% 이상의 메모리를 확보해야 합니다. 인덱스가 메모리에 적재되지 못하면 성능이 10–100배 저하됩니다.
 
 **읽기 확장 (Read Replicas)**
 PostgreSQL의 표준 스트리밍 복제를 통해 읽기 분산. 벡터 검색은 대부분 읽기 워크로드이므로 효과적입니다.

@@ -1,14 +1,14 @@
 # VCF 9.1 Private AI 모델 서빙 API 가이드
 
-> **이 가이드를 읽기 전에** — 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 잡으시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
+> **이 가이드를 읽기 전에** — 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 익히시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
 
-> Private AI Foundation(PAIF) 위에서 모델을 **API로 서빙하고 사내 앱이 소비**하는 방법을 다루는 실무 레퍼런스
+> Private AI Foundation(PAIF)를 기반으로 모델을 **API로 서빙하고 사내 앱이 소비**하는 방법을 다루는 실무 레퍼런스
 
-VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프라이즈 벡터 DB를 올렸다면(데이터), 마지막 단계는 **"그 모델을 어떻게 API로 노출하고, 앱이 어떻게 소비하는가"** 입니다. 이 가이드는 PAIS(Private AI Services)가 제공하는 **OpenAI 호환 API**를 중심으로, 추론 엔드포인트와 에이전트(RAG) API, 인증, MCP 도구, 관측성, 레퍼런스 구현을 생애주기 순서로 정리합니다.
+VCF에서 Private AI Foundation을 구축하고(인프라), 이를 기반으로 엔터프라이즈 벡터 DB를 구축했다면(데이터), 마지막 단계는 **"그 모델을 어떻게 API로 노출하고, 앱이 어떻게 소비하는가"** 입니다. 이 가이드는 PAIS(Private AI Services)가 제공하는 **OpenAI 호환 API**를 중심으로, 추론 엔드포인트와 에이전트(RAG) API, 인증, MCP 도구, 관측성, 레퍼런스 구현을 생애주기 순서로 정리합니다.
 
 핵심 메시지는 하나입니다. **기존 OpenAI 코드의 `base_url`만 사내 PAIS로 바꾸면, 데이터가 외부로 나가지 않는 사내 추론으로 그대로 전환됩니다.**
 
-한 가지 단서가 PAIS 3.0부터 붙습니다. 같은 `base_url` 뒤에는 이제 사내 GPU의 로컬 모델뿐 아니라 다른 인스턴스의 공유 모델과 Google Gemini 같은 원격 클라우드 모델도 놓일 수 있습니다. 앱 코드는 구분하지 않지만 데이터의 행선지는 다르므로, `GET /models`에 보이는 모델 중 어느 것이 원격인지는 앱 팀이 알고 있어야 합니다([02 2.5.1절](docs/02-serving-api-architecture.md), 반출 통제는 [⑤ 05 5.6절](../05-security/docs/05-data-governance.md)).
+한 가지 단서가 PAIS 3.0부터 붙습니다. 같은 `base_url`에는 이제 사내 GPU의 로컬 모델뿐 아니라 다른 인스턴스의 공유 모델과 Google Gemini 같은 원격 클라우드 모델도 연결될 수 있습니다. 앱 코드는 구분하지 않지만 데이터의 행선지는 다르므로, `GET /models`에 보이는 모델 중 어느 것이 원격인지는 앱 팀이 알고 있어야 합니다([02 2.5.1절](docs/02-serving-api-architecture.md), 반출 통제는 [⑤ 05 5.6절](../05-security/docs/05-data-governance.md)).
 
 > **VCF Private AI 가이드 시리즈 — ③ 서빙 API**, 7부작 중 한 편입니다. [전체 7개 보기 — 시리즈 허브](../README.md), 상위 전략 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)
 
@@ -31,7 +31,7 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 
 ## 문서 구성
 
-기초 동작 원리(00)를 먼저 짚고, 추론을 노출하고(서빙) → 호출하고(소비) → 통제하는(인증, 도구, 운영) 생애주기 순서입니다.
+기초 동작 원리(00)를 먼저 파악하고, 추론을 노출하고(서빙) → 호출하고(소비) → 통제하는(인증, 도구, 운영) 생애주기 순서입니다.
 
 | 순서 | 문서 | 내용 |
 |---|---|---|
@@ -52,11 +52,11 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 - **"GPU, 양자화, 동시성 같은 기초부터 알고 싶어요"** → [00](docs/00-serving-primer.md)
 - **"왜 외부 LLM API 대신 사내 API인가요?"** → [01](docs/01-why-serving-api.md)
 - **"서빙 아키텍처가 어떻게 생겼나요? / 모델이 API가 되기까지 절차는?"** → [02](docs/02-serving-api-architecture.md)
-- **"기존 OpenAI 코드를 그대로 쓸 수 있나요?"** → [03](docs/03-openai-compatible-endpoints.md) + [08](docs/08-reference-implementation.md)
+- **"기존 OpenAI 코드를 그대로 사용할 수 있나요?"** → [03](docs/03-openai-compatible-endpoints.md) + [08](docs/08-reference-implementation.md)
 - **"RAG를 직접 짜지 않고 API로 받고 싶어요"** → [04](docs/04-agent-rag-api.md)
 - **"토큰은 어떻게 받나요?"** → [05](docs/05-auth-and-gateway.md)
 - **"에이전트에 사내 DB, 도구를 붙이고 싶어요"** → [06](docs/06-mcp-tools-api.md)
-- **"운영하면서 무엇을 봐야 하나요?"** → [07](docs/07-observability-ops.md)
+- **"운영하면서 무엇을 모니터링해야 하나요?"** → [07](docs/07-observability-ops.md)
 
 ---
 
@@ -67,7 +67,7 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 | **PAIF** | Private AI Foundation with NVIDIA — VCF 코어 구독에 포함된 AI 인프라 |
 | **PAIS** | Private AI Services — Model Runtime, RAG, Agent Builder 등 관리형 AI 서비스 레이어 |
 | **Model Endpoint** | 단일 모델을 OpenAI 호환 API로 노출하는 서빙 단위 (상태 비저장) |
-| **Agent** | Model Endpoint + Knowledge Base(+MCP 도구)를 묶어 RAG, 세션까지 캡슐화한 API |
+| **Agent** | Model Endpoint + Knowledge Base(+MCP 도구)를 결합해 RAG, 세션까지 캡슐화한 API |
 | **API Gateway** | Model Runtime의 진입점 — 인증, 인가, 로드밸런싱 담당 |
 | **OpenAI 호환** | `/compatibility/openai/v1` 경로로 OpenAI SDK, 클라이언트를 그대로 사용 가능 |
 | **MCP** | Model Context Protocol — 에이전트가 외부 데이터와 도구를 표준으로 연동 (PAIS 2.1부터) |
@@ -81,7 +81,7 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 1. **① 인프라** — [VCF Private AI Foundation 실무 가이드](../01-infra/README.md) — PAIF/PAIS/DLVM(Deep Learning VM, 딥러닝 가상머신) 구축과 운영
 2. **② 데이터** — [Private AI를 위한 엔터프라이즈 vectorDB 가이드](../02-vectordb/README.md) — PostgreSQL + pgvector
 3. **③ 서빙(API)** — 본 가이드
-4. **④ 통합(RAG)** — [엔드투엔드 RAG 레퍼런스 아키텍처](../04-rag/README.md) — ①②③을 묶는 RAG 레퍼런스
+4. **④ 통합(RAG)** — [엔드투엔드 RAG 레퍼런스 아키텍처](../04-rag/README.md) — ①②③을 통합하는 RAG 레퍼런스
 5. **⑤ 보안과 거버넌스** — [Private AI 보안과 거버넌스 통합 가이드](../05-security/README.md) — 전 계층 보안, 거버넌스, 감사
 6. **⑥ 사이징, 용량, 비용** — [사이징, 용량, 비용(TCO) 가이드](../06-sizing-cost/README.md) — 워크로드, GPU, VKS 사이징, TCO
 7. **⑦ 통합 설계** — [VCF Private AI 통합 설계 가이드](../07-design/README.md) — ①–⑥의 설계 결정을 하나의 플랫폼 설계로 종합
@@ -104,7 +104,7 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 그 위에 엔터프
 
 ## 면책 조항 (Disclaimer)
 
-**작성자 관점** — VCF + PAIF + PAIS 조합으로 모델을 서빙하는 방향을 권장하는 관점으로 쓰여 있습니다. 다만 PAIS 관리형 서빙이 맞지 않는 경우(미지원 엔진, 기존 MLOps 자산 등)도 솔직하게 다룹니다.
+**작성자 관점** — VCF + PAIF + PAIS 조합으로 모델을 서빙하는 방향을 권장하는 관점으로 작성했습니다. 다만 PAIS 관리형 서빙이 맞지 않는 경우(미지원 엔진, 기존 MLOps 자산 등)도 솔직하게 다룹니다.
 
 **비공식 문서** — 공개된 공식 기술 문서, API 레퍼런스, 릴리스 노트를 기반으로 작성한 비공식 실무 레퍼런스입니다. Broadcom, VMware, NVIDIA 또는 기타 벤더의 공식 입장을 대변하지 않습니다.
 

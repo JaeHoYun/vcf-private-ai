@@ -1,9 +1,9 @@
 # 00 — What's New (VCF 9.1.x / PAIF 9.1.x / PAIS 2.1과 3.0)
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
-> 이 문서는 **9.0.x에서 9.1로 올라오는 분**, **9.1 / PAIS 2.1을 운영하다가 9.1.1 / PAIS 3.0으로 올라오는 분**, **9.1.x를 처음 접하는 분** 모두를 위한 변경 요약입니다. 0.1절부터 0.6절까지는 9.0.x 대비 9.1의 변경, 0.7절부터 0.9절까지는 9.1 대비 9.1.1 / PAIS 3.0의 변경이며, 0.4절과 0.5절의 표는 세 버전을 함께 보여 줍니다. 어느 기능이 어느 버전에서 들어왔는지 한 표로 보려면 0.8절로 바로 가시면 됩니다.
+> 이 문서는 **9.0.x에서 9.1로 업그레이드하는 분**, **9.1 / PAIS 2.1을 운영하다가 9.1.1 / PAIS 3.0으로 업그레이드하는 분**, **9.1.x를 처음 접하는 분** 모두를 위한 변경 요약입니다. 0.1절부터 0.6절까지는 9.0.x 대비 9.1의 변경, 0.7절부터 0.9절까지는 9.1 대비 9.1.1 / PAIS 3.0의 변경이며, 0.4절과 0.5절의 표는 세 버전을 함께 보여 줍니다. 어느 기능이 어느 버전에서 추가됐는지 한 표로 확인하려면 0.8절로 바로 가시면 됩니다.
 
-VCF 9.1은 2026년 5월 GA되었으며, "프로덕션 AI를 위한 안전하고 비용 효율적인 프라이빗 클라우드"를 표방했습니다. AI 관점에서는 PAIF 9.1 / **Private AI Services(PAIS) 2.1**이 함께 출시되며 **에이전트, 외부 도구 연동(MCP), 에어갭, 관측성**이 크게 보강됐습니다. 이어 2026년 9월 3일 VCF 9.1.1이 유지보수 릴리스로 GA됐고, 같은 날 PAIF 9.1.1과 **PAIS 3.0**이 나오면서 공유 모델 호스팅, 원격 클라우드 모델 연결, API 토큰이 추가됐습니다(0.7절).
+VCF 9.1은 2026년 5월 GA되었으며, "프로덕션 AI를 위한 안전하고 비용 효율적인 프라이빗 클라우드"를 표방했습니다. AI 관점에서는 PAIF 9.1 / **Private AI Services(PAIS) 2.1**이 함께 출시되며 **에이전트, 외부 도구 연동(MCP), 에어갭, 관측성**이 크게 보강됐습니다. 이어 2026년 9월 3일 VCF 9.1.1이 유지보수 릴리스로 GA됐고, 같은 날 PAIF 9.1.1과 **PAIS 3.0**이 출시되면서 공유 모델 호스팅, 원격 클라우드 모델 연결, API 토큰이 추가됐습니다(0.7절).
 
 ---
 
@@ -27,7 +27,7 @@ VCF 9.1은 2026년 5월 GA되었으며, "프로덕션 AI를 위한 안전하고 
 
 ## 0.2 VCF 9.1 플랫폼 변화 (AI 인프라에 영향)
 
-PAIF는 VCF 위에서 동작하므로, 플랫폼 레벨 변화가 AI 운영에 직접 영향을 줍니다.
+PAIF는 VCF를 기반으로 동작하므로, 플랫폼 레벨 변화가 AI 운영에 직접 영향을 줍니다.
 
 | 변화 | 내용 | AI 워크로드 관점 |
 |------|------|----------------|
@@ -112,13 +112,13 @@ VKS가 **Dynamic Resource Allocation(DRA)** 기반의 개방형 GPU 스케줄링
 | **TensorFlow 카탈로그 번들** | 축소/비권장 흐름 유지 | PyTorch 기반 권장 |
 | **DirectPath I/O "vMotion 제한" 서술** | 폐기 | Enhanced DirectPath I/O는 vMotion 유지 ([0.3-(5)](#5-enhanced-directpath-io-주의-기존-서술-정정)) |
 | **Native S3 Object Storage** | **Tech Preview (9.1.x, 9.1.1에서도 유지)** | 프로덕션 비적용. 기존 오브젝트 스토리지 유지, GA 시 재검토 |
-| **DLVM 콘솔, Miniforge** | DLVM 9.1에서 deprecated 예고 | 개발 환경은 DLVM 9.1.1의 Deep Learning Container 이미지 등 컨테이너 기반으로 옮기는 흐름을 전제로 계획 |
+| **DLVM 콘솔, Miniforge** | DLVM 9.1에서 deprecated 예고 | 개발 환경은 DLVM 9.1.1의 Deep Learning Container 이미지 등 컨테이너 기반으로 전환하는 흐름을 전제로 계획 |
 | **레거시 non-chat completions API** | PAIS 3.0에서 deprecated (OpenAI 호환 API와 Agent Builder API 양쪽) | 신규 코드는 chat completions만 사용. 기존 호출부 점검 ([③ 03](../../03-serving-api/docs/03-openai-compatible-endpoints.md)) |
 | **에이전트 API `completion_role` 필드** | PAIS 3.0에서 제거. 응답 role은 항상 assistant | 해당 필드를 읽는 클라이언트 코드 수정 |
 | **boolean 필드 느슨한 값** | PAIS 3.0에서 엄격 검증 | "true" / "false" 문자열 등 비정규 값을 보내는 클라이언트 점검 |
 | **PostgreSQL 12, 13 (DSM)** | DSM 9.1.1에서 지원 제거 | DSM 9.1.1 배포 전에 14 이상으로 업그레이드 ([② 01](../../02-vectordb/docs/01-version-compatibility.md)) |
 | **TanzuKubernetesCluster(TKC) API** | VKS 3.7에서 종료(VKr 1.32가 마지막) | 브라운필드 환경의 TKC 기반 클러스터는 ClusterClass 기반으로 전환 후 VKS 3.7 업그레이드 |
-| **VCF Automation 퍼블릭 클라우드 리소스 관리** | VCF Automation 9.1.1에서 deprecated, 기본 비활성 | AI 인프라 범위 밖이나 같은 VCF Automation을 쓰는 조직은 영향 확인 |
+| **VCF Automation 퍼블릭 클라우드 리소스 관리** | VCF Automation 9.1.1에서 deprecated, 기본 비활성 | AI 인프라 범위 밖이나 같은 VCF Automation을 사용하는 조직은 영향 확인 |
 
 > 위 deprecated 항목의 정확한 상태는 적용 직전 [PAIF 9.1 / 9.1.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)와 [PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)로 재확인하시기 바랍니다.
 
@@ -145,7 +145,7 @@ VKS가 **Dynamic Resource Allocation(DRA)** 기반의 개방형 GPU 스케줄링
 
 ## 0.7 9.1.1 / PAIS 3.0 변경 (2026-09-03 GA)
 
-VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱신한 유지보수 릴리스이며, 공식 릴리스 노트 스스로 "지원성 개선 중심"이라고 밝힙니다. AI 관점의 실질 변경은 같은 날 나온 PAIS 3.0과 DLVM 9.1.1 이미지에 있습니다. PAIF 9.1.1 릴리스 노트의 변경 항목도 이 두 가지뿐입니다.
+VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱신한 유지보수 릴리스이며, 공식 릴리스 노트 스스로 "지원성 개선 중심"이라고 밝힙니다. AI 관점의 실질 변경은 같은 날 출시된 PAIS 3.0과 DLVM 9.1.1 이미지에 있습니다. PAIF 9.1.1 릴리스 노트의 변경 항목도 이 두 가지뿐입니다.
 
 ### 0.7.1 PAIS 3.0 변경 요약
 
@@ -167,17 +167,17 @@ VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱�
 
 ### 0.7.2 PAIS 2.1.2 (2026-08-17) 수정 사항
 
-3.0 이전에 2.1 라인의 수정 릴리스가 한 번 있었습니다. 2.1을 유지하는 환경이라면 최소 2.1.2로 올리는 것이 좋습니다. 수정된 문제는 패키지 다운로드 URL 오류, 로컬 레지스트리 미러와 5000 포트 충돌, 중간 CA 인증서 갱신 요구, CPU 추론에서 MCP 도구 사용 시 reasoning 모델 타임아웃, Photon OS 패키지 갱신, 지원 번들 로그 수집 개선입니다.
+3.0 이전에 2.1 라인의 수정 릴리스가 한 번 있었습니다. 2.1을 유지하는 환경이라면 최소 2.1.2로 업그레이드하는 것이 좋습니다. 수정된 문제는 패키지 다운로드 URL 오류, 로컬 레지스트리 미러와 5000 포트 충돌, 중간 CA 인증서 갱신 요구, CPU 추론에서 MCP 도구 사용 시 reasoning 모델 타임아웃, Photon OS 패키지 갱신, 지원 번들 로그 수집 개선입니다.
 
-### 0.7.3 VCF 9.1.1 플랫폼 변경 중 AI 인프라에 닿는 것
+### 0.7.3 VCF 9.1.1 플랫폼 변경 중 AI 인프라에 영향을 주는 것
 
 | 컴포넌트 | 변경 | AI 인프라 관점 |
 |----------|------|----------------|
 | VCF Operations | AI Assistant(백엔드로 PAIS 모델 엔드포인트 또는 사설 Google Gemini 인스턴스 선택), VKS 메트릭 OpenTelemetry 2초 간격 스트리밍과 멀티클러스터 모니터링, Grafana 대시보드 임포트 | 플랫폼이 자기 모델로 자기를 진단하는 구성이 가능. VKS 관측이 PAIS 관측과 같은 표준(OTel)으로 맞춰짐 ([문서 10](10-operations.md)) |
 | VCF Operations | AD / LDAP 로그인 시 온디맨드 조회, 비밀번호 정책과 인증서 관리 범위 확장(vSphere Supervisor, NSX Edge, 라이선스 서버 포함), Salt 기반 구성 API, 컴팩트 폼팩터(CPU / 메모리 최대 40% 절감), 라이선스 서버 IPv6 | 인증서 회전 런북에 Supervisor 인증서가 편입됨 ([문서 10](10-operations.md)) |
-| vCenter | 컴퓨트 정책으로 VM-VM affinity / anti-affinity 규칙, 메모리 티어링 환경에서 HA admission control이 DRAM을 별도 추적, Secure Boot PK 자동 교정 | 모델 레플리카 VM을 호스트 분산하는 근거가 공식 기능이 됨 ([⑦ 04](../../07-design/docs/04-network-storage-availability.md)) |
+| vCenter | 컴퓨트 정책으로 VM-VM affinity / anti-affinity 규칙, 메모리 티어링 환경에서 HA admission control이 DRAM을 별도 추적, Secure Boot PK 자동 교정 | 모델 레플리카 VM을 호스트 분산하는 근거가 공식 기능으로 마련됨 ([⑦ 04](../../07-design/docs/04-network-storage-availability.md)) |
 | VCF Automation | VLAN-backed VPC, 퍼블릭 클라우드 리소스 관리 deprecated, BYO Velero deprecated | VKS 백업은 Broadcom 제공 Velero 패키지로 |
-| DSM 9.1.1 | PostgreSQL 18 지원, 읽기 복제, set_user 확장, SQL Server 2025, VKS 3.7 연동, Supervisor 크로스클러스터 HA. Avi와 NSX를 함께 쓰는 클러스터는 VCF 9.1.0 이상으로 올리기 전에 DSM을 9.1.1로 먼저 올려야 DB 다운타임을 피함 | 벡터 DB 운영 ([② 06](../../02-vectordb/docs/06-operations.md)) |
+| DSM 9.1.1 | PostgreSQL 18 지원, 읽기 복제, set_user 확장, SQL Server 2025, VKS 3.7 연동, Supervisor 크로스클러스터 HA. Avi와 NSX를 함께 사용하는 클러스터는 VCF 9.1.0 이상으로 업그레이드하기 전에 DSM을 9.1.1로 먼저 업그레이드해야 DB 다운타임을 피함 | 벡터 DB 운영 ([② 06](../../02-vectordb/docs/06-operations.md)) |
 | VKS 3.7 | VKr 1.33–1.36, ClusterClass v3.7.0, 워커 노드 최대 250, 5노드 컨트롤 플레인, 네이티브 OIDC, Workload Identity Federation, 애드온 관리 프레임워크(지원 4단계), TKC API 종료 | 클러스터 사이징 상한과 ID 연동 ([⑥ 04](../../06-sizing-cost/docs/04-vks-cluster-sizing.md)) |
 | Tech Preview | GitOps Service(Argo CD 내장), vSAN Object Storage(S3 호환) | 프로덕션 비적용 |
 | 인증 | vSphere 9.1이 NVIDIA-Certified Hypervisor 인증 획득 | GPU 워크로드 성능 근거 자료로 활용 가능 |
@@ -199,7 +199,7 @@ VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱�
 
 ## 0.8 버전별 기능 이력 (PAIS 2.0.89 / 2.1 / 3.0)
 
-"우리 환경은 2.1인데 이 기능을 쓸 수 있나"를 답하는 표입니다. 본문에서 "PAIS 3.0부터"로 표기한 대목은 이 표의 3.0 열에 해당합니다. 모든 버전을 반드시 최신으로 올려야 하는 것은 아니므로, 운영 중인 버전의 열만 보고 해당 절을 골라 읽으시면 됩니다.
+"우리 환경은 2.1인데 이 기능을 사용할 수 있나"를 답하는 표입니다. 본문에서 "PAIS 3.0부터"로 표기한 대목은 이 표의 3.0 열에 해당합니다. 모든 버전을 반드시 최신으로 업그레이드해야 하는 것은 아니므로, 운영 중인 버전의 열만 확인하고 해당 절을 골라 읽으시면 됩니다.
 
 | 기능 | 2.0.89 (VCF 9.0.x, 2025-09) | 2.1 (VCF 9.1, 2026-05) | 3.0 (VCF 9.1.1, 2026-09) | 본문 위치 |
 |------|:---:|:---:|:---:|-----------|
@@ -233,7 +233,7 @@ VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱�
 
 ## 0.9 9.1 → 9.1.1 / PAIS 2.1 → 3.0 체크리스트
 
-0.6절의 9.0.x → 9.1 체크리스트를 이미 마친 환경이 9.1.1로 올라갈 때의 추가 항목입니다.
+0.6절의 9.0.x → 9.1 체크리스트를 이미 마친 환경이 9.1.1로 업그레이드할 때의 추가 항목입니다.
 
 ```
 - [계획] VCF 9.1.1.0, PAIF 9.1.1, PAIS 3.0, DLVM 9.1.1, DSM 9.1.1 릴리스 노트 검토

@@ -2,33 +2,33 @@
 
 [← 목차로](../README.md)
 
-이 부록은 본문에 쓰인 약어와 기술 용어를 풀어 둔 **용어집**과 참조 링크를 담습니다. 본문에서 모르는 용어를 만나면 여기에서 찾으세요.
+이 부록은 본문에 사용된 약어와 기술 용어를 설명한 **용어집**과 참조 링크를 담습니다. 본문에서 모르는 용어를 만나면 여기에서 찾으세요.
 
 ## A1.1 용어집
 
-### 가. 이 가이드에서 쓰는 용어
+### 가. 이 가이드에서 사용하는 용어
 
 | 용어 | 풀이 |
 |------|------|
-| 설계 결정(design decision) | 설계 중 둘 이상의 경로 가운데 하나를 골라야 하는 갈림길. 이 가이드의 중심 개념 |
+| 설계 결정(design decision) | 설계 중 둘 이상의 경로 가운데 하나를 골라야 하는 선택 지점. 이 가이드의 중심 개념 |
 | D1–D16 | 16개 설계 결정에 붙인 식별 번호 (→ [06.1](../docs/06-decision-forks.md)) |
-| 결정 요인(driver) | 설계 결정을 끌고 가는 요구사항과 제약 (워크로드, SLO, 규제, 예산, 기존 자산, 스킬셋 등) (→ [01](../docs/01-design-process.md)) |
+| 결정 요인(driver) | 설계 결정을 좌우하는 요구사항과 제약 (워크로드, SLO, 규제, 예산, 기존 자산, 스킬셋 등) (→ [01](../docs/01-design-process.md)) |
 | 설계 결정 기록 | 결정 하나의 선택, 근거, 트레이드오프를 한 장으로 남기는 기록 (→ [06.3](../docs/06-decision-forks.md)) |
-| 블루프린트(소, 중, 대) | 여러 설계 결정을 미리 묶어 둔 레퍼런스 설계 출발점 (→ [02](../docs/02-reference-blueprints.md)) |
+| 블루프린트(소, 중, 대) | 여러 설계 결정을 미리 조합해 둔 레퍼런스 설계 출발점 (→ [02](../docs/02-reference-blueprints.md)) |
 | 그린필드(greenfield), 브라운필드(brownfield) | 처음부터 새로 짓는 환경 / 기존 자산(온프렘 AI, MLOps)이 이미 있는 환경 (→ [08](../docs/08-brownfield-integration.md)) |
-| 점진 통합(incremental integration) | 기존 환경을 한 번에 바꾸지 않고 단계로 나눠 PAIF로 옮기는 방식 (→ [08](../docs/08-brownfield-integration.md)) |
-| 온프렘 회귀(repatriation) | 퍼블릭 클라우드에 둔 워크로드를 다시 사내(온프렘)로 들이는 것. 한국어 '회수'는 reclaim/unprovisioning으로 읽히기 쉬워 '온프렘 회귀'로 표기 (→ [08](../docs/08-brownfield-integration.md)) |
+| 점진 통합(incremental integration) | 기존 환경을 한 번에 바꾸지 않고 단계로 나눠 PAIF로 이관하는 방식 (→ [08](../docs/08-brownfield-integration.md)) |
+| 온프렘 회귀(repatriation) | 퍼블릭 클라우드에서 운영하던 워크로드를 다시 사내(온프렘)로 이전하는 것. 한국어 '회수'는 reclaim/unprovisioning으로 읽히기 쉬워 '온프렘 회귀'로 표기 (→ [08](../docs/08-brownfield-integration.md)) |
 
 ### 나. VCF, 인프라
 
 | 용어 | 풀이 |
 |------|------|
-| VCF (VMware Cloud Foundation) | 컴퓨트, 스토리지, 네트워크, 쿠버네티스를 묶는 프라이빗 클라우드 플랫폼 |
+| VCF (VMware Cloud Foundation) | 컴퓨트, 스토리지, 네트워크, 쿠버네티스를 통합한 프라이빗 클라우드 플랫폼 |
 | 통합(consolidated) 토폴로지 | 관리와 워크로드를 한 클러스터에 합친 최소 구성 (Private AI 비권고) |
 | 표준(standard) 토폴로지 | 관리 도메인과 워크로드 도메인을 분리한 구성 (Private AI 기본) |
-| 워크로드 도메인 | 워크로드 전용으로 분리한 클러스터 묶음 |
+| 워크로드 도메인 | 워크로드 전용으로 분리한 클러스터 그룹 |
 | VKS (vSphere Kubernetes Service) | VCF의 관리형 쿠버네티스 서비스 |
-| Supervisor | vSphere에 쿠버네티스 제어부를 올린 계층 |
+| Supervisor | vSphere에 쿠버네티스 제어부를 통합한 계층 |
 | vSAN | VCF에 통합된 하이퍼컨버지드(HCI) 스토리지 |
 | vSAN ESA (Express Storage Architecture) | vSAN 차세대 고성능 아키텍처 |
 | HCI (Hyper-Converged Infrastructure) | 컴퓨트와 스토리지를 노드 안에 통합한 방식 |
@@ -51,8 +51,8 @@
 
 | 용어 | 풀이 |
 |------|------|
-| PAIF (Private AI Foundation with NVIDIA) | VCF 위에서 GPU, 드라이버, 모델을 표준화하는 AI 인프라 계층 |
-| PAIS (Private AI Services) | 모델 서빙, RAG, 에이전트를 관리형으로 올리는 서비스 계층 |
+| PAIF (Private AI Foundation with NVIDIA) | VCF를 기반으로 GPU, 드라이버, 모델을 표준화하는 AI 인프라 계층 |
+| PAIS (Private AI Services) | 모델 서빙, RAG, 에이전트를 관리형으로 제공하는 서비스 계층 |
 | vGPU | 가상 GPU. 호스트 GPU를 가상머신에 나눠 주는 방식 (NVAIE 라이선스 필요) |
 | MIG (Multi-Instance GPU) | GPU를 하드웨어 수준으로 분할하는 기능 |
 | 타임슬라이싱(time-slicing) | GPU를 시간 분할로 여러 VM이 공유 |
@@ -65,7 +65,7 @@
 | Model Runtime, Model Gallery, Agent Builder | PAIS의 모델 실행, 카탈로그, 에이전트 모듈 |
 | MCP (Model Context Protocol) | 모델과 도구를 잇는 표준 인터페이스 |
 | Artifact Mirroring Tool | 에어갭 환경에서 모델을 반입하는 도구와 절차 (동작과 명령 세부는 릴리스별로 다르므로 공식 문서로 확인) |
-| MLOps | 모델 학습, 배포, 운영을 자동화하는 방법론, 도구 묶음 (기존 온프렘 MLOps의 PAIF 통합은 → [08](../docs/08-brownfield-integration.md)) |
+| MLOps | 모델 학습, 배포, 운영을 자동화하는 방법론, 도구 세트 (기존 온프렘 MLOps의 PAIF 통합은 → [08](../docs/08-brownfield-integration.md)) |
 
 ### 라. 데이터와 RAG
 
@@ -76,7 +76,7 @@
 | 임베딩(embedding) | 텍스트 등을 수치 벡터로 변환한 것 |
 | pgvector | PostgreSQL의 벡터 검색 확장 |
 | DSM (Data Services Manager) | VMware의 관리형 데이터 서비스(여기서는 PostgreSQL) |
-| ANN (Approximate Nearest Neighbor) | 근사 최근접 이웃 검색 (대규모 벡터에 쓰는 빠른 검색) |
+| ANN (Approximate Nearest Neighbor) | 근사 최근접 이웃 검색 (대규모 벡터에 사용하는 빠른 검색) |
 
 ### 마. 운영과 가용성
 
@@ -102,7 +102,7 @@
 | OIDC, OAuth 2.0 | 표준 인증과 인가 프로토콜 |
 | 페더레이션(federation) | 외부 IdP와 신원을 연동하는 것 |
 | soft, hard 격리 | 네임스페이스 논리 격리 / 클러스터와 도메인 물리 격리 |
-| 멀티테넌시 | 여러 테넌트(팀과 조직)가 한 플랫폼을 공유하는 것. 전사 확장 단계에서 팀과 사업부별 격리와 자원 배분의 기준이 됨 (→ [05 5.1](../docs/05-tenancy-security.md#51-결정-멀티테넌시-격리--soft네임스페이스-vs-hard클러스터와-도메인-분리), [02 2.5](../docs/02-reference-blueprints.md#25-전사-확장멀티테넌트)) |
+| 멀티테넌시 | 여러 테넌트(팀과 조직)가 한 플랫폼을 공유하는 것. 전사 확장 단계에서 팀과 사업부별 격리와 자원 배분의 기준으로 작용함 (→ [05 5.1](../docs/05-tenancy-security.md#51-결정-멀티테넌시-격리--soft네임스페이스-vs-hard클러스터와-도메인-분리), [02 2.5](../docs/02-reference-blueprints.md#25-전사-확장멀티테넌트)) |
 
 ## A1.2 참조 링크
 

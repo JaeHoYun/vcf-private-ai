@@ -3,13 +3,13 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 경로와 필드는 [공식 PAIS API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) 기준이며, 버전에 따라 변경될 수 있습니다.
 
-[03](03-openai-compatible-endpoints.md)의 Model Endpoint가 "모델 1회 호출"이라면, **Agent API는 RAG, 세션, 도구를 묶어 한 번에 호출**합니다. 대부분의 문서 기반 Q&A 앱은 RAG 로직을 직접 구현하는 대신 이 API를 호출하는 편이 구현 분량이 적고 오류 가능성도 낮습니다.
+[03](03-openai-compatible-endpoints.md)의 Model Endpoint가 "모델 1회 호출"이라면, **Agent API는 RAG, 세션, 도구를 통합해 한 번에 호출**합니다. 대부분의 문서 기반 Q&A 앱은 RAG 로직을 직접 구현하는 대신 이 API를 호출하는 편이 구현 분량이 적고 오류 가능성도 낮습니다.
 
 ---
 
 ## 4.1 RAG를 구성하는 리소스 4종
 
-Agent가 문서 기반으로 답하려면, 그 뒤에 데이터 파이프라인 리소스가 있어야 합니다. PAIS는 이를 각각의 API 리소스로 노출합니다.
+Agent가 문서 기반으로 답하려면, 백엔드에 데이터 파이프라인 리소스가 구성되어 있어야 합니다. PAIS는 이를 각각의 API 리소스로 노출합니다.
 
 ```
 Data Source ──▶ Knowledge Base ──▶ Index ──▶ (검색) ──▶ Agent
@@ -20,11 +20,11 @@ Data Source ──▶ Knowledge Base ──▶ Index ──▶ (검색) ──�
 | 리소스 | 역할 | 핵심 경로(컨트롤 플레인) |
 |--------|------|------------------------|
 | **Data Source** | 원천 데이터 연결 정의 | `/control/data-sources` |
-| **Knowledge Base** | 데이터 소스를 묶는 논리 단위 | `/control/knowledge-bases` |
+| **Knowledge Base** | 데이터 소스를 그룹화하는 논리 단위 | `/control/knowledge-bases` |
 | **Index** | 청크와 임베딩 색인 | `/control/knowledge-bases/{kb-id}/indexes` |
-| **Agent** | 모델 + KB(+도구)를 묶은 호출 단위 | `/compatibility/openai/v1/agents` |
+| **Agent** | 모델 + KB(+도구)를 결합한 호출 단위 | `/compatibility/openai/v1/agents` |
 
-> OpenAI 호환 인터페이스(`/compatibility/openai/v1`)에는 **모델과 에이전트 호출**이, 컨트롤 플레인(`/control`)에는 **데이터, 인덱스, MCP(Model Context Protocol) 도구 관리**가 놓입니다. 호출(런타임) vs 관리(구성)의 분리로 이해하면 경로를 기억하기 쉽습니다.
+> OpenAI 호환 인터페이스(`/compatibility/openai/v1`)에는 **모델과 에이전트 호출**이, 컨트롤 플레인(`/control`)에는 **데이터, 인덱스, MCP(Model Context Protocol) 도구 관리**가 속합니다. 호출(런타임) vs 관리(구성)의 분리로 이해하면 경로를 기억하기 쉽습니다.
 
 ---
 
@@ -54,7 +54,7 @@ UI로 구성할 수도 있지만, GitOps, 자동화를 위해 API로 구성하�
 | 색인 트리거 | `POST .../indexes/{index-id}/indexings` → 상태 `PENDING` |
 | 진행 확인 | `GET .../indexes/{index-id}/active-indexing` → `PENDING`/`DONE` |
 
-> `embeddings_model_endpoint`에는 PAIS 3.0부터 원격 클라우드 임베딩 모델도 지정할 수 있습니다. 이 경우 색인 때 지식베이스의 문서 본문 전체가 그 서비스로 나가므로, 질의 시점의 반출보다 훨씬 넓은 반출입니다. 원격 임베딩은 [⑤ 05 5.6절](../../05-security/docs/05-data-governance.md)의 허용 목록에 든 지식베이스에만 쓰고, 인덱싱과 질의에 같은 임베딩 모델을 써야 검색이 일관되므로 나중에 사내 모델로 바꾸려면 전체 재색인이 필요하다는 점도 미리 계산에 넣으십시오. 3.0은 지식베이스와 인덱스 복제(clone)도 지원하므로, 임베딩 모델을 바꿔 보는 실험은 복제본에서 하는 편이 안전합니다.
+> `embeddings_model_endpoint`에는 PAIS 3.0부터 원격 클라우드 임베딩 모델도 지정할 수 있습니다. 이 경우 색인 때 지식베이스의 문서 본문 전체가 그 서비스로 나가므로, 질의 시점의 반출보다 훨씬 넓은 반출입니다. 원격 임베딩은 [⑤ 05 5.6절](../../05-security/docs/05-data-governance.md)의 허용 목록에 포함된 지식베이스에만 사용하고, 인덱싱과 질의에 같은 임베딩 모델을 사용해야 검색이 일관되므로 나중에 사내 모델로 바꾸려면 전체 재색인이 필요하다는 점도 미리 계산에 넣으십시오. 3.0은 지식베이스와 인덱스 복제(clone)도 지원하므로, 임베딩 모델을 바꿔 보는 실험은 복제본에서 하는 편이 안전합니다.
 
 **④ 인덱스 직접 검색 (RAG 디버깅에 유용)**
 
@@ -63,7 +63,7 @@ UI로 구성할 수도 있지만, GitOps, 자동화를 위해 API로 구성하�
 | 검색 | `POST .../indexes/{index-id}/search` (`text`, `top_k`, `similarity_cutoff`) |
 | 응답 | `chunks[]`(`text`, `score`, `document_id`, `origin_name`, `metadata`) |
 
-> `search`는 **Agent를 거치지 않고 검색 품질만 따로 점검**할 때 매우 유용합니다. 답이 이상하면 "검색이 문제인지(잘못된 청크가 올라옴) 생성이 문제인지(좋은 청크인데 답이 틀림)"를 이 엔드포인트로 분리 진단할 수 있습니다. 벡터 인덱스와 청크 튜닝의 상세는 [② vectorDB 가이드](../../02-vectordb/README.md) 참조.
+> `search`는 **Agent를 거치지 않고 검색 품질만 따로 점검**할 때 매우 유용합니다. 답이 이상하면 "검색이 문제인지(잘못된 청크가 검색됨) 생성이 문제인지(좋은 청크인데 답이 틀림)"를 이 엔드포인트로 분리 진단할 수 있습니다. 벡터 인덱스와 청크 튜닝의 상세는 [② vectorDB 가이드](../../02-vectordb/README.md) 참조.
 
 ---
 
@@ -103,13 +103,13 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents' \
 
 > 위 `tools`의 `link_type`, `tool_id` 값 형식은 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)의 스키마와 제품 내 Sample Code로 정확히 확인하세요. KB 연결과 MCP 도구 연결의 표기가 다를 수 있습니다.
 
-> **PAIS 3.0에서 바뀐 것.** 에이전트 API의 `completion_role` 필드가 제거됐고 응답의 role은 항상 `assistant`입니다. 이 필드를 읽거나 설정하던 클라이언트는 수정이 필요합니다. 에이전트 API의 non-chat completions 형태도 deprecated로 표시됐으므로 에이전트 호출은 4.4절의 `chat/completions` 경로만 쓰십시오. boolean 필드는 3.0부터 엄격히 검증되어 `"true"` 문자열 같은 비정규 값은 거부됩니다.
+> **PAIS 3.0에서 바뀐 것.** 에이전트 API의 `completion_role` 필드가 제거됐고 응답의 role은 항상 `assistant`입니다. 이 필드를 읽거나 설정하던 클라이언트는 수정이 필요합니다. 에이전트 API의 non-chat completions 형태도 deprecated로 표시됐으므로 에이전트 호출은 4.4절의 `chat/completions` 경로만 사용하십시오. boolean 필드는 3.0부터 엄격히 검증되어 `"true"` 문자열 같은 비정규 값은 거부됩니다.
 
 ---
 
 ## 4.4 에이전트 채팅 — `POST /agents/{id}/chat/completions`
 
-에이전트를 호출하는 런타임 엔드포인트입니다. 형태는 `chat/completions`와 같지만, **RAG, 세션이 자동으로 끼워집니다.**
+에이전트를 호출하는 런타임 엔드포인트입니다. 형태는 `chat/completions`와 같지만, **RAG, 세션이 자동으로 적용됩니다.**
 
 | 항목 | 값 |
 |------|----|
@@ -134,7 +134,7 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents/hr-assista
 
 첫 응답에서 받은 `session_id`를 **후속 요청에 그대로 실어 보내면** PAIS가 이전 맥락을 이어받습니다. 앱은 이전 `messages`를 다시 누적할 필요 없이, **이번 턴의 사용자 발화만** 보내면 됩니다(Model Endpoint와의 결정적 차이).
 
-전달 위치는 배포와 버전에 따라 **요청 바디** 또는 **헤더**가 쓰일 수 있습니다. 두 방식 모두 예시로 제시하되, 적용 전 공식 레퍼런스로 정확한 위치를 확인하시기 바랍니다.
+전달 위치는 배포와 버전에 따라 **요청 바디** 또는 **헤더**가 사용될 수 있습니다. 두 방식 모두 예시로 제시하되, 적용 전 공식 레퍼런스로 정확한 위치를 확인하시기 바랍니다.
 
 ```bash
 # 방식 A) 요청 바디에 session_id 포함 (두 번째 턴: 이번 발화만 전송)
@@ -156,7 +156,7 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents/hr-assista
 
 > **면책** — 위 `session_id`의 전달 위치(바디 필드명 `session_id` / 헤더명 `x-pais-session-id`)는 **예시**입니다. PAIS 버전에 따라 필드명, 헤더명, 전달 위치가 다를 수 있으므로, 적용 전 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 정확한 키를 확인하시기 바랍니다. `session_id`를 생략하면 매 요청이 **새 세션**으로 처리되어 맥락이 끊깁니다.
 
-> **세션을 PAIS가 관리**하므로, 앱은 대화 이력을 직접 쌓지 않아도 됩니다(Model Endpoint와의 가장 큰 차이). 다만 사용자에게 보여줄 **대화 이력의 영구 저장**(감사와 재현용)은 여전히 앱이 자체 DB에 남기는 것을 권장합니다 — PAIS 세션은 운영용 맥락이지 앱의 영구 기록이 아닙니다.
+> **세션을 PAIS가 관리**하므로, 앱은 대화 이력을 직접 누적하지 않아도 됩니다(Model Endpoint와의 가장 큰 차이). 다만 사용자에게 보여줄 **대화 이력의 영구 저장**(감사와 재현용)은 여전히 앱이 자체 DB에 남기는 것을 권장합니다 — PAIS 세션은 운영용 맥락이지 앱의 영구 기록이 아닙니다.
 
 ---
 

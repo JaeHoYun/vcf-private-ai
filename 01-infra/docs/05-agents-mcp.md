@@ -50,7 +50,7 @@
 
 ## 5.3 MCP(Model Context Protocol)란?
 
-**MCP는 에이전트(LLM)와 외부 데이터와 도구를 잇는 산업 표준 인터페이스**입니다. 9.0.x에서는 외부 시스템을 붙이려면 시스템마다 커스텀 커넥터/코드를 만들어야 했지만, PAIS는 2.1부터 **MCP 표준으로 커스텀 커넥터 없이** 연동합니다.
+**MCP는 에이전트(LLM)와 외부 데이터와 도구를 잇는 산업 표준 인터페이스**입니다. 9.0.x에서는 외부 시스템을 연동하려면 시스템마다 커스텀 커넥터/코드를 만들어야 했지만, PAIS는 2.1부터 **MCP 표준으로 커스텀 커넥터 없이** 연동합니다.
 
 ```
             [ 에이전트 (LLM) ]
@@ -61,7 +61,7 @@
    PostgreSQL  (DB)        (ITSM)       (코드/이슈)  (메신저)
 ```
 
-> 비유하자면 MCP는 표준 포트와 같습니다. 도구마다 다른 케이블(커스텀 커넥터)을 만들 필요 없이, 하나의 표준 인터페이스로 다양한 시스템을 꽂습니다.
+> 비유하자면 MCP는 표준 포트와 같습니다. 도구마다 다른 케이블(커스텀 커넥터)을 만들 필요 없이, 하나의 표준 인터페이스로 다양한 시스템을 연결합니다.
 
 ### 지원 연동 (PAIS 2.1에서 도입)
 
@@ -84,7 +84,7 @@ PAIS는 2.1부터 MCP 연동에 **중앙 관리와 자동 검색** 기능을 갖
 | **Knowledge Base의 MCP 노출 (KB-as-MCP-tool)** | Knowledge Base를 **MCP 도구로 노출**해, 앱 개발자가 컨텍스트 인식 에이전트를 구성. "exposes knowledge bases over MCP so that AI application developers can build context-aware agents" |
 | **Agentic Retrieval** | Data Indexing & Retrieval이 **MCP 도구로 통합**되어, 에이전트가 *검색 수행 여부와 검색어를 스스로 결정*. "Data Indexing and Retrieval is integrated in Private AI Services as an MCP tool, allowing agents to decide whether to retrieve content from a knowledge base and what search term to use" |
 
-> 위 세 기능은 [Broadcom TechDocs — Private AI Services 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html) 및 [MCP 도구 탐색 가이드](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html) 기준입니다. 이로써 RAG 검색은 고정 파이프라인이 아니라 **에이전트가 도구 설명을 보고 호출 여부를 판단**하는 흐름으로 동작합니다(5.4절).
+> 위 세 기능은 [Broadcom TechDocs — Private AI Services 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html) 및 [MCP 도구 탐색 가이드](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html) 기준입니다. 이로써 RAG 검색은 고정 파이프라인이 아니라 **에이전트가 도구 설명을 근거로 호출 여부를 판단**하는 흐름으로 동작합니다(5.4절).
 
 ---
 
@@ -123,14 +123,14 @@ PAIS는 2.1부터 MCP 연동에 **중앙 관리와 자동 검색** 기능을 갖
 |------------|----------|------|
 | **연결 승인** | 어떤 MCP 도구를 플랫폼에 등록할지 | Platform/Org Admin 승인제, 화이트리스트 |
 | **권한 범위** | 도구별 읽기/쓰기 범위, 접근 가능 데이터 | 최소 권한 원칙(read-only 우선), 서비스 계정 분리 |
-| **네임스페이스 경계** | 어떤 네임스페이스의 에이전트가 어떤 도구를 쓰는지 | DEV/PROD 분리, 민감 도구는 PROD 제한 |
+| **네임스페이스 경계** | 어떤 네임스페이스의 에이전트가 어떤 도구를 사용하는지 | DEV/PROD 분리, 민감 도구는 PROD 제한 |
 | **인증** | 도구 자격 증명 보관 | Secret 관리, 정기 갱신, 토큰 만료 |
 | **감사** | 도구 호출 추적 | 모든 tool call 로깅(누가, 언제, 무엇을, 결과) |
 | **데이터 유출 방지** | 외부로 나가는 컨텍스트 통제 | 입출력 필터링, 개인식별정보(PII) 마스킹, 쓰기 작업 승인 게이트 |
 
 > 위 표는 플랫폼팀이 정의해야 할 축의 요약입니다. 에이전트 신원, 자율성 수준 상한, 에이전트 레지스트리, 도구 게이트웨이 같은 보안 통제의 상세는 [⑤ 08 에이전트 보안 거버넌스](../../05-security/docs/08-agent-governance.md)가 기준입니다.
 
-> **쓰기(Write) 작업 주의:** ServiceNow 티켓 생성, Slack 전송, DB 갱신 등 **부수효과가 있는 도구**는 별도 승인 게이트와 확인 절차를 두는 것을 강력히 권장합니다. 읽기 전용으로 시작해 점진적으로 권한을 확대하세요.
+> **쓰기(Write) 작업 주의:** ServiceNow 티켓 생성, Slack 전송, DB 갱신 등 **부수효과가 있는 도구**는 별도 승인 게이트와 확인 절차를 마련하는 것을 강력히 권장합니다. 읽기 전용으로 시작해 점진적으로 권한을 확대하세요.
 
 > **에어갭 환경:** 방산, 금융, 공공처럼 외부 반출이 불가한 환경에서는 MCP 연동 대상도 **내부 시스템(사내 PostgreSQL, 내부 ITSM)** 으로 한정하고, Artifact Mirroring Tool(아티팩트 미러링 도구) 기반 폐쇄망 구성과 결합합니다 → [문서 06](06-production.md), [문서 08](08-industry.md).
 
@@ -156,7 +156,7 @@ PAIS는 **OpenTelemetry(OTel) Collector 기반 LLM 트레이싱**을 제공합�
 ## 5.7 에이전트 설계 베스트 프랙티스
 
 1. **읽기 우선, 쓰기 신중** — 부수효과 도구는 승인 게이트와 드라이런으로 시작.
-2. **도구 최소화** — 한 에이전트에 너무 많은 도구를 붙이면 LLM의 도구 선택 정확도가 떨어집니다. 역할별로 분리.
+2. **도구 최소화** — 한 에이전트에 너무 많은 도구를 연결하면 LLM의 도구 선택 정확도가 떨어집니다. 역할별로 분리.
 3. **시스템 프롬프트에 도구 사용 규칙 명시** — "확실하지 않으면 도구를 호출하지 말 것", "민감 작업은 사용자 확인" 등.
 4. **RAG + 도구의 역할 구분** — 사실/문서는 KB(RAG), 실시간/정형 데이터는 MCP 도구.
 5. **트레이싱 상시 활성화** — 환각, 오작동, 비용 급증을 단계별로 추적.

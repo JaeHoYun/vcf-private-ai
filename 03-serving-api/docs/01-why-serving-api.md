@@ -2,7 +2,7 @@
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 
-LLM을 앱에 붙이는 가장 쉬운 길은 외부 SaaS API(예: 퍼블릭 LLM API)를 호출하는 것입니다. 그런데 기업 환경에서는 이 방법이 통하지 않을 때가 많습니다. 이 문서는 **왜 모델을 사내 인프라에서 API로 직접 서빙하는가**, 그리고 **PAIS의 OpenAI 호환 API가 그 전환을 왜 쉽게 만드는가**를 정리합니다.
+LLM을 앱에 연동하는 가장 쉬운 방법은 외부 SaaS API(예: 퍼블릭 LLM API)를 호출하는 것입니다. 그런데 기업 환경에서는 이 방법이 통하지 않을 때가 많습니다. 이 문서는 **왜 모델을 사내 인프라에서 API로 직접 서빙하는가**, 그리고 **PAIS의 OpenAI 호환 API가 그 전환을 어떻게 단순화하는가**를 정리합니다.
 
 ---
 
@@ -22,7 +22,7 @@ LLM을 앱에 붙이는 가장 쉬운 길은 외부 SaaS API(예: 퍼블릭 LLM 
 
 ## 1.2 "그럼 코드를 다 새로 짜야 하나요?" — 아니요
 
-사내 추론으로 옮길 때 가장 큰 걱정은 **기존 코드를 버려야 하는가**입니다. PAIS는 이 부담을 거의 없앱니다. **PAIS Model Endpoint와 Agent는 OpenAI 호환 API 형태로 제공**되기 때문입니다.
+사내 추론으로 전환할 때 가장 큰 걱정은 **기존 코드를 버려야 하는가**입니다. PAIS는 이 부담을 거의 없앱니다. **PAIS Model Endpoint와 Agent는 OpenAI 호환 API 형태로 제공**되기 때문입니다.
 
 ```
 기존 (외부 LLM API)                    전환 후 (사내 PAIS)
@@ -39,7 +39,7 @@ LLM을 앱에 붙이는 가장 쉬운 길은 외부 SaaS API(예: 퍼블릭 LLM 
 
 OpenAI SDK, LangChain, LlamaIndex 등 OpenAI 인터페이스를 따르는 클라이언트는 대부분 **`base_url`, 인증, `model` 이름만 바꾸면** 그대로 동작합니다. (실제 예제는 [08 레퍼런스 구현](08-reference-implementation.md))
 
-같은 `base_url` 뒤에 PAIS 3.0부터는 다른 인스턴스의 공유 모델과 원격 클라우드 모델도 놓일 수 있으므로, 위 그림의 "데이터 미반출"은 사내 로컬 모델을 고른 경우에 해당합니다. `GET /models`에 보이는 모델 중 어느 것이 원격인지는 앱 팀이 알아야 하며, 연결 방식은 [02 2.5.1절](02-serving-api-architecture.md), 모델을 어디에 둘지의 결정 틀은 [⑦ 03 3.4.1절](../../07-design/docs/03-compute-gpu-topology.md)에 있습니다.
+PAIS 3.0부터는 같은 `base_url`에 다른 인스턴스의 공유 모델과 원격 클라우드 모델도 연결될 수 있으므로, 위 그림의 "데이터 미반출"은 사내 로컬 모델을 고른 경우에 해당합니다. `GET /models`에 보이는 모델 중 어느 것이 원격인지는 앱 팀이 알아야 하며, 연결 방식은 [02 2.5.1절](02-serving-api-architecture.md), 모델을 어디에 배치할지의 결정 기준은 [⑦ 03 3.4.1절](../../07-design/docs/03-compute-gpu-topology.md)에 있습니다.
 
 > "호환"은 인터페이스 호환을 뜻합니다. 모든 OpenAI 전용 파라미터와 기능이 1:1로 동일하게 동작한다는 보장은 아니므로, 사용하는 파라미터는 [03 엔드포인트](03-openai-compatible-endpoints.md)의 지원 필드와 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 확인하시기 바랍니다.
 
@@ -47,18 +47,18 @@ OpenAI SDK, LangChain, LlamaIndex 등 OpenAI 인터페이스를 따르는 클라
 
 ## 1.3 두 종류의 API — Endpoint와 Agent
 
-PAIS는 소비 방식이 다른 **두 종류의 API**를 제공합니다. 이 구분은 가이드 전체를 관통하므로 먼저 짚습니다.
+PAIS는 소비 방식이 다른 **두 종류의 API**를 제공합니다. 이 구분은 가이드 전체를 관통하므로 먼저 정리합니다.
 
 | | **Model Endpoint API** | **Agent API** |
 |---|---|---|
-| 한 줄 | 단일 모델을 그대로 호출 | RAG, 세션, 도구까지 묶어서 호출 |
+| 한 줄 | 단일 모델을 그대로 호출 | RAG, 세션, 도구까지 통합해 호출 |
 | 상태 | 상태 비저장(stateless) — 대화 이력을 앱이 관리 | 상태 저장 — 세션과 이력을 PAIS가 관리 |
 | RAG | 없음 (직접 구현) | 내장 (Knowledge Base 연결) |
 | 외부 도구 | 없음 | MCP 도구 연동 (PAIS 2.1부터) |
 | OpenAI 호환 | 지원 `chat/completions`, `embeddings` | 지원 `agents/{id}/chat/completions` |
 | 적합 | 커스텀 RAG, 단순 챗봇, 임베딩 생성 | 표준 문서 Q&A, 에이전트(대다수) |
 
-> **대부분의 RAG 앱은 Agent API가 정답입니다.** 검색, 세션, 출처 제공을 직접 짤 필요가 없습니다. 고급 검색(멀티홉과 리랭킹)이나 기존 RAG 자산 재사용이 필요할 때만 Model Endpoint API + 직접 구현으로 내려갑니다. (이 선택의 상세 의사결정은 [① 04 4.2절](../../01-infra/docs/04-dev-scenarios.md) 참조)
+> **대부분의 RAG 앱은 Agent API가 정답입니다.** 검색, 세션, 출처 제공을 직접 짤 필요가 없습니다. 고급 검색(멀티홉과 리랭킹)이나 기존 RAG 자산 재사용이 필요할 때만 Model Endpoint API + 직접 구현을 선택합니다. (이 선택의 상세 의사결정은 [① 04 4.2절](../../01-infra/docs/04-dev-scenarios.md) 참조)
 
 ---
 
@@ -73,7 +73,7 @@ PAIS는 소비 방식이 다른 **두 종류의 API**를 제공합니다. 이 �
  소비하는 계층. 모델 배포, GPU 구성 자체는 ① 인프라, 벡터 DB는 ② 데이터.
 ```
 
-다음 문서에서 이 API들이 **아키텍처적으로 어디서 나오는지**(Model Runtime, API Gateway)를 봅니다.
+다음 문서에서는 이 API들을 **아키텍처에서 어느 구성 요소가 제공하는지**(Model Runtime, API Gateway) 살펴봅니다.
 
 ---
 

@@ -1,6 +1,6 @@
 # VCF 9.1 Private AI 사이징, 용량, 비용(TCO) 가이드
 
-> **이 가이드를 읽기 전에** — 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 잡으시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
+> **이 가이드를 읽기 전에** — 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 익히시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
 
 > VMware Cloud Foundation(VCF) 9.1 기반 Private AI(PAIF: Private AI Foundation / PAIS: Private AI Services) 플랫폼을 **워크로드, GPU, VKS 클러스터 사이징부터 용량 계획과 TCO**까지 한 권으로 다루는 정량 설계 레퍼런스
 
@@ -27,7 +27,7 @@
 
 ## 독자별 빠른 경로
 
-사이징은 임원, 기획자, 아키텍트, 인프라 담당이 서로 다른 깊이로 보는 주제입니다. 처음이라면 [00 오리엔테이션](docs/00-orientation.md)(선수지식, 용어집, 개념 미니맵)부터 보세요.
+사이징은 임원, 기획자, 아키텍트, 인프라 담당이 서로 다른 깊이로 검토하는 주제입니다. 처음이라면 [00 오리엔테이션](docs/00-orientation.md)(선수지식, 용어집, 개념 미니맵)부터 읽어 보세요.
 
 | 독자 | 권장 시작점 |
 |------|-------------|
@@ -77,10 +77,10 @@
 - **"GPU 몇 장 필요한가"** → [02 GPU 사이징](docs/02-gpu-sizing.md)
 - **"이미 GPU가 있다 — 그걸로 무엇을 얼마나(역방향)"** → [01 사이징 방법론](docs/01-sizing-methodology.md) 1.7절
 - **"구매 전 예산 추정 출발 숫자가 필요하다"** → [부록 A1 1차 가정치](appendix/A1-first-order-reference.md)
-- **"처음부터 끝까지 한 예제로 보고 싶다"** → [08 레퍼런스 시나리오](docs/08-reference-scenario.md)
+- **"처음부터 끝까지 한 예제로 확인하고 싶다"** → [08 레퍼런스 시나리오](docs/08-reference-scenario.md)
 - **"이미 GPU가 있다 — 역방향을 끝까지 예제로"** → [09 역방향 시나리오](docs/09-reverse-sizing-scenario.md)
 - **"프로덕션 클러스터를 어떻게 짜나"** → [04 VKS 클러스터 사이징](docs/04-vks-cluster-sizing.md)
-- **"얼마나 드나"** → [07 TCO와 비용 모델](docs/07-tco-cost-model.md)
+- **"비용이 얼마나 필요한가"** → [07 TCO와 비용 모델](docs/07-tco-cost-model.md)
 
 ## 참고 자료
 

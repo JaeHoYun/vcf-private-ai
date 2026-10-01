@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 기반 Private AI 플랫폼에서, 모델, 검색, 도구가 결합된 LLM 애플리케이션의 **앱 계층 가드레일**을 거버넌스/운영 관점으로 통합합니다. 개별 RAG 구현의 인젝션과 출력 방어 절차는 시리즈 ④ RAG 레퍼런스 아키텍처에서 상세히 다루므로, 본 문서는 해당 절로 링크를 걸어 상세를 위임하고, 여기서는 플랫폼 전반에 걸친 가드레일 **정책, 운영, 검증**을 다룹니다.
+이 문서는 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 기반 Private AI 플랫폼에서, 모델, 검색, 도구가 결합된 LLM 애플리케이션의 **앱 계층 가드레일**을 거버넌스/운영 관점으로 통합합니다. 개별 RAG 구현의 인젝션과 출력 방어 절차는 시리즈 ④ RAG 레퍼런스 아키텍처에서 상세히 다루므로, 본 문서는 해당 절을 링크해 상세를 위임하고, 여기서는 플랫폼 전반에 걸친 가드레일 **정책, 운영, 검증**을 다룹니다.
 
 - 입력측 인젝션과 살균 상세: [④ RAG 가이드 03 3.6 — 프롬프트 인젝션 방어와 입력 살균](../../04-rag/docs/03-retrieval-context.md#36-보안--프롬프트-인젝션-방어와-입력-살균)
 - 출력측 가드레일 상세: [④ RAG 가이드 04 4.6 — 출력 가드레일, 민감정보, 출력 안전](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일--민감정보와-출력-안전)
@@ -14,9 +14,9 @@
 
 ## 6.1 가드레일을 왜 앱 계층에 두는가 — 다층 방어 모델
 
-LLM 애플리케이션의 근본 취약점은 **명령(instruction)과 데이터(data)가 같은 채널로 모델에 전달**된다는 점입니다. 그래서 공격자가 데이터처럼 보이는 입력에 명령을 심으면 모델이 이를 새 지시로 오인합니다. 이것이 OWASP가 두 판 연속 1위로 꼽은 **LLM01 Prompt Injection**의 본질입니다([OWASP LLM01:2025 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/)). 모델 자체로는 이 분리를 보장할 수 없으므로, 방어선은 모델 **바깥의 앱 계층**에 두어야 합니다.
+LLM 애플리케이션의 근본 취약점은 **명령(instruction)과 데이터(data)가 같은 채널로 모델에 전달**된다는 점입니다. 그래서 공격자가 데이터처럼 보이는 입력에 명령을 심으면 모델이 이를 새 지시로 오인합니다. 이것이 OWASP가 두 판 연속 1위로 꼽은 **LLM01 Prompt Injection**의 본질입니다([OWASP LLM01:2025 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/)). 모델 자체로는 이 분리를 보장할 수 없으므로, 방어선은 모델 **바깥의 앱 계층**에 배치해야 합니다.
 
-가드레일은 단일 방어선이 아니라 **요청 흐름의 여러 지점에 거는 다층 통제**입니다. 일반적으로 입력이 모델에 도달하기 **전** 단계의 입력 필터, 시스템 지시, 전처리, 분류기(LLM-as-a-Judge 포함)와, 출력이 사용자에게 도달하기 **전** 단계의 후처리, 키워드 필터, 휴먼인더루프가 함께 작동합니다([Guardrailed LLMs: Red Teaming and Safety Mitigations, IJRAI](https://ijrai.org/index.php/ijrai/article/download/79/76)).
+가드레일은 단일 방어선이 아니라 **요청 흐름의 여러 지점에 적용하는 다층 통제**입니다. 일반적으로 입력이 모델에 도달하기 **전** 단계의 입력 필터, 시스템 지시, 전처리, 분류기(LLM-as-a-Judge 포함)와, 출력이 사용자에게 도달하기 **전** 단계의 후처리, 키워드 필터, 휴먼인더루프가 함께 작동합니다([Guardrailed LLMs: Red Teaming and Safety Mitigations, IJRAI](https://ijrai.org/index.php/ijrai/article/download/79/76)).
 
 | 통제 지점 | 위치 | 대표 통제 | 주요 대응 위험 |
 |---|---|---|---|
@@ -29,7 +29,7 @@ LLM 애플리케이션의 근본 취약점은 **명령(instruction)과 데이터
 
 ## 6.2 입력측 가드레일 — 인젝션 방어와 살균
 
-입력측은 직접/간접 프롬프트 인젝션을 모두 막아야 합니다. 직접 인젝션은 사용자 입력에, 간접 인젝션은 **검색된 청크, 외부 문서, 도구 응답**에 명령이 숨어 들어오는 경우입니다. RAG에서는 검색 청크 자체가 인젝션 벡터가 되며, MITRE ATLAS는 이를 `AML.T0051 LLM Prompt Injection`으로, RAG 오염을 별도 기법으로 분류합니다([MITRE ATLAS](https://atlas.mitre.org/), [Repello AI: MITRE ATLAS AML.T techniques](https://repello.ai/blog/mitre-atlas-framework)).
+입력측은 직접/간접 프롬프트 인젝션을 모두 차단해야 합니다. 직접 인젝션은 사용자 입력에, 간접 인젝션은 **검색된 청크, 외부 문서, 도구 응답**에 명령이 숨어 들어오는 경우입니다. RAG에서는 검색 청크 자체가 인젝션 벡터로 작용하며, MITRE ATLAS는 이를 `AML.T0051 LLM Prompt Injection`으로, RAG 오염을 별도 기법으로 분류합니다([MITRE ATLAS](https://atlas.mitre.org/), [Repello AI: MITRE ATLAS AML.T techniques](https://repello.ai/blog/mitre-atlas-framework)).
 
 핵심 통제는 다음과 같습니다. 구현 절차는 [④ RAG 03 3.6](../../04-rag/docs/03-retrieval-context.md#36-보안--프롬프트-인젝션-방어와-입력-살균)을 참조하고, 본 문서는 플랫폼 정책으로만 규정합니다.
 
@@ -40,11 +40,11 @@ LLM 애플리케이션의 근본 취약점은 **명령(instruction)과 데이터
 | 외부 입력 비신뢰 처리 | 사용자 생성 콘텐츠, 외부 문서 모두 비신뢰로 간주, 수집 전 검증 | [Solo.io: Mitigating Indirect Prompt Injection](https://www.solo.io/blog/mitigating-indirect-prompt-injection-attacks-on-llms) |
 | jailbreak 탐지 | 알려진 우회 패턴(역할 위장, "이전 지시 무시" 등) 분류기로 탐지와 차단 | [LLM Red Teaming, Mend](https://www.mend.io/blog/llm-red-teaming-threats-testing-best-practices/) |
 
-> 주의: 살균과 검색 단계 방어만으로는 악성 텍스트 검색을 완전히 막지 못한다는 연구가 있습니다. 입력측 단독에 의존하지 말고 출력측(6.3), 도구측(6.4)과 반드시 결합하십시오([Overcoming the Retrieval Barrier: Indirect Prompt Injection in the Wild, arXiv](https://arxiv.org/abs/2601.07072)).
+> 주의: 살균과 검색 단계 방어만으로는 악성 텍스트 검색을 완전히 차단하지 못한다는 연구가 있습니다. 입력측 단독에 의존하지 말고 출력측(6.3), 도구측(6.4)과 반드시 결합하십시오([Overcoming the Retrieval Barrier: Indirect Prompt Injection in the Wild, arXiv](https://arxiv.org/abs/2601.07072)).
 
 ## 6.3 출력측 가드레일 — 민감정보, 누출, 유해 출력
 
-모델이 답을 만든 **직후, 사용자에게 내보내기 전**에 거는 방어선입니다. 다층 방어의 나머지 절반이며, 입력측을 통과한 인젝션의 결과를 최종적으로 차단하는 지점이기도 합니다. 구현 절차는 [④ RAG 04 4.6](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일--민감정보와-출력-안전)을 참조하고, 본 문서는 플랫폼 공통 정책 수준에서 다룹니다.
+모델이 답을 만든 **직후, 사용자에게 반환하기 전**에 적용하는 방어선입니다. 다층 방어의 나머지 절반이며, 입력측을 통과한 인젝션의 결과를 최종적으로 차단하는 지점이기도 합니다. 구현 절차는 [④ RAG 04 4.6](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일--민감정보와-출력-안전)을 참조하고, 본 문서는 플랫폼 공통 정책 수준에서 다룹니다.
 
 | 통제 | 정책 요구사항 | 근거 |
 |---|---|---|
@@ -59,24 +59,24 @@ LLM 애플리케이션의 근본 취약점은 **명령(instruction)과 데이터
 
 ## 6.4 에이전트와 도구 사용 안전 — 과도한 에이전시 제어
 
-LLM이 도구(파일 I/O, API, 명령 실행)에 접근하면 의도 범위를 벗어난 행위를 할 수 있습니다. OWASP는 이를 **LLM06 Excessive Agency**로 분류하고 세 가지 근본 원인으로 나눕니다. 도구가 과업 범위를 넘는 **과도한 기능**(excessive functionality), 도구가 필요 이상 권한으로 동작하는 **과도한 권한**(excessive permissions), 충분한 감독 없이 자율 동작하는 **과도한 자율성**(excessive autonomy)입니다([OWASP LLM06:2025 Excessive Agency](https://aembit.io/blog/owasp-top-10-llm-risks-explained/)).
+LLM이 도구(파일 I/O, API, 명령 실행)에 접근하면 의도 범위를 초과하는 행위를 할 수 있습니다. OWASP는 이를 **LLM06 Excessive Agency**로 분류하고 세 가지 근본 원인으로 나눕니다. 도구가 과업 범위를 넘는 **과도한 기능**(excessive functionality), 도구가 필요 이상 권한으로 동작하는 **과도한 권한**(excessive permissions), 충분한 감독 없이 자율 동작하는 **과도한 자율성**(excessive autonomy)입니다([OWASP LLM06:2025 Excessive Agency](https://aembit.io/blog/owasp-top-10-llm-risks-explained/)).
 
 | 통제 | 정책 요구사항 | 근거 |
 |---|---|---|
 | 도구 호출 화이트리스트 | 에이전트가 호출 가능한 도구를 명시적 허용 목록으로 제한. 미등록 도구 호출은 거부 | [OWASP LLM06:2025](https://aembit.io/blog/owasp-top-10-llm-risks-explained/) |
 | 최소권한 | 각 도구는 과업에 필요한 최소 권한과 범위로만 동작 | [Promptfoo: MITRE ATLAS 매핑](https://www.promptfoo.dev/docs/red-team/mitre-atlas/) |
 | 휴먼인더루프 | 비가역, 고위험 행위(송금, 삭제, 외부 전송)는 사람 승인 후 실행 | [NIST AI 600-1 Generative AI Profile](https://www.nist.gov/itl/ai-risk-management-framework) |
-| 도구 응답 비신뢰 처리 | 도구 반환값도 간접 인젝션 벡터로 보고 살균 후 컨텍스트에 주입 | [OWASP LLM01:2025](https://genai.owasp.org/llmrisk/llm01-prompt-injection/) |
+| 도구 응답 비신뢰 처리 | 도구 반환값도 간접 인젝션 벡터로 간주하고 살균 후 컨텍스트에 주입 | [OWASP LLM01:2025](https://genai.owasp.org/llmrisk/llm01-prompt-injection/) |
 
 > 송금, 삭제, 외부 전송 같은 **비가역 행위는 제안과 초안 단계까지만 자동화하고 실행은 사람이 승인한다**는 원칙과 같은 방향입니다. 도구 화이트리스트는 이 원칙을 기술적으로 강제하는 1차 수단입니다.
 
-PAIS는 모델 게이트웨이(API Gateway)와 MCP Tools Registry를 플랫폼에 내장하여, 도구 등록, 인증, 인가를 플랫폼 계층에서 다룰 수 있는 지점을 제공합니다([Private AI Services, VCF 9.1 Blog](https://blogs.vmware.com/cloud-foundation/2025/06/19/private-ai-services-new-in-vmware-private-ai-foundation-with-nvidia-in-vcf-9-0/)). 다만 이 레지스트리가 **세분화된 도구 호출 화이트리스트와 휴먼인더루프 승인**을 네이티브로 강제하는지는 릴리스별로 다를 수 있어 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 **확인 필요**합니다. 플랫폼 제공 여부와 무관하게, 위 통제는 오케스트레이션 계층에서 독립적으로 두는 것을 권장합니다.
+PAIS는 모델 게이트웨이(API Gateway)와 MCP Tools Registry를 플랫폼에 내장하여, 도구 등록, 인증, 인가를 플랫폼 계층에서 다룰 수 있는 지점을 제공합니다([Private AI Services, VCF 9.1 Blog](https://blogs.vmware.com/cloud-foundation/2025/06/19/private-ai-services-new-in-vmware-private-ai-foundation-with-nvidia-in-vcf-9-0/)). 다만 이 레지스트리가 **세분화된 도구 호출 화이트리스트와 휴먼인더루프 승인**을 네이티브로 강제하는지는 릴리스별로 다를 수 있어 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 **확인 필요**합니다. 플랫폼 제공 여부와 무관하게, 위 통제는 오케스트레이션 계층에서 독립적으로 구현하는 것을 권장합니다.
 
-이 절은 LLM06 한 항목의 정책 수준에 머뭅니다. 에이전트를 행위자로 보는 위협 목록(OWASP Agentic ASI01–10), 에이전트별 비인간 신원, 자율성 상한과 위험 등급의 매트릭스, 레지스트리, MCP 도구 오염과 제3자 서버 체크리스트, 코드 실행 샌드박스, 킬스위치, 도구 게이트웨이의 위치는 [08 에이전트 보안 거버넌스](08-agent-governance.md)가 정본입니다. 휴먼인더루프의 구현 패턴과 승인 큐는 [앱 가이드 07 7.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md)에 있습니다.
+이 절은 LLM06 한 항목의 정책 수준에 머뭅니다. 에이전트를 행위자로 간주하는 위협 목록(OWASP Agentic ASI01–10), 에이전트별 비인간 신원, 자율성 상한과 위험 등급의 매트릭스, 레지스트리, MCP 도구 오염과 제3자 서버 체크리스트, 코드 실행 샌드박스, 킬스위치, 도구 게이트웨이의 위치는 [08 에이전트 보안 거버넌스](08-agent-governance.md)가 정본입니다. 휴먼인더루프의 구현 패턴과 승인 큐는 [앱 가이드 07 7.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md)에 있습니다.
 
 ## 6.5 PAIS 네이티브 가드 기능과 플랫폼 경계
 
-PAIS와 VCF는 가드레일을 거는 데 활용할 수 있는 플랫폼 기능을 여럿 제공합니다. 다만 이 중 어느 것이 **LLM 콘텐츠 가드(인젝션 탐지, PII 마스킹, 출력 필터)를 네이티브로 수행**하는지는 단정하지 않고 공식 문서로 확인하는 것을 원칙으로 합니다.
+PAIS와 VCF는 가드레일을 적용하는 데 활용할 수 있는 플랫폼 기능을 여럿 제공합니다. 다만 이 중 어느 것이 **LLM 콘텐츠 가드(인젝션 탐지, PII 마스킹, 출력 필터)를 네이티브로 수행**하는지는 단정하지 않고 공식 문서로 확인하는 것을 원칙으로 합니다.
 
 | 플랫폼 기능 | 확인된 역할 | 콘텐츠 가드 네이티브 제공 여부 |
 |---|---|---|
@@ -85,20 +85,20 @@ PAIS와 VCF는 가드레일을 거는 데 활용할 수 있는 플랫폼 기능�
 | Avi WAF + Istio mTLS | L7 보호, 엔드포인트 mTLS 암호화 | 네트워크/L7 보호. LLM 의미 가드는 아님 |
 | vSphere Namespace 쿼터 | 테넌트별 CPU, 메모리, GPU 자원 가드레일 | 자원 가드레일. 콘텐츠 가드 아님 |
 
-위 표의 네트워크와 자원 통제는 [VCF 9.1 Private AI Blog](https://blogs.vmware.com/cloud-foundation/2026/05/05/vcf-9-1-secure-cost-effective-private-cloud-platform-for-production-ai/)와 [Secure Private AI with Broadcom, Part 2](https://blogs.vmware.com/cloud-foundation/2026/04/30/guide-to-secure-private-ai-with-broadcom-part-2/)에서 확인됩니다. WAF, mTLS는 악성 입력, 데이터 유출, 외부 위협으로부터 AI 엔드포인트를 보호하지만, **프롬프트 인젝션의 의미적 판단이나 PII 마스킹 같은 콘텐츠 계층 가드를 대체하지 않습니다**. 따라서 본 문서의 입력측, 출력측, 도구측 가드는 플랫폼 보호와 **별개의 추가 계층**으로 두어야 합니다.
+위 표의 네트워크와 자원 통제는 [VCF 9.1 Private AI Blog](https://blogs.vmware.com/cloud-foundation/2026/05/05/vcf-9-1-secure-cost-effective-private-cloud-platform-for-production-ai/)와 [Secure Private AI with Broadcom, Part 2](https://blogs.vmware.com/cloud-foundation/2026/04/30/guide-to-secure-private-ai-with-broadcom-part-2/)에서 확인됩니다. WAF, mTLS는 악성 입력, 데이터 유출, 외부 위협으로부터 AI 엔드포인트를 보호하지만, **프롬프트 인젝션의 의미적 판단이나 PII 마스킹 같은 콘텐츠 계층 가드를 대체하지 않습니다**. 따라서 본 문서의 입력측, 출력측, 도구측 가드는 플랫폼 보호와 **별개의 추가 계층**으로 구성해야 합니다.
 
-결론: 플랫폼은 인증, 격리, 암호화, 자원 통제를 제공하고, 콘텐츠 가드레일은 앱(오케스트레이션/BFF) 계층 책임으로 둡니다. 네이티브 콘텐츠 가드 항목은 모두 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 **확인 필요**로 표기합니다. PAIS 3.0 릴리스 노트에도 콘텐츠 가드레일 기능은 없으므로([Private AI Services 릴리스 노트, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)) 이 결론은 3.0에서도 유효합니다.
+결론: 플랫폼은 인증, 격리, 암호화, 자원 통제를 제공하고, 콘텐츠 가드레일은 앱(오케스트레이션/BFF) 계층 책임으로 정합니다. 네이티브 콘텐츠 가드 항목은 모두 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 **확인 필요**로 표기합니다. PAIS 3.0 릴리스 노트에도 콘텐츠 가드레일 기능은 없으므로([Private AI Services 릴리스 노트, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)) 이 결론은 3.0에서도 유효합니다.
 
-**가드레일 삽입 지점 결정표** — "앱 계층 책임"이라는 결론 다음에 오는 질문은 앱의 어느 자리에 두느냐입니다. 선택지는 넷이며, [⑦ 06 D15](../../07-design/docs/06-decision-forks.md)의 설계 결정과 짝입니다.
+**가드레일 삽입 지점 결정표** — "앱 계층 책임"이라는 결론에 이어지는 질문은 앱의 어느 위치에 배치하느냐입니다. 선택지는 넷이며, [⑦ 06 D15](../../07-design/docs/06-decision-forks.md)의 설계 결정과 짝입니다.
 
 | 삽입 지점 | 모습 | 맞는 상황 | 감수하는 것 |
 |---|---|---|---|
 | 앱 오케스트레이션 안(라이브러리) | 규칙과 소형 분류기를 앱 코드에서 호출 | 첫 유스케이스, 단일 앱, 지연 민감 | 앱마다 재구현, 정책 표준화가 코드 리뷰에 의존 |
-| 1계층 AI 게이트웨이 훅 | 게이트웨이의 요청과 응답 훅에서 가드 호출 | 앱이 여럿이고 1계층 게이트웨이가 있음([③ 05 5.7절](../../03-serving-api/docs/05-auth-and-gateway.md)) | 검색 청크와 도구 결과 같은 앱 내부 컨텍스트는 게이트웨이가 보지 못함 |
+| 1계층 AI 게이트웨이 훅 | 게이트웨이의 요청과 응답 훅에서 가드 호출 | 앱이 여럿이고 1계층 게이트웨이가 있음([③ 05 5.7절](../../03-serving-api/docs/05-auth-and-gateway.md)) | 검색 청크와 도구 결과 같은 앱 내부 컨텍스트는 게이트웨이가 확인하지 못함 |
 | 별도 가드 서비스 | 가드 모델을 독립 서비스로 서빙하고 앱과 게이트웨이가 호출 | 규제 심사, 균일 정책, 모델 급 판단 필요 | GPU 자원과 지연 추가, 가드 서비스 자체의 가용성 |
 | 결합 | 입력측은 게이트웨이, 검색 결과와 도구 결과 살균은 앱, 출력측은 가드 서비스 | 대기업, 다중 앱과 에이전트 | 정책이 세 곳에 나뉘므로 버전 관리(6.6)가 필수 |
 
-어느 지점이든 출력 가드는 생성 모델과 분리된 계층(6.3)이어야 하고, 검색 청크와 도구 결과의 살균은 그 컨텍스트를 보는 앱 안에서만 가능합니다.
+어느 지점이든 출력 가드는 생성 모델과 분리된 계층(6.3)이어야 하고, 검색 청크와 도구 결과의 살균은 그 컨텍스트에 접근하는 앱 안에서만 가능합니다.
 
 **플랫폼이 공용 가드 서비스로 서빙할 후보** — 위 결정표의 "별도 가드 서비스"와 "결합" 지점에서 플랫폼 팀이 공용으로 호스팅할 만한 모델 급 후보만 적습니다. 릴리스, 라이선스, 한국어 성능은 도입 전 확인합니다.
 
@@ -139,7 +139,7 @@ PAIS와 VCF는 가드레일을 거는 데 활용할 수 있는 플랫폼 기능�
 | 9 | 정책 버전 추적 | 가드레일 정책과 프롬프트 변경 이력 조회 | 변경과 승인 이력이 추적 가능 |
 | 10 | red team→회귀 연계 | 과거 우회 케이스를 회귀 스위트에서 재실행 | 동일 우회가 재현되지 않음(불합격 0건) |
 
-**추적성 점검**: 각 가드레일 항목이 OWASP/ATLAS 근거(F) → 정책 주장(Claim) → 통제(SC/TR) → 검증 케이스로 연결되는지 확인합니다. 체인이 끊긴 항목은 합격으로 보지 않습니다.
+**추적성 점검**: 각 가드레일 항목이 OWASP/ATLAS 근거(F) → 정책 주장(Claim) → 통제(SC/TR) → 검증 케이스로 연결되는지 확인합니다. 체인이 끊긴 항목은 합격으로 간주하지 않습니다.
 
 **플랫폼 확인 항목**: 6.5의 "확인 필요" 항목(PAIS 네이티브 콘텐츠 가드)은 [PAIS 공식 문서](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 릴리스별 재확인 후, 네이티브 제공이 확인되면 앱 계층 중복 가드를 조정합니다. 확인 전에는 앱 계층 독립 가드를 기본값으로 유지합니다.
 

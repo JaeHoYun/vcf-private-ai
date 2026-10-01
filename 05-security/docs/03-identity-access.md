@@ -3,9 +3,9 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 기반 Private AI 플랫폼에서 "누가(사람, 서비스, 에이전트) 무엇에 접근할 수 있는가"를 통제하는 거버넌스 관점을 다룹니다. 모델 추론 API, 에이전트, MCP 도구, 지식 베이스(KB)는 모두 동일한 ID 체계 위에서 권한이 평가되어야 하며, 한 곳이라도 통제가 끊기면 전체 신뢰 경계가 무너집니다.
+이 문서는 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 기반 Private AI 플랫폼에서 "누가(사람, 서비스, 에이전트) 무엇에 접근할 수 있는가"를 통제하는 거버넌스 관점을 다룹니다. 모델 추론 API, 에이전트, MCP 도구, 지식 베이스(KB)는 모두 동일한 ID 체계를 기준으로 권한이 평가되어야 하며, 한 곳이라도 통제가 끊기면 전체 신뢰 경계가 무너집니다.
 
-서빙 계층의 인증 구현 절차(API 키 발급 화면, 게이트웨이 설정 단계 등)는 [③ 서빙 가이드](../../03-serving-api/README.md)에서 다룹니다. 본 문서는 그 위에서 "정책을 어떻게 설계하고 강제하고 검증할 것인가"라는 거버넌스 층위에 집중합니다.
+서빙 계층의 인증 구현 절차(API 키 발급 화면, 게이트웨이 설정 단계 등)는 [③ 서빙 가이드](../../03-serving-api/README.md)에서 다룹니다. 본 문서는 이를 바탕으로 "정책을 어떻게 설계하고 강제하고 검증할 것인가"라는 거버넌스 층위에 집중합니다.
 
 ---
 
@@ -22,17 +22,17 @@ PAIS API는 OIDC를 인가 기반으로 사용하며, 대화형 클라이언트�
 | 인간 사용자 | VI Admin, MLOps, 앱 개발자, 감사자 | OIDC(Authorization Code + PKCE) + MFA | 세션 단위, 단기 토큰 |
 | 서비스 ID(M2M) | 백엔드 앱, 배치 작업 | OAuth2 Client Credentials | 단기 액세스 토큰, 회전 |
 | 에이전트 런타임 | Agent Builder 에이전트 | 네임스페이스 귀속 ID + 승인된 도구 스코프 | 위임된 단기 토큰 |
-| 인스턴스 간 연결(PAIS 3.0부터) | 다른 PAIS 인스턴스의 공유 모델을 쓰는 consumer, CLI 자동화 | 계정이 발급한 API 토큰(외부 OIDC 토큰은 인스턴스 간 접근 불가) | 장기 토큰, 정책 회전 |
+| 인스턴스 간 연결(PAIS 3.0부터) | 다른 PAIS 인스턴스의 공유 모델을 사용하는 consumer, CLI 자동화 | 계정이 발급한 API 토큰(외부 OIDC 토큰은 인스턴스 간 접근 불가) | 장기 토큰, 정책 회전 |
 
-> 거버넌스 원칙: 인간용 흐름(PKCE+MFA)과 서비스용 흐름(Client Credentials)을 절대 섞지 마세요. 사람이 만든 개인 토큰으로 무인 자동화를 돌리면 퇴사와 역할 변경 시 추적과 회수가 끊깁니다.
+> 거버넌스 원칙: 인간용 흐름(PKCE+MFA)과 서비스용 흐름(Client Credentials)을 절대 섞지 마세요. 사람이 만든 개인 토큰으로 무인 자동화를 실행하면 퇴사와 역할 변경 시 추적과 회수가 끊깁니다.
 
-신원 보증 수준은 NIST SP 800-63 프레임워크(IAL/AAL/FAL)를 기준선으로 잡습니다. 운영자와 관리자 같은 고위험 역할은 AAL2(MFA) 이상, 프로덕션 모델 변경 같은 최고위험 작업은 AAL3(하드웨어 인증기, 검증자 위장 저항) 적용을 권고합니다([NIST SP 800-63-4](https://pages.nist.gov/800-63-4/sp800-63.html)).
+신원 보증 수준은 NIST SP 800-63 프레임워크(IAL/AAL/FAL)를 기준선으로 삼습니다. 운영자와 관리자 같은 고위험 역할은 AAL2(MFA) 이상, 프로덕션 모델 변경 같은 최고위험 작업은 AAL3(하드웨어 인증기, 검증자 위장 저항) 적용을 권고합니다([NIST SP 800-63-4](https://pages.nist.gov/800-63-4/sp800-63.html)).
 
 ---
 
 ## 3.2 RBAC: 역할 정의와 최소 권한
 
-통합 SSO 위에서 역할 기반 접근통제(RBAC)를 설계합니다. 핵심은 "직무에 필요한 최소 범위"만 부여하고, 역할 간 직무 분리(SoD)를 강제하는 것입니다. 특히 운영 권한과 감사 권한은 반드시 분리되어야 부정 변경의 자기 은폐를 막을 수 있습니다.
+통합 SSO를 기반으로 역할 기반 접근통제(RBAC)를 설계합니다. 핵심은 "직무에 필요한 최소 범위"만 부여하고, 역할 간 직무 분리(SoD)를 강제하는 것입니다. 특히 운영 권한과 감사 권한은 반드시 분리되어야 부정 변경의 자기 은폐를 방지할 수 있습니다.
 
 | 역할 | 책임 | 부여 권한(예시) | 명시적 차단 |
 |---|---|---|---|
@@ -41,7 +41,7 @@ PAIS API는 OIDC를 인가 기반으로 사용하며, 대화형 클라이언트�
 | 앱 개발자 | 에이전트와 앱 구축 | Agent Builder 사용, 승인된 도구와 KB 소비 | MCP 서버 신규 등록 승인, 인프라 변경 |
 | 감사자 | 통제와 로그 검증 | 로그, 구성, 권한 부여 내역 읽기 전용 | 모든 쓰기, 실행, 삭제 |
 
-VCF SSO와 vCenter Server Linking을 사용하면 워크로드 도메인 전반의 구성을 일관되게 관리하면서, 공통 ID 소스로 더 세분화된 접근통제를 구현할 수 있습니다([10 VCF 9 Enhancements, Broadcom VCF Blog](https://blogs.vmware.com/cloud-foundation/2025/09/18/10-vmware-cloud-foundation-9-enhancements-simplifying-your-day-2-operations/)). VKS 3.7(VCF 9.1.1 동반)부터는 워크로드 클러스터가 Pinniped를 거치지 않는 네이티브 OIDC 인증과 Workload Identity Federation(서비스 계정 발급자 URL로 외부 시스템이 클러스터 워크로드의 신원을 검증)을 지원하므로, 모델 엔드포인트가 도는 VKS 클러스터의 kubectl 접근과 워크로드 신원도 같은 IdP 체계로 묶을 수 있습니다. VCF Operations 9.1.1의 AD와 LDAP 온디맨드 조회는 사전 프로비저닝 없이 그룹 소속으로 로그인을 허용하므로, 위 표의 역할을 IdP 그룹에 매핑해 두면 신규 인력 온보딩이 단순해집니다.
+VCF SSO와 vCenter Server Linking을 사용하면 워크로드 도메인 전반의 구성을 일관되게 관리하면서, 공통 ID 소스로 더 세분화된 접근통제를 구현할 수 있습니다([10 VCF 9 Enhancements, Broadcom VCF Blog](https://blogs.vmware.com/cloud-foundation/2025/09/18/10-vmware-cloud-foundation-9-enhancements-simplifying-your-day-2-operations/)). VKS 3.7(VCF 9.1.1 동반)부터는 워크로드 클러스터가 Pinniped를 거치지 않는 네이티브 OIDC 인증과 Workload Identity Federation(서비스 계정 발급자 URL로 외부 시스템이 클러스터 워크로드의 신원을 검증)을 지원하므로, 모델 엔드포인트가 실행되는 VKS 클러스터의 kubectl 접근과 워크로드 신원도 같은 IdP 체계로 통합할 수 있습니다. VCF Operations 9.1.1의 AD와 LDAP 온디맨드 조회는 사전 프로비저닝 없이 그룹 소속으로 로그인을 허용하므로, 위 표의 역할을 IdP 그룹에 매핑해 두면 신규 인력 온보딩이 단순해집니다.
 
 PAIS의 Agent Builder, KB, 도구 소비는 VCF Automation의 **네임스페이스** 단위로 가용성이 결정되므로, 네임스페이스 경계를 RBAC의 1차 격리 단위로 삼는 것이 효과적입니다([Adding MCP Servers, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities.html)).
 
@@ -70,13 +70,13 @@ curl 'https://pais.local/api/v1/compatibility/openai/v1/models' \
 | 클라이언트 시크릿 | 서비스 계정 등록 | 정책상 정기 회전 | 노출 의심 시 즉시 폐기와 재발급 |
 | API 토큰(PAIS 3.0부터) | VCF Automation 계정 또는 PAIS 로컬 계정 | 공식 만료 기간 미명시(확인 필요). 조직 정책으로 회전 주기 지정 | 발급 화면에서 폐기, 노출 의심 시 즉시 재발급 |
 
-PAIS 3.0은 OIDC 액세스 토큰과 별개로 계정이 직접 발급하는 **API 토큰**을 두었습니다(`vcfa-<org>-<값>` 또는 `pais-<인증공급자>-<값>`). 용도는 다른 인스턴스의 공유 모델 접근, VCF Consumption CLI 실행, PAIS API 인증이며, 외부 OIDC 공급자 토큰으로는 인스턴스 간 접근이 되지 않습니다. 이 토큰은 사용자 신원을 담지 않는 장기 자격증명이므로, 위 표의 단기 토큰 원칙에서 유일한 예외입니다. 그래서 두 가지를 강제해야 합니다. 첫째, 인스턴스 간 연결과 CLI 자동화 밖의 일반 앱 경로에는 쓰지 않습니다(사용자별 감사 추적이 끊기기 때문입니다). 둘째, 만료가 명시되지 않은 만큼 소유자, 용도, 발급일을 인벤토리에 남기고 정기 회전을 정책으로 둡니다. 사용 절차는 [③ 05 5.6절](../../03-serving-api/docs/05-auth-and-gateway.md)에 있습니다([Generate API Tokens, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/generate-api-tokens-for-local-accounts.html)).
+PAIS 3.0은 OIDC 액세스 토큰과 별개로 계정이 직접 발급하는 **API 토큰**을 도입했습니다(`vcfa-<org>-<값>` 또는 `pais-<인증공급자>-<값>`). 용도는 다른 인스턴스의 공유 모델 접근, VCF Consumption CLI 실행, PAIS API 인증이며, 외부 OIDC 공급자 토큰으로는 인스턴스 간 접근이 되지 않습니다. 이 토큰은 사용자 신원을 담지 않는 장기 자격증명이므로, 위 표의 단기 토큰 원칙에서 유일한 예외입니다. 그래서 두 가지를 강제해야 합니다. 첫째, 인스턴스 간 연결과 CLI 자동화 밖의 일반 앱 경로에는 사용하지 않습니다(사용자별 감사 추적이 끊기기 때문입니다). 둘째, 만료가 명시되지 않은 만큼 소유자, 용도, 발급일을 인벤토리에 남기고 정기 회전을 정책으로 규정합니다. 사용 절차는 [③ 05 5.6절](../../03-serving-api/docs/05-auth-and-gateway.md)에 있습니다([Generate API Tokens, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/generate-api-tokens-for-local-accounts.html)).
 
 API 게이트웨이 정책은 OWASP API Security Top 10(2023)을 점검표로 삼습니다. 특히 API1:2023(BOLA)과 API2:2023(Broken Authentication)이 최우선입니다. 객체 ID를 받는 모든 엔드포인트는 호출자가 그 객체에 대한 권한이 있는지 객체 수준 인가를 검증해야 하고, 토큰은 발급자, 대상(audience), 만료, 서명, 키 ID 같은 클레임을 전부 검증해야 합니다([OWASP API1:2023 BOLA](https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/), [OWASP API Security Project](https://owasp.org/www-project-api-security/)).
 
 마이크로서비스 간 통신은 PAIS 내부에서 mTLS로 상호 인증됩니다. 즉 클라이언트→게이트웨이 구간은 Bearer 토큰, 서비스↔서비스 구간은 mTLS라는 이중 경계를 유지합니다([VMware Private AI Service API, Broadcom Developer Portal](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)).
 
-> 거버넌스 원칙: 장수 토큰과 정적 API 키 공유를 금지하고, 단기 토큰 + 시크릿 회전을 표준으로 둡니다. 토큰이 단기이므로 누출되더라도 피해 범위가 그 수명 안으로 한정됩니다.
+> 거버넌스 원칙: 장수 토큰과 정적 API 키 공유를 금지하고, 단기 토큰 + 시크릿 회전을 표준으로 정합니다. 토큰이 단기이므로 누출되더라도 피해 범위가 그 수명 안으로 한정됩니다.
 
 ---
 
@@ -93,11 +93,11 @@ PAIS는 MCP(Model Context Protocol) 서버에 연결하고, 그 서버가 제공
 | REX 도구(데이터 인덱싱과 검색 내부 생성) | 생성 시 자동 승인 | 플랫폼 내부 신뢰 경계 안 |
 | 외부 MCP 서버 도구 | 명시적 승인 필요 | 외부 능력 유입에 대한 통제 지점 |
 
-REX 도구는 생성 시 자동 승인되지만, 외부 MCP 서버의 도구는 명시적 승인을 거쳐야 합니다([Adding MCP Servers, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities.html)). 이 차이는 외부에서 들어오는 능력을 사람이 한 번 검토하는 통제 지점이 됩니다.
+REX 도구는 생성 시 자동 승인되지만, 외부 MCP 서버의 도구는 명시적 승인을 거쳐야 합니다([Adding MCP Servers, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities.html)). 이 차이는 외부에서 들어오는 능력을 사람이 한 번 검토하는 통제 지점으로 작용합니다.
 
 도구 갤러리(Tool Gallery)에서는 각 도구의 제공 MCP 서버, 현재 사용 중인 에이전트, 입력과 출력 스키마를 포함한 전체 설명을 확인할 수 있습니다([Explore MCP Tools, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html)). 도구는 네임스페이스 범위에서 동작하므로, 승인과 소비 권한도 네임스페이스 경계를 따릅니다.
 
-승인 게이트가 검토하는 대상은 도구의 설명문까지입니다. 도구 설명은 모델이 읽는 지시이므로 승인 뒤 서버 측에서 바뀌면 승인의 전제가 사라집니다. 승인 시점의 이름, 설명, 스키마 해시를 기록하고 바뀌면 재승인하는 통제, 그리고 MCP 사양의 인가 요구(2025-06-18 개정판의 OAuth 2.1과 RFC 8707 대상 표시, 2026-07-28 개정판의 발급자 검증과 HTTP+SSE 전송 폐기 예고)를 PAIS의 정적 토큰 방식과 어떻게 맞출지는 [08 8.5절](08-agent-governance.md)이 다룹니다. PAIS 3.0의 MCP 연결은 Streamable HTTP와 SSE 전송, 정적 토큰 헤더, CA 신뢰 번들을 지원하므로([Connect an MCP Server, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/connect-to-an-mcp-server.html)), 신규 서버는 Streamable HTTP로 만들고 기존 SSE 서버는 전환 계획을 둡니다. 에이전트 자체에 비인간 신원을 부여하고 자격증명을 사람이나 다른 에이전트와 분리하는 원칙은 [08 8.2절](08-agent-governance.md)에 있습니다.
+승인 게이트가 검토하는 대상은 도구의 설명문까지입니다. 도구 설명은 모델이 읽는 지시이므로 승인 뒤 서버 측에서 바뀌면 승인의 전제가 사라집니다. 승인 시점의 이름, 설명, 스키마 해시를 기록하고 바뀌면 재승인하는 통제, 그리고 MCP 사양의 인가 요구(2025-06-18 개정판의 OAuth 2.1과 RFC 8707 대상 표시, 2026-07-28 개정판의 발급자 검증과 HTTP+SSE 전송 폐기 예고)를 PAIS의 정적 토큰 방식과 어떻게 맞출지는 [08 8.5절](08-agent-governance.md)이 다룹니다. PAIS 3.0의 MCP 연결은 Streamable HTTP와 SSE 전송, 정적 토큰 헤더, CA 신뢰 번들을 지원하므로([Connect an MCP Server, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/connect-to-an-mcp-server.html)), 신규 서버는 Streamable HTTP로 만들고 기존 SSE 서버는 전환 계획을 수립합니다. 에이전트 자체에 비인간 신원을 부여하고 자격증명을 사람이나 다른 에이전트와 분리하는 원칙은 [08 8.2절](08-agent-governance.md)에 있습니다.
 
 거버넌스 관점에서 권장하는 도구 권한 계층은 다음과 같습니다.
 
@@ -113,7 +113,7 @@ KB(지식 베이스) 접근도 같은 원칙입니다. KB는 Google Drive, Confl
 
 ## 3.5 시크릿 관리: 모델과 DB 자격증명과 키 회전
 
-AI 플랫폼은 모델 레지스트리 접근 토큰, 벡터 DB, 관계형 DB 자격증명, 외부 데이터 소스(SharePoint, S3 등) 연결 비밀, MCP 서버 인증 정보 등 다양한 시크릿을 다룹니다. 이들이 평문 설정, 코드, 이미지에 박히면 단일 유출로 전체가 무너집니다.
+AI 플랫폼은 모델 레지스트리 접근 토큰, 벡터 DB, 관계형 DB 자격증명, 외부 데이터 소스(SharePoint, S3 등) 연결 비밀, MCP 서버 인증 정보 등 다양한 시크릿을 다룹니다. 이들이 평문 설정, 코드, 이미지에 하드코딩되면 단일 유출로 전체가 무너집니다.
 
 | 시크릿 유형 | 사용처 | 회전 기준 |
 |---|---|---|
@@ -126,7 +126,7 @@ AI 플랫폼은 모델 레지스트리 접근 토큰, 벡터 DB, 관계형 DB �
 
 거버넌스 기준선은 다음과 같습니다.
 
-- 시크릿은 코드, 이미지, 로그에 두지 않고 전용 비밀 저장소에서만 주입합니다.
+- 시크릿은 코드, 이미지, 로그에 저장하지 않고 전용 비밀 저장소에서만 주입합니다.
 - 모든 시크릿은 소유자, 용도, 만료를 가진 인벤토리로 관리하고, 만료 없는 시크릿을 예외로 취급합니다.
 - 회전은 정기 일정 + 트리거(인력 변동, 노출 의심, 사고 대응) 기반으로 수행합니다. 클라이언트 시크릿은 노출 의심 시 즉시 폐기하고 재발급합니다([OAuth.net Client Credentials](https://oauth.net/2/grant-types/client-credentials/)).
 - 단기 토큰을 기본으로 하여, 회전 누락이 있어도 누출 시 피해 범위가 그 수명 안으로 한정됩니다([OWASP API Security Project](https://owasp.org/www-project-api-security/)).
@@ -137,7 +137,7 @@ AI 플랫폼은 모델 레지스트리 접근 토큰, 벡터 DB, 관계형 DB �
 
 ## 3.6 검증 방법
 
-아래 점검 항목으로 ID, 인증, 접근통제 통제가 설계대로 강제되는지 검증합니다. 각 항목은 합격 기준(통과/실패)을 명확히 두고 정기 회귀로 반복합니다.
+아래 점검 항목으로 ID, 인증, 접근통제 통제가 설계대로 강제되는지 검증합니다. 각 항목은 합격 기준(통과/실패)을 명확히 정하고 정기 회귀로 반복합니다.
 
 | # | 검증 항목 | 방법 | 합격 기준 |
 |---|---|---|---|
@@ -155,7 +155,7 @@ AI 플랫폼은 모델 레지스트리 접근 토큰, 벡터 DB, 관계형 DB �
 
 권장 검증 주기: 항목 2, 3, 4, 5, 6은 변경 시마다(CI/CD 게이트), 1, 7, 8, 9는 분기, 10은 회전 정책 주기에 맞춰 수행합니다. 모든 검증 결과는 감사자가 읽기 전용으로 열람 가능해야 하며, 통제 실패는 [01 위협 모델](01-threat-model.md)의 위험 항목과 추적 가능하게 연결합니다.
 
-검증 결과의 근거가 되는 정의와 동작은 다음 공식 출처에 묶입니다.
+검증 결과의 근거인 정의와 동작은 다음 공식 출처를 따릅니다.
 
 - 인증과 인가 표준: [RFC 6749 4.4절](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4), [NIST SP 800-63-4](https://pages.nist.gov/800-63-4/sp800-63.html), [OWASP API Security Top 10 (2023)](https://owasp.org/www-project-api-security/)
 - 플랫폼 동작: [VMware Private AI Service API](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/), [Adding MCP Servers (TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities.html)

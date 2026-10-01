@@ -36,7 +36,7 @@ DSM은 배포 시 자동 백업을 구성합니다. PostgreSQL 기본값은 주 
 - PITR: DSM UI에서 특정 시점으로 복구
 - Clone: 프로덕션 DB를 개발/테스트로 복제(라이브 데이터 검증)
 - Delete Protection: 삭제된 DB는 기본 30일 보관(조정 가능), 복구 가능
-- DR: 다른 vSphere 환경/다른 DSM 어플라이언스에 secondary 노드를 두고 replication, 장애 시 secondary를 primary로 승격
+- DR: 다른 vSphere 환경/다른 DSM 어플라이언스에 secondary 노드를 배치하고 replication, 장애 시 secondary를 primary로 승격
 
 벡터 워크로드 주의: 임베딩과 메타데이터가 동일 DB에 있으므로 PITR 복구 시 벡터와 관계형 데이터가 동일 시점으로 일관되게 복원됩니다. 별도 벡터 DB 동기화 문제가 없습니다.
 
@@ -65,7 +65,7 @@ pgvector 주의: 메이저 업그레이드 전 pgvector 확장 호환성과 인�
 
 출처: Why choose DSM as your on-premises DBaaS(VCF Blog).
 
-**DSM 9.1 → 9.1.1 업그레이드 주의(2026-09)** — 지켜야 할 순서가 두 가지 있습니다. Avi와 NSX를 함께 쓰는 클러스터는 VCF 9.1.0 이상 업그레이드보다 DSM 9.1.1을 먼저 적용해야 데이터베이스 다운타임이 없고, PostgreSQL 12와 13은 9.1.1에서 제거되므로 그 인스턴스는 미리 14 이상으로 올립니다. 9.1.1은 MySQL 메이저 업그레이드와 마이너 자동 업그레이드도 지원하지만 벡터 DB 범위 밖입니다. 전체 플랫폼 업그레이드 순서에서 DSM의 자리는 [① 10 10.1.1절](../../01-infra/docs/10-operations.md)에 있습니다.
+**DSM 9.1 → 9.1.1 업그레이드 주의(2026-09)** — 지켜야 할 순서가 두 가지 있습니다. Avi와 NSX를 함께 사용하는 클러스터는 VCF 9.1.0 이상 업그레이드보다 DSM 9.1.1을 먼저 적용해야 데이터베이스 다운타임이 없고, PostgreSQL 12와 13은 9.1.1에서 제거되므로 그 인스턴스는 미리 14 이상으로 업그레이드합니다. 9.1.1은 MySQL 메이저 업그레이드와 마이너 자동 업그레이드도 지원하지만 벡터 DB 범위 밖입니다. 전체 플랫폼 업그레이드 순서에서 DSM의 순서는 [① 10 10.1.1절](../../01-infra/docs/10-operations.md)에서 다룹니다.
 
 ---
 
@@ -79,7 +79,7 @@ pgvector 주의: 메이저 업그레이드 전 pgvector 확장 호환성과 인�
 
 #### 무중단 재인덱싱: REINDEX vs REINDEX CONCURRENTLY
 
-HNSW 인덱스의 bloat 누적이나 파라미터 변경으로 재구축이 필요할 때, 일반 `REINDEX`는 PostgreSQL이 기본적으로 ACCESS EXCLUSIVE 락을 잡아 재구축이 끝날 때까지 해당 테이블에 대한 쓰기(읽기는 가능)를 차단합니다. 24/7 운영 중인 RAG/검색 서비스에서는 이 쓰기 중단이 그대로 장애로 이어질 수 있습니다. 가용성이 중요한 환경에서는 `REINDEX INDEX CONCURRENTLY idx_docs_embedding;`처럼 `CONCURRENTLY` 옵션을 사용합니다. 이 옵션은 SHARE UPDATE EXCLUSIVE 락만 잡아 재구축 중에도 INSERT/UPDATE/DELETE가 계속됩니다. 다만 비용이 있습니다. 공식 문서에 따르면 `CONCURRENTLY`는 각 인덱스에 대해 테이블을 두 번 스캔하고 해당 인덱스를 사용할 수 있는 기존 트랜잭션의 종료를 기다려야 하므로, 일반 재구축보다 총 작업량이 많고 완료까지 현저히 오래 걸리며, 추가 CPU, 메모리, I/O 부하가 다른 작업을 느리게 만들 수 있습니다. 또한 대용량 HNSW 인덱스는 재구축 동안 기존 인덱스와 신규 인덱스가 함께 존재하므로 일시적으로 추가 디스크와 메모리 여유가 필요합니다. 따라서 가능하면 유지보수 윈도에 수행하되, 온라인 가용성이 필수면 `CONCURRENTLY`를 선택합니다. 실패 시 INVALID 상태의 인덱스가 남을 수 있으므로 재시도 전 상태를 점검합니다.
+HNSW 인덱스의 bloat 누적이나 파라미터 변경으로 재구축이 필요할 때, 일반 `REINDEX`는 PostgreSQL이 기본적으로 ACCESS EXCLUSIVE 락을 획득해 재구축이 끝날 때까지 해당 테이블에 대한 쓰기(읽기는 가능)를 차단합니다. 24/7 운영 중인 RAG/검색 서비스에서는 이 쓰기 중단이 그대로 장애로 이어질 수 있습니다. 가용성이 중요한 환경에서는 `REINDEX INDEX CONCURRENTLY idx_docs_embedding;`처럼 `CONCURRENTLY` 옵션을 사용합니다. 이 옵션은 SHARE UPDATE EXCLUSIVE 락만 획득해 재구축 중에도 INSERT/UPDATE/DELETE가 계속됩니다. 다만 비용이 있습니다. 공식 문서에 따르면 `CONCURRENTLY`는 각 인덱스에 대해 테이블을 두 번 스캔하고 해당 인덱스를 사용할 수 있는 기존 트랜잭션의 종료를 기다려야 하므로, 일반 재구축보다 총 작업량이 많고 완료까지 현저히 오래 걸리며, 추가 CPU, 메모리, I/O 부하로 다른 작업이 느려질 수 있습니다. 또한 대용량 HNSW 인덱스는 재구축 동안 기존 인덱스와 신규 인덱스가 함께 존재하므로 일시적으로 추가 디스크와 메모리 여유가 필요합니다. 따라서 가능하면 유지보수 윈도에 수행하되, 온라인 가용성이 필수면 `CONCURRENTLY`를 선택합니다. 실패 시 INVALID 상태의 인덱스가 남을 수 있으므로 재시도 전 상태를 점검합니다.
 
 출처: [PostgreSQL: REINDEX 문서](https://www.postgresql.org/docs/current/sql-reindex.html)
 
@@ -91,7 +91,7 @@ HNSW 인덱스의 bloat 누적이나 파라미터 변경으로 재구축이 필�
 - 차원이 바뀌면 새 `vector(D)` 컬럼 정의 필요
 - 재인덱싱은 PAIS(Private AI Services)의 Data Indexing & Retrieval 갱신 정책으로 스케줄링 가능
 
-PAIS 3.0부터는 지식베이스와 인덱스를 복제(clone)할 수 있습니다. 임베딩 모델을 바꿔 보는 실험이나 청크 설정 변경은 복제본에서 먼저 돌리고, 검색 품질(5.4절)이 확인되면 승격하는 방식이 원본 인덱스를 건드리지 않아 안전합니다. 복제본도 같은 pgvector 인스턴스의 용량을 쓰므로 스토리지 여유를 함께 산정하십시오.
+PAIS 3.0부터는 지식베이스와 인덱스를 복제(clone)할 수 있습니다. 임베딩 모델을 바꿔 보는 실험이나 청크 설정 변경은 복제본에서 먼저 실행하고, 검색 품질(5.4절)이 확인되면 승격하는 방식이 원본 인덱스를 변경하지 않아 안전합니다. 복제본도 같은 pgvector 인스턴스의 용량을 사용하므로 스토리지 여유를 함께 산정하십시오.
 
 ### 보안 주의: 병렬 HNSW 빌드 취약점
 

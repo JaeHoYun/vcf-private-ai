@@ -1,6 +1,6 @@
 # Private AI를 위한 엔터프라이즈 vectorDB 가이드
 
-> **이 가이드를 읽기 전에** — 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 잡으시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
+> **이 가이드를 읽기 전에** — 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 익히시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
 
 > PostgreSQL + pgvector. 상용 벡터 DB 추가 도입 없이 VCF 인프라에서 AI 워크로드를 배포, 사용, 관리하기 위한 실무 가이드
 
@@ -52,7 +52,7 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 
 ## 독자별 권장 경로
 
-역할에 따라 읽는 순서를 다르게 잡으면 효율적입니다.
+역할에 따라 읽는 순서를 다르게 정하면 효율적입니다.
 
 - VI Admin(인프라 관리자): 01 호환 → 03 아키텍처 → 04 배포 → 06 운영
 - DBA(데이터베이스 관리자): 01 호환 → 02 기초 → 04 배포 → 06 운영 → 05 사용

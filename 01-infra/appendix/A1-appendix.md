@@ -9,7 +9,7 @@
 ### A1.1.1 기본 개념
 
 **Q1. PAIF와 PAIS의 관계는?**
-PAIS는 PAIF에 **포함된 관리형 AI 서비스 레이어**입니다. PAIF가 인프라(GPU, 네트워크, 스토리지)부터 서비스(Model Runtime, RAG, Agent, MCP)까지 전체를 묶고, 그중 서비스 부분이 PAIS입니다.
+PAIS는 PAIF에 **포함된 관리형 AI 서비스 레이어**입니다. PAIF가 인프라(GPU, 네트워크, 스토리지)부터 서비스(Model Runtime, RAG, Agent, MCP)까지 전체를 포괄하고, 그중 서비스 부분이 PAIS입니다.
 
 **Q2. PAIF는 별도로 사야 하나요? (라이선스)**
 아니요. **PAIF는 VCF 코어 구독에 포함**됩니다(별도 구매 불필요). 단 **NVIDIA AI Enterprise(NVAIE)** 는 NVIDIA에서 별도 구매해야 하며 vGPU 드라이버, NIM, NeMo 등을 포함합니다. GPU 하드웨어도 별도입니다. 또한 벡터 DB는 DSM 기반입니다. **DSM 자체는 별도 라이선스(Advanced Service)이지만, PAIS가 벡터 DB용 사용 권한을 포함**하므로 RAG 벡터 DB를 위해 DSM을 따로 살 필요는 없습니다(일반 DBaaS 확장 시에는 별도). → 9.0.x 일부 자료의 "PAIF = VCF Add-on" 서술은 부정확합니다. ([문서 01 1.2절](../docs/01-concepts.md#12-라이선스-구조-정확히))
@@ -26,10 +26,10 @@ Model Endpoint는 단일 모델 API, Agent는 RAG, 세션, (9.1)도구사용까�
 ① 외부 도구 연동 **MCP**, ② 에어갭 **Artifact Mirroring Tool**, ③ **CPU Completion 추론(llama.cpp)**, ④ **관측성**(모델과 GPU 대시보드 + OTel), ⑤ **Enhanced DirectPath I/O**(NVAIE 없이 전용 GPU + vMotion), ⑥ **Blackwell GPU**, ⑦ 추론 엔진 대폭 상향(vLLM 0.11.2 등). ([문서 00](../docs/00-whats-new.md))
 
 **Q6. `pais` CLI는 Deprecated 아닌가요?**
-단독 실행 파일 형태의 `pais` CLI는 DLVM 9.1 이미지에서 제거됐고, 그 자리를 VCF Consumption CLI의 `pais` 플러그인(`vcf pais models ...`, `vcf pais amt ...`)이 맡습니다. DLVM 9.1.1 이미지에는 VCF CLI 9.1.0과 확장된 플러그인이 동봉되고, PAIS 3.0은 CLI로 kubeconfig 조회와 지원 번들 수집을 더 쉽게 했습니다. 그래도 **모델 저장은 VCF Automation UI를 우선** 사용하고, CLI 구문은 적용 직전 공식 명령 레퍼런스로 확인하시기 바랍니다.
+단독 실행 파일 형태의 `pais` CLI는 DLVM 9.1 이미지에서 제거됐고, 그 자리를 VCF Consumption CLI의 `pais` 플러그인(`vcf pais models ...`, `vcf pais amt ...`)이 맡습니다. DLVM 9.1.1 이미지에는 VCF CLI 9.1.0과 확장된 플러그인이 동봉되고, PAIS 3.0에서는 CLI로 kubeconfig 조회와 지원 번들 수집이 더 쉬워졌습니다. 그래도 **모델 저장은 VCF Automation UI를 우선** 사용하고, CLI 구문은 적용 직전 공식 명령 레퍼런스로 확인하시기 바랍니다.
 
 **Q6-1. 9.1.1 / PAIS 3.0에서는 무엇이 바뀌었나요?**
-공유 모델 호스팅(중앙 인스턴스의 모델을 다른 인스턴스와 네임스페이스에서 참조), 원격 클라우드 모델 연결(Gemini, OpenAI 호환), API 토큰, 관측성 확장, 데이터 평면 모듈 on/off가 추가됐습니다. 엔진은 vLLM 0.20.0, llama.cpp b9309로 올라갔고 VKr 1.34, ClusterClass v3.5.0을 씁니다. non-chat completions API는 deprecated입니다. ([문서 00 0.7절](../docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga), 버전별 이력은 [0.8절](../docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30))
+공유 모델 호스팅(중앙 인스턴스의 모델을 다른 인스턴스와 네임스페이스에서 참조), 원격 클라우드 모델 연결(Gemini, OpenAI 호환), API 토큰, 관측성 확장, 데이터 평면 모듈 on/off가 추가됐습니다. 엔진은 vLLM 0.20.0, llama.cpp b9309로 업그레이드됐고 VKr 1.34, ClusterClass v3.5.0을 사용합니다. non-chat completions API는 deprecated입니다. ([문서 00 0.7절](../docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga), 버전별 이력은 [0.8절](../docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30))
 
 **Q7. DirectPath I/O는 vMotion이 안 된다던데요?**
 9.1의 **Enhanced DirectPath I/O**는 NVAIE 없이 전용 GPU를 제공하면서 **vMotion 이점을 유지**합니다. 과거 "vMotion 제한" 서술은 폐기됐습니다. ([문서 02 2.3절](../docs/02-architecture.md#23-gpu-할당-방식-주의-91-변경))
@@ -152,17 +152,17 @@ kubectl logs <pod> -n <ns>
 | **SPBM(Storage Policy-Based Management)** | 스토리지 정책 기반 관리 — 가용성과 성능 요구를 정책으로 정의해 vSAN에 적용 (문서 10 10.5절) |
 | **Supervisor** | vSphere Kubernetes 컨트롤 플레인 |
 | **Tool-calling** | LLM이 외부 도구를 호출해 작업을 수행하는 패턴 |
-| **Trust Bundle** | PAIS가 신뢰하는 인증서 묶음 (OIDC, Harbor, DSM 인증서). 인증서 갱신 시 재구성 (문서 10 10.3.3절) |
+| **Trust Bundle** | PAIS가 신뢰하는 인증서 번들 (OIDC, Harbor, DSM 인증서). 인증서 갱신 시 재구성 (문서 10 10.3.3절) |
 | **TTFT(Time To First Token)** | 요청 후 첫 토큰이 생성되기까지의 지연. LLM 응답성 핵심 SLI (문서 10 10.4절) |
 | **vGPU** | NVIDIA Virtual GPU — GPU 가상화/분할 공유 (NVAIE 필요) |
 | **VKr / VKS / VKSM** | vSphere Kubernetes release / Service / Service Management |
 | **vLLM** | LLM 추론 최적화 엔진 (PagedAttention) |
-| **vSAN Effective Capacity** | vSAN 9.1의 운영과 재구축 예비를 자동 산정해 안전하게 쓸 수 있는 용량을 보여 주는 뷰 (문서 10 10.5절) |
+| **vSAN Effective Capacity** | vSAN 9.1의 운영과 재구축 예비를 자동 산정해 안전하게 사용할 수 있는 용량을 보여 주는 뷰 (문서 10 10.5절) |
 | **vSAN Skyline Health** | vSAN 클러스터, 디바이스, 네트워크 상태를 점검하고 문제를 진단하고 안내하는 건전성 점검 기능 (문서 10 10.5절) |
 | **Workload Mobility** | VCF Operations의 워크로드 이동 기능. 다른 환경의 VM을 재부팅 없이 VCF로 전환(마이그레이션)할 때 활용 (문서 09) |
 | **그린필드(Greenfield)** | 신규 인프라를 처음부터 구성해 PAIF 환경을 구축하는 출발 상황 (문서 09) |
-| **마이그레이션(전환)** | 기존 가상화, 경쟁 플랫폼에서 VCF로 워크로드를 옮겨 PAIF 환경을 구축하는 출발 상황. Workload Mobility 활용 (문서 09) |
-| **브라운필드(Brownfield)** | 이미 운영 중인 VCF/vSphere 환경에 GPU 워크로드 도메인을 더해 PAIF를 얹는 구축 출발 상황 (문서 09) |
+| **마이그레이션(전환)** | 기존 가상화, 경쟁 플랫폼에서 VCF로 워크로드를 이전해 PAIF 환경을 구축하는 출발 상황. Workload Mobility 활용 (문서 09) |
+| **브라운필드(Brownfield)** | 이미 운영 중인 VCF/vSphere 환경에 GPU 워크로드 도메인을 추가해 PAIF를 구축하는 구축 출발 상황 (문서 09) |
 
 ---
 

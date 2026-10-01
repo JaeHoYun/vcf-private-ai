@@ -15,7 +15,7 @@
 | Private AI Foundation (PAIF) | 9.1.1 | 2026-09 (9.1은 2026-05) | 9.1.1 변경은 PAIS 3.0 제공과 DLVM 이미지 갱신 |
 | Private AI Services (PAIS) | 3.0 | 2026-09 (2.1은 2026-05) | 공유 모델 호스팅, 원격 클라우드 모델, API 토큰, 지식베이스 복제 추가. 2.1의 UI 셀프서비스와 폐쇄망(Artifact Mirroring Tool) 지원 유지 |
 
-9.1 / PAIS 2.1 기준으로 쓰인 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 읽을 수 있습니다.
+9.1 / PAIS 2.1 기준으로 작성된 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 읽을 수 있습니다.
 
 ---
 
@@ -27,7 +27,7 @@
 | MySQL | 8.4.6, 8.0.43, 8.0.42, 8.0.41, 8.0.40 | 8.4.10, 8.4.8, 8.4.6, 8.0.46, 8.0.45, 8.0.43, 8.0.42 | Fast Cloning(vSAN ESA 필요). 9.1.1에서 메이저 버전 업그레이드와 마이너 자동 업그레이드 지원 |
 | Microsoft SQL Server | 2022.CU22 | 2022.CU25, 2025.CU6 | **9.1에서 정식 GA**. Always On Availability Groups, 자동 백업/PITR(Point-In-Time Recovery, 특정 시점 복구), AD(Active Directory) 통합. 9.1.1에서 TDE(투명한 데이터 암호화) 활성화 |
 
-DSM 9.1.1 업그레이드 순서 주의: Avi Load Balancer와 NSX 네트워킹을 함께 쓰는 클러스터는 VCF를 9.1.0 이상으로 올리기 전에 DSM을 9.1.1로 먼저 올려야 데이터베이스 다운타임을 피할 수 있습니다(DSM 9.1.1 릴리스 노트 업그레이드 주의 사항). 운영 절차는 [06 운영](06-operations.md)에서 다룹니다.
+DSM 9.1.1 업그레이드 순서 주의: Avi Load Balancer와 NSX 네트워킹을 함께 사용하는 클러스터는 VCF를 9.1.0 이상으로 업그레이드하기 전에 DSM을 9.1.1로 먼저 업그레이드해야 데이터베이스 다운타임을 피할 수 있습니다(DSM 9.1.1 릴리스 노트 업그레이드 주의 사항). 운영 절차는 [06 운영](06-operations.md)에서 다룹니다.
 
 출처: VMware Data Services Manager 9.1 및 9.1.1 Release Notes.
 
@@ -56,7 +56,7 @@ PAIS의 Data Indexing & Retrieval 모듈은 pgvector 확장이 설치된 외부 
 | DSM 단독 프로비저닝(벡터 검색만) | PostgreSQL 17.10 또는 18.4 + pgvector | DSM 9.1.1 번들. PostgreSQL 18은 9.1.1에서 처음 지원되므로 pgvector 호환과 확장 동작을 PoC로 확인한 뒤 채택 |
 | PAIS Data Indexing & Retrieval 연동 | PostgreSQL 16.8 + pgvector 0.8.0 | PAIS 3.0 릴리스 노트 기준 검증 조합(2.0.x, 2.1, 3.0 모두 동일). 연동 전 PAIS 릴리스 노트로 재확인 필수 |
 
-PAIS 검증 조합은 PAIS 3.0 릴리스 노트에 명시된 값이며, DSM이 지원하는 최신 PostgreSQL(18.4)과는 다릅니다. PAIS Data Indexing이 붙는 인스턴스는 검증 조합을 유지하고, 별도 벡터 검색 용도의 인스턴스에서만 상위 버전을 검토하시기 바랍니다.
+PAIS 검증 조합은 PAIS 3.0 릴리스 노트에 명시된 값이며, DSM이 지원하는 최신 PostgreSQL(18.4)과는 다릅니다. PAIS Data Indexing과 연동되는 인스턴스는 검증 조합을 유지하고, 별도 벡터 검색 용도의 인스턴스에서만 상위 버전을 검토하시기 바랍니다.
 
 ---
 

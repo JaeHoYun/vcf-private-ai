@@ -2,45 +2,45 @@
 
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 
-구축([문서 09](09-deployment-scenarios.md))이 끝나면 플랫폼을 **굴리는** 단계가 시작됩니다. Day-2 운영은 "어떻게 깔까"가 아니라 **"깔아둔 것을 어떻게 유지하고 운영하나"** 입니다. 업그레이드와 패치, 장애 대응, 백업과 복구, 인증서 관리, 관측과 SLO, 네트워크와 스토리지 운영, 일상 점검이 여기에 속합니다.
+구축([문서 09](09-deployment-scenarios.md))이 끝나면 플랫폼을 **운영하는** 단계가 시작됩니다. Day-2 운영은 "어떻게 구축할까"가 아니라 **"구축한 것을 어떻게 유지하고 운영하나"** 입니다. 업그레이드와 패치, 장애 대응, 백업과 복구, 인증서 관리, 관측과 SLO, 네트워크와 스토리지 운영, 일상 점검이 여기에 속합니다.
 
 > **이 문서의 경계:** 플랫폼/인프라 Day-2 운영을 다룹니다. 보안 운영(위협, 접근통제, 공급망, 감사)은 [⑤ 보안과 거버넌스 가이드](../../05-security/README.md), 용량과 비용 운영은 [⑥ 사이징, 용량, 비용 가이드](../../06-sizing-cost/README.md)로 위임합니다.
 
 > **이 문서가 다루는 것:** **업그레이드(LCM, 수명주기 관리)**, **트러블슈팅**, **백업과 복구와 인증서 회전**, **SLO, 알람, 온콜**, **네트워크와 스토리지 Day-2**, **운영자 독자 트랙**. 운영을 처음 맡으셨다면 10.6절 운영자 독자 트랙의 상황별 라우터에서 시작하세요.
 
-> **이 문서를 읽기 전에:** Day-2 운영은 여러 계층(인프라 → Kubernetes → GPU → PAIS)에 걸쳐 폭이 넓습니다. 아래 개념을 알아두면 각 절을 빠르게 따라올 수 있고, 모르는 용어는 '모를 때' 링크부터 펴 보세요.
+> **이 문서를 읽기 전에:** Day-2 운영은 여러 계층(인프라 → Kubernetes → GPU → PAIS)에 걸쳐 폭이 넓습니다. 아래 개념을 알아두면 각 절을 빠르게 이해할 수 있고, 모르는 용어는 '모를 때' 링크부터 펴 보세요.
 
 | 영역 | 알아두면 좋은 것 | 모를 때 |
 |------|-----------------|---------|
-| LCM, 업그레이드 순서 | VCF는 코어→관리서비스→Kubernetes→GPU→PAIS가 서로 의존하므로 **순서대로** 올려야 한다는 개념 | 10.1절, [A1 용어집](../appendix/A1-appendix.md) |
+| LCM, 업그레이드 순서 | VCF는 코어→관리서비스→Kubernetes→GPU→PAIS가 서로 의존하므로 **순서대로** 업그레이드해야 한다는 개념 | 10.1절, [A1 용어집](../appendix/A1-appendix.md) |
 | 백업과 복구(RTO/RPO) | "백업이 있다"와 "복구된다"는 다르며, 복구 허용 시간(RTO), 데이터 손실 허용 시점(RPO)을 수치로 약속한다는 개념 | 10.3절, [06 프로덕션](06-production.md) 6.3절, [A1 용어집](../appendix/A1-appendix.md) |
-| 인증서와 Trust Bundle | 만료된 인증서는 접근 불가, 기동 실패를 부르며, PAIS Trust Bundle은 OIDC, Harbor, DSM 인증서 묶음이라는 개념 | 10.3.3절, [02 아키텍처](02-architecture.md), [A1 용어집](../appendix/A1-appendix.md) |
+| 인증서와 Trust Bundle | 만료된 인증서는 접근 불가, 기동 실패를 부르며, PAIS Trust Bundle은 OIDC, Harbor, DSM 인증서 번들이라는 개념 | 10.3.3절, [02 아키텍처](02-architecture.md), [A1 용어집](../appendix/A1-appendix.md) |
 | SLI/SLO, TTFT | 어떤 지표(SLI)가 어느 값(SLO)을 넘으면 알람과 온콜인지 약속한다는 개념. TTFT는 첫 토큰까지의 지연 | 10.4절, [06 프로덕션](06-production.md) 6.8절, [A1 용어집](../appendix/A1-appendix.md) |
-| vSAN, NSX 운영 기초 | vSAN Effective Capacity, Adaptive Resync, NSX Edge 건전성 등 이미 깔린 인프라를 운영하는 관점의 기본 용어 | 10.5절, [02 아키텍처](02-architecture.md), [A1 용어집](../appendix/A1-appendix.md) |
+| vSAN, NSX 운영 기초 | vSAN Effective Capacity, Adaptive Resync, NSX Edge 건전성 등 이미 구축된 인프라를 운영하는 관점의 기본 용어 | 10.5절, [02 아키텍처](02-architecture.md), [A1 용어집](../appendix/A1-appendix.md) |
 | VCF Operations 알람 | Symptom(증상)+임계치로 Alert를 정의하고 Notification으로 통지하는 알람 프레임워크 | 10.4.2절, [06 프로덕션](06-production.md) 6.8절, [A1 용어집](../appendix/A1-appendix.md) |
 
-> 운영 점검, 업그레이드, 복구, SLO를 기록하려면 [10 Day-2 운영 워크시트](../worksheet/10-day2-ops-checklist.md)를 함께 쓰세요.
+> 운영 점검, 업그레이드, 복구, SLO를 기록하려면 [10 Day-2 운영 워크시트](../worksheet/10-day2-ops-checklist.md)를 함께 사용하세요.
 
 ---
 
 ## 10.1 플랫폼 업그레이드와 패치 (LCM 런북)
 
-업그레이드는 **이미 돌아가는 플랫폼의 라이프사이클 관리**이므로 구축이 아니라 Day-2 운영에 속합니다. [문서 09 9.3절 브라운필드](09-deployment-scenarios.md)에서 "기존 VCF가 9.1 미만이면 먼저 업그레이드"라고 참조한 절차의 기준 문서가 이 절입니다.
+업그레이드는 **이미 운영 중인 플랫폼의 라이프사이클 관리**이므로 구축이 아니라 Day-2 운영에 속합니다. [문서 09 9.3절 브라운필드](09-deployment-scenarios.md)에서 "기존 VCF가 9.1 미만이면 먼저 업그레이드"라고 참조한 절차의 기준 문서가 이 절입니다.
 
-PAIF/PAIS는 **여러 계층이 서로 의존**합니다(VCF 코어 → 관리 서비스 → Kubernetes → GPU → PAIS). 그래서 업그레이드는 **순서가 가장 중요**합니다. 순서를 어기면 호환성 오류, 기동 실패가 납니다.
+PAIF/PAIS는 **여러 계층이 서로 의존**합니다(VCF 코어 → 관리 서비스 → Kubernetes → GPU → PAIS). 그래서 업그레이드는 **순서가 가장 중요**합니다. 순서를 어기면 호환성 오류, 기동 실패가 발생합니다.
 
-### 10.1.1 업그레이드 순서 — 기반(VCF)부터 위로
+### 10.1.1 업그레이드 순서 — 기반(VCF)부터 상위 계층으로
 
 | 순서 | 계층 | 대상 | 수행 위치 |
 |:---:|------|------|-----------|
 | 1 | **VCF 코어** | SDDC Manager → NSX → vCenter → ESX → vSAN | SDDC Manager 라이프사이클 관리 |
-| 2 | **VCF 관리 서비스** | VCF Operations, Automation, Identity Broker | 9.1에서 플릿(fleet) 라이프사이클로 전환(Operations 업그레이드 시 처리). 9.1.1 패치는 관리 서비스 fleet lifecycle을 9.1.1.0으로 먼저 올린 뒤 나머지 컴포넌트를 진행 |
-| 3 | **Kubernetes** | Supervisor, VKS(3.5.0+, 9.1.1은 3.7.x) / VKr(1.32 → 1.33, PAIS 3.0은 1.34) | Supervisor/VKS 업그레이드. VKS 3.7은 VKr 1.32를 지원하지 않으므로 1.33 이상으로 먼저 올린 뒤 진행 |
+| 2 | **VCF 관리 서비스** | VCF Operations, Automation, Identity Broker | 9.1에서 플릿(fleet) 라이프사이클로 전환(Operations 업그레이드 시 처리). 9.1.1 패치는 관리 서비스 fleet lifecycle을 9.1.1.0으로 먼저 업그레이드한 뒤 나머지 컴포넌트를 진행 |
+| 3 | **Kubernetes** | Supervisor, VKS(3.5.0+, 9.1.1은 3.7.x) / VKr(1.32 → 1.33, PAIS 3.0은 1.34) | Supervisor/VKS 업그레이드. VKS 3.7은 VKr 1.32를 지원하지 않으므로 1.33 이상으로 먼저 업그레이드한 뒤 진행 |
 | 4 | **GPU 스택** | NVIDIA GPU Operator(24.9.0 → 25.10.1, 3.0부터 26.3.1 선택), 드라이버(580.105.8 또는 580.126.20) | PAISConfiguration / GPU Operator |
-| 5 | **DSM** | Data Services Manager 9.1 → 9.1.1 | Avi Load Balancer와 NSX를 함께 쓰는 클러스터는 VCF를 9.1.0 이상으로 올리기 전에 DSM 9.1.1을 먼저 적용해야 데이터베이스 다운타임을 피함. PostgreSQL 12와 13 인스턴스는 사전 업그레이드 |
+| 5 | **DSM** | Data Services Manager 9.1 → 9.1.1 | Avi Load Balancer와 NSX를 함께 사용하는 클러스터는 VCF를 9.1.0 이상으로 업그레이드하기 전에 DSM 9.1.1을 먼저 적용해야 데이터베이스 다운타임을 피함. PostgreSQL 12와 13 인스턴스는 사전 업그레이드 |
 | 6 | **PAIS** | Private AI Services 2.0.x → 2.1(2.1.2) → 3.0 (Supervisor Service) | "Supervisor Service를 새 버전으로 업그레이드" |
 
-> **순서의 핵심:** VCF 코어 자체의 순서는 **SDDC Manager가 가장 먼저**입니다(이후 컴포넌트 업그레이드를 SDDC Manager가 수행). 그 위에서 Kubernetes → GPU → PAIS 순으로 올라갑니다. GPU Operator, 드라이버는 PAIS보다 먼저 올려 두어야 ModelRuntime이 정상 기동합니다. DSM은 PAIS 지식베이스가 붙는 PostgreSQL을 제공하므로 PAIS보다 먼저 정리합니다.
+> **순서의 핵심:** VCF 코어 자체의 순서는 **SDDC Manager가 가장 먼저**입니다(이후 컴포넌트 업그레이드를 SDDC Manager가 수행). 이후 Kubernetes → GPU → PAIS 순으로 진행합니다. GPU Operator, 드라이버는 PAIS보다 먼저 업그레이드해 두어야 ModelRuntime이 정상 기동합니다. DSM은 PAIS 지식베이스가 사용하는 PostgreSQL을 제공하므로 PAIS보다 먼저 정리합니다.
 
 > **적용 전 확인:** VCF 코어 순서(SDDC Manager → NSX → vCenter → ESX → vSAN)와 9.1의 관리 서비스 플릿 라이프사이클 전환은 공식 문서 기준이나, **정확한 버전 경로와 세부 단계는 적용 전 반드시 [공식 업그레이드 시퀀스 문서](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation.html)와 [업그레이드 시퀀스와 이슈 KB](https://knowledge.broadcom.com/external/article/440630/upgrade-sequence-and-related-issues-for.html)로 재확인**하시기 바랍니다.
 
@@ -63,8 +63,8 @@ PAIF/PAIS는 **여러 계층이 서로 의존**합니다(VCF 코어 → 관리 �
 | 영향 | 내용 | 대비 |
 |------|------|------|
 | **PAIS 2.0.x → 2.1** | 모델 엔드포인트를 호스팅하는 **VKS 클러스터를 삭제와 재생성** → 노드 재생성, 모델 재다운로드 동안 다운타임 | 유지보수 창 + 모델 재다운로드 시간 산정, 사전 모델 캐시 |
-| **PAIS 2.1 → 3.0** | 릴리스 노트가 명시한 다운타임은 **레플리카가 하나뿐인 모델 엔드포인트**입니다. VKr가 1.33에서 1.34로 올라가므로 노드 재생성이 따를 수 있으나, 2.0.x → 2.1 때와 같은 클러스터 삭제와 재생성은 공식 문서에 명시돼 있지 않습니다(확인 필요). Prometheus 메트릭 수집이 VKS 클러스터 가용 이후에 시작되도록 동작이 바뀌어, 업그레이드 직후 메트릭 공백이 알람으로 오인될 수 있습니다 | 중요 엔드포인트는 사전에 레플리카 2 이상, 유지보수 창 확보, 메트릭 공백 구간 알람 억제 |
-| **Model Endpoint 재배포 실패** | 업그레이드 후 메모리 부족으로 재배포 실패 가능(PAIS 2.1 알려진 이슈, [문서 02 2.9절](02-architecture.md)). 3.0은 vLLM 0.20.0(CUDA 13.0)으로 올라가므로 VRAM 요구량을 다시 산정 | 리소스 여유 확보, 업그레이드 후 재배포 검증 |
+| **PAIS 2.1 → 3.0** | 릴리스 노트가 명시한 다운타임은 **레플리카가 하나뿐인 모델 엔드포인트**입니다. VKr가 1.33에서 1.34로 업그레이드되므로 노드 재생성이 따를 수 있으나, 2.0.x → 2.1 때와 같은 클러스터 삭제와 재생성은 공식 문서에 명시돼 있지 않습니다(확인 필요). Prometheus 메트릭 수집이 VKS 클러스터 가용 이후에 시작되도록 동작이 바뀌어, 업그레이드 직후 메트릭 공백이 알람으로 오인될 수 있습니다 | 중요 엔드포인트는 사전에 레플리카 2 이상, 유지보수 창 확보, 메트릭 공백 구간 알람 억제 |
+| **Model Endpoint 재배포 실패** | 업그레이드 후 메모리 부족으로 재배포 실패 가능(PAIS 2.1 알려진 이슈, [문서 02 2.9절](02-architecture.md)). 3.0은 vLLM 0.20.0(CUDA 13.0)으로 업그레이드되므로 VRAM 요구량을 다시 산정 | 리소스 여유 확보, 업그레이드 후 재배포 검증 |
 | **API 폐기 사항(3.0)** | non-chat completions deprecated, 에이전트 API `completion_role` 제거, boolean 값 엄격 검증 → 기존 클라이언트가 실패할 수 있음 | 업그레이드 전 호출부 점검([③ 03](../../03-serving-api/docs/03-openai-compatible-endpoints.md)) |
 | **API 토큰 미활성(3.0 알려진 이슈)** | UI로 PAIS를 활성화하면 API 토큰 발급이 켜지지 않고, 로컬 계정의 기본 base URL도 UI에서 설정되지 않음 | 활성화 후 설정에서 API 토큰 발급을 켜고 base URL을 별도 설정 |
 | **GPU 드라이버 교체** | 드라이버(v580.x) 교체는 테넌트 GPU 워크로드에 영향([문서 07 7.7절](07-gpuaas.md)) | 유지보수 창, MIG 설정 회귀 테스트 |
@@ -73,11 +73,11 @@ PAIF/PAIS는 **여러 계층이 서로 의존**합니다(VCF 코어 → 관리 �
 
 ### 10.1.4 라이브 패치 — ESX 무중단 패치 (9.1에서 실용화)
 
-ESX 호스트 패치는 전통적으로 **호스트를 유지보수 모드로 비우고(vMotion) → 재부팅**하는 절차였습니다. **라이브 패치**(ESX Live Patch)는 실행 중인 하이퍼바이저 메모리에 패치를 적용하고 **필요한 sub-process만 재시작**하므로, **호스트 재부팅도 VM 이전도 없이** 보안과 버그 패치를 온라인으로 반영합니다. 정기 보안 패치를 다운타임 없이 돌릴 수 있어, 9.1 LCM에서 가장 체감되는 개선입니다.
+ESX 호스트 패치는 전통적으로 **호스트를 유지보수 모드로 비우고(vMotion) → 재부팅**하는 절차였습니다. **라이브 패치**(ESX Live Patch)는 실행 중인 하이퍼바이저 메모리에 패치를 적용하고 **필요한 sub-process만 재시작**하므로, **호스트 재부팅도 VM 이전도 없이** 보안과 버그 패치를 온라인으로 반영합니다. 정기 보안 패치를 다운타임 없이 적용할 수 있어, 9.1 LCM에서 가장 체감되는 개선입니다.
 
 **동작 방식**
 
-- 대상 호스트는 전체 유지보수 모드가 아니라 **부분 유지보수 모드**(partial maintenance mode)로 들어갑니다 → 기존 VM은 계속 실행되고, 신규 VM 생성, 해당 호스트로의 vMotion만 잠시 막힙니다.
+- 대상 호스트는 전체 유지보수 모드가 아니라 **부분 유지보수 모드**(partial maintenance mode)로 들어갑니다 → 기존 VM은 계속 실행되고, 신규 VM 생성, 해당 호스트로의 vMotion만 잠시 제한됩니다.
 - VM은 **비우지 않습니다.** 패치가 VM 실행 런타임(vmx)을 건드릴 때만 VM이 **FSR**(Fast-Suspend-Resume, 빠른 일시정지와 재개)를 한 번 거칩니다 — 게스트 재부팅이 아니라 아주 짧은 멈춤이라 사실상 무중단입니다. vmkernel, user-space, NSX 패치는 FSR 없이 적용될 수 있습니다.
 - 라이브 패치 대상이 아닌 패치는 **자동으로 "유지보수 모드 + 재부팅"으로 폴백**합니다(또는 enforce 설정으로 비대상 패치를 차단).
 
@@ -89,7 +89,7 @@ ESX 호스트 패치는 전통적으로 **호스트를 유지보수 모드로 �
 | VCF 9.0 | vmkernel, user-space 데몬, NSX 컴포넌트까지 확장, vGPU VM의 FSR 가속(AI/ML 워크로드 무중단) |
 | **VCF 9.1** | **TPM 활성 호스트 지원 + 클러스터 기본 활성**, vSAN, 코어 스토리지 데몬까지 확장. 벤더 기준 **ESX 패치의 최대 80**%가 라이브 패치 대상 |
 
-9.0까지는 **TPM 2.0이 켜진 호스트에서는 라이브 패치를 쓸 수 없는** 한계가 있었습니다. 요즘 서버 대부분이 TPM을 켜고 출하되어 실무 적용이 막히곤 했는데, **9.1에서 TPM 지원이 추가되고 클러스터 기본 활성으로 바뀌면서** 현장 대다수 하드웨어에서 쓸 수 있는 기능이 되었습니다. 보안 패치 적용 압박이 큰 AI 인프라일수록 효과가 큽니다.
+9.0까지는 **TPM 2.0이 켜진 호스트에서는 라이브 패치를 사용할 수 없는** 한계가 있었습니다. 요즘 서버 대부분이 TPM을 켜고 출하되어 실무 적용이 어려웠는데, **9.1에서 TPM 지원이 추가되고 클러스터 기본 활성으로 바뀌면서** 현장 대다수 하드웨어에서 이 기능을 사용할 수 있습니다. 보안 패치 적용 압박이 큰 AI 인프라일수록 효과가 큽니다.
 
 **전제조건**
 
@@ -97,8 +97,8 @@ ESX 호스트 패치는 전통적으로 **호스트를 유지보수 모드로 �
 
 **범위와 한계**
 
-- **ESX 호스트 패치 계층 한정**입니다. PAIS 2.0.x → 2.1처럼 **VKS 재생성과 모델 재다운로드가 따르는 단계의 다운타임(10.1.3절)은 라이브 패치로 줄지 않습니다.**
-- **모든 패치가 대상은 아닙니다.** 커널의 대규모 변경 등은 폴백 경로(재부팅)를 탑니다 — 그래서 "최대 80%"이지 100%가 아닙니다.
+- **ESX 호스트 패치 계층 한정**입니다. PAIS 2.0.x → 2.1처럼 **VKS 재생성과 모델 재다운로드가 따르는 단계의 다운타임(10.1.3절)은 라이브 패치로 줄일 수 없습니다.**
+- **모든 패치가 대상은 아닙니다.** 커널의 대규모 변경 등은 폴백 경로(재부팅)를 따릅니다 — 그래서 "최대 80%"이지 100%가 아닙니다.
 - 9.0까지 제약이던 **DPU(분산 서비스 엔진)과 병렬 리메디에이션(parallel remediation) 동시 사용**의 9.1 해소 여부는 적용 전 확인이 필요합니다.
 
 > **적용 전 확인:** TPM 지원, 기본 활성, 범위 확장은 9.1 공식 발표 기준입니다. 라이브 패치 적용 가능 여부는 **패치별로 다르므로**, 전제조건과 잔존 제약과 함께 적용 전 공식 문서로 재확인하시기 바랍니다 ([VCF 9.1 vSphere 신기능 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/12/whats-new-with-vsphere-9-1/), [Live patch 확장 — VCF 9.0 블로그](https://blogs.vmware.com/cloud-foundation/2025/07/15/live-patch-gets-even-better-in-vsphere-with-vmware-cloud-foundation-9-0/), [라이브 패치 요건 KB](https://knowledge.broadcom.com/external/article/419942/requirements-for-enabling-the-vsphere-li.html)).
@@ -128,7 +128,7 @@ ESX 호스트 패치는 전통적으로 **호스트를 유지보수 모드로 �
 
 ### 10.1.8 에어갭 아티팩트 미러링 런북 (Artifact Mirroring Tool 실행)
 
-에어갭(폐쇄망) 환경에 PAIS 아티팩트를 반입하는 일은 **이미 깔린 플랫폼을 갱신하고 운영**하는 Day-2 작업입니다. 미러 갱신을 재실행하는 주기가 LCM 리듬에 묶이므로 LCM 런북 바로 옆에 둡니다. **아키텍처와 설계(왜 필요, 구성도, 출처 레지스트리, 용량/무결성 경계)는 [문서 06 6.9절](06-production.md)** 에서 다루며, 이 절은 그 위에서 **실제로 끌어오고 반입하고 적재하는 실행 절차**입니다.
+에어갭(폐쇄망) 환경에 PAIS 아티팩트를 반입하는 일은 **이미 구축된 플랫폼을 갱신하고 운영**하는 Day-2 작업입니다. 미러 갱신을 재실행하는 주기가 LCM 주기에 연동되므로 LCM 런북 바로 다음에 배치합니다. **아키텍처와 설계(왜 필요, 구성도, 출처 레지스트리, 용량/무결성 경계)는 [문서 06 6.9절](06-production.md)** 에서 다루며, 이 절은 그 설계를 바탕으로 **실제로 가져오고 반입하고 적재하는 실행 절차**입니다.
 
 Artifact Mirroring Tool은 **PAIS Services 패키지와 NVIDIA GPU Operator 구성요소를 내부 Harbor 프로젝트(OCI 레지스트리)로 미러링**합니다. 출처 레지스트리 표는 [문서 06 6.9절](06-production.md)를 참조하세요.
 
@@ -146,14 +146,14 @@ Artifact Mirroring Tool은 **PAIS Services 패키지와 NVIDIA GPU Operator 구�
 | 단계 | 위치 | 작업 |
 |------|------|------|
 | 1 | 미러 호스트 | 출처 레지스트리 인증(`docker login`) |
-| 2 | 미러 호스트 | `vcf pais amt pull`로 아티팩트 끌어오기 |
+| 2 | 미러 호스트 | `vcf pais amt pull`로 아티팩트 가져오기 |
 | 3 | 미러 호스트 | 산출물(`pais-store` 등)을 에어갭으로 오프라인 반입 |
 | 4 | 내부망 | 내부 Harbor 인증(`docker login`) |
 | 5 | 내부망 | `vcf pais amt push`로 내부 Harbor 적재 |
 | 6 | 내부망 | 모델 갤러리 push/pull(`vcf pais models`) |
 | 7 | 내부망 | Supervisor에 PAIS 설치(`pais.yml` + `yaml-svc-cfg.yaml`) |
 
-먼저 인터넷 연결 미러 호스트에서 출처 레지스트리에 인증한 뒤 아티팩트를 끌어옵니다. `vcf pais amt pull`은 `pais-store` 디렉터리를 생성하고, 설치 파일 `pais.yml`과 `yaml-svc-cfg.yaml`의 갱신본을 함께 생성합니다.
+먼저 인터넷 연결 미러 호스트에서 출처 레지스트리에 인증한 뒤 아티팩트를 가져옵니다. `vcf pais amt pull`은 `pais-store` 디렉터리를 생성하고, 설치 파일 `pais.yml`과 `yaml-svc-cfg.yaml`의 갱신본을 함께 생성합니다.
 
 ```bash
 # 1) 출처 레지스트리 인증 (pull 전)
@@ -185,7 +185,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 
 마지막으로 Supervisor에 PAIS를 설치합니다. pull 단계에서 갱신된 `pais.yml`을 업로드하고, `yaml-svc-cfg.yaml`의 내용을 설치 워크플로우에 붙여넣습니다 ([Install Private AI Services on the Supervisor](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/installing-and-configuring-private-ai-services/install-private-ai-services-on-the-supervisor.html)).
 
-> **무결성 점검은 별도 단계입니다:** Artifact Mirroring Tool이 서명, 매니페스트, 다이제스트를 자동 검증한다는 공식 근거는 확인되지 않았습니다. 반입 아티팩트의 무결성과 공급망 점검은 **운영자가 수행하는 별도 절차**로 보고, [문서 06 6.9.2절](06-production.md)의 보안 가이드 딥링크를 따르세요.
+> **무결성 점검은 별도 단계입니다:** Artifact Mirroring Tool이 서명, 매니페스트, 다이제스트를 자동 검증한다는 공식 근거는 확인되지 않았습니다. 반입 아티팩트의 무결성과 공급망 점검은 **운영자가 수행하는 별도 절차**로 간주하고, [문서 06 6.9.2절](06-production.md)의 보안 가이드 딥링크를 따르세요.
 
 > **미러 갱신:** 새 BOM(Bill of Materials)이나 갱신된 `pais.yml`을 기준으로 위 `pull` → 반입 → `push` 경로를 재실행합니다. 갱신 주기, 운영 항목과 인접 가이드 딥링크는 [문서 06 6.9.2절](06-production.md)에 정리돼 있습니다.
 
@@ -195,7 +195,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 
 장애 대응은 Day-2에서 가장 자주 펴보는 부분입니다. [문서 02 2.9절 알려진 이슈](02-architecture.md)를 **운영자 관점의 증상 → 진단 → 조치**로 재구성했습니다. 알려진 이슈의 Workaround는 버전에 따라 바뀌므로 적용 전 공식 릴리스 노트로 최신 내용을 재확인하세요.
 
-> **이 절은 운영 런북입니다(증상→진단→조치).** GPU 주입 실패(`CDI device injection failed`)의 ConfigMap 우회나 vGPU Unlicensed 점검표 같은 **핸즈온 깊은 수정과 PoC 단계 절차**는 [문서 11 11.11절](11-gpu-enablement.md)을 보세요.
+> **이 절은 운영 런북입니다(증상→진단→조치).** GPU 주입 실패(`CDI device injection failed`)의 ConfigMap 우회나 vGPU Unlicensed 점검표 같은 **핸즈온 깊은 수정과 PoC 단계 절차**는 [문서 11 11.11절](11-gpu-enablement.md)을 참조하세요.
 
 ### 10.2.1 진단 기본 흐름
 
@@ -229,7 +229,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 | 증상 | 가능 원인 | 조치 |
 |------|----------|------|
 | LLM 트레이스 미표시 | OTel Collector 수신 문제 (PAIS 2.1 알려진 이슈) | 트레이스 수신 검증, 릴리스 노트 Workaround 확인 ([문서 06 6.8절](06-production.md)) |
-| 설치나 업그레이드 직후 메트릭이 비어 있음 | PAIS 3.0 동작 변경: Prometheus 수집이 PAIS 관리 VKS 클러스터 가용 이후 시작 | 장애가 아님. 클러스터 READY 확인 후 수집 재개를 기다리고, 알람 규칙에 유예 구간을 둠 |
+| 설치나 업그레이드 직후 메트릭이 비어 있음 | PAIS 3.0 동작 변경: Prometheus 수집이 PAIS 관리 VKS 클러스터 가용 이후 시작 | 장애가 아님. 클러스터 READY 확인 후 수집 재개를 기다리고, 알람 규칙에 유예 구간을 설정함 |
 | 원격 클라우드 모델 호출이 실패 | `InferenceGatewayRoute`의 TLS 검증 모드와 발급자 인증서 불일치, 자격증명 Secret 만료 | 네임스페이스 CA 신뢰 번들에 발급자 인증서 추가, Secret 갱신 ([③ 02 2.5.1절](../../03-serving-api/docs/02-serving-api-architecture.md)) |
 
 ### 10.2.5 DLVM, 드라이버 (9.0.x 보고 — 재확인 필요)
@@ -247,7 +247,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 
 ## 10.3 백업, 복구와 인증서, 시크릿 회전
 
-구축 후 상시 돌아가야 하는 두 위생 작업입니다. (1) 플랫폼 구성과 데이터의 백업과 **복구 가능성** 보장, (2) 인증서와 시크릿의 정기 회전. 둘 다 "필요할 때 안 되면 치명적"이라 평소에 점검해 두어야 합니다.
+구축 후 상시 수행해야 하는 두 위생 작업입니다. (1) 플랫폼 구성과 데이터의 백업과 **복구 가능성** 보장, (2) 인증서와 시크릿의 정기 회전. 둘 다 "필요할 때 안 되면 치명적"이라 평소에 점검해 두어야 합니다.
 
 ### 10.3.1 백업 대상 — 플랫폼 구성까지 확장
 
@@ -293,7 +293,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 - PAIS **Trust Bundle = OIDC, Harbor, DSM 인증서**([문서 02 2.6절](02-architecture.md) Phase 3). 이들 인증서 갱신 시 Trust Bundle을 재구성합니다.
 - 시크릿 = Harbor 레지스트리 자격증명, OIDC 클라이언트 시크릿, 서비스 계정 토큰([문서 06 6.10절](06-production.md)) → 정기 회전. PAIS 3.0부터는 API 토큰과 원격 클라우드 모델 자격증명 Secret도 회전 대상입니다([⑤ 03](../../05-security/docs/03-identity-access.md)).
 - **PAIS 3.0 Ingress 인증서 반입(BYO)**: 3.0부터 PAIS Ingress의 TLS 종단 인증서를 조직 CA가 발급한 것으로 바꿔 넣을 수 있고, OIDC 연결의 TLS 검증도 설정할 수 있습니다. 반입한 인증서는 플랫폼이 자동 갱신하지 않으므로 만료 추적과 교체를 이 절의 회전 일정에 넣습니다. 공유 모델의 consumer 쪽에 전달한 provider 발급자 인증서도 provider가 Ingress 인증서를 바꾸면 함께 갱신해야 합니다([문서 06 6.4.1절](06-production.md)).
-- **VCF Operations 9.1.1 인증서 관리 범위 확장**: 9.1.1부터 vSphere Supervisor, NSX Edge, 라이선스 서버, cloud proxy, VCF Automation의 인증서가 VCF Operations의 인증서 관리와 만료 알람 대상에 들어왔습니다. PAIS가 도는 Supervisor의 인증서를 별도 추적하던 절차는 이 관리 화면으로 합칩니다.
+- **VCF Operations 9.1.1 인증서 관리 범위 확장**: 9.1.1부터 vSphere Supervisor, NSX Edge, 라이선스 서버, cloud proxy, VCF Automation의 인증서가 VCF Operations의 인증서 관리와 만료 알람 대상에 포함됐습니다. PAIS가 실행되는 Supervisor의 인증서를 별도 추적하던 절차는 이 관리 화면으로 합칩니다.
 
 > **적용 전 확인:** VCF 9의 자동 인증서 갱신(Fleet Management CA), 파일 기반 백업, 복구 절차는 공식 문서 기준이나, 정확한 단계와 9.1 차이는 적용 전 [백업과 복구 문서](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/backup-and-restore-of-cloud-foundation/file-based-backups-for-sddc-manager-and-vcenter-server.html), [인증서 자동 갱신(VCF 블로그)](https://blogs.vmware.com/cloud-foundation/2025/06/19/automatic-certificate-renewal-in-vcf-9/)로 재확인하시기 바랍니다.
 
@@ -301,7 +301,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 
 ## 10.4 SLO, 알람, 온콜
 
-[문서 06 6.8절 관측성](06-production.md)은 "무엇을 볼 수 있나"(대시보드)를 다룹니다. 운영 단계에서는 **"어떤 값이 나쁘면 누가 언제 깨어나나"** 를 별도로 정해야 합니다. 즉 SLI/SLO 정의 → 알람 임계치 → 온콜과 에스컬레이션입니다. ([문서 06 6.11절](06-production.md) 배포 체크리스트의 "알림 규칙과 On-call"을 운영 절차로 구체화한 것입니다.)
+[문서 06 6.8절 관측성](06-production.md)은 "무엇을 확인할 수 있나"(대시보드)를 다룹니다. 운영 단계에서는 **"어떤 값이 나쁘면 누가 언제 깨어나나"** 를 별도로 정해야 합니다. 즉 SLI/SLO 정의 → 알람 임계치 → 온콜과 에스컬레이션입니다. ([문서 06 6.11절](06-production.md) 배포 체크리스트의 "알림 규칙과 On-call"을 운영 절차로 구체화한 것입니다.)
 
 ### 10.4.1 SLI/SLO — 무엇을 약속하나
 
@@ -324,7 +324,7 @@ VCF Operations의 **Alert Definition(Symptom + 임계치), Notification**으로 
 - **알람(Alert)**: 증상 조합 + 심각도(Critical/Warning).
 - **알림(Notification)**: 이메일과 웹훅 등으로 통지.
 - 9.1은 신규 알람(예: vCenter High Session Count, Increased request load)과 전체 헬스 대시보드를 제공합니다.
-- 9.1.1은 VKS 메트릭을 OpenTelemetry 표준으로 2초 간격 스트리밍하고(기존 5분 폴링 대비) 멀티클러스터 VKS 뷰를 제공하므로, 모델 엔드포인트가 도는 VKS 워커의 포화를 알람 임계에 반영할 때 지연이 크게 줄었습니다. Grafana 대시보드 임포트도 지원합니다.
+- 9.1.1은 VKS 메트릭을 OpenTelemetry 표준으로 2초 간격 스트리밍하고(기존 5분 폴링 대비) 멀티클러스터 VKS 뷰를 제공하므로, 모델 엔드포인트가 실행되는 VKS 워커의 포화를 알람 임계에 반영할 때 지연이 크게 줄었습니다. Grafana 대시보드 임포트도 지원합니다.
 
 알람 설계 원칙(노이즈 방지):
 
@@ -348,15 +348,15 @@ VCF Operations의 **Alert Definition(Symptom + 임계치), Notification**으로 
 
 ### 10.4.4 AI Assistant로 진단 보조 (VCF 9.1.1)
 
-VCF Operations 9.1.1은 콘솔 안에 대화형 **AI Assistant**를 넣었습니다. 자연어로 VCF 상태를 묻고, 알람과 구성과 로그를 함께 엮어 원인 후보(예: ESX CPU와 메모리 경합)를 짚어 주며, API 지식 없이 관리 팩(management pack)을 만드는 데도 씁니다. 백엔드 모델은 두 가지 중에서 고릅니다. **PAIS에서 서빙 중인 모델 엔드포인트**이거나, 조직이 계약한 사설 Google Gemini 인스턴스입니다.
+VCF Operations 9.1.1은 콘솔 안에 대화형 **AI Assistant**를 넣었습니다. 자연어로 VCF 상태를 묻고, 알람과 구성과 로그를 함께 연관 지어 원인 후보(예: ESX CPU와 메모리 경합)를 제시하며, API 지식 없이 관리 팩(management pack)을 만드는 데도 사용합니다. 백엔드 모델은 두 가지 중에서 고릅니다. **PAIS에서 서빙 중인 모델 엔드포인트**이거나, 조직이 계약한 사설 Google Gemini 인스턴스입니다.
 
 Private AI 인프라 운영 관점에서는 첫 번째 선택지가 자연스럽습니다. 이 플랫폼이 이미 서빙하는 사내 모델로 플랫폼 자신을 진단하므로 운영 데이터(알람, 로그, 구성)가 밖으로 나가지 않습니다. 두 번째 선택지를 고르면 그 데이터가 사외로 나가므로 [⑤ 05 5.6절](../../05-security/docs/05-data-governance.md)의 반출 통제가 그대로 적용됩니다.
 
 운영 절차에서의 자리는 다음과 같습니다.
 
-- 10.2절의 트러블슈팅 런북에서 "증상 식별 → 계층 좁히기" 단계의 보조 도구로 씁니다. 결론을 내는 주체는 여전히 런북과 운영자입니다.
-- AI Assistant가 쓰는 PAIS 모델 엔드포인트는 운영 전용 네임스페이스에 두고, 다른 워크로드의 피크가 진단 도구의 응답을 막지 않도록 레플리카를 분리합니다.
-- 관리 팩 생성 기능으로 만든 대시보드와 알람은 10.4.2절의 알람 설계 원칙(증상 기반, 심각도 분리, 런북 링크)에 맞춰 검토한 뒤에만 운영에 올립니다.
+- 10.2절의 트러블슈팅 런북에서 "증상 식별 → 계층 좁히기" 단계의 보조 도구로 사용합니다. 결론을 도출하는 주체는 여전히 런북과 운영자입니다.
+- AI Assistant가 사용하는 PAIS 모델 엔드포인트는 운영 전용 네임스페이스에 배치하고, 다른 워크로드의 피크가 진단 도구의 응답을 지연시키지 않도록 레플리카를 분리합니다.
+- 관리 팩 생성 기능으로 만든 대시보드와 알람은 10.4.2절의 알람 설계 원칙(증상 기반, 심각도 분리, 런북 링크)에 맞춰 검토한 뒤에만 운영에 반영합니다.
 
 > 근거: [New AI and Kubernetes Private Cloud Operations Capabilities in VCF 9.1.1 (VMware Cloud Foundation Blog, 2026-09-03)](https://blogs.vmware.com/cloud-foundation/2026/09/03/new-ai-and-kubernetes-private-cloud-operations-capabilities-in-vmware-cloud-foundation-9-1-1/). 구성 절차와 지원 모델 범위는 적용 직전 VCF Operations 9.1.1 문서로 확인하시기 바랍니다.
 
@@ -364,7 +364,7 @@ Private AI 인프라 운영 관점에서는 첫 번째 선택지가 자연스럽
 
 ## 10.5 네트워크와 스토리지 Day-2 운영
 
-플랫폼을 굴리다 보면 **네트워크와 스토리지**가 AI 워크로드의 체감 성능과 안정성을 좌우합니다. 모델 로딩은 스토리지 처리량에, 추론 응답과 분산 학습은 네트워크에 민감합니다. **구성과 설계는 [문서 02](02-architecture.md), [문서 09](09-deployment-scenarios.md)에서, 용량 산정은 [⑥ 사이징, 용량, 비용 가이드](../../06-sizing-cost/README.md)에서** 다뤘으므로, 이 절은 **이미 깔린 네트워크와 스토리지를 운영(건전성, 성능, 용량 추세, 장애 대응)** 하는 데 집중합니다.
+플랫폼을 운영하다 보면 **네트워크와 스토리지**가 AI 워크로드의 체감 성능과 안정성을 좌우합니다. 모델 로딩은 스토리지 처리량에, 추론 응답과 분산 학습은 네트워크에 민감합니다. **구성과 설계는 [문서 02](02-architecture.md), [문서 09](09-deployment-scenarios.md)에서, 용량 산정은 [⑥ 사이징, 용량, 비용 가이드](../../06-sizing-cost/README.md)에서** 다뤘으므로, 이 절은 **이미 구축된 네트워크와 스토리지를 운영(건전성, 성능, 용량 추세, 장애 대응)** 하는 데 집중합니다.
 
 > **이 절의 경계:** 구성과 설계 → [문서 02](02-architecture.md), [문서 09](09-deployment-scenarios.md) / 용량과 사이징 → [⑥ 가이드](../../06-sizing-cost/README.md)(벡터 DB는 [② 데이터 가이드](../../02-vectordb/README.md)) / 보안 네트워크(마이크로세그멘테이션, 접근통제, 감사) → [⑤ 보안과 거버넌스 가이드](../../05-security/README.md) / 백업 타깃 → 10.3절. 여기서는 **Day-2 운영 점검**만 다룹니다.
 
@@ -372,7 +372,7 @@ Private AI 인프라 운영 관점에서는 첫 번째 선택지가 자연스럽
 
 PAIF 네트워크는 **NSX(Edge, VPC, 세그먼트)** + **모델 엔드포인트 앞단 로드밸런서** + (분산 워크로드에 한해) **GPU 패브릭**으로 이뤄집니다. 운영 관점에서 다음을 점검합니다.
 
-| 운영 영역 | 무엇을 보나 | 조치와 연계 |
+| 운영 영역 | 무엇을 확인하나 | 조치와 연계 |
 |----------|------------|-----------|
 | NSX Edge, Transport Node 건전성 | VCF Operations가 Edge 메트릭을 20초 주기로 수집 — VTEP 상태, DataPath IPC Thread, Edge Agent 상태 등 | 임계 초과 시 알람(10.4절), 장애 시 10.2절 |
 | 모델 엔드포인트 로드밸런서(NSX Edge/ALB) | TLS 종단, 백엔드 헬스, 세션, 인증서 만료 임박 | 인증서 회전 → 10.3.3절, 알람 → 10.4절 |
@@ -387,7 +387,7 @@ PAIF 스토리지는 **vSAN(플랫폼, VM, VKS 노드)** + **AI 자산 store(모
 
 **vSAN 운영:**
 
-| 운영 영역 | 무엇을 보나 | 메모 |
+| 운영 영역 | 무엇을 확인하나 | 메모 |
 |----------|------------|------|
 | 용량 | VCF 9.1 신규 **Effective Capacity 뷰**(+ Auto-RAID)가 운영 예비와 호스트 재구축 예비(과거 "슬랙 스페이스")를 자동 산정 → 광고된 여유 용량을 안전하게 사용 | 디스크 공간 헬스 알람을 모니터하고 임계 도달 전 조치 |
 | 건전성 | **vSAN Skyline Health**로 클러스터와 디바이스 상태 점검 | 디바이스 장애 시 객체 자동 resync |
@@ -395,7 +395,7 @@ PAIF 스토리지는 **vSAN(플랫폼, VM, VKS 노드)** + **AI 자산 store(모
 
 **AI 자산 스토리지 운영:**
 
-| 운영 영역 | 무엇을 보나 | 메모 |
+| 운영 영역 | 무엇을 확인하나 | 메모 |
 |----------|------------|------|
 | 모델 레지스트리(Harbor) 증가 | 모델과 NIM(NVIDIA 추론 마이크로서비스) 누적에 따른 저장소 증가 추세 | Day-2 추세 점검은 여기, **용량 산정은 ⑥**. 플랫폼 Harbor 20GB 구분은 [문서 06 6.9.2절](06-production.md) |
 | 벡터 DB(pgvector/DSM) 증가 | 인덱스와 벡터 데이터 증가 | 추세 점검은 여기, 사이징은 ⑥ / 상세 운영은 [② 데이터 가이드](../../02-vectordb/README.md) |
@@ -414,17 +414,17 @@ PAIF 스토리지는 **vSAN(플랫폼, VM, VKS 노드)** + **AI 자산 store(모
 
 ## 10.6 운영자 독자 트랙
 
-**무슨 일이 생기면 어디로 가나** — 이 문서(및 ① 전반)의 Day-2 운영 내용을 **인프라 운영자 관점의 진입로**로 묶습니다. 처음 운영을 맡았거나, 특정 상황에서 어디를 봐야 할지 빠르게 찾을 때 사용하세요.
+**무슨 일이 생기면 어디로 가나** — 이 문서(및 ① 전반)의 Day-2 운영 내용을 **인프라 운영자 관점의 진입 경로**로 정리합니다. 처음 운영을 맡았거나, 특정 상황에서 어디를 확인해야 할지 빠르게 찾을 때 사용하세요.
 
 ### 10.6.1 상황별 라우터
 
 | 상황 / 할 일 | 가는 곳 |
 |-------------|---------|
-| 플랫폼을 새 버전으로 올려야 함 | 10.1절 LCM 런북 |
+| 플랫폼 버전 업그레이드 필요 | 10.1절 LCM 런북 |
 | 뭔가 고장났다 / 에러가 난다 | 10.2절 트러블슈팅 |
-| 백업, 복구를 점검, 훈련해야 함 | 10.3절 백업과 복구 |
+| 백업, 복구 점검과 훈련 필요 | 10.3절 백업과 복구 |
 | 인증서가 만료된다 / 시크릿 교체 | 10.3.3절 인증서와 시크릿 회전 |
-| 알람을 설정하거나 SLO를 정해야 함 | 10.4절 SLO, 알람, 온콜 |
+| 알람 설정 또는 SLO 정의 필요 | 10.4절 SLO, 알람, 온콜 |
 | 새벽에 알람을 받았다(온콜) | 10.4.3절 → 10.2절 |
 | 네트워크가 느리다 / Edge, LB, Network Policy 점검 | 10.5.1절 네트워크 Day-2 |
 | 스토리지 용량과 성능 / vSAN 점검 | 10.5.2절 스토리지 Day-2 |
@@ -435,7 +435,7 @@ PAIF 스토리지는 **vSAN(플랫폼, VM, VKS 노드)** + **AI 자산 store(모
 
 ### 10.6.2 운영자 정기 점검 리듬
 
-Day-2를 "사고 났을 때만"이 아니라 주기로 돌립니다.
+Day-2를 "사고 났을 때만"이 아니라 주기적으로 수행합니다.
 
 ```
 일간:  관측 대시보드(모델, GPU) 확인, 활성 알람, 온콜 처리, Endpoint 헬스, 네트워크, vSAN 헬스 알람

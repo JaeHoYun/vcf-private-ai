@@ -3,11 +3,11 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-이 문서는 사내 폐쇄망(프라이빗) 환경에서 운영하는 생성형 AI 플랫폼의 데이터 거버넌스와 프라이버시 통제를 다룹니다. 기반 스택은 VMware Cloud Foundation(VCF) 9.1.1과 그 위에서 동작하는 VMware Private AI Foundation with NVIDIA(PAIF) 9.1.1, VMware Private AI Services(PAIS) 3.0입니다. 검색과 생성에 쓰이는 벡터 데이터 계층은 시리즈 ② 가이드에서 다룬 Data Services Manager(DSM) 기반 PostgreSQL + pgvector를 전제합니다. PAIF에서 벡터DB가 pgvector(PostgreSQL) 위에서 DSM으로 배포되고 관리된다는 점은 Broadcom TechDocs와 VCF 블로그에서 확인됩니다([Broadcom TechDocs: Deploy a Vector Database for PAIF](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-rag-workloads-in-private-ai-foundation-with-nvidia/deploy-a-vector-database-for-paif.html), [VCF Blog: Initial Availability of PAIF](https://blogs.vmware.com/cloud-foundation/2024/03/18/announcing-initial-availability-of-vmware-private-ai-foundation-with-nvidia/)).
+이 문서는 사내 폐쇄망(프라이빗) 환경에서 운영하는 생성형 AI 플랫폼의 데이터 거버넌스와 프라이버시 통제를 다룹니다. 기반 스택은 VMware Cloud Foundation(VCF) 9.1.1과 이를 기반으로 동작하는 VMware Private AI Foundation with NVIDIA(PAIF) 9.1.1, VMware Private AI Services(PAIS) 3.0입니다. 검색과 생성에 사용되는 벡터 데이터 계층은 시리즈 ② 가이드에서 다룬 Data Services Manager(DSM) 기반 PostgreSQL + pgvector를 전제합니다. PAIF에서 벡터DB가 pgvector(PostgreSQL) 기반으로 구성되어 DSM으로 배포되고 관리된다는 점은 Broadcom TechDocs와 VCF 블로그에서 확인됩니다([Broadcom TechDocs: Deploy a Vector Database for PAIF](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-rag-workloads-in-private-ai-foundation-with-nvidia/deploy-a-vector-database-for-paif.html), [VCF Blog: Initial Availability of PAIF](https://blogs.vmware.com/cloud-foundation/2024/03/18/announcing-initial-availability-of-vmware-private-ai-foundation-with-nvidia/)).
 
 데이터 거버넌스는 "어떤 데이터가, 누구에게, 언제까지, 어디에서" 노출, 보존, 이동되는지를 규율하는 영역입니다. 본 문서는 인프라 계층(VCF/PAIF)과 데이터 계층(② 벡터DB)을 잇는 통제에 집중하며, 프롬프트 인젝션 방어와 출력 검열 같은 애플리케이션 런타임 가드레일은 06 문서의 범위로 명시적으로 분리합니다(아래 5.7 경계 정리 참조).
 
-용어 풀이를 먼저 둡니다. PII(Personally Identifiable Information)는 개인을 식별할 수 있는 정보를 뜻합니다. ACL(Access Control List)은 특정 자원에 누가 접근 가능한지 적은 권한 목록입니다. RAG(Retrieval-Augmented Generation)는 외부 문서를 검색해 답변에 보태는 방식입니다. 임베딩(embedding)은 문서를 숫자 벡터로 바꾼 표현입니다. GPU-Accelerated Workload Domain(약칭 GPU WLD)은 VCF에서 GPU 가속 AI 워크로드를 격리해 담는 공식 도메인 단위입니다.
+용어 설명부터 정리합니다. PII(Personally Identifiable Information)는 개인을 식별할 수 있는 정보를 뜻합니다. ACL(Access Control List)은 특정 자원에 누가 접근 가능한지 적은 권한 목록입니다. RAG(Retrieval-Augmented Generation)는 외부 문서를 검색해 답변에 보태는 방식입니다. 임베딩(embedding)은 문서를 숫자 벡터로 바꾼 표현입니다. GPU-Accelerated Workload Domain(약칭 GPU WLD)은 VCF에서 GPU 가속 AI 워크로드를 격리해 담는 공식 도메인 단위입니다.
 
 ## 5.1 데이터 거버넌스 책임 모델과 데이터 분류
 
@@ -21,7 +21,7 @@
 | 앱 소유자 | 출력 가드레일, 사용자 인증 컨텍스트 전달 | 06 문서 |
 | 보안팀(문서보안 운영) | 보호 문서 복호화 서비스 계정과 정책 예외, 대량 복호화 임계치, 복호화 로그 검토 | 5.9 |
 
-모든 데이터는 인입 전에 분류(classification) 등급이 부여되어야 합니다. 데이터 최소화 원칙(data minimization)은 목적에 필요한 데이터만 수집하고 보관하라는 NIST Privacy Framework의 핵심 통제(CT.DM 계열)로, AI 파이프라인에도 동일하게 적용됩니다([NIST Privacy Framework v1.0 Core](https://www.nist.gov/document/nist-privacy-framework-version-1-core-pdf), [NIST: Data Minimization 가이드](https://www.strac.io/blog/nist-privacy-framework-data-minimization)). 즉 "수집 가능하니까 인입"이 아니라 "RAG 목적에 필요하니까 인입"이 되어야 하며, 분류 등급에 따라 이후의 권한 필터, 마스킹, 보존기간이 결정됩니다.
+모든 데이터는 인입 전에 분류(classification) 등급이 부여되어야 합니다. 데이터 최소화 원칙(data minimization)은 목적에 필요한 데이터만 수집하고 보관하라는 NIST Privacy Framework의 핵심 통제(CT.DM 계열)로, AI 파이프라인에도 동일하게 적용됩니다([NIST Privacy Framework v1.0 Core](https://www.nist.gov/document/nist-privacy-framework-version-1-core-pdf), [NIST: Data Minimization 가이드](https://www.strac.io/blog/nist-privacy-framework-data-minimization)). 즉 "수집 가능하니까 인입"이 아니라 "RAG 목적에 필요하니까 인입"이어야 하며, 분류 등급에 따라 이후의 권한 필터, 마스킹, 보존기간이 결정됩니다.
 
 권장 분류 체계는 최소 4단계(공개 / 내부 / 기밀 / 제한)이며, 각 문서와 청크 메타데이터에 등급을 기록합니다. PII 포함 여부는 분류와 독립된 별도 플래그로 관리하는 편이 마스킹 정책 적용에 유리합니다.
 
@@ -29,11 +29,11 @@
 
 ## 5.2 문서 권한 거버넌스: 접근등급 메타데이터와 권한 재동기화
 
-RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서가 검색 결과로 노출"되는 것입니다. OWASP는 이를 LLM02(민감정보 노출)와 LLM08(벡터와 임베딩 취약점)의 교차 지점으로 분류합니다. 검색 단계에서 권한 없는 문서가 반환되면 곧바로 민감정보 노출로 이어집니다([OWASP LLM08: Vector and Embedding Weaknesses](https://www.indusface.com/learning/owasp-llm-vector-and-embedding-weaknesses/), [OWASP Top 10 for LLM Applications 2025](https://www.indusface.com/learning/owasp-top-10-llm/)).
+RAG의 가장 흔한 데이터 사고는 "사용자가 조회해서는 안 될 문서가 검색 결과로 노출"되는 것입니다. OWASP는 이를 LLM02(민감정보 노출)와 LLM08(벡터와 임베딩 취약점)의 교차 지점으로 분류합니다. 검색 단계에서 권한 없는 문서가 반환되면 곧바로 민감정보 노출로 이어집니다([OWASP LLM08: Vector and Embedding Weaknesses](https://www.indusface.com/learning/owasp-llm-vector-and-embedding-weaknesses/), [OWASP Top 10 for LLM Applications 2025](https://www.indusface.com/learning/owasp-top-10-llm/)).
 
 ### 접근등급 메타데이터
 
-② 벡터DB(pgvector) 가이드의 스키마를 전제로, 각 청크 레코드에 원본 ACL을 투영한 권한 메타데이터를 함께 저장합니다. 핵심은 임베딩과 권한 정보를 같은 레코드에 묶어 검색 시점에 함께 평가하는 것입니다.
+② 벡터DB(pgvector) 가이드의 스키마를 전제로, 각 청크 레코드에 원본 ACL을 투영한 권한 메타데이터를 함께 저장합니다. 핵심은 임베딩과 권한 정보를 같은 레코드에 결합해 검색 시점에 함께 평가하는 것입니다.
 
 | 메타데이터 필드 | 용도 | 예시 |
 |---|---|---|
@@ -55,7 +55,7 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 
 - 이벤트 기반 우선: 원본 시스템의 권한 변경과 삭제 이벤트를 구독해 즉시 메타데이터를 갱신하거나 레코드를 무효화합니다. 권한 회수는 지연 없이 반영되어야 합니다.
 - 주기적 전수 대사(reconciliation) 병행: 이벤트 유실에 대비해 `source_doc_id` 기준으로 원본 ACL과 벡터DB 메타데이터를 주기 대조하고, 불일치 시 회수 우선 정책으로 처리합니다.
-- 회수는 "차단 후 정리": 권한 회수 신호가 오면 먼저 검색 노출을 차단(soft-delete/tombstone)하고, 이후 임베딩 잔존까지 제거(5.5 참조)합니다.
+- 회수는 "차단 후 정리": 권한 회수 신호가 수신되면 먼저 검색 노출을 차단(soft-delete/tombstone)하고, 이후 임베딩 잔존까지 제거(5.5 참조)합니다.
 - 삭제 전파: 원본 문서 삭제는 벡터DB 레코드 삭제 + 잊힐 권리 처리(5.5)로 연결됩니다.
 
 > 주의: 권한 재동기화는 "검색 결과의 정확성"이 아니라 "권한 회수의 즉시성"을 보장하는 통제입니다. 동기화 주기가 길수록 회수된 권한이 노출되는 시간 창이 길어집니다. 구체적인 SLA(예: 회수 반영 목표 시간)는 조직 정책에 따르며, 운영 도구별 이벤트 지원 여부는 확인 필요입니다.
@@ -66,7 +66,7 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 
 권한 메타데이터를 저장했더라도, 검색 시점에 실제로 필터링하지 않으면 의미가 없습니다. 검색단 권한 필터링은 사용자의 인증 컨텍스트(소속 그룹과 역할)를 검색 쿼리의 필터 조건으로 적용해, 권한 있는 청크만 후보로 삼는 통제입니다.
 
-업계 표준은 사전 필터(pre-filter)와 사후 필터(post-filter)를 모두 쓰는 하이브리드입니다. 사전 필터는 벡터 검색 쿼리에 `acl_principals` 조건을 결합해 권한 없는 청크가 애초에 후보에 들지 않게 하고, 사후 필터는 반환 직전에 최종 인가를 재확인합니다([The Right Approach to Authorization in RAG (Oso)](https://www.osohq.com/post/right-approach-to-authorization-in-rag), [Item-Level Permissions in RAG](https://kirkryan.co.uk/item-level-permissions-in-rag-why-your-vector-database-needs-access-control/), [ACL and Metadata Filtering (Databricks)](https://community.databricks.com/t5/technical-blog/mastering-rag-chatbot-security-acl-and-metadata-filtering-with/ba-p/101946)).
+업계 표준은 사전 필터(pre-filter)와 사후 필터(post-filter)를 모두 사용하는 하이브리드입니다. 사전 필터는 벡터 검색 쿼리에 `acl_principals` 조건을 결합해 권한 없는 청크를 애초에 후보에서 제외하고, 사후 필터는 반환 직전에 최종 인가를 재확인합니다([The Right Approach to Authorization in RAG (Oso)](https://www.osohq.com/post/right-approach-to-authorization-in-rag), [Item-Level Permissions in RAG](https://kirkryan.co.uk/item-level-permissions-in-rag-why-your-vector-database-needs-access-control/), [ACL and Metadata Filtering (Databricks)](https://community.databricks.com/t5/technical-blog/mastering-rag-chatbot-security-acl-and-metadata-filtering-with/ba-p/101946)).
 
 | 단계 | 위치 | 역할 | 실패 시 영향 |
 |---|---|---|---|
@@ -80,13 +80,13 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 - 필터 조건 자체가 사용자 입력으로 조작되지 않도록 서버 측에서 주입합니다(클라이언트가 보낸 권한 값을 신뢰하지 않음).
 - 검색 로그에 "누가, 어떤 필터로, 무엇을 받았는지"를 남겨 추적 가능성을 확보합니다(5.8 검증과 연계).
 
-규제 산업용 RAG 통제 가이드도 데이터 프라이버시, 접근통제, 인젝션 방어를 핵심 축으로 제시하며, 검색단 인가를 필수 통제로 봅니다([Secure RAG for Regulated Industries](https://www.blockchain-council.org/ai/secure-rag-for-regulated-industries-data-privacy-access-control-prompt-injection-defense/)).
+규제 산업용 RAG 통제 가이드도 데이터 프라이버시, 접근통제, 인젝션 방어를 핵심 축으로 제시하며, 검색단 인가를 필수 통제로 간주합니다([Secure RAG for Regulated Industries](https://www.blockchain-council.org/ai/secure-rag-for-regulated-industries-data-privacy-access-control-prompt-injection-defense/)).
 
 ---
 
 ## 5.4 프라이버시: PII 식별, 마스킹, 익명화(인입/출력 양단)
 
-프라이버시 통제는 데이터가 들어올 때와 나갈 때 양쪽에서 작동해야 합니다. 한쪽만 막으면 다른 경로로 새어 나갑니다.
+프라이버시 통제는 데이터가 들어올 때와 나갈 때 양쪽에서 작동해야 합니다. 한쪽만 차단하면 다른 경로로 유출됩니다.
 
 ### 인입 단(데이터 적재 시)
 
@@ -103,7 +103,7 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 
 ### 출력 단(응답 생성 시)
 
-검색 결과나 모델 생성 응답에 PII가 섞여 나가는 것을 막는 출력 측 필터입니다. 인입 단에서 놓친 PII, 또는 여러 청크 조합으로 재구성되는 식별 정보를 마지막에 거릅니다. 다만 출력 가드레일의 런타임 구현(응답 검열과 차단 로직)은 06 문서가 다루며, 본 문서는 "출력 단에서도 PII 통제가 필요하다"는 정책 경계까지를 규정합니다.
+검색 결과나 모델 생성 응답에 PII가 섞여 유출되는 것을 차단하는 출력 측 필터입니다. 인입 단에서 놓친 PII, 또는 여러 청크 조합으로 재구성되는 식별 정보를 마지막에 걸러냅니다. 다만 출력 가드레일의 런타임 구현(응답 검열과 차단 로직)은 06 문서가 다루며, 본 문서는 "출력 단에서도 PII 통제가 필요하다"는 정책 경계까지를 규정합니다.
 
 > 민감정보 분류와 PII 플래그(5.1, 5.2의 `pii_flag`)에 따라 마스킹 정책이 결정됩니다. 분류가 정확할수록 양단 필터의 오탐과 미탐이 줄어듭니다.
 
@@ -119,7 +119,7 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 
 함의는 분명합니다. 원본 문서를 지워도 벡터DB의 임베딩을 함께 지우지 않으면 PII가 잔존합니다. "삭제"는 원본, 청크, 임베딩, 캐시, 로그까지 전파되어야 완결됩니다.
 
-같은 이유로 문서보안(DRM)으로 보호되던 문서를 인입하면 청크, 임베딩, 캐시, 프롬프트 로그, 추적 데이터가 모두 그 문서의 **파생 사본**이 됩니다. 원문에 걸려 있던 보호가 파생 사본에는 자동으로 따라오지 않으므로, 파생 사본은 원문의 분류 등급과 접근 주체를 상속해 정보자산으로 등록하고, 저장 암호화와 등급별 인스턴스 분리로 원문과 같은 수준의 보호를 다시 붙입니다(5.9절).
+같은 이유로 문서보안(DRM)으로 보호되던 문서를 인입하면 청크, 임베딩, 캐시, 프롬프트 로그, 추적 데이터가 모두 그 문서의 **파생 사본**에 해당합니다. 원문에 적용되어 있던 보호가 파생 사본에는 자동으로 승계되지 않으므로, 파생 사본은 원문의 분류 등급과 접근 주체를 상속해 정보자산으로 등록하고, 저장 암호화와 등급별 인스턴스 분리로 원문과 같은 수준의 보호를 다시 적용합니다(5.9절).
 
 ### 수명주기 통제 매트릭스
 
@@ -128,11 +128,11 @@ RAG의 가장 흔한 데이터 사고는 "사용자가 봐서는 안 될 문서�
 | 보존(retention) | 분류 등급별 보존기간 설정, 만료 시 자동 정리 | 만료 청크의 임베딩 동시 만료 |
 | 삭제(deletion) | 원본 삭제 → 청크, 임베딩, 인덱스 삭제 전파 | 인덱스에서 물리 제거까지 확인 |
 | 잊힐 권리 | 특정 개인 데이터 식별 후 전 계층 삭제 | 해당 개인 관련 임베딩 전부 추적과 제거 |
-| 학습/파인튜닝 데이터 | 별도 거버넌스: 동의, 출처, 보존 기록 | 학습 데이터는 모델 가중치에 잔류(되돌리기 곤란) |
+| 학습/파인튜닝 데이터 | 별도 거버넌스: 동의, 출처, 보존 기록 | 학습 데이터는 모델 가중치에 잔류(제거 곤란) |
 
 ### 학습/파인튜닝 데이터 거버넌스
 
-RAG는 검색 데이터를 모델에 재학습시키지 않고 외부에서 보태므로, 잊힐 권리 대응이 상대적으로 용이합니다([VCF Blog: PAIF Technical Overview](https://blogs.vmware.com/cloud-foundation/2024/03/05/vmware-private-ai-foundation-with-nvidia-a-technical-overview/)). 반면 파인튜닝과 학습에 투입된 데이터는 모델 가중치에 흡수되어 사후 삭제가 어렵습니다. 따라서 학습 데이터는 인입 전 PII 처리, 동의, 출처 기록을 더 엄격히 적용하고, 가능하면 "삭제가 필요할 수 있는 데이터는 학습이 아닌 RAG로" 두는 설계가 안전합니다(데이터 최소화 원칙의 연장).
+RAG는 검색 데이터를 모델에 재학습시키지 않고 외부에서 보태므로, 잊힐 권리 대응이 상대적으로 용이합니다([VCF Blog: PAIF Technical Overview](https://blogs.vmware.com/cloud-foundation/2024/03/05/vmware-private-ai-foundation-with-nvidia-a-technical-overview/)). 반면 파인튜닝과 학습에 투입된 데이터는 모델 가중치에 흡수되어 사후 삭제가 어렵습니다. 따라서 학습 데이터는 인입 전 PII 처리, 동의, 출처 기록을 더 엄격히 적용하고, 가능하면 "삭제가 필요할 수 있는 데이터는 학습이 아닌 RAG로" 처리하는 설계가 안전합니다(데이터 최소화 원칙의 연장).
 
 ---
 
@@ -152,21 +152,21 @@ VCF/PAIF는 인터넷 비연결(disconnected/air-gapped) 환경에서 RAG 워크
 
 ### 원격 클라우드 모델 경로의 반출 통제 (PAIS 3.0부터)
 
-위 상주 원칙은 "외부 모델 API로 가는 경로가 없다"를 전제로 했습니다. PAIS 3.0은 그 경로를 정식 기능으로 열었습니다. 조직 관리자나 VI 관리자가 `InferenceGatewayRoute` 리소스로 Google Gemini 네이티브 API, Gemini Enterprise Agent Platform(구 Vertex AI), Google OpenAI 호환 계층, 서드파티 OpenAI 호환 서비스를 연결하면, 그 모델은 사내 모델과 같은 엔드포인트 형태로 앱과 에이전트에 보입니다([③ 02 2.5.1절](../../03-serving-api/docs/02-serving-api-architecture.md)). 앱 코드가 구분하지 않기 때문에, 통제는 앱이 아니라 이 절이 정하는 정책과 플랫폼 설정에서 이뤄져야 합니다.
+위 상주 원칙은 "외부 모델 API로 가는 경로가 없다"를 전제로 했습니다. PAIS 3.0은 그 경로를 정식 기능으로 지원합니다. 조직 관리자나 VI 관리자가 `InferenceGatewayRoute` 리소스로 Google Gemini 네이티브 API, Gemini Enterprise Agent Platform(구 Vertex AI), Google OpenAI 호환 계층, 서드파티 OpenAI 호환 서비스를 연결하면, 그 모델은 사내 모델과 같은 엔드포인트 형태로 앱과 에이전트에 노출됩니다([③ 02 2.5.1절](../../03-serving-api/docs/02-serving-api-architecture.md)). 앱 코드가 구분하지 않기 때문에, 통제는 앱이 아니라 이 절이 정하는 정책과 플랫폼 설정에서 이뤄져야 합니다.
 
-**무엇이 나가나** — completion 원격 모델에는 사용자 질의, 시스템 지시문, 검색으로 가져온 청크, MCP 도구가 돌려준 결과가 프롬프트로 나갑니다. embedding 원격 모델에는 지식베이스 인덱싱 시 문서 본문 전체가 나갑니다. 즉 "질문만 나간다"가 아니라 "그 에이전트가 볼 수 있는 모든 데이터가 나갈 수 있다"로 보고 설계해야 합니다.
+**무엇이 나가나** — completion 원격 모델에는 사용자 질의, 시스템 지시문, 검색으로 가져온 청크, MCP 도구가 반환한 결과가 프롬프트로 나갑니다. embedding 원격 모델에는 지식베이스 인덱싱 시 문서 본문 전체가 나갑니다. 즉 "질문만 나간다"가 아니라 "그 에이전트가 접근할 수 있는 모든 데이터가 나갈 수 있다"로 간주하고 설계해야 합니다.
 
 | 통제 | 내용 | 관련 절 |
 |---|---|---|
-| 허용 목록 | 원격 모델 연결은 명시된 네임스페이스에만 만들고, 어떤 지식베이스와 에이전트가 원격 모델을 쓸 수 있는지를 5.1의 분류 등급으로 정합니다. 기본은 공개와 내부 등급만 허용하고 기밀과 제한 등급 지식베이스는 사내 모델로 고정. 보호 문서(5.9절)에서 파생된 지식베이스는 등급과 무관하게 사내 모델로 고정([⑦ 05 5.4절](../../07-design/docs/05-tenancy-security.md#54-보강-보호-문서-복호화-존의-배치)) | 5.1, 5.2, 5.9 |
-| 인입 단 마스킹 | 원격 모델이 허용된 지식베이스는 인입 단계에서 PII를 마스킹한 사본을 씁니다. 출력 단 마스킹만으로는 이미 나간 데이터를 되돌릴 수 없습니다 | 5.4 |
-| 전송 검증 | `InferenceGatewayRoute`의 TLS 검증 모드는 strict를 기본으로 하고, 사설 CA를 쓰는 서드파티 서비스만 caOnly로 둡니다. none은 시험 환경 밖에서 금지 | ③ 02 |
+| 허용 목록 | 원격 모델 연결은 명시된 네임스페이스에만 만들고, 어떤 지식베이스와 에이전트가 원격 모델을 사용할 수 있는지를 5.1의 분류 등급으로 정합니다. 기본은 공개와 내부 등급만 허용하고 기밀과 제한 등급 지식베이스는 사내 모델로 고정. 보호 문서(5.9절)에서 파생된 지식베이스는 등급과 무관하게 사내 모델로 고정([⑦ 05 5.4절](../../07-design/docs/05-tenancy-security.md#54-보강-보호-문서-복호화-존의-배치)) | 5.1, 5.2, 5.9 |
+| 인입 단 마스킹 | 원격 모델이 허용된 지식베이스는 인입 단계에서 PII를 마스킹한 사본을 사용합니다. 출력 단 마스킹만으로는 이미 반출된 데이터를 회수할 수 없습니다 | 5.4 |
+| 전송 검증 | `InferenceGatewayRoute`의 TLS 검증 모드는 strict를 기본으로 하고, 사설 CA를 사용하는 서드파티 서비스만 caOnly로 설정합니다. none은 시험 환경 밖에서 금지 | ③ 02 |
 | 자격증명 | 원격 서비스 API 키와 서비스 계정 키는 Secret으로만 참조하고 최소 범위로 발급, 정기 회전 | 03 3.5절 |
-| 국외 이전 명시 | 원격 모델의 처리 위치(리전)와 공급자의 데이터 보존 정책을 확인해 국외 이전 여부를 정책 문서에 적습니다. 공급자가 프롬프트를 학습에 쓰지 않는다는 계약 조건을 확보합니다 | 5.6 |
+| 국외 이전 명시 | 원격 모델의 처리 위치(리전)와 공급자의 데이터 보존 정책을 확인해 국외 이전 여부를 정책 문서에 적습니다. 공급자가 프롬프트를 학습에 사용하지 않는다는 계약 조건을 확보합니다 | 5.6 |
 | 추적 | PAIS가 제공하는 원격 모델 토큰 사용량 추적을 반출 증빙으로 남기고, 게이트웨이 요청 로그에서 원격 모델 호출을 별도 태그로 구분해 감사 대상에 넣습니다 | 07 |
 | 에어갭 | 완전 에어갭 환경에서는 이 경로가 성립하지 않습니다. 원격 모델을 허용하려면 프록시 수준 이상의 연결이 필요하므로 ⑦ D12 에어갭 수준 결정과 함께 정합니다 | ⑦ 05 |
 
-> 원칙: 원격 모델은 "사내에 둘 수 없는 상용 모델이 필요하고, 그 유스케이스가 다루는 데이터가 반출 정책 안에 있을 때"만 씁니다. GPU 부족을 원격 모델로 메우는 결정은 비용 문제가 아니라 데이터 경계 문제이므로, 이 표의 통제를 먼저 갖춘 뒤에만 허용합니다. ([근거: Connect to a Remote Model Running in the Cloud, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/connect-to-a-remote-model-running-in-the-cloud.html))
+> 원칙: 원격 모델은 "사내에 배포할 수 없는 상용 모델이 필요하고, 그 유스케이스가 다루는 데이터가 반출 정책 안에 있을 때"만 사용합니다. GPU 부족을 원격 모델로 메우는 결정은 비용 문제가 아니라 데이터 경계 문제이므로, 이 표의 통제를 먼저 갖춘 뒤에만 허용합니다. ([근거: Connect to a Remote Model Running in the Cloud, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/what-is-private-ai-services/connect-to-a-remote-model-running-in-the-cloud.html))
 
 ### 멀티테넌트 데이터 경계
 
@@ -194,11 +194,11 @@ VCF/PAIF는 인터넷 비연결(disconnected/air-gapped) 환경에서 RAG 워크
 | 프롬프트 인젝션 | (범위 밖) | 인젝션 방어와 입력 검증 |
 | 데이터 노출 | 저장, 검색, 잔존 관점 통제 | 응답 시점 노출 차단 |
 
-요약하면, 05는 "데이터에 무엇을 새겨두고 어떻게 보존, 필터, 삭제할지"를, 06은 "런타임에 입력과 출력을 어떻게 막을지"를 책임집니다. 검색단 권한 필터(5.3)는 두 문서가 맞물리는 지점으로, 정책은 05가, 신원 전달과 런타임 적용은 06이 담당합니다.
+요약하면, 05는 "데이터에 무엇을 기록하고 어떻게 보존, 필터, 삭제할지"를, 06은 "런타임에 입력과 출력을 어떻게 통제할지"를 책임집니다. 검색단 권한 필터(5.3)는 두 문서가 함께 다루는 지점으로, 정책은 05가, 신원 전달과 런타임 적용은 06이 담당합니다.
 
 ## 5.8 검증 방법
 
-아래 항목으로 데이터 거버넌스 통제가 실제로 작동하는지 검증합니다. 모든 검증은 근거와 로그를 남겨 추적 가능해야 합니다. 뒤에 오는 5.9 보호 문서 거버넌스와 5.10 대화 데이터 수명주기의 검증 항목(11–13)도 이 표에 함께 둡니다.
+아래 항목으로 데이터 거버넌스 통제가 실제로 작동하는지 검증합니다. 모든 검증은 근거와 로그를 남겨 추적 가능해야 합니다. 이어지는 5.9 보호 문서 거버넌스와 5.10 대화 데이터 수명주기의 검증 항목(11–13)도 이 표에 함께 수록합니다.
 
 | # | 검증 항목 | 방법 | 합격 기준 |
 |---|---|---|---|
@@ -220,37 +220,37 @@ VCF/PAIF는 인터넷 비연결(disconnected/air-gapped) 환경에서 RAG 워크
 
 ## 5.9 보호 문서(DRM) 복호화 거버넌스
 
-문서보안(DRM)으로 암호화된 문서를 검색 결합의 소스로 쓰려면 서버 측에서 복호화해야 합니다. 이 절은 그 복호화를 누가 승인하고 어떤 조건으로 허용하며 무엇을 남기는지를 정합니다. 파이프라인의 위치는 [④ 02 2.1.2절](../../04-rag/docs/02-ingestion-indexing.md), 범위 결정과 인입 패턴과 조직 워크플로는 [앱 가이드 06 데이터 소스 온보딩과 보호 문서](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/06-data-onboarding.md)가 정본입니다. 특정 문서보안 제품의 규격은 다루지 않습니다.
+문서보안(DRM)으로 암호화된 문서를 검색 결합의 소스로 사용하려면 서버 측에서 복호화해야 합니다. 이 절은 그 복호화를 누가 승인하고 어떤 조건으로 허용하며 무엇을 남기는지를 정합니다. 파이프라인의 위치는 [④ 02 2.1.2절](../../04-rag/docs/02-ingestion-indexing.md), 범위 결정과 인입 패턴과 조직 워크플로는 [앱 가이드 06 데이터 소스 온보딩과 보호 문서](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/06-data-onboarding.md)가 정본입니다. 특정 문서보안 제품의 규격은 다루지 않습니다.
 
 **전제** — 서버 측 복호화 자체를 금지하는 규제나 관행은 없습니다. 검색엔진 인덱서, 데이터 유출 방지, 백업이 오래전부터 "권한을 가진 가상 사용자"로 문서보안 서버와 통신해 암호문을 읽어 왔습니다. 검색 결합이 다른 점은 파생 사본(청크, 임베딩, 캐시, 로그)이 많고 출력이 생성형이라는 것이며, 그래서 통제의 초점은 복호화 행위가 아니라 **파생 사본의 등급 상속**에 있습니다.
 
 | 통제 | 내용 | 관련 절 |
 |---|---|---|
 | 승인 주체 | 데이터 오너가 저장소별 인덱싱 범위(등급, 폴더, 기간)를 서면 승인하고 회수 권한을 갖습니다. 복호화 서비스의 도입과 파생 데이터의 등급과 로그 보존은 정보보호위원회 심의 대상입니다 | 5.1 |
-| 서비스 신원 | 복호화 워커는 문서보안 시스템에 등록한 전용 서비스 계정과 허용 프로세스로 동작하며, 문서 단위 권한 확인을 켠 채 복호화합니다. 사람 계정 대여는 금지합니다. 대량 배치 복호화는 감사 체계에서 이상행위로 잡히므로 임계치를 별도 정책으로 승인해 경보와 분리합니다 | 03 3.1절, 3.5절 |
+| 서비스 신원 | 복호화 워커는 문서보안 시스템에 등록한 전용 서비스 계정과 허용 프로세스로 동작하며, 문서 단위 권한 확인을 켠 채 복호화합니다. 사람 계정 대여는 금지합니다. 대량 배치 복호화는 감사 체계에서 이상행위로 탐지되므로 임계치를 별도 정책으로 승인해 경보와 분리합니다 | 03 3.1절, 3.5절 |
 | 선별 원칙 | 공개와 내부 등급은 기본 대상, 기밀은 오너 승인분만 격리 지식베이스에, 제한과 국가핵심기술과 최상위 민감 문서는 인덱싱에서 제외하거나 메타데이터만 인덱싱합니다. 전사 일괄 복호화는 하지 않습니다 | 5.1 |
-| 격리 | 복호화, 정규화, 마스킹, 청킹, 임베딩, 스테이징을 한 존으로 묶어 별도 VKS 네임스페이스에 두고 NSX 분산 방화벽으로 필요한 통신 외를 차단합니다. 평문은 존을 나가지 않습니다 | 02, [⑦ 05 5.4절](../../07-design/docs/05-tenancy-security.md) |
+| 격리 | 복호화, 정규화, 마스킹, 청킹, 임베딩, 스테이징을 한 존으로 통합해 별도 VKS 네임스페이스에 배치하고 NSX 분산 방화벽으로 필요한 통신 외를 차단합니다. 평문은 존을 나가지 않습니다 | 02, [⑦ 05 5.4절](../../07-design/docs/05-tenancy-security.md) |
 | 파생 사본 재보호 | 청크와 임베딩과 캐시와 로그를 원문 등급의 정보자산으로 등록하고, 저장 암호화와 등급별 인스턴스 분리를 적용하며, 5.2의 메타데이터에 원본 보호 정책 식별자와 복호화 시각과 승인 근거를 남깁니다 | 5.2, 5.5 |
 | 검색 시점 강제 | 문서보안 정책을 허용 그룹 목록으로 평탄화한 `acl_principals`로 사전 필터하고 기본값은 거부입니다. 지식베이스 안의 문서 단위 필터가 없는 관리형 경로는 사용자 집단 단위로 지식베이스를 분리합니다 | 5.3 |
 | 회수와 재분류 | 문서보안 서버의 권한 회수와 등급 상향과 문서 폐기 이벤트를 받아 청크를 즉시 비활성화하고, 세션 히스토리와 추적 데이터의 같은 문서 ID를 함께 무효화합니다. 반영 목표 시간을 정하고 측정합니다 | 5.2, 5.5 |
 | 감사 | 복호화 이벤트(서비스 계정, 시각, 원본 문서와 보호 정책, 승인 근거, 건수, 결과)를 로그 대상에 넣고, 검색 로그와 LLM 추적과 문서 ID로 잇습니다. 분기마다 복호화 로그의 이상행위를 검토하고 인덱스 범위를 승인 대장과 대조합니다 | [07 7.1.2절](07-audit-compliance.md) |
-| 조회 전용 | 보호 문서는 검색 결합 조회에만 쓰고 파인튜닝 데이터로 쓰지 않습니다. 쓰려면 별도 심의입니다 | 5.5 |
+| 조회 전용 | 보호 문서는 검색 결합 조회에만 사용하고 파인튜닝 데이터로 사용하지 않습니다. 파인튜닝에 사용하려면 별도 심의를 거칩니다 | 5.5 |
 
-> 규제 관점: 개인정보 처리 안내서는 검색 결합의 개인정보 노출 위험에 접근통제, 사용자 인증, 응답 필터링, 기록 관리를 요구하고, 정보보호 관리체계 인증기준은 복호화 권한 부여 절차와 자산 등급별 취급절차를 요구하며, 공공의 망 보안체계는 등급 기반 흐름 통제와 로그의 등급 분류를 둡니다. 어느 것도 복호화를 금지하지 않고 파생 사본의 통제를 요구합니다. 시효성 정보는 [AX 방법론 부록 A2](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/appendix/A2-kr-regulatory-timeline.md)가 단일 출처입니다.
+> 규제 관점: 개인정보 처리 안내서는 검색 결합의 개인정보 노출 위험에 접근통제, 사용자 인증, 응답 필터링, 기록 관리를 요구하고, 정보보호 관리체계 인증기준은 복호화 권한 부여 절차와 자산 등급별 취급절차를 요구하며, 공공의 망 보안체계는 등급 기반 흐름 통제와 로그의 등급 분류를 규정합니다. 어느 것도 복호화를 금지하지 않고 파생 사본의 통제를 요구합니다. 시효성 정보는 [AX 방법론 부록 A2](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/appendix/A2-kr-regulatory-timeline.md)가 단일 출처입니다.
 
 ## 5.10 대화 데이터 수명주기
 
-5.5절의 수명주기 통제는 문서 코퍼스를 대상으로 했습니다. 서비스가 운영되면 문서가 아닌 데이터가 쌓입니다. 세션 히스토리, 프롬프트와 완성문의 로그, 사용자 피드백, 그리고 07의 재생 가능한 추적 데이터입니다. 이 데이터는 사용자의 질문(개인정보와 업무 기밀이 섞임)과 근거로 쓰인 문서의 발췌(원문 등급의 파생 사본)를 함께 담으므로, 문서와 별도로 통제 대상으로 정의해야 합니다. 앱이 무엇을 하는지는 [앱 가이드 11 11.7절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/11-app-integration-ux.md)이 다루고, 이 절은 플랫폼 정책을 정합니다.
+5.5절의 수명주기 통제는 문서 코퍼스를 대상으로 했습니다. 서비스가 운영되면 문서가 아닌 데이터가 축적됩니다. 세션 히스토리, 프롬프트와 완성문의 로그, 사용자 피드백, 그리고 07의 재생 가능한 추적 데이터입니다. 이 데이터는 사용자의 질문(개인정보와 업무 기밀이 섞임)과 근거로 사용된 문서의 발췌(원문 등급의 파생 사본)를 함께 담으므로, 문서와 별도로 통제 대상으로 정의해야 합니다. 앱이 무엇을 하는지는 [앱 가이드 11 11.7절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/11-app-integration-ux.md)이 다루고, 이 절은 플랫폼 정책을 정합니다.
 
 | 통제 | 내용 |
 |---|---|
 | 대상 정의 | 세션 히스토리(PAIS 세션과 앱 DB), 프롬프트와 완성문 로그(앱, 게이트웨이), 피드백 이벤트(앱), 추적 데이터(PAIS OpenTelemetry와 관측 백엔드), 응답 캐시. 각각의 저장 위치와 소유자를 5.1의 책임 모델에 적습니다 |
-| 등급 상속 | 대화 데이터는 근거로 쓰인 문서 중 가장 높은 등급을 상속하고, 개인정보 포함 여부를 별도 플래그로 둡니다. 추적 데이터 저장소는 그 자체로 발췌본 저장소이므로 기밀 등급 지식베이스를 쓰는 서비스의 추적은 같은 등급 자산으로 등록합니다 |
+| 등급 상속 | 대화 데이터는 근거로 사용된 문서 중 가장 높은 등급을 상속하고, 개인정보 포함 여부를 별도 플래그로 관리합니다. 추적 데이터 저장소는 그 자체로 발췌본 저장소이므로 기밀 등급 지식베이스를 사용하는 서비스의 추적은 같은 등급 자산으로 등록합니다 |
 | 보존 기준 | 운영 목적(세션과 디버깅)과 감사 목적(규제 범주별 보존)을 나눕니다. 프롬프트 본문의 보존은 등급별로 정합니다. 공개와 내부 등급은 보존 허용, 기밀 등급은 마스킹 후 보존 또는 본문 대신 해시와 길이만 보존, 제한 등급은 보존 금지. 고영향 AI에 해당하는 서비스는 결정 근거 문서를 법이 정한 기간 보관하되 본문이 아니라 근거 메타데이터(문서 ID, 인용 노드, 구성 버전)로 충족할 수 있는지 법무와 확인합니다 |
-| 추적 데이터의 개인정보 | OpenTelemetry 수집기 단계에서 개인정보를 마스킹하거나 본문을 해시로 대체하는 처리를 등급별 정책으로 둡니다(07 7.2절). 마스킹 전 원문이 수집기 버퍼에 머무는 시간도 통제 대상입니다 |
-| 고지와 이용 정책 | 내부 임직원 서비스라도 질의가 기록되고 누가 볼 수 있는지를 고지하고, 이용 정책에 금지 입력(개인정보, 자격증명, 외부 기밀)과 결과 검증 책임을 명시하며 개인정보 처리방침에 반영합니다 |
-| 열람과 삭제 | 사용자가 자기 대화를 열람하고 삭제를 요청하는 경로를 두고, 삭제는 세션, 로그, 피드백, 추적 데이터, 캐시까지 전파합니다(5.5의 삭제 전파와 같은 원칙) |
-| 접근 통제 | 로그와 추적 데이터를 볼 수 있는 역할을 최소로 두고(03 3.2절의 감사자 역할), 접근 자체를 기록합니다 |
+| 추적 데이터의 개인정보 | OpenTelemetry 수집기 단계에서 개인정보를 마스킹하거나 본문을 해시로 대체하는 처리를 등급별 정책으로 정합니다(07 7.2절). 마스킹 전 원문이 수집기 버퍼에 머무는 시간도 통제 대상입니다 |
+| 고지와 이용 정책 | 내부 임직원 서비스라도 질의가 기록되고 누가 열람할 수 있는지를 고지하고, 이용 정책에 금지 입력(개인정보, 자격증명, 외부 기밀)과 결과 검증 책임을 명시하며 개인정보 처리방침에 반영합니다 |
+| 열람과 삭제 | 사용자가 자기 대화를 열람하고 삭제를 요청하는 경로를 마련하고, 삭제는 세션, 로그, 피드백, 추적 데이터, 캐시까지 전파합니다(5.5의 삭제 전파와 같은 원칙) |
+| 접근 통제 | 로그와 추적 데이터를 열람할 수 있는 역할을 최소로 한정하고(03 3.2절의 감사자 역할), 접근 자체를 기록합니다 |
 
 > 원칙: "재생 가능한 추적"(07 7.1.1절)과 "최소 보존"은 긴장 관계에 있습니다. 해법은 추적을 없애는 것이 아니라 추적의 본문을 등급에 맞게 줄이는 것입니다. 메타데이터는 오래, 본문은 짧게, 기밀은 마스킹해서.
 

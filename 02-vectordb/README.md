@@ -32,22 +32,6 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 
 ---
 
-## 기반 버전
-
-| 구분 | 버전 | 비고 |
-|------|------|------|
-| VMware Cloud Foundation (VCF) | 9.1.1 | 9.1 GA 2026-05, 9.1.1 GA 2026-09 |
-| Private AI Foundation with NVIDIA (PAIF) | 9.1.1 | VCF 코어 구독 포함(NVAIE만 별도) |
-| Private AI Services (PAIS) | 3.0 | 2026-09 GA. 2.1은 2026-05 GA |
-| Data Services Manager (DSM) | 9.1.1 | 2026-09 GA. 9.1은 2026-05 GA |
-| PostgreSQL (DSM 9.1.1) | 18.4, 17.10, 16.14, 15.18, 14.23 | 12와 13은 9.1.1에서 제거 |
-| pgvector | 0.8.0 (DSM 9.1 번들, 9.1.1 번들은 릴리스 노트 미기재) / 0.8.2 커뮤니티 | 0.8.2는 CVE-2026-3172 수정 |
-| PostgreSQL / pgvector (PAIS 검증 조합) | 16.8 / 0.8.0 | 공식 문서 기준 조합이며 도입 환경에서 검증 권장 |
-
-> 도입 전 반드시 확인하는 정보입니다. 상세는 [01 버전 호환 매트릭스](docs/01-version-compatibility.md)를 참조하시기 바랍니다.
-
----
-
 ## 주요 내용
 
 - Vector Embedding, 근사 최근접 이웃(ANN, Approximate Nearest Neighbor) 검색, HNSW/IVFFlat 인덱스의 동작 원리
@@ -66,6 +50,20 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 - [VCF Private AI Foundation 실무 가이드](../01-infra/README.md). VCF 9.1 기반 Private AI Foundation with NVIDIA 구축 가이드
 
 ---
+
+## 기반 버전
+
+| 구분 | 버전 | 비고 |
+|------|------|------|
+| VMware Cloud Foundation (VCF) | 9.1.1 | 9.1 GA 2026-05, 9.1.1 GA 2026-09 |
+| Private AI Foundation with NVIDIA (PAIF) | 9.1.1 | VCF 코어 구독 포함(NVAIE만 별도) |
+| Private AI Services (PAIS) | 3.0 | 2026-09 GA. 2.1은 2026-05 GA |
+| Data Services Manager (DSM) | 9.1.1 | 2026-09 GA. 9.1은 2026-05 GA |
+| PostgreSQL (DSM 9.1.1) | 18.4, 17.10, 16.14, 15.18, 14.23 | 12와 13은 9.1.1에서 제거 |
+| pgvector | 0.8.0 (DSM 9.1 번들, 9.1.1 번들은 릴리스 노트 미기재) / 0.8.2 커뮤니티 | 0.8.2는 CVE-2026-3172 수정 |
+| PostgreSQL / pgvector (PAIS 검증 조합) | 16.8 / 0.8.0 | 공식 문서 기준 조합이며 도입 환경에서 검증 권장 |
+
+> 도입 전 반드시 확인하는 정보입니다. 상세는 [01 버전 호환 매트릭스](docs/01-version-compatibility.md)를 참조하시기 바랍니다.
 
 ## 라이선스
 

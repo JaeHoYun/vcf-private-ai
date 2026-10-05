@@ -31,6 +31,10 @@
 >
 > 직접 채워 작성하는 양식으로 [거버넌스와 데이터주권 갭 워크시트](worksheet/governance-sovereignty-gap.md)가 있습니다. 이미 운영 중인 AI 자산의 통제 격차를 자산대장 실측(A절), 한국 AI 기본법과 NIST AI RMF와 EU AI Act와 ISO 42001 대비 격차(B절), 규제 데이터의 외부 경유 소급 점검(C절)으로 되짚습니다. AX 방법론 가이드에 있던 양식을 이관한 것입니다.
 
+## 참고 자료
+
+각 문서는 본문에 1차 출처(Broadcom TechDocs, NVIDIA 공식 문서, OWASP Top 10 for LLM Applications, NIST AI RMF/CSF, MITRE ATLAS 등)를 인라인으로 표기합니다. 보안 통제의 적용 전에는 해당 공식 문서로 최신 사양을 재확인하시기 바랍니다.
+
 ## 기반 버전
 
 | 구분 | 버전 | 비고 |
@@ -42,10 +46,6 @@
 | PostgreSQL / pgvector (PAIS 검증 조합) | 16.8 / 0.8.0 | DSM 9.1.1 기준(②) |
 
 > 본 가이드는 **보안과 거버넌스 관점**에 집중하며, 엔진과 컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 단일 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전). 모든 수치는 작성 시점(2026-06) 기준이고 2026-09에 VCF 9.1.1 / PAIS 3.0을 반영했으며, 적용 전 공식 문서로 재확인하시기 바랍니다.
-
-## 참고 자료
-
-각 문서는 본문에 1차 출처(Broadcom TechDocs, NVIDIA 공식 문서, OWASP Top 10 for LLM Applications, NIST AI RMF/CSF, MITRE ATLAS 등)를 인라인으로 표기합니다. 보안 통제의 적용 전에는 해당 공식 문서로 최신 사양을 재확인하시기 바랍니다.
 
 ## 라이선스
 

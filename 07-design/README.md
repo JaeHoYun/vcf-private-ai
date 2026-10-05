@@ -46,16 +46,6 @@
 - **블루프린트로 빠르게** — 소/중/대 레퍼런스 설계를 출발점으로 제시하고, 각 선택의 근거를 함께 제시합니다.
 - **결정을 추적한다** — ①–⑥에 흩어진 설계 결정을 대안과 트레이드오프와 함께 설계 결정 기록으로 한곳에 모읍니다.
 
-## 빠른 시작
-
-- **"어디서 시작하나"** → [01 설계 프로세스](docs/01-design-process.md)
-- **"빠른 출발점이 필요하다"** → [02 레퍼런스 블루프린트](docs/02-reference-blueprints.md)
-- **"설계 결정을 한자리에서 검토하고 결정하고 기록한다"** → [06 설계 결정 카탈로그](docs/06-decision-forks.md) + [07 설계 리뷰](docs/07-design-review.md)
-- **"이미 온프렘 AI, MLOps가 있고 점진적으로 이관한다"** → [08 브라운필드 통합 설계](docs/08-brownfield-integration.md)
-- **"전사 확장(멀티테넌트) 설계를 검토한다"** → [02 2.5절 전사 확장 블루프린트](docs/02-reference-blueprints.md), [05 5.1.1절 멀티테넌트 기반 설계](docs/05-tenancy-security.md)
-- **"누가 무엇을 책임지나"** → [09 역할과 책임 (RACI)](docs/09-roles-raci.md)
-- **"설계 결정을 직접 적는다"** → [채워넣기 워크시트](worksheet/README.md) (결정 요인 시트 → 설계 결정 기록)
-
 ## 라이선스
 
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). 자유롭게 활용하시되 출처를 표기해 주세요. `출처: https://github.com/JaeHoYun/vcf-private-ai/tree/main/07-design`

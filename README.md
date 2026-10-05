@@ -90,23 +90,19 @@ flowchart TB
 
 - [Platform Engineering 2.0: An Evolution for the AI Era](https://www.linkedin.com/pulse/time-platform-engineering-20-now-vmwarevcf-m3yfc/) — Broadcom, PlatformEngineering.org 공동 백서. 개발자 중심 플랫폼(1.0)이 AI 네이티브 플랫폼(GPU, 모델 서빙, MCP), 다중 페르소나, 내장 FinOps, 보안 기층화, 컴포저블 아키텍처의 다섯 축으로 확장된다는 프레임워크로, 본 시리즈 ①–⑦과 앱과 에이전트 서비스 가이드의 기술 토픽과 거의 1:1로 대응합니다.
 
-## 기반 버전 (요약)
+## 기반 버전
 
-| 구분 | 버전 |
-|------|------|
-| VMware Cloud Foundation | 9.1.1 (9.1 GA 2026-05, 9.1.1 GA 2026-09) |
-| Private AI Foundation with NVIDIA (PAIF) | 9.1.1 |
-| Private AI Services (PAIS) | 3.0 (2026-09 GA, VCF 9.1.x 호환) |
-| Data Services Manager (DSM) | 9.1.1 |
-| PostgreSQL / pgvector (PAIS 검증 조합) | 16.8 / 0.8.0 |
+| 구분 | 버전 | 비고 |
+|------|------|------|
+| VMware Cloud Foundation (VCF) | 9.1.1 | 9.1 GA 2026-05, 9.1.1 GA 2026-09 |
+| Private AI Foundation with NVIDIA (PAIF) | 9.1.1 | VCF 코어 구독 포함(NVAIE만 별도) |
+| Private AI Services (PAIS) | 3.0 | 2026-09 GA, VCF 9.1.x 호환 |
+| Data Services Manager (DSM) | 9.1.1 | PostgreSQL 18.4, 17.10, 16.14, 15.18, 14.23 지원 |
+| PostgreSQL / pgvector (PAIS 검증 조합) | 16.8 / 0.8.0 | PAIS Data Indexing이 검증한 조합 |
 
-> 엔진과 컴포넌트 상세 버전 단일 기준 문서는 [① README의 기반 버전표](01-infra/README.md#기반-버전-source-of-truth)를 따릅니다. 어느 기능이 어느 버전에서 들어왔는지는 [① 00 What's New의 버전별 기능 이력](01-infra/docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)에서 확인할 수 있습니다.
+> 엔진과 컴포넌트 상세 버전의 단일 기준 문서는 [① README의 기반 버전표](01-infra/README.md#기반-버전)입니다. 어느 기능이 어느 버전에서 들어왔는지는 [① 00 What's New의 버전별 기능 이력](01-infra/docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)에서 확인할 수 있습니다.
 >
-> **이전 기준선이 필요하다면** — PAIS 2.1 / VCF 9.1 기준으로 작성된 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 그대로 읽을 수 있습니다. 본문에서 "PAIS 3.0부터"로 표기한 대목은 2.1 환경에서는 생략하면 됩니다.
-
-## 주요 주제
-
-`VCF`, `PAIF`, `PAIS`, `VKS`, `vSAN`, `NSX`, `DLVM`, `vLLM`, `RAG`, `VectorDB`, `pgvector`, `Model Serving`, `MCP`, `Agent Builder`, `Security`, `Governance`, `Sizing`, `TCO`, `Design`, `Blueprint`
+> **이전 기준선이 필요하다면.** PAIS 2.1 / VCF 9.1 기준으로 작성된 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 그대로 읽을 수 있습니다. 본문에서 "PAIS 3.0부터"로 표기한 대목은 2.1 환경에서는 생략하면 됩니다.
 
 ## 라이선스
 

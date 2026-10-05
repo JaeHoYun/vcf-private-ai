@@ -30,29 +30,28 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발
 
 ---
 
-## 기반 버전 (Source of Truth)
-
-> **이 표가 문서 전체 버전 기준의 단일 출처입니다.** 각 문서는 개별 버전을 반복 표기하지 않고 이 표를 참조합니다.
-> 모든 수치와 버전은 작성 시점(2026-06) Broadcom 공식 릴리스 노트 기준이고, 2026-09에 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 GA(2026-09-03) 내용을 반영했습니다. 적용 전 [공식 문서](#참고-자료)로 재확인하시기 바랍니다.
+## 기반 버전
 
 | 구분 | 버전 | 비고 |
 |------|------|------|
-| **VMware Cloud Foundation** | **9.1.1** | 9.1 GA 2026년 5월, 9.1.1 GA 2026년 9월(유지보수 릴리스, BOM 갱신) |
-| **Private AI Foundation with NVIDIA (PAIF)** | **9.1.1** | VCF 코어 구독 포함 (NVAIE만 별도). 9.1.1 변경은 PAIS 3.0 제공과 DLVM 이미지 갱신 |
-| **Private AI Services (PAIS)** | **3.0** | VCF 9.1.x 호환. 공유 모델 호스팅, 원격 클라우드 모델, API 토큰, 관측성 확장 추가. 2.1의 UI 셀프서비스, MCP, Artifact Mirroring Tool(에어갭)은 그대로 유지 |
+| VMware Cloud Foundation (VCF) | 9.1.1 | 9.1 GA 2026-05, 9.1.1 GA 2026-09(유지보수 릴리스, BOM 갱신) |
+| Private AI Foundation with NVIDIA (PAIF) | 9.1.1 | VCF 코어 구독 포함(NVAIE만 별도). 9.1.1 변경은 PAIS 3.0 제공과 DLVM 이미지 갱신 |
+| Private AI Services (PAIS) | 3.0 | VCF 9.1.x 호환. 공유 모델 호스팅, 원격 클라우드 모델, API 토큰, 관측성 확장 추가. 2.1의 UI 셀프서비스, MCP, Artifact Mirroring Tool(에어갭)은 그대로 유지 |
 | Deep Learning VM(DLVM) 이미지 | 9.1.1 | Ubuntu 26.04 LTS, NVIDIA 데이터센터 드라이버 595.71.05, Miniforge 26.1.1(deprecated 예고), VCF CLI 9.1.0 동봉. 9.1 이미지는 Ubuntu 24.04, 드라이버 580.95.05, Miniforge 24.11.3 |
-| vLLM (Completion/Embedding) | **0.20.0** | completions + embeddings 지원. CUDA 13.0 기본이라 GPU 드라이버 580 이상 필요 |
-| Infinity (Embedding) | **0.0.76** | embeddings 전용 (2.1과 동일) |
-| llama.cpp (CPU 추론) | **b9309** | completions + embeddings, CPU 추론 |
-| VKr (vSphere Kubernetes release) | **1.34** | ClusterClass `builtin-generic-v3.5.0`, Ubuntu 24.04 노드 이미지. 컨트롤 플레인 VM 클래스는 best-effort-large 이상 |
-| VKS (vSphere Kubernetes Service) | **3.7.x** | VKS 3.7.1(2026-08)이 VKr 1.33에서 1.36까지 지원. PAIS가 고정한 VKr과 ClusterClass 값을 우선 따릅니다 |
-| NVIDIA GPU Operator | **25.10.1** (기본값) 또는 **26.3.1** | 데이터센터 드라이버 580.105.8 또는 580.126.20, vGPU(NVAIE) 드라이버 580.105.8 |
+| vLLM (Completion/Embedding) | 0.20.0 | completions + embeddings 지원. CUDA 13.0 기본이라 GPU 드라이버 580 이상 필요 |
+| Infinity (Embedding) | 0.0.76 | embeddings 전용 (2.1과 동일) |
+| llama.cpp (CPU 추론) | b9309 | completions + embeddings, CPU 추론 |
+| VKr (vSphere Kubernetes release) | 1.34 | ClusterClass `builtin-generic-v3.5.0`, Ubuntu 24.04 노드 이미지. 컨트롤 플레인 VM 클래스는 best-effort-large 이상 |
+| VKS (vSphere Kubernetes Service) | 3.7.x | VKS 3.7.1(2026-08)이 VKr 1.33에서 1.36까지 지원. PAIS가 고정한 VKr과 ClusterClass 값을 우선 따릅니다 |
+| NVIDIA GPU Operator | 25.10.1(기본값) 또는 26.3.1 | 데이터센터 드라이버 580.105.8 또는 580.126.20, vGPU(NVAIE) 드라이버 580.105.8 |
 | Data Services Manager (DSM) | 9.1.1 | PostgreSQL 18.4, 17.10, 16.14, 15.18, 14.23 지원. PostgreSQL 12와 13은 9.1.1에서 제거 |
 | PostgreSQL / pgvector (PAIS 검증 조합) | 16.8 / 0.8.0 | PAIS Data Indexing이 검증한 조합. 2.1과 동일 |
 
-> **9.0.x에서 업그레이드하시는 경우**: 엔진과 운영 컴포넌트 버전이 대폭 상향됐습니다. 변경 요약과 마이그레이션 체크리스트는 [00](docs/00-whats-new.md)을 먼저 보시기 바랍니다.
+> **이 표가 문서 전체 버전 기준의 단일 출처입니다.** 각 문서는 개별 버전을 반복 표기하지 않고 이 표를 참조합니다. 모든 수치와 버전은 작성 시점(2026-06) Broadcom 공식 릴리스 노트 기준이고, 2026-09에 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 GA(2026-09-03) 내용을 반영했습니다. 적용 전 [공식 문서](#참고-자료)로 재확인하시기 바랍니다.
 >
-> **9.1 / PAIS 2.1을 운영 중이라면**: 9.1.1 / PAIS 3.0에서 무엇이 바뀌었는지는 [00의 0.7절](docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga)에, 기능이 어느 버전에서 추가됐는지는 [00의 0.8절 버전별 기능 이력](docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)에 정리했습니다. 2.1 기준으로 작성된 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 읽을 수 있습니다.
+> **9.0.x에서 업그레이드하시는 경우.** 엔진과 운영 컴포넌트 버전이 대폭 상향됐습니다. 변경 요약과 마이그레이션 체크리스트는 [00](docs/00-whats-new.md)을 먼저 보시기 바랍니다.
+>
+> **9.1 / PAIS 2.1을 운영 중이라면.** 9.1.1 / PAIS 3.0에서 무엇이 바뀌었는지는 [00의 0.7절](docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga)에, 기능이 어느 버전에서 추가됐는지는 [00의 0.8절 버전별 기능 이력](docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)에 정리했습니다. 2.1 기준으로 작성된 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 읽을 수 있습니다.
 
 ## 주요 용어
 

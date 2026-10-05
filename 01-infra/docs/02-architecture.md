@@ -1,6 +1,6 @@
 # 02 — 아키텍처 및 구축 순서
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 
 이 문서는 PAIF의 **계층 구조**, **GPU 할당 방식(9.1 변경 반영)**, **구축 Phase와 의존성**을 다룹니다.
 
@@ -253,7 +253,7 @@ kubectl get services | grep pais-ingress # PAIS UI 접근 IP
 
 ## 2.7 DLVM 이미지 (9.1)
 
-VCF 9.1 호환 DLVM(Deep Learning VM, 딥러닝용 가상머신 이미지)은 신규 Ubuntu OS와 ML 라이브러리/프레임워크/툴킷으로 갱신됐고, 임베디드 Conda가 **Miniconda 24.3.0 → Miniforge3 24.11.3** 으로 변경됐습니다. 9.1.1 이미지(Ubuntu 26.04, 드라이버 595.71.05, Miniforge 26.1.1, VCF CLI 9.1.0)의 구성은 [README 버전표](../README.md#기반-버전-source-of-truth)와 [문서 03 Step 1](03-workflows.md)의 콜아웃을 참조하십시오.
+VCF 9.1 호환 DLVM(Deep Learning VM, 딥러닝용 가상머신 이미지)은 신규 Ubuntu OS와 ML 라이브러리/프레임워크/툴킷으로 갱신됐고, 임베디드 Conda가 **Miniconda 24.3.0 → Miniforge3 24.11.3** 으로 변경됐습니다. 9.1.1 이미지(Ubuntu 26.04, 드라이버 595.71.05, Miniforge 26.1.1, VCF CLI 9.1.0)의 구성은 [README 버전표](../README.md#기반-버전)와 [문서 03 Step 1](03-workflows.md)의 콜아웃을 참조하십시오.
 
 ```
 DLVM 기본 구성 (VCF 9.1)

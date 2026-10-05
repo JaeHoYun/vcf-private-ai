@@ -1,6 +1,6 @@
 # 06 — 프로덕션 아키텍처
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 
 PAIF 기반 AI 서비스를 프로덕션에서 운영하기 위한 **HA, DR, 멀티테넌트, 스케일링, 보안**과, 9.1에서 강화된 **관측성과 에어갭(Artifact Mirroring Tool)** 을 다룹니다.
 

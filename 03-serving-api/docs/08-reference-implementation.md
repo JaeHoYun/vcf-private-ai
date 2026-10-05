@@ -1,6 +1,6 @@
 # 08 — 레퍼런스 구현
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 아래 코드는 **최소 동작 예제**입니다. 경로, 인증, 필드는 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 확인 후 적용하세요. `{fqdn}`, `<...>` 는 환경값으로 치환합니다.
 
 앞 문서들의 내용을 **실제로 호출하는 코드**로 정리했습니다. 핵심 메시지는 변하지 않습니다. **`base_url`만 사내 PAIS로 바꾸면 됩니다.**

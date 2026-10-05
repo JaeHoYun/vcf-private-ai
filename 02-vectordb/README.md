@@ -32,16 +32,19 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 
 ---
 
-## 핵심 버전 호환 요약
+## 기반 버전
 
-도입 전 반드시 확인하는 정보입니다. 상세는 [docs/01-version-compatibility.md](docs/01-version-compatibility.md) 참조.
-
-| 컴포넌트 | 기준 | 비고 |
-|---|---|---|
-| VCF / DSM / PAIF / PAIS | 9.1.1 / 9.1.1 / 9.1.1 / 3.0 | 9.1.1과 3.0은 2026-09 GA(9.1과 2.1은 2026-05) |
+| 구분 | 버전 | 비고 |
+|------|------|------|
+| VMware Cloud Foundation (VCF) | 9.1.1 | 9.1 GA 2026-05, 9.1.1 GA 2026-09 |
+| Private AI Foundation with NVIDIA (PAIF) | 9.1.1 | VCF 코어 구독 포함(NVAIE만 별도) |
+| Private AI Services (PAIS) | 3.0 | 2026-09 GA. 2.1은 2026-05 GA |
+| Data Services Manager (DSM) | 9.1.1 | 2026-09 GA. 9.1은 2026-05 GA |
 | PostgreSQL (DSM 9.1.1) | 18.4, 17.10, 16.14, 15.18, 14.23 | 12와 13은 9.1.1에서 제거 |
 | pgvector | 0.8.0 (DSM 9.1 번들, 9.1.1 번들은 릴리스 노트 미기재) / 0.8.2 커뮤니티 | 0.8.2는 CVE-2026-3172 수정 |
-| PAIS 연동 검증 | PostgreSQL 16.8 + pgvector 0.8.0 | 공식 문서 기준 조합이며 도입 환경에서 검증 권장 |
+| PostgreSQL / pgvector (PAIS 검증 조합) | 16.8 / 0.8.0 | 공식 문서 기준 조합이며 도입 환경에서 검증 권장 |
+
+> 도입 전 반드시 확인하는 정보입니다. 상세는 [01 버전 호환 매트릭스](docs/01-version-compatibility.md)를 참조하시기 바랍니다.
 
 ---
 

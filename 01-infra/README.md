@@ -30,6 +30,20 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발
 
 ---
 
+## 주요 용어
+
+| 용어 | 설명 |
+|------|------|
+| **VCF** | VMware Cloud Foundation — 통합 프라이빗 클라우드 플랫폼 |
+| **PAIF** | Private AI Foundation with NVIDIA — VCF가 제공하는 AI 플랫폼(솔루션). **PAIF 코어 기능 계층 + PAIS 서비스 계층**으로 구성되며 VCF 코어 구독에 포함(NVAIE만 별도) |
+| **PAIS** | Private AI Services — Model Runtime, RAG, Agent Builder 등 관리형 AI 서비스 레이어 |
+| **DLVM** | Deep Learning VM — GPU 장착 개발/실험용 VM |
+| **(GPU-Accelerated) Workload Domain** | PAIS를 설치하는 GPU 가속 VCF 워크로드 도메인. Broadcom 공식 표기는 **GPU-Accelerated Workload Domain**이며, 본 문서는 가독성을 위해 **PAIF Workload Domain**으로 약칭합니다 ([TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)) |
+| **VKS** | vSphere Kubernetes Service — vSphere 네이티브 K8s |
+| **MCP** | Model Context Protocol — 에이전트가 외부 데이터와 도구를 표준 인터페이스로 연동하는 프로토콜 (PAIS 2.1 신규) |
+| **Artifact Mirroring Tool** | 에어갭 환경 구동용 아티팩트 미러링 도구 (PAIS 2.1 신규) |
+| **NVAIE** | NVIDIA AI Enterprise — vGPU 드라이버, NIM, NeMo 등을 포함하며 **NVIDIA에서 별도 구매** |
+
 ## 기반 버전
 
 | 구분 | 버전 | 비고 |
@@ -52,20 +66,6 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발
 > **9.0.x에서 업그레이드하시는 경우.** 엔진과 운영 컴포넌트 버전이 대폭 상향됐습니다. 변경 요약과 마이그레이션 체크리스트는 [00](docs/00-whats-new.md)을 먼저 보시기 바랍니다.
 >
 > **9.1 / PAIS 2.1을 운영 중이라면.** 9.1.1 / PAIS 3.0에서 무엇이 바뀌었는지는 [00의 0.7절](docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga)에, 기능이 어느 버전에서 추가됐는지는 [00의 0.8절 버전별 기능 이력](docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)에 정리했습니다. 2.1 기준으로 작성된 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 읽을 수 있습니다.
-
-## 주요 용어
-
-| 용어 | 설명 |
-|------|------|
-| **VCF** | VMware Cloud Foundation — 통합 프라이빗 클라우드 플랫폼 |
-| **PAIF** | Private AI Foundation with NVIDIA — VCF가 제공하는 AI 플랫폼(솔루션). **PAIF 코어 기능 계층 + PAIS 서비스 계층**으로 구성되며 VCF 코어 구독에 포함(NVAIE만 별도) |
-| **PAIS** | Private AI Services — Model Runtime, RAG, Agent Builder 등 관리형 AI 서비스 레이어 |
-| **DLVM** | Deep Learning VM — GPU 장착 개발/실험용 VM |
-| **(GPU-Accelerated) Workload Domain** | PAIS를 설치하는 GPU 가속 VCF 워크로드 도메인. Broadcom 공식 표기는 **GPU-Accelerated Workload Domain**이며, 본 문서는 가독성을 위해 **PAIF Workload Domain**으로 약칭합니다 ([TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)) |
-| **VKS** | vSphere Kubernetes Service — vSphere 네이티브 K8s |
-| **MCP** | Model Context Protocol — 에이전트가 외부 데이터와 도구를 표준 인터페이스로 연동하는 프로토콜 (PAIS 2.1 신규) |
-| **Artifact Mirroring Tool** | 에어갭 환경 구동용 아티팩트 미러링 도구 (PAIS 2.1 신규) |
-| **NVAIE** | NVIDIA AI Enterprise — vGPU 드라이버, NIM, NeMo 등을 포함하며 **NVIDIA에서 별도 구매** |
 
 ## 라이선스
 

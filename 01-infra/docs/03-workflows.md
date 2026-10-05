@@ -1,6 +1,6 @@
 # 03 — 역할별 워크플로우
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 
 이 문서는 AI 플레이그라운드에서 **모델 준비 → RAG/에이전트 구성 → 앱 연동**까지 페르소나별로 무엇을 어떤 순서로 하는지 다룹니다. 9.1의 **VCF Automation UI 셀프서비스**를 기본 경로로 삼습니다. PAIS 3.0부터는 VCF Automation을 거치지 않고 vSphere의 Local Consumption Interface로 PAIS를 배포하는 경로와, 인증 공급자를 VCF Automation 계정 또는 PAIS 로컬 계정 중에서 고르는 선택지가 더해졌습니다. VCF Automation 없이 Supervisor만 운영하는 소규모 환경에서 사용할 수 있는 경로이며, 이 경로로 활성화하면 API 토큰 발급이 기본으로 꺼져 있는 알려진 이슈가 있으니 활성화 뒤 확인이 필요합니다([문서 10 10.1.3절](10-operations.md)).
 

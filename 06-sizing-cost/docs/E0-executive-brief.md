@@ -1,6 +1,6 @@
 # E0 — 임원 브리프 (요약 문서)
 
-> 기반 버전은 [README의 기반 버전 기준](../README.md#기반-버전-source-of-truth)을 참조하세요.
+> 기반 버전은 [README의 기반 버전 기준](../README.md#기반-버전)을 참조하세요.
 > 의사결정자용 요약입니다. 산정 근거와 산식은 [07 TCO](07-tco-cost-model.md), [08 레퍼런스 시나리오](08-reference-scenario.md)를 참조하세요.
 
 ---

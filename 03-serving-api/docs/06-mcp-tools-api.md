@@ -1,6 +1,6 @@
 # 06 — MCP 도구 API
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 경로와 필드는 [공식 PAIS API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) 기준입니다.
 
 PAIS는 에이전트가 **외부 데이터와 도구(DB, ITSM(IT 서비스 관리 시스템), 메신저 등)** 를 표준 인터페이스(MCP)로 연동하도록 지원합니다(2.1부터). 이 문서는 그 연동을 **API로 등록, 승인, 통제**하는 방법을 다룹니다. MCP의 개념과 거버넌스 원칙은 [① 05](../../01-infra/docs/05-agents-mcp.md)에 자세하며, 여기서는 API에 집중합니다.

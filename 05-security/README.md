@@ -31,16 +31,17 @@
 >
 > 직접 채워 작성하는 양식으로 [거버넌스와 데이터주권 갭 워크시트](worksheet/governance-sovereignty-gap.md)가 있습니다. 이미 운영 중인 AI 자산의 통제 격차를 자산대장 실측(A절), 한국 AI 기본법과 NIST AI RMF와 EU AI Act와 ISO 42001 대비 격차(B절), 규제 데이터의 외부 경유 소급 점검(C절)으로 되짚습니다. AX 방법론 가이드에 있던 양식을 이관한 것입니다.
 
-## 기반 버전 (Source of Truth)
-
-> 본 가이드는 **보안과 거버넌스 관점**에 집중하며, 엔진과 컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 단일 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이고 2026-09에 VCF 9.1.1 / PAIS 3.0을 반영했으며, 적용 전 공식 문서로 재확인하시기 바랍니다.
+## 기반 버전
 
 | 구분 | 버전 | 비고 |
 |------|------|------|
-| VMware Cloud Foundation / PAIF | 9.1.1 | 9.1 GA 2026-05, 9.1.1 GA 2026-09 |
+| VMware Cloud Foundation (VCF) | 9.1.1 | 9.1 GA 2026-05, 9.1.1 GA 2026-09 |
+| Private AI Foundation with NVIDIA (PAIF) | 9.1.1 | VCF 코어 구독 포함(NVAIE만 별도) |
 | Private AI Services (PAIS) | 3.0 | Agent Builder, Data Indexing(RAG), MCP Tools Registry, Artifact Mirroring Tool. 3.0에서 API 토큰, BYO TLS 인증서, 원격 클라우드 모델 추가 |
 | vDefend (Add-on) | 9.1 | 분산 방화벽과 IDS/IPS |
-| PostgreSQL / pgvector (DSM 9.1.1) | 16.8 / 0.8.0 | PAIS 검증 조합 (②) |
+| PostgreSQL / pgvector (PAIS 검증 조합) | 16.8 / 0.8.0 | DSM 9.1.1 기준(②) |
+
+> 본 가이드는 **보안과 거버넌스 관점**에 집중하며, 엔진과 컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 단일 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전). 모든 수치는 작성 시점(2026-06) 기준이고 2026-09에 VCF 9.1.1 / PAIS 3.0을 반영했으며, 적용 전 공식 문서로 재확인하시기 바랍니다.
 
 ## 참고 자료
 

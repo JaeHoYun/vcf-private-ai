@@ -1,6 +1,6 @@
 # 05 — 데이터 거버넌스와 프라이버시
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 사내 폐쇄망(프라이빗) 환경에서 운영하는 생성형 AI 플랫폼의 데이터 거버넌스와 프라이버시 통제를 다룹니다. 기반 스택은 VMware Cloud Foundation(VCF) 9.1.1과 이를 기반으로 동작하는 VMware Private AI Foundation with NVIDIA(PAIF) 9.1.1, VMware Private AI Services(PAIS) 3.0입니다. 검색과 생성에 사용되는 벡터 데이터 계층은 시리즈 ② 가이드에서 다룬 Data Services Manager(DSM) 기반 PostgreSQL + pgvector를 전제합니다. PAIF에서 벡터DB가 pgvector(PostgreSQL) 기반으로 구성되어 DSM으로 배포되고 관리된다는 점은 Broadcom TechDocs와 VCF 블로그에서 확인됩니다([Broadcom TechDocs: Deploy a Vector Database for PAIF](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-rag-workloads-in-private-ai-foundation-with-nvidia/deploy-a-vector-database-for-paif.html), [VCF Blog: Initial Availability of PAIF](https://blogs.vmware.com/cloud-foundation/2024/03/18/announcing-initial-availability-of-vmware-private-ai-foundation-with-nvidia/)).

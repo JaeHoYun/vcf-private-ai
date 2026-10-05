@@ -1,6 +1,6 @@
 # 05 — 스토리지와 네트워크 용량 사이징
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 GPU-Accelerated Workload Domain(이하 시리즈 약칭 PAIF Workload Domain)에서 프라이빗 AI 추론과 RAG 워크로드를 운영할 때 필요한 스토리지 용량과 성능과 네트워크 대역폭을 사이징하는 방법을 다룹니다. 스토리지는 vSAN(ESA), 데이터/벡터는 DSM pgvector(②), 모델 레지스트리는 Harbor, 네트워크는 NSX를 전제로 합니다.

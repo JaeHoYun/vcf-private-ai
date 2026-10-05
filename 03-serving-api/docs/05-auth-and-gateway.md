@@ -1,6 +1,6 @@
 # 05 — 인증과 게이트웨이
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 인증 방식은 PAIS 버전과 배포 구성에 따라 달라질 수 있으므로, 적용 전 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 확인하시기 바랍니다.
 
 API는 "어떻게 호출하느냐"만큼 "누가 호출하느냐"가 중요합니다. PAIS API Gateway에서 인증이 어떻게 이뤄지는지 정리합니다.

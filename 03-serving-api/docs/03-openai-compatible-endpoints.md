@@ -1,6 +1,6 @@
 # 03 — OpenAI 호환 엔드포인트
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 이 문서의 경로와 필드는 [공식 PAIS API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) 기준입니다. PAIS 버전에 따라 변경될 수 있으므로 적용 직전 공식 레퍼런스와 제품 내 Sample Code로 확인하시기 바랍니다.
 
 PAIS의 모델 추론은 **OpenAI 호환 인터페이스**로 노출됩니다. OpenAI가 정의한 `models`, `embeddings`, `chat/completions` 형태를 그대로 따르므로, OpenAI SDK, 클라이언트를 거의 수정 없이 사용합니다.

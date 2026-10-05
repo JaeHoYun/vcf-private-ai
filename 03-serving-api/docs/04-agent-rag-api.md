@@ -1,6 +1,6 @@
 # 04 — 에이전트와 RAG API
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 경로와 필드는 [공식 PAIS API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) 기준이며, 버전에 따라 변경될 수 있습니다.
 
 [03](03-openai-compatible-endpoints.md)의 Model Endpoint가 "모델 1회 호출"이라면, **Agent API는 RAG, 세션, 도구를 통합해 한 번에 호출**합니다. 대부분의 문서 기반 Q&A 앱은 RAG 로직을 직접 구현하는 대신 이 API를 호출하는 편이 구현 분량이 적고 오류 가능성도 낮습니다.

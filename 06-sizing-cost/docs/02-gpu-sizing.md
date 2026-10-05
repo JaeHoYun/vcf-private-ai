@@ -1,6 +1,6 @@
 # 02 — GPU 사이징
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 환경의 GPU-Accelerated Workload Domain(이하 시리즈 약칭 PAIF Workload Domain)에서 추론 워크로드를 운영할 때, "모델 크기와 서비스 목표를 입력하면 GPU 메모리(VRAM)와 GPU 수량이 얼마나 필요한가"를 추정하는 방법을 다룹니다. vLLM, llama.cpp 등 추론 엔진을 전제로 합니다.

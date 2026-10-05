@@ -1,6 +1,6 @@
 # 01 — 위협 모델과 보안 아키텍처 전경
 
-> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전-source-of-truth)를 참조하세요.
+> 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
 이 문서는 VCF 9.1.1 / PAIF(Private AI Foundation) 9.1.1 / PAIS(Private AI Services) 3.0 기반 Private AI 플랫폼의 **위협 모델**과 **보안 아키텍처 전경**(landscape)을 정리합니다. 개별 통제의 상세 설계는 02–08 문서로 위임하며, 본 문서는 "무엇을 왜 방어하는가"를 파악하는 출발점입니다. 착수 순서와 요청 경로 청사진은 [00 어디서부터 시작하나](00-where-to-start.md)에 있습니다.

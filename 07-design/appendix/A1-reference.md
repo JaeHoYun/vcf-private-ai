@@ -109,7 +109,7 @@
 - [시리즈 허브](../../README.md) — 7편 전체 목록
 - 형제 가이드: [① 인프라](../../01-infra/README.md) | [② VectorDB](../../02-vectordb/README.md) | [③ 서빙 API](../../03-serving-api/README.md) | [④ RAG](../../04-rag/README.md) | [⑤ 보안과 거버넌스](../../05-security/README.md) | [⑥ 사이징과 비용](../../06-sizing-cost/README.md)
 - 상위 전략: [기업용 AX 방법론 가이드](https://github.com/JaeHoYun/enterprise-ax-methodology)
-- 버전 단일 기준: [① README 기반 버전표](../../01-infra/README.md#기반-버전-source-of-truth)
+- 버전 단일 기준: [① README 기반 버전표](../../01-infra/README.md#기반-버전)
 - 공식 문서: [Broadcom TechDocs (VCF, Private AI)](https://techdocs.broadcom.com/)
 
 ---

@@ -12,6 +12,21 @@
 
 ---
 
+## 목차
+
+| 구분 | 번호 | 문서 | 주요 내용 |
+|------|------|------|-----------|
+| 본문 | 01 | [레퍼런스 아키텍처 전경](docs/01-reference-architecture.md) | 전체 데이터 흐름, 컴포넌트 매핑, 직접 구축 vs 구매(Agent Builder) 결정 |
+| | 02 | [데이터 인입과 인덱싱](docs/02-ingestion-indexing.md) | 문서 로딩, 청킹 전략, 임베딩, pgvector 적재 |
+| | 03 | [검색과 컨텍스트 조립](docs/03-retrieval-context.md) | 유사도/하이브리드 검색, 리랭킹, 컨텍스트 윈도우 관리 |
+| | 04 | [추론 통합](docs/04-inference-integration.md) | Agent vs Model Endpoint, RAG 호출 흐름, 스트리밍, 인용 |
+| | 05 | [앱 통합 패턴](docs/05-app-integration.md) | 4-Tier 구조, base_url 스위치, 인증, 멀티턴 세션 |
+| | 06 | [평가와 품질](docs/06-evaluation-quality.md) | RAG 평가 지표, 환각과 근거율, 회귀 테스트, 관측성 |
+| | 07 | [프로덕션 운영](docs/07-production-operations.md) | 스케일링, 멀티테넌트, 캐시, 사이징, 에어갭(폐쇄망) 환경 배포(Artifact Mirroring Tool, 아티팩트 미러링 도구) |
+| 부록 | A1 | [부록](appendix/A1-reference.md) | FAQ, 용어, 체크리스트, 참고 링크 |
+
+> **준비(인덱싱) → 검색(검색과 조립) → 생성(추론) → 소비(앱) → 검증(평가) → 운영**으로 이어지는 RAG 생애주기 순서입니다.
+
 ## 기반 버전 (기준 문서)
 
 > 본 가이드는 **통합 흐름**에 집중하며, 엔진과 컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이고 2026-09에 VCF 9.1.1 / PAIS 3.0을 반영했으며, 적용 전 공식 문서로 재확인하시기 바랍니다.
@@ -29,21 +44,6 @@
 > **"사내 정책과 기술 문서 수천 건을 학습한 Q&A 봇"** — 직원이 자연어로 질문하면, 사내 문서에서 근거를 찾아 출처와 함께 답한다. 데이터는 사내 밖으로 반출되지 않는다.
 
 이 시나리오를 ②(pgvector)와 ③(서빙 API)으로 조립하는 과정을 문서 01–07이 단계별로 따라갑니다. (※ 시나리오는 가상의 일반 엔터프라이즈를 가정하며 특정 기업과 무관합니다.)
-
-## 문서 구성
-
-**준비(인덱싱) → 검색(검색과 조립) → 생성(추론) → 소비(앱) → 검증(평가) → 운영**으로 이어지는 RAG 생애주기 순서입니다.
-
-| 순서 | 문서 | 내용 |
-|------|------|------|
-| 01 | [레퍼런스 아키텍처 전경](docs/01-reference-architecture.md) | 전체 데이터 흐름, 컴포넌트 매핑, 직접 구축 vs 구매(Agent Builder) 결정 |
-| 02 | [데이터 인입과 인덱싱](docs/02-ingestion-indexing.md) | 문서 로딩, 청킹 전략, 임베딩, pgvector 적재 |
-| 03 | [검색과 컨텍스트 조립](docs/03-retrieval-context.md) | 유사도/하이브리드 검색, 리랭킹, 컨텍스트 윈도우 관리 |
-| 04 | [추론 통합](docs/04-inference-integration.md) | Agent vs Model Endpoint, RAG 호출 흐름, 스트리밍, 인용 |
-| 05 | [앱 통합 패턴](docs/05-app-integration.md) | 4-Tier 구조, base_url 스위치, 인증, 멀티턴 세션 |
-| 06 | [평가와 품질](docs/06-evaluation-quality.md) | RAG 평가 지표, 환각과 근거율, 회귀 테스트, 관측성 |
-| 07 | [프로덕션 운영](docs/07-production-operations.md) | 스케일링, 멀티테넌트, 캐시, 사이징, 에어갭(폐쇄망) 환경 배포(Artifact Mirroring Tool, 아티팩트 미러링 도구) |
-| A1 | [부록](appendix/A1-reference.md) | FAQ, 용어, 체크리스트, 참고 링크 |
 
 ## 빠른 시작
 

@@ -12,6 +12,22 @@
 
 ---
 
+## 목차
+
+| 구분 | 번호 | 문서 | 주요 내용 |
+|------|------|------|-----------|
+| 본문 | 01 | [설계 프로세스와 요구사항 수집](docs/01-design-process.md) | 요구사항과 제약 입력(워크로드, SLO, 규제, 예산), 설계 결정 순서 |
+| | 02 | [레퍼런스 설계 블루프린트](docs/02-reference-blueprints.md) | 소/중/대 규모별(T-shirt sizing) 레퍼런스 설계, 각 구성과 선택 근거 |
+| | 03 | [설계 결정: 컴퓨트, GPU, VKS 토폴로지](docs/03-compute-gpu-topology.md) | GPU 배치, VKS/Supervisor 토폴로지, 노드 풀 설계 |
+| | 04 | [설계 결정: 네트워크, 스토리지, 가용성](docs/04-network-storage-availability.md) | NSX 설계, vSAN 스토리지 정책, 가용성과 DR |
+| | 05 | [설계 결정: 멀티테넌시와 보안 설계](docs/05-tenancy-security.md) | 테넌트 격리 모델, security by design (⑤ 위임) |
+| | 06 | [설계 결정 카탈로그](docs/06-decision-forks.md) | 16개 설계 결정 색인, 요구와 제약→설계 결정 매핑, 설계 결정 기록 템플릿 |
+| | 07 | [설계 리뷰 체크리스트와 검증 관문](docs/07-design-review.md) | 설계 리뷰 항목, 단계별 검증 관문 |
+| | 08 | [브라운필드 통합 설계](docs/08-brownfield-integration.md) | 기존 온프렘 AI, MLOps의 PAIF 점진 통합, 퍼블릭 클라우드 처리 |
+| | 09 | [역할과 책임 (RACI)](docs/09-roles-raci.md) | AI 플랫폼 수명주기 단계별 역할표(인프라/플랫폼/앱/보안/데이터) |
+| 부록 | A1 | [부록](appendix/A1-reference.md) | 용어집, 참조 링크 |
+| | 워크시트 | [채워넣기 워크시트](worksheet/README.md) | 결정 요인 시트 + 설계 결정 기록(D1–D16) + 브라운필드용 AI 자산 인벤토리와 6R 처분 매트릭스 채워넣기 양식 |
+
 ## 기반 버전 (Source of Truth)
 
 > 본 가이드는 **설계 의사결정**에 집중하며, 엔진과 컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 단일 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이고 2026-09에 VCF 9.1.1 / PAIS 3.0을 반영했으며, 적용 전 공식 문서로 재확인하시기 바랍니다.
@@ -29,22 +45,6 @@
 - **요구사항이 먼저다** — 워크로드 프로파일, SLO, 규제, 예산을 입력으로 설계 결정의 순서를 정합니다.
 - **블루프린트로 빠르게** — 소/중/대 레퍼런스 설계를 출발점으로 제시하고, 각 선택의 근거를 함께 제시합니다.
 - **결정을 추적한다** — ①–⑥에 흩어진 설계 결정을 대안과 트레이드오프와 함께 설계 결정 기록으로 한곳에 모읍니다.
-
-## 문서 구성
-
-| 순서 | 문서 | 내용 |
-|------|------|------|
-| 01 | [설계 프로세스와 요구사항 수집](docs/01-design-process.md) | 요구사항과 제약 입력(워크로드, SLO, 규제, 예산), 설계 결정 순서 |
-| 02 | [레퍼런스 설계 블루프린트](docs/02-reference-blueprints.md) | 소/중/대 규모별(T-shirt sizing) 레퍼런스 설계, 각 구성과 선택 근거 |
-| 03 | [설계 결정: 컴퓨트, GPU, VKS 토폴로지](docs/03-compute-gpu-topology.md) | GPU 배치, VKS/Supervisor 토폴로지, 노드 풀 설계 |
-| 04 | [설계 결정: 네트워크, 스토리지, 가용성](docs/04-network-storage-availability.md) | NSX 설계, vSAN 스토리지 정책, 가용성과 DR |
-| 05 | [설계 결정: 멀티테넌시와 보안 설계](docs/05-tenancy-security.md) | 테넌트 격리 모델, security by design (⑤ 위임) |
-| 06 | [설계 결정 카탈로그](docs/06-decision-forks.md) | 16개 설계 결정 색인, 요구와 제약→설계 결정 매핑, 설계 결정 기록 템플릿 |
-| 07 | [설계 리뷰 체크리스트와 검증 관문](docs/07-design-review.md) | 설계 리뷰 항목, 단계별 검증 관문 |
-| 08 | [브라운필드 통합 설계](docs/08-brownfield-integration.md) | 기존 온프렘 AI, MLOps의 PAIF 점진 통합, 퍼블릭 클라우드 처리 |
-| 09 | [역할과 책임 (RACI)](docs/09-roles-raci.md) | AI 플랫폼 수명주기 단계별 역할표(인프라/플랫폼/앱/보안/데이터) |
-| A1 | [부록](appendix/A1-reference.md) | 용어집, 참조 링크 |
-| 워크시트 | [채워넣기 워크시트](worksheet/README.md) | 결정 요인 시트 + 설계 결정 기록(D1–D16) + 브라운필드용 AI 자산 인벤토리와 6R 처분 매트릭스 채워넣기 양식 |
 
 ## 빠른 시작
 

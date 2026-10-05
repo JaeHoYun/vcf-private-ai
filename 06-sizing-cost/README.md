@@ -48,30 +48,6 @@
 
 > 본 가이드의 사이징 수치(GPU 메모리, 처리량, 노드 수 등)는 모두 **어림 기준이며 환경과 릴리스별로 달라집니다. 적용 전 반드시 벤치마크와 부하시험으로 실측 보정**하시기 바랍니다. 비용과 라이선스 단가는 단정하지 않으며 공식 견적과 구독 조건으로 확인하셔야 합니다.
 
-## 독자별 빠른 경로
-
-사이징은 임원, 기획자, 아키텍트, 인프라 담당이 서로 다른 깊이로 검토하는 주제입니다. 처음이라면 [00 오리엔테이션](docs/00-orientation.md)(선수지식, 용어집, 개념 미니맵)부터 읽어 보세요.
-
-| 독자 | 권장 시작점 |
-|------|-------------|
-| 임원/의사결정자 | [E0 임원 브리프(요약 문서)](docs/E0-executive-brief.md) → [07.6 손익분기](docs/07-tco-cost-model.md#76-퍼블릭-gpu-클라우드-vs-온프레미스-paif-비교-프레임) |
-| IT기획자 | [부록 A2 입력 환산](appendix/A2-inputs-and-defaults.md) → [08 전 과정 예제](docs/08-reference-scenario.md) → [07 TCO](docs/07-tco-cost-model.md) → [부록 A3 견적](appendix/A3-rfq-quote-checklist.md) |
-| 개발자/아키텍트 | [01 방법론](docs/01-sizing-methodology.md) → [02 GPU](docs/02-gpu-sizing.md), [03 컴퓨트](docs/03-compute-memory-sizing.md) → [04 클러스터](docs/04-vks-cluster-sizing.md) |
-| 인프라 담당 | [04 클러스터](docs/04-vks-cluster-sizing.md) → [05 스토리지와 네트워크](docs/05-storage-network-sizing.md) → [06 용량 계획](docs/06-capacity-planning.md) |
-
-## 빠른 시작
-
-- **"어디서부터 사이징하나"** → [01 사이징 방법론](docs/01-sizing-methodology.md)
-- **"입력만 바꿔 바로 계산하고 싶다"** → [계산 워크북(xlsx)](worksheet/)
-- **"입력값을 어떻게 정하나(사용자 수만 있다)"** → [부록 A2 입력값 환산](appendix/A2-inputs-and-defaults.md)
-- **"GPU 몇 장 필요한가"** → [02 GPU 사이징](docs/02-gpu-sizing.md)
-- **"이미 GPU가 있다 — 그걸로 무엇을 얼마나(역방향)"** → [01 사이징 방법론](docs/01-sizing-methodology.md) 1.7절
-- **"구매 전 예산 추정 출발 숫자가 필요하다"** → [부록 A1 1차 가정치](appendix/A1-first-order-reference.md)
-- **"처음부터 끝까지 한 예제로 확인하고 싶다"** → [08 레퍼런스 시나리오](docs/08-reference-scenario.md)
-- **"이미 GPU가 있다 — 역방향을 끝까지 예제로"** → [09 역방향 시나리오](docs/09-reverse-sizing-scenario.md)
-- **"프로덕션 클러스터를 어떻게 짜나"** → [04 VKS 클러스터 사이징](docs/04-vks-cluster-sizing.md)
-- **"비용이 얼마나 필요한가"** → [07 TCO와 비용 모델](docs/07-tco-cost-model.md)
-
 ## 참고 자료
 
 각 문서는 본문에 1차 출처(Broadcom TechDocs, VCF 블로그, NVIDIA, vLLM 등)를 인라인으로 표기합니다. 사이징과 비용 수치는 적용 전 공식 문서와 견적과 실측으로 반드시 재확인하시기 바랍니다.

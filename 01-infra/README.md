@@ -54,24 +54,6 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발
 >
 > **9.1 / PAIS 2.1을 운영 중이라면**: 9.1.1 / PAIS 3.0에서 무엇이 바뀌었는지는 [00의 0.7절](docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga)에, 기능이 어느 버전에서 추가됐는지는 [00의 0.8절 버전별 기능 이력](docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)에 정리했습니다. 2.1 기준으로 작성된 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 읽을 수 있습니다.
 
-## 빠른 시작
-
-- **"9.0에서 뭐가 바뀌었나요?"** → [00](docs/00-whats-new.md)
-- **"9.1.1 / PAIS 3.0에서 뭐가 바뀌었나요?"** → [00의 0.7절](docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga)
-- **"PAIF가 뭔가요?"** → [01](docs/01-concepts.md)
-- **"아키텍처/구축 순서가 궁금해요"** → [02](docs/02-architecture.md)
-- **"개발자로서 뭘 할 수 있나요?"** → [03](docs/03-workflows.md) + [04](docs/04-dev-scenarios.md)
-- **"에이전트/MCP로 외부 도구를 붙이고 싶어요"** → [05](docs/05-agents-mcp.md)
-- **"프로덕션 운영/에어갭은?"** → [06](docs/06-production.md)
-- **"GPU를 사내와 계열사에 서비스로 제공하고 싶어요(GPUaaS)"** → [07](docs/07-gpuaas.md)
-- **"우리 산업(제조/방산/유통/콘텐츠)에는?"** → [08](docs/08-industry.md)
-- **"새로 / 기존 환경에 / 경쟁사에서 전환하며 구축하려면?"** → [09](docs/09-deployment-scenarios.md)
-- **"알람, 백업, 업그레이드, 트러블슈팅을 맡았어요(운영자)"** → [10 10.6절 운영자 독자 트랙](docs/10-operations.md#106-운영자-독자-트랙)
-- **"구축한 다음 운영과 업그레이드는?"** → [10](docs/10-operations.md)
-- **"GPU를 실제로 할당해 보는데 자꾸 실패해요(PoC 엔지니어)"** → [11 GPU Enablement 핸즈온](docs/11-gpu-enablement.md) (딥다이브)
-- **"특정 질문이 있어요"** → [A1](appendix/A1-appendix.md) FAQ
-- **"채워넣을 워크시트가 필요해요(구축 결정, SoW, 운영 점검)"** → [worksheet/](worksheet/README.md)
-
 ## 주요 용어
 
 | 용어 | 설명 |

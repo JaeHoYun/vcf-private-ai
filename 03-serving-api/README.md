@@ -47,19 +47,6 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 이를 기반으로 
 
 ---
 
-## 빠른 시작
-
-- **"GPU, 양자화, 동시성 같은 기초부터 알고 싶어요"** → [00](docs/00-serving-primer.md)
-- **"왜 외부 LLM API 대신 사내 API인가요?"** → [01](docs/01-why-serving-api.md)
-- **"서빙 아키텍처가 어떻게 생겼나요? / 모델이 API가 되기까지 절차는?"** → [02](docs/02-serving-api-architecture.md)
-- **"기존 OpenAI 코드를 그대로 사용할 수 있나요?"** → [03](docs/03-openai-compatible-endpoints.md) + [08](docs/08-reference-implementation.md)
-- **"RAG를 직접 짜지 않고 API로 받고 싶어요"** → [04](docs/04-agent-rag-api.md)
-- **"토큰은 어떻게 받나요?"** → [05](docs/05-auth-and-gateway.md)
-- **"에이전트에 사내 DB, 도구를 붙이고 싶어요"** → [06](docs/06-mcp-tools-api.md)
-- **"운영하면서 무엇을 모니터링해야 하나요?"** → [07](docs/07-observability-ops.md)
-
----
-
 ## 주요 용어
 
 | 용어 | 설명 |

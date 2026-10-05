@@ -45,12 +45,6 @@
 
 이 시나리오를 ②(pgvector)와 ③(서빙 API)으로 조립하는 과정을 문서 01–07이 단계별로 따라갑니다. (※ 시나리오는 가상의 일반 엔터프라이즈를 가정하며 특정 기업과 무관합니다.)
 
-## 빠른 시작
-
-- **"전체 개요부터"** → [01 레퍼런스 아키텍처](docs/01-reference-architecture.md)
-- **"노코드로 빨리"** → [01의 Agent Builder 결정](docs/01-reference-architecture.md#14-빌드-vs-바이--두-가지-조립-방식) (직접 구축 vs 구매) + [04](docs/04-inference-integration.md)
-- **"검색 품질이 기대에 못 미친다"** → [03 검색과 조립](docs/03-retrieval-context.md) + [06 평가](docs/06-evaluation-quality.md)
-
 ## 라이선스
 
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). 자유롭게 활용하시되 출처를 표기해 주세요. `출처: https://github.com/JaeHoYun/vcf-private-ai/tree/main/04-rag`

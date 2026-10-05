@@ -42,18 +42,6 @@
 | vDefend (Add-on) | 9.1 | 분산 방화벽과 IDS/IPS |
 | PostgreSQL / pgvector (DSM 9.1.1) | 16.8 / 0.8.0 | PAIS 검증 조합 (②) |
 
-## 빠른 시작
-
-- **"보안 때문에 전체를 어떻게 설계하고 어디서부터 시작하나"** → [00 어디서부터 시작하나](docs/00-where-to-start.md)
-- **"전체 개요부터"** → [01 위협 모델과 보안 아키텍처](docs/01-threat-model.md)
-- **"멀티테넌트/계열사 격리가 고민"** → [02 격리](docs/02-network-tenant-isolation.md) + [03 접근통제](docs/03-identity-access.md)
-- **"규제 대응과 감사 준비"** → [07 감사와 컴플라이언스 체크리스트](docs/07-audit-compliance.md) + [거버넌스와 데이터주권 갭 워크시트](worksheet/governance-sovereignty-gap.md)
-- **"플랫폼 밖에서 사용되는 AI(섀도 AI)를 어떤 신호로 찾나"** → [07 7.2.3절](docs/07-audit-compliance.md) + [08 8.4절 레지스트리](docs/08-agent-governance.md)
-- **"RAG 앱이 인젝션에 안전한가"** → [06 앱 가드레일](docs/06-app-guardrails.md)
-- **"에이전트에 도구와 쓰기 권한을 주려는데 무엇을 통제하나"** → [08 에이전트 보안 거버넌스](docs/08-agent-governance.md)
-
-서비스 하나를 출시하는 앱 팀의 준비물과 점검표는 [앱 가이드 12 서비스 보안 준비와 가드레일](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md)에, 전사 거버넌스 운영 모델과 국내 규제 일정은 [AX 방법론 07](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/docs/07-organization-and-control.md)과 [부록 A2](https://github.com/JaeHoYun/enterprise-ax-methodology/blob/main/appendix/A2-kr-regulatory-timeline.md)에 있습니다. 이 가이드는 플랫폼 통제의 정본이고, 그 둘은 이 가이드를 참조합니다.
-
 ## 참고 자료
 
 각 문서는 본문에 1차 출처(Broadcom TechDocs, NVIDIA 공식 문서, OWASP Top 10 for LLM Applications, NIST AI RMF/CSF, MITRE ATLAS 등)를 인라인으로 표기합니다. 보안 통제의 적용 전에는 해당 공식 문서로 최신 사양을 재확인하시기 바랍니다.

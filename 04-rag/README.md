@@ -48,7 +48,9 @@
 
 ## 라이선스
 
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). 자유롭게 활용하시되 출처를 표기해 주세요. `출처: https://github.com/JaeHoYun/vcf-private-ai/tree/main/04-rag`
+이 문서는 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)으로 제공됩니다. 자유롭게 활용하시되 아래와 같이 출처를 표기해 주세요. 라이선스 전문은 [LICENSE](../LICENSE) 파일에 있습니다.
+
+출처: https://github.com/JaeHoYun/vcf-private-ai/tree/main/04-rag
 
 ## 면책 조항
 

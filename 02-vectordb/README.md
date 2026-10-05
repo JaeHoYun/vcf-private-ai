@@ -14,6 +14,24 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 
 ---
 
+## 목차
+
+| 구분 | 번호 | 문서 | 주요 내용 |
+|------|------|------|-----------|
+| 본문 | 01 | [버전 호환 매트릭스](docs/01-version-compatibility.md) | VCF / DSM / PAIS / PostgreSQL / pgvector 버전 호환 기준 |
+| | 02 | [Vector Database & pgvector 기초](docs/02-vectordb-pgvector-basics.md) | Vector DB 기초 개념, pgvector 심층 분석(아키텍처, 인덱스, 성능, 튜닝) |
+| | 03 | [VCF DSM 아키텍처](docs/03-vcf-dsm-architecture.md) | 왜 VCF DSM인가, DSM 아키텍처, Private AI Services(PAIS) 통합 |
+| | 04 | [배포 (Day-0 / Day-1)](docs/04-deployment.md) | Day-0/1 배포. 선행조건, DSM 프로비저닝, HA 구성, PAIS 연결, 사이징 |
+| | 05 | [사용 및 RAG 구성 (Day-1 / Day-2)](docs/05-usage-rag.md) | Day-1/2 사용. pgvector 사용법, RAG 파이프라인 구성 |
+| | 06 | [운영 (Day-2)](docs/06-operations.md) | Day-2 운영. 모니터링, 백업, 스케일, 트러블슈팅, 유지보수, 보안 |
+| | 07 | [산업 도입 시나리오](docs/07-scenarios.md) | 금융/유통/제조 산업 도입 시나리오 |
+| | 08 | [PoC 가이드](docs/08-poc-guide.md) | 4주 PoC 가이드 및 성공 기준 |
+| 부록 | A1 | [Vector Database 경쟁 비교](appendix/A1-vectordb-comparison.md) | 전용/확장형 벡터 DB 10종 경쟁 비교 |
+
+> 버전 기준을 먼저 확인한 뒤 배포-사용-관리 생애주기 순서로 구성됩니다. 경쟁 비교는 부록에 있습니다.
+
+---
+
 ## 핵심 버전 호환 요약
 
 도입 전 반드시 확인하는 정보입니다. 상세는 [docs/01-version-compatibility.md](docs/01-version-compatibility.md) 참조.
@@ -24,29 +42,6 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 | PostgreSQL (DSM 9.1.1) | 18.4, 17.10, 16.14, 15.18, 14.23 | 12와 13은 9.1.1에서 제거 |
 | pgvector | 0.8.0 (DSM 9.1 번들, 9.1.1 번들은 릴리스 노트 미기재) / 0.8.2 커뮤니티 | 0.8.2는 CVE-2026-3172 수정 |
 | PAIS 연동 검증 | PostgreSQL 16.8 + pgvector 0.8.0 | 공식 문서 기준 조합이며 도입 환경에서 검증 권장 |
-
----
-
-## 문서 구성
-
-버전 기준을 먼저 확인한 뒤 배포-사용-관리 생애주기 순서로 구성됩니다. 경쟁 비교는 부록에 있습니다.
-
-| 순서 | 문서 | 내용 |
-|---|---|---|
-| 01 | [버전 호환 매트릭스](docs/01-version-compatibility.md) | VCF / DSM / PAIS / PostgreSQL / pgvector 버전 호환 기준 |
-| 02 | [Vector Database & pgvector 기초](docs/02-vectordb-pgvector-basics.md) | Vector DB 기초 개념, pgvector 심층 분석(아키텍처, 인덱스, 성능, 튜닝) |
-| 03 | [VCF DSM 아키텍처](docs/03-vcf-dsm-architecture.md) | 왜 VCF DSM인가, DSM 아키텍처, Private AI Services(PAIS) 통합 |
-| 04 | [배포 (Day-0 / Day-1)](docs/04-deployment.md) | Day-0/1 배포. 선행조건, DSM 프로비저닝, HA 구성, PAIS 연결, 사이징 |
-| 05 | [사용 및 RAG 구성 (Day-1 / Day-2)](docs/05-usage-rag.md) | Day-1/2 사용. pgvector 사용법, RAG 파이프라인 구성 |
-| 06 | [운영 (Day-2)](docs/06-operations.md) | Day-2 운영. 모니터링, 백업, 스케일, 트러블슈팅, 유지보수, 보안 |
-| 07 | [산업 도입 시나리오](docs/07-scenarios.md) | 금융/유통/제조 산업 도입 시나리오 |
-| 08 | [PoC 가이드](docs/08-poc-guide.md) | 4주 PoC 가이드 및 성공 기준 |
-
-부록
-
-| 문서 | 내용 |
-|---|---|
-| [Vector Database 경쟁 비교](appendix/A1-vectordb-comparison.md) | 전용/확장형 벡터 DB 10종 경쟁 비교 |
 
 ---
 

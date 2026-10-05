@@ -12,6 +12,29 @@
 
 ---
 
+## 목차
+
+| 구분 | 번호 | 문서 | 주요 내용 |
+|------|------|------|-----------|
+| 본문 | 00 | [오리엔테이션](docs/00-orientation.md) | 독자별 경로, 선수지식 체크, 개념 미니맵, 미니 용어집 |
+| | E0 | [임원 브리프(요약 문서)](docs/E0-executive-brief.md) | 의사결정 지점, 손익분기 개념, 비용 구조, 임원 체크리스트 |
+| | 01 | [사이징 방법론과 워크로드 분류](docs/01-sizing-methodology.md) | 워크로드 분류, 입력값 체크리스트, 사이징 절차, 추정→실측 원칙 |
+| | 02 | [GPU 사이징](docs/02-gpu-sizing.md) | 모델→VRAM(가중치와 KV캐시), 처리량→GPU 수, Replica, vGPU/MIG/DirectPath 용량 함의 |
+| | 03 | [컴퓨트와 메모리 사이징](docs/03-compute-memory-sizing.md) | 노드 vCPU/RAM, CPU 추론(llama.cpp), 임베딩/리랭커, Replica 환산 |
+| | 04 | [VKS 클러스터 사이징과 인프라](docs/04-vks-cluster-sizing.md) | 컨트롤 플레인, 노드 풀, GPU 노드 풀, 오토스케일, 스케일 한도, 단일 vs 다중 클러스터 |
+| | 05 | [스토리지와 네트워크 용량 사이징](docs/05-storage-network-sizing.md) | vSAN, Harbor 모델 레지스트리, 벡터 인덱스 용량(②), NSX 대역폭 |
+| | 06 | [용량 계획과 운영](docs/06-capacity-planning.md) | 모니터링 지표, 증설 트리거, Reservation/쿼터 용량, PoC→프로덕션 로드맵 |
+| | 07 | [TCO와 비용 모델](docs/07-tco-cost-model.md) | 라이선스, HW, 운영비 분해, 비용 산정 워크시트, 퍼블릭 vs 온프레미스 비교 프레임 |
+| | 08 | [레퍼런스 시나리오(전 과정 예제)](docs/08-reference-scenario.md) | 입력→GPU→노드→클러스터→스토리지→TCO를 한 시나리오로 끝까지 |
+| | 09 | [역방향 시나리오(공급 제약)](docs/09-reverse-sizing-scenario.md) | 고정 GPU→가용 용량→적재→할당 상한→잔여/증설, 08의 반대 방향 |
+| 부록 | A1 | [1차 가정치 레퍼런스](appendix/A1-first-order-reference.md) | **예산 추정 전용** 처리량, 동시성, KV, 임베딩, 콜드스타트 출발 숫자(출처와 경고 포함) |
+| | A2 | [입력값 환산, 기본값, 모델 선택](appendix/A2-inputs-and-defaults.md) | 사용자 수→동시성 환산, 워크로드 프리셋, SLA 기본값, 모델 선택 1차 가이드 |
+| | A3 | [견적 요청(RFQ) 체크리스트](appendix/A3-rfq-quote-checklist.md) | 단가 칸을 채우려면 무엇을 물어야 하나(라이선스, HW, 시설, 기록 양식) |
+| | A4 | [AI FinOps 스코어카드](appendix/A4-ai-finops-scorecard.md) | 이미 나가고 있는 AI 지출의 역방향 감사. 태깅, 단위경제, 가동률, 구매 방식, 모델 적정성, 이상 탐지의 여섯 점검축과 자산별 회수 판정 입력 |
+| | 워크북 | [계산 워크북(xlsx)](worksheet/) | 입력만 바꾸면 GPU, 노드, 스토리지, TCO 골격이 수식으로 자동 산출되는 스프레드시트 |
+
+> 워크로드를 **자원 → 노드 → 클러스터 → 비용**으로 환산하는 사이징 생애주기 순서입니다. 각 문서는 끝에 추정치를 검증하는 **검증과 실측 방법**을 담습니다.
+
 ## 기반 버전 (Source of Truth)
 
 > 본 가이드는 **정량 사이징과 비용**에 집중하며, 엔진과 컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 단일 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이고 2026-09에 VCF 9.1.1 / PAIS 3.0을 반영했으며, 적용 전 공식 문서와 견적으로 재확인하시기 바랍니다.
@@ -35,39 +58,6 @@
 | IT기획자 | [부록 A2 입력 환산](appendix/A2-inputs-and-defaults.md) → [08 전 과정 예제](docs/08-reference-scenario.md) → [07 TCO](docs/07-tco-cost-model.md) → [부록 A3 견적](appendix/A3-rfq-quote-checklist.md) |
 | 개발자/아키텍트 | [01 방법론](docs/01-sizing-methodology.md) → [02 GPU](docs/02-gpu-sizing.md), [03 컴퓨트](docs/03-compute-memory-sizing.md) → [04 클러스터](docs/04-vks-cluster-sizing.md) |
 | 인프라 담당 | [04 클러스터](docs/04-vks-cluster-sizing.md) → [05 스토리지와 네트워크](docs/05-storage-network-sizing.md) → [06 용량 계획](docs/06-capacity-planning.md) |
-
-## 문서 구성
-
-워크로드를 **자원 → 노드 → 클러스터 → 비용**으로 환산하는 사이징 생애주기 순서입니다. 각 문서는 끝에 추정치를 검증하는 **검증과 실측 방법**을 담습니다.
-
-| 순서 | 문서 | 내용 |
-|------|------|------|
-| 00 | [오리엔테이션](docs/00-orientation.md) | 독자별 경로, 선수지식 체크, 개념 미니맵, 미니 용어집 |
-| E0 | [임원 브리프(요약 문서)](docs/E0-executive-brief.md) | 의사결정 지점, 손익분기 개념, 비용 구조, 임원 체크리스트 |
-| 01 | [사이징 방법론과 워크로드 분류](docs/01-sizing-methodology.md) | 워크로드 분류, 입력값 체크리스트, 사이징 절차, 추정→실측 원칙 |
-| 02 | [GPU 사이징](docs/02-gpu-sizing.md) | 모델→VRAM(가중치와 KV캐시), 처리량→GPU 수, Replica, vGPU/MIG/DirectPath 용량 함의 |
-| 03 | [컴퓨트와 메모리 사이징](docs/03-compute-memory-sizing.md) | 노드 vCPU/RAM, CPU 추론(llama.cpp), 임베딩/리랭커, Replica 환산 |
-| 04 | [VKS 클러스터 사이징과 인프라](docs/04-vks-cluster-sizing.md) | 컨트롤 플레인, 노드 풀, GPU 노드 풀, 오토스케일, 스케일 한도, 단일 vs 다중 클러스터 |
-| 05 | [스토리지와 네트워크 용량 사이징](docs/05-storage-network-sizing.md) | vSAN, Harbor 모델 레지스트리, 벡터 인덱스 용량(②), NSX 대역폭 |
-| 06 | [용량 계획과 운영](docs/06-capacity-planning.md) | 모니터링 지표, 증설 트리거, Reservation/쿼터 용량, PoC→프로덕션 로드맵 |
-| 07 | [TCO와 비용 모델](docs/07-tco-cost-model.md) | 라이선스, HW, 운영비 분해, 비용 산정 워크시트, 퍼블릭 vs 온프레미스 비교 프레임 |
-| 08 | [레퍼런스 시나리오(전 과정 예제)](docs/08-reference-scenario.md) | 입력→GPU→노드→클러스터→스토리지→TCO를 한 시나리오로 끝까지 |
-| 09 | [역방향 시나리오(공급 제약)](docs/09-reverse-sizing-scenario.md) | 고정 GPU→가용 용량→적재→할당 상한→잔여/증설, 08의 반대 방향 |
-
-### 부록 (자립성 보조)
-
-| 부록 | 문서 | 내용 |
-|------|------|------|
-| A1 | [1차 가정치 레퍼런스](appendix/A1-first-order-reference.md) | **예산 추정 전용** 처리량, 동시성, KV, 임베딩, 콜드스타트 출발 숫자(출처와 경고 포함) |
-| A2 | [입력값 환산, 기본값, 모델 선택](appendix/A2-inputs-and-defaults.md) | 사용자 수→동시성 환산, 워크로드 프리셋, SLA 기본값, 모델 선택 1차 가이드 |
-| A3 | [견적 요청(RFQ) 체크리스트](appendix/A3-rfq-quote-checklist.md) | 단가 칸을 채우려면 무엇을 물어야 하나(라이선스, HW, 시설, 기록 양식) |
-| A4 | [AI FinOps 스코어카드](appendix/A4-ai-finops-scorecard.md) | 이미 나가고 있는 AI 지출의 역방향 감사. 태깅, 단위경제, 가동률, 구매 방식, 모델 적정성, 이상 탐지의 여섯 점검축과 자산별 회수 판정 입력 |
-
-### 계산 도구
-
-| 도구 | 내용 |
-|------|------|
-| [계산 워크북(xlsx)](worksheet/) | 입력만 바꾸면 GPU, 노드, 스토리지, TCO 골격이 수식으로 자동 산출되는 스프레드시트 |
 
 ## 빠른 시작
 

@@ -9,6 +9,27 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발
 
 ---
 
+## 목차
+
+| 구분 | 번호 | 문서 | 주요 내용 |
+|------|------|------|-----------|
+| 본문 | 00 | [What's New (9.1 / 9.1.1)](docs/00-whats-new.md) | VCF/PAIF 9.1 신규 기능, 9.1.1 / PAIS 3.0 변경, 버전별 기능 이력, 버전 매트릭스, 9.0.x→9.1→9.1.1 마이그레이션 |
+| | 01 | [핵심 개념 및 페르소나](docs/01-concepts.md) | PAIF/PAIS/DLVM 개념, 라이선스 구조, 역할 정의 |
+| | 02 | [아키텍처 및 구축 순서](docs/02-architecture.md) | 계층 구조, GPU(DirectPath/vGPU/Blackwell/DRA), Phase별 구축 |
+| | 03 | [역할별 워크플로우](docs/03-workflows.md) | AI 플레이그라운드, 모델 준비, RAG 구성, PAIS UI, 데이터 소스 |
+| | 04 | [개발 시나리오 및 AI 앱 개발](docs/04-dev-scenarios.md) | PAIS 사용 패턴(라이프사이클, 소비 깊이, 상황 축), AI 앱 4-Tier, API 연동, 배포 |
+| | 05 | [에이전트, MCP, 거버넌스](docs/05-agents-mcp.md) | Agent Builder, Model Context Protocol, Tool-calling, LLM 트레이싱 |
+| | 06 | [프로덕션 아키텍처](docs/06-production.md) | HA/DR, 멀티테넌트, 스케일링, 워크로드 사이징, 모델 라이프사이클, 보안, AI 관측성, 에어갭(Artifact Mirroring Tool) |
+| | 07 | [GPUaaS (PAIF GPU 자원 서비스)](docs/07-gpuaas.md) | 책임 경계 2티어, VM+K8s 셀프서비스, GPU 분할 매트릭스, 쇼백과 차지백, 셀프서비스/공유풀 시나리오 |
+| | 08 | [한국 산업군 적용 시나리오](docs/08-industry.md) | 제조, 방산, 유통, 콘텐츠 PAIF 시나리오, 에어갭, Blackwell, MCP 연계 |
+| | 09 | [구축 시나리오](docs/09-deployment-scenarios.md) | 신규(그린필드), 기존 환경에 추가 구축(브라운필드)와 전환(마이그레이션) 구축 출발 상황별 절차 골격, 선결요건, 리스크 |
+| | 10 | [Day-2 운영](docs/10-operations.md) | 구축 이후 운영. 업그레이드(LCM), 트러블슈팅, 백업복구, 인증서 회전, SLO/알람, 온콜, 네트워크, 스토리지 Day-2 런북 + 운영자 독자 트랙(상황별 라우터) |
+| | 11 | [GPU Enablement 핸즈온 (딥다이브)](docs/11-gpu-enablement.md) | 시리즈 표준보다 깊은 핸즈온 트랙. BIOS 전제→하이퍼바이저 인식→할당 모드 4종→버전 인터락→GPU Operator→PAIS 소비 수직 경로, known-good 스냅샷, PoC 검증 경로, 흔한 함정(CDI, vGPU 라이선스) |
+| 부록 | A1 | [FAQ, 버전 매트릭스, 용어집](appendix/A1-appendix.md) | 자주 묻는 질문, 호환성, 용어, 참고 링크 |
+| | 워크시트 | [채워넣기 워크시트](worksheet/README.md) | 09 구축 시나리오 결정, 현황 파악, SoW 정의, 10 Day-2 점검, 업그레이드, 복구, SLO 기록용 채워넣기 양식(계산용 xlsx 아님) |
+
+---
+
 ## 기반 버전 (Source of Truth)
 
 > **이 표가 문서 전체 버전 기준의 단일 출처입니다.** 각 문서는 개별 버전을 반복 표기하지 않고 이 표를 참조합니다.
@@ -32,27 +53,6 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발
 > **9.0.x에서 업그레이드하시는 경우**: 엔진과 운영 컴포넌트 버전이 대폭 상향됐습니다. 변경 요약과 마이그레이션 체크리스트는 [00](docs/00-whats-new.md)을 먼저 보시기 바랍니다.
 >
 > **9.1 / PAIS 2.1을 운영 중이라면**: 9.1.1 / PAIS 3.0에서 무엇이 바뀌었는지는 [00의 0.7절](docs/00-whats-new.md#07-911--pais-30-변경-2026-09-03-ga)에, 기능이 어느 버전에서 추가됐는지는 [00의 0.8절 버전별 기능 이력](docs/00-whats-new.md#08-버전별-기능-이력-pais-2089--21--30)에 정리했습니다. 2.1 기준으로 작성된 2026-06 시점 문서 전체는 태그 [`baseline-pais-2.1`](https://github.com/JaeHoYun/vcf-private-ai/tree/baseline-pais-2.1)에서 읽을 수 있습니다.
-
----
-
-## 목차
-
-| 문서 | 제목 | 주요 내용 |
-|------|------|----------|
-| 00 | **[What's New (9.1 / 9.1.1)](docs/00-whats-new.md)** | VCF/PAIF 9.1 신규 기능, 9.1.1 / PAIS 3.0 변경, 버전별 기능 이력, 버전 매트릭스, 9.0.x→9.1→9.1.1 마이그레이션 |
-| 01 | [핵심 개념 및 페르소나](docs/01-concepts.md) | PAIF/PAIS/DLVM 개념, 라이선스 구조, 역할 정의 |
-| 02 | [아키텍처 및 구축 순서](docs/02-architecture.md) | 계층 구조, GPU(DirectPath/vGPU/Blackwell/DRA), Phase별 구축 |
-| 03 | [역할별 워크플로우](docs/03-workflows.md) | AI 플레이그라운드, 모델 준비, RAG 구성, PAIS UI, 데이터 소스 |
-| 04 | [개발 시나리오 및 AI 앱 개발](docs/04-dev-scenarios.md) | PAIS 사용 패턴(라이프사이클, 소비 깊이, 상황 축), AI 앱 4-Tier, API 연동, 배포 |
-| 05 | **[에이전트, MCP, 거버넌스](docs/05-agents-mcp.md)** | Agent Builder, Model Context Protocol, Tool-calling, LLM 트레이싱 |
-| 06 | [프로덕션 아키텍처](docs/06-production.md) | HA/DR, 멀티테넌트, 스케일링, 워크로드 사이징, 모델 라이프사이클, 보안, AI 관측성, 에어갭(Artifact Mirroring Tool) |
-| 07 | **[GPUaaS (PAIF GPU 자원 서비스)](docs/07-gpuaas.md)** | 책임 경계 2티어, VM+K8s 셀프서비스, GPU 분할 매트릭스, 쇼백과 차지백, 셀프서비스/공유풀 시나리오 |
-| 08 | **[한국 산업군 적용 시나리오](docs/08-industry.md)** | 제조, 방산, 유통, 콘텐츠 PAIF 시나리오, 에어갭, Blackwell, MCP 연계 |
-| 09 | **[구축 시나리오](docs/09-deployment-scenarios.md)** | 신규(그린필드), 기존 환경에 추가 구축(브라운필드)와 전환(마이그레이션) 구축 출발 상황별 절차 골격, 선결요건, 리스크 |
-| 10 | **[Day-2 운영](docs/10-operations.md)** | 구축 이후 운영 — 업그레이드(LCM), 트러블슈팅, 백업복구, 인증서 회전, SLO/알람, 온콜, 네트워크, 스토리지 Day-2 런북 + 운영자 독자 트랙(상황별 라우터) |
-| 11 | **[GPU Enablement 핸즈온](docs/11-gpu-enablement.md)** (딥다이브) | 시리즈 표준보다 깊은 핸즈온 트랙 — BIOS 전제→하이퍼바이저 인식→할당 모드 4종→버전 인터락→GPU Operator→PAIS 소비 수직 경로, known-good 스냅샷, PoC 검증 경로, 흔한 함정(CDI, vGPU 라이선스) |
-| A1 | [FAQ, 버전 매트릭스, 용어집](appendix/A1-appendix.md) | 자주 묻는 질문, 호환성, 용어, 참고 링크 |
-| 워크시트 | [채워넣기 워크시트](worksheet/README.md) | 09 구축 시나리오 결정, 현황 파악, SoW 정의, 10 Day-2 점검, 업그레이드, 복구, SLO 기록용 채워넣기 양식(계산용 xlsx 아님) |
 
 ## 빠른 시작
 

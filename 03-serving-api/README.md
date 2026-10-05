@@ -14,6 +14,24 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 이를 기반으로 
 
 ---
 
+## 목차
+
+| 구분 | 번호 | 문서 | 주요 내용 |
+|------|------|------|-----------|
+| 본문 | 00 | [추론 서빙은 어떻게 동작하나 (기초)](docs/00-serving-primer.md) | 왜 GPU, 양자화, 추론 엔진, 동시성(연속 배칭, PagedAttention), 같은 API로 CPU↔GPU |
+| | 01 | [왜 사내 추론 API인가](docs/01-why-serving-api.md) | 데이터 주권, 비용, 레이턴시, OpenAI 호환의 의미 |
+| | 02 | [서빙 API 아키텍처](docs/02-serving-api-architecture.md) | 서빙 계층의 토대, 4대 모듈, 제어/데이터 평면, 모델 생애주기(반입→배포→노출→호출), Model Runtime, Gateway, Endpoint vs Agent |
+| | 03 | [OpenAI 호환 엔드포인트](docs/03-openai-compatible-endpoints.md) | models, embeddings, chat/completions, 요청/응답 스키마, 스트리밍, 함수 호출, 구조화 출력(JSON 모드), 에러 처리 |
+| | 04 | [에이전트와 RAG API](docs/04-agent-rag-api.md) | agents CRUD, agent chat, data-sources, knowledge-bases, indexes, search |
+| | 05 | [인증과 게이트웨이](docs/05-auth-and-gateway.md) | OIDC Bearer 토큰, mTLS, API Gateway, 레이트리밋, 쿼터, 로드밸런싱, 에러/재시도 |
+| | 06 | [MCP 도구 API](docs/06-mcp-tools-api.md) | mcp-servers 등록과 도구 승인, 거버넌스(읽기 우선) |
+| | 07 | [관측성과 운영](docs/07-observability-ops.md) | 토큰 usage, OTel 트레이싱, Grafana 관측성(health, quality, behavior), 모델 버전 관리, 알려진 이슈 |
+| | 08 | [레퍼런스 구현](docs/08-reference-implementation.md) | curl, OpenAI SDK, LangChain 최소 동작 예제, 엔드투엔드 |
+
+> 기초 동작 원리(00)를 먼저 파악하고, 추론을 노출하고(서빙) → 호출하고(소비) → 통제하는(인증, 도구, 운영) 생애주기 순서입니다.
+
+---
+
 ## 기반 버전 (Source of Truth)
 
 > 모든 수치와 버전은 작성 시점(2026-06) Broadcom 공식 문서 기준이고, 2026-09에 VCF 9.1.1 / PAIS 3.0 GA 내용을 반영했습니다. 적용 전 [참고 자료](#참고-자료)의 공식 문서로 재확인하시기 바랍니다.
@@ -26,24 +44,6 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 이를 기반으로 
 | Private AI Services API | OpenAI 호환 (`/compatibility/openai/v1`) | [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/) |
 
 > **추론 엔진 버전(vLLM, Infinity, llama.cpp 등)** 은 ① 인프라 가이드의 버전 단일 기준 문서를 따릅니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 본 가이드는 **API 계층**에 집중하며, 엔진 버전은 별도로 단정하지 않고 그 표를 기준선으로 삼습니다. 엔진 버전은 릴리스마다 변동되므로 적용 직전 공식 릴리스 노트로 확인하시기 바랍니다.
-
----
-
-## 문서 구성
-
-기초 동작 원리(00)를 먼저 파악하고, 추론을 노출하고(서빙) → 호출하고(소비) → 통제하는(인증, 도구, 운영) 생애주기 순서입니다.
-
-| 순서 | 문서 | 내용 |
-|---|---|---|
-| 00 | [추론 서빙은 어떻게 동작하나 (기초)](docs/00-serving-primer.md) | 왜 GPU, 양자화, 추론 엔진, 동시성(연속 배칭, PagedAttention), 같은 API로 CPU↔GPU |
-| 01 | [왜 사내 추론 API인가](docs/01-why-serving-api.md) | 데이터 주권, 비용, 레이턴시, OpenAI 호환의 의미 |
-| 02 | [서빙 API 아키텍처](docs/02-serving-api-architecture.md) | 서빙 계층의 토대, 4대 모듈, 제어/데이터 평면, 모델 생애주기(반입→배포→노출→호출), Model Runtime, Gateway, Endpoint vs Agent |
-| 03 | [OpenAI 호환 엔드포인트](docs/03-openai-compatible-endpoints.md) | models, embeddings, chat/completions, 요청/응답 스키마, 스트리밍, 함수 호출, 구조화 출력(JSON 모드), 에러 처리 |
-| 04 | [에이전트와 RAG API](docs/04-agent-rag-api.md) | agents CRUD, agent chat, data-sources, knowledge-bases, indexes, search |
-| 05 | [인증과 게이트웨이](docs/05-auth-and-gateway.md) | OIDC Bearer 토큰, mTLS, API Gateway, 레이트리밋, 쿼터, 로드밸런싱, 에러/재시도 |
-| 06 | [MCP 도구 API](docs/06-mcp-tools-api.md) | mcp-servers 등록과 도구 승인, 거버넌스(읽기 우선) |
-| 07 | [관측성과 운영](docs/07-observability-ops.md) | 토큰 usage, OTel 트레이싱, Grafana 관측성(health, quality, behavior), 모델 버전 관리, 알려진 이슈 |
-| 08 | [레퍼런스 구현](docs/08-reference-implementation.md) | curl, OpenAI SDK, LangChain 최소 동작 예제, 엔드투엔드 |
 
 ---
 

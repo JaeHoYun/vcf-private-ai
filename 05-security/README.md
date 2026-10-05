@@ -12,6 +12,25 @@
 
 ---
 
+## 목차
+
+| 구분 | 번호 | 문서 | 주요 내용 |
+|------|------|------|-----------|
+| 본문 | 00 | [어디서부터 시작하나: 보안 청사진과 첫 90일](docs/00-where-to-start.md) | 요청 경로상의 통제 지점 한 장, 90일 로드맵, 게이트별 최소 보안 세트, 준비물 워크시트, 흔한 실수 |
+| | 01 | [위협 모델과 보안 아키텍처 전경](docs/01-threat-model.md) | AI 파이프라인 공격면, 다층 방어 계층, 책임 분담, OWASP, ATLAS 매핑 |
+| | 02 | [네트워크, 테넌트, GPU 격리](docs/02-network-tenant-isolation.md) | NSX VPC/마이크로세그, vDefend, MIG, 네임스페이스 강격리 |
+| | 03 | [ID, 인증, 접근통제](docs/03-identity-access.md) | OIDC/RBAC, API 게이트웨이, MCP 도구 승인 게이트, 시크릿 |
+| | 04 | [에어갭, 공급망, 모델 출처](docs/04-airgap-supply-chain.md) | Artifact Mirroring Tool, Harbor, 모델 서명, 스캔, SBOM |
+| | 05 | [데이터 거버넌스와 프라이버시](docs/05-data-governance.md) | 문서 ACL 동기화, 검색단 인가, PII, 보존과 잔존 |
+| | 06 | [앱 계층 가드레일](docs/06-app-guardrails.md) | 프롬프트 인젝션/출력 방어, 도구 사용 안전(④ 브리지) |
+| | 07 | [감사, 로깅, 사고대응 및 컴플라이언스 체크리스트](docs/07-audit-compliance.md) | 추적성, 모델 행위 관측, 섀도 AI 후보 탐지, 사고대응, 한국 규제 매핑, 통제 검증 총괄(C-01–C-18과 게이트) |
+| | 08 | [에이전트 보안 거버넌스](docs/08-agent-governance.md) | 에이전트 위협 ASI01–10, 비인간 신원, 자율성 상한과 위험 등급 매트릭스, 레지스트리, MCP 도구 공급망과 도구 오염, 샌드박스, 킬스위치, 도구 게이트웨이, 레드팀 |
+| 부록 | 워크시트 | [거버넌스와 데이터주권 갭 워크시트](worksheet/governance-sovereignty-gap.md) | 자산대장 실측(A절), 국내외 규제 대비 격차(B절), 규제 데이터의 외부 경유 소급 점검(C절) 채워넣기 양식 |
+
+> 착수 문서(00)에서 전체 구성과 순서를 정한 뒤, 플랫폼을 **위협 식별 → 격리 → 접근통제 → 공급망 → 데이터 → 앱 → 감사** 순으로 방어하고, 마지막(08)에서 행위자로서의 에이전트를 다룹니다. 각 문서는 끝에 해당 영역 통제의 **검증 방법**을 담습니다.
+>
+> 직접 채워 작성하는 양식으로 [거버넌스와 데이터주권 갭 워크시트](worksheet/governance-sovereignty-gap.md)가 있습니다. 이미 운영 중인 AI 자산의 통제 격차를 자산대장 실측(A절), 한국 AI 기본법과 NIST AI RMF와 EU AI Act와 ISO 42001 대비 격차(B절), 규제 데이터의 외부 경유 소급 점검(C절)으로 되짚습니다. AX 방법론 가이드에 있던 양식을 이관한 것입니다.
+
 ## 기반 버전 (Source of Truth)
 
 > 본 가이드는 **보안과 거버넌스 관점**에 집중하며, 엔진과 컴포넌트 버전은 단정하지 않고 형제 가이드의 버전 단일 기준 문서를 기준선으로 삼습니다 → [① README 버전표](../01-infra/README.md#기반-버전-source-of-truth). 모든 수치는 작성 시점(2026-06) 기준이고 2026-09에 VCF 9.1.1 / PAIS 3.0을 반영했으며, 적용 전 공식 문서로 재확인하시기 바랍니다.
@@ -22,24 +41,6 @@
 | Private AI Services (PAIS) | 3.0 | Agent Builder, Data Indexing(RAG), MCP Tools Registry, Artifact Mirroring Tool. 3.0에서 API 토큰, BYO TLS 인증서, 원격 클라우드 모델 추가 |
 | vDefend (Add-on) | 9.1 | 분산 방화벽과 IDS/IPS |
 | PostgreSQL / pgvector (DSM 9.1.1) | 16.8 / 0.8.0 | PAIS 검증 조합 (②) |
-
-## 문서 구성
-
-착수 문서(00)에서 전체 구성과 순서를 정한 뒤, 플랫폼을 **위협 식별 → 격리 → 접근통제 → 공급망 → 데이터 → 앱 → 감사** 순으로 방어하고, 마지막(08)에서 행위자로서의 에이전트를 다룹니다. 각 문서는 끝에 해당 영역 통제의 **검증 방법**을 담습니다.
-
-| 순서 | 문서 | 내용 |
-|------|------|------|
-| 00 | [어디서부터 시작하나: 보안 청사진과 첫 90일](docs/00-where-to-start.md) | 요청 경로상의 통제 지점 한 장, 90일 로드맵, 게이트별 최소 보안 세트, 준비물 워크시트, 흔한 실수 |
-| 01 | [위협 모델과 보안 아키텍처 전경](docs/01-threat-model.md) | AI 파이프라인 공격면, 다층 방어 계층, 책임 분담, OWASP, ATLAS 매핑 |
-| 02 | [네트워크, 테넌트, GPU 격리](docs/02-network-tenant-isolation.md) | NSX VPC/마이크로세그, vDefend, MIG, 네임스페이스 강격리 |
-| 03 | [ID, 인증, 접근통제](docs/03-identity-access.md) | OIDC/RBAC, API 게이트웨이, MCP 도구 승인 게이트, 시크릿 |
-| 04 | [에어갭, 공급망, 모델 출처](docs/04-airgap-supply-chain.md) | Artifact Mirroring Tool, Harbor, 모델 서명, 스캔, SBOM |
-| 05 | [데이터 거버넌스와 프라이버시](docs/05-data-governance.md) | 문서 ACL 동기화, 검색단 인가, PII, 보존과 잔존 |
-| 06 | [앱 계층 가드레일](docs/06-app-guardrails.md) | 프롬프트 인젝션/출력 방어, 도구 사용 안전(④ 브리지) |
-| 07 | [감사, 로깅, 사고대응 및 컴플라이언스 체크리스트](docs/07-audit-compliance.md) | 추적성, 모델 행위 관측, 섀도 AI 후보 탐지, 사고대응, 한국 규제 매핑, 통제 검증 총괄(C-01–C-18과 게이트) |
-| 08 | [에이전트 보안 거버넌스](docs/08-agent-governance.md) | 에이전트 위협 ASI01–10, 비인간 신원, 자율성 상한과 위험 등급 매트릭스, 레지스트리, MCP 도구 공급망과 도구 오염, 샌드박스, 킬스위치, 도구 게이트웨이, 레드팀 |
-
-직접 채워 작성하는 양식으로 [거버넌스와 데이터주권 갭 워크시트](worksheet/governance-sovereignty-gap.md)가 있습니다. 이미 운영 중인 AI 자산의 통제 격차를 자산대장 실측(A절), 한국 AI 기본법과 NIST AI RMF와 EU AI Act와 ISO 42001 대비 격차(B절), 규제 데이터의 외부 경유 소급 점검(C절)으로 되짚습니다. AX 방법론 가이드에 있던 양식을 이관한 것입니다.
 
 ## 빠른 시작
 

@@ -102,17 +102,17 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 이를 기반으로 
 
 ---
 
-## 면책 조항 (Disclaimer)
+## 면책 조항
 
-**작성자 관점** — VCF + PAIF + PAIS 조합으로 모델을 서빙하는 방향을 권장하는 관점으로 작성했습니다. 다만 PAIS 관리형 서빙이 맞지 않는 경우(미지원 엔진, 기존 MLOps 자산 등)도 솔직하게 다룹니다.
+**비공식 문서.** 작성자가 공개 자료를 바탕으로 정리한 비공식 문서이며, Broadcom, NVIDIA 등 특정 벤더의 공식 입장을 대변하지 않습니다.
 
-**비공식 문서** — 공개된 공식 기술 문서, API 레퍼런스, 릴리스 노트를 기반으로 작성한 비공식 실무 레퍼런스입니다. Broadcom, VMware, NVIDIA 또는 기타 벤더의 공식 입장을 대변하지 않습니다.
+**정확성과 최신성.** 본문의 버전, 수치, 구성값, 절차는 작성 시점 기준의 예시이며 제품 릴리스와 조직 환경에 따라 달라집니다. 성능과 비용 수치는 출처의 발표 조건을 따른 값입니다. 적용 전 공식 문서와 자체 환경에서 검증하시기 바랍니다.
 
-**정확성 및 최신성** — 본 문서의 내용은 작성 시점(2026년 6월, PAIS 3.0 반영 2026년 9월) 기준이며, 제품 업데이트에 따라 달라질 수 있습니다. 특히 **API 엔드포인트 경로와 요청/응답 스키마와 인증 방식**은 PAIS 버전에 따라 변경될 수 있으므로, 적용 전 반드시 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 확인하시기 바랍니다. 또한 본문에 언급된 **성능과 비용 관련 서술**(예: 단위 비용과 레이턴시 이점)은 일반론이며 실제 효과는 워크로드와 환경별 검증이 필요합니다.
+**책임 한계.** 이 문서를 참고해 발생한 직접, 간접 손해는 작성자가 책임지지 않습니다. 기술 지원이 필요하면 각 벤더의 공식 지원 채널을 이용하시기 바랍니다.
 
-**책임 한계** — 본 문서를 참고하여 발생한 직접적, 간접적 손해에 대해 작성자는 책임을 지지 않습니다. 실제 구축과 운영은 각 조직의 요구사항과 환경에 맞게 검토 후 진행하시고, 기술 지원이 필요한 경우 Broadcom 공식 지원 채널을 이용하시기 바랍니다.
+**상표권 고지.** VMware, VMware Cloud Foundation 등은 Broadcom의 상표이고 NVIDIA, CUDA 등은 NVIDIA Corporation의 상표입니다. 기타 언급된 제품명과 회사명은 각 소유자의 상표입니다.
 
-**상표권 고지** — VMware, VMware Cloud Foundation, vSphere, vSAN, NSX, VCF Automation, VCF Operations, Private AI Foundation, Private AI Services 등은 Broadcom의 등록 상표입니다. NVIDIA, CUDA, NIM, NeMo 등은 NVIDIA Corporation의 등록 상표입니다. OpenAI는 OpenAI의 상표이며, 본 문서의 "OpenAI 호환"은 API 인터페이스 호환성을 의미할 뿐 OpenAI와의 제휴와 보증을 뜻하지 않습니다. 기타 언급된 제품명 및 회사명은 각 소유자의 상표 또는 등록 상표입니다.
+**이 가이드의 유의사항.** VCF, PAIF, PAIS 조합으로 모델을 서빙하는 방향을 권장하는 관점으로 작성했으며, PAIS 관리형 서빙이 맞지 않는 경우(미지원 엔진, 기존 MLOps 자산 등)도 함께 다룹니다. API 엔드포인트 경로, 요청과 응답 스키마, 인증 방식은 PAIS 버전에 따라 바뀔 수 있으므로 적용 전 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 확인하시기 바랍니다. OpenAI는 OpenAI의 상표이며, 본문의 "OpenAI 호환"은 API 인터페이스 호환성을 뜻할 뿐 OpenAI와의 제휴나 보증을 뜻하지 않습니다.
 
 ---
 

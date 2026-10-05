@@ -89,14 +89,14 @@ VCF에서 Private AI Foundation을 운영 중이라면 DSM(Data Services Manager
 
 ---
 
-## 면책 조항 (Disclaimer)
+## 면책 조항
 
-개인적으로 작성한 비공식 문서이며 특정 벤더의 공식 입장을 대변하지 않습니다. 모든 사양/라이선스는 공식 자료로 확인하시기 바랍니다.
+**비공식 문서.** 작성자가 공개 자료를 바탕으로 정리한 비공식 문서이며, Broadcom, NVIDIA 등 특정 벤더의 공식 입장을 대변하지 않습니다.
 
-비공식 문서: 공개된 기술 문서, 블로그, 릴리스 노트를 기반으로 작성한 비공식 기술 레퍼런스입니다. Broadcom, VMware, NVIDIA 또는 기타 벤더의 공식 입장을 대변하지 않습니다.
+**정확성과 최신성.** 본문의 버전, 수치, 구성값, 절차는 작성 시점 기준의 예시이며 제품 릴리스와 조직 환경에 따라 달라집니다. 성능과 비용 수치는 출처의 발표 조건을 따른 값입니다. 적용 전 공식 문서와 자체 환경에서 검증하시기 바랍니다.
 
-정확성 및 최신성: 작성 시점(2026년 6월, DSM 9.1.1과 PAIS 3.0 반영 2026년 9월) 기준이며, 제품 업데이트에 따라 내용이 달라질 수 있습니다. 가격, 기능, 성능 수치는 시점에 따라 변동되므로 공식 문서를 함께 확인하시기 바랍니다.
+**책임 한계.** 이 문서를 참고해 발생한 직접, 간접 손해는 작성자가 책임지지 않습니다. 기술 지원이 필요하면 각 벤더의 공식 지원 채널을 이용하시기 바랍니다.
 
-벤치마크: 인용된 벤치마크는 각 출처의 테스트 환경과 조건에 따른 결과이며, 실제 워크로드에서의 성능은 다를 수 있습니다. 프로덕션 도입 전 자체 워크로드 기반 테스트를 권장합니다.
+**상표권 고지.** VMware, VMware Cloud Foundation 등은 Broadcom의 상표이고 NVIDIA, CUDA 등은 NVIDIA Corporation의 상표입니다. 기타 언급된 제품명과 회사명은 각 소유자의 상표입니다.
 
-상표권 고지: VMware, VMware Cloud Foundation, vSphere, vSAN, NSX, VCF Automation, VCF Operations, Data Services Manager, Private AI Services 등은 Broadcom의 등록 상표입니다. NVIDIA, CUDA, NIM 등은 NVIDIA Corporation의 등록 상표입니다. PostgreSQL은 PostgreSQL Global Development Group의 상표입니다. 기타 언급된 제품명 및 회사명은 각 소유자의 상표 또는 등록 상표입니다.
+**이 가이드의 유의사항.** 인용한 벤치마크는 각 출처의 테스트 환경과 조건에서 측정한 결과입니다. 프로덕션 도입 전 자체 워크로드로 테스트하시기 바랍니다. PostgreSQL은 PostgreSQL Global Development Group의 상표입니다.

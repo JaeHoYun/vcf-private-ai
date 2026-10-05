@@ -55,6 +55,14 @@
 
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). 자유롭게 활용하시되 출처를 표기해 주세요. `출처: https://github.com/JaeHoYun/vcf-private-ai/tree/main/04-rag`
 
-## 면책
+## 면책 조항
 
-**비공식 문서** — Broadcom, NVIDIA 등 벤더의 공식 입장을 대변하지 않습니다. 본문의 API 경로, 파라미터, 인덱스 설정값은 **예시**이며 릴리스마다 변동되므로, 적용 직전 [PAIS 공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 공식 문서로 확인하시기 바랍니다. 언급된 제품명과 상표는 각 소유자의 자산입니다.
+**비공식 문서.** 작성자가 공개 자료를 바탕으로 정리한 비공식 문서이며, Broadcom, NVIDIA 등 특정 벤더의 공식 입장을 대변하지 않습니다.
+
+**정확성과 최신성.** 본문의 버전, 수치, 구성값, 절차는 작성 시점 기준의 예시이며 제품 릴리스와 조직 환경에 따라 달라집니다. 성능과 비용 수치는 출처의 발표 조건을 따른 값입니다. 적용 전 공식 문서와 자체 환경에서 검증하시기 바랍니다.
+
+**책임 한계.** 이 문서를 참고해 발생한 직접, 간접 손해는 작성자가 책임지지 않습니다. 기술 지원이 필요하면 각 벤더의 공식 지원 채널을 이용하시기 바랍니다.
+
+**상표권 고지.** VMware, VMware Cloud Foundation 등은 Broadcom의 상표이고 NVIDIA, CUDA 등은 NVIDIA Corporation의 상표입니다. 기타 언급된 제품명과 회사명은 각 소유자의 상표입니다.
+
+**이 가이드의 유의사항.** 본문의 API 경로, 파라미터, 인덱스 설정값은 예시이며 릴리스마다 바뀝니다. 적용 직전 [PAIS 공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 확인하시기 바랍니다.

@@ -77,11 +77,9 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 이를 기반으로 
 
 ## 라이선스
 
-이 문서는 자유롭게 활용하실 수 있습니다. **출처 표기**를 부탁드립니다.
+이 문서는 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)으로 제공됩니다. 자유롭게 활용하시되 아래와 같이 출처를 표기해 주세요. 라이선스 전문은 [LICENSE](../LICENSE) 파일에 있습니다.
 
-```
 출처: https://github.com/JaeHoYun/vcf-private-ai/tree/main/03-serving-api
-```
 
 ## 피드백
 

@@ -112,7 +112,7 @@ VCF 9.1.x — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 4. **노출 (ML API Gateway).** 배포된 Endpoint는 개별 파드 IP가 아니라 **Gateway의 단일 진입 URL**로 노출됩니다. Gateway가 인증, 인가, 로드밸런싱을 일괄 처리합니다(2.6절).
 5. **소비 (앱/에이전트).** 앱은 기존 OpenAI 코드의 `base_url`만 사내 PAIS로 바꿔 호출합니다([03](03-openai-compatible-endpoints.md), [08](08-reference-implementation.md)). Agent를 사용하면 여기에 RAG, 세션, 도구가 추가됩니다(2.7절).
 
-> **여기서 "GPU는 어디에 연결되나"의 답.** 프로덕션 추론에서 GPU는 개발용 DLVM이 아니라 **Endpoint 파드(VKS 워커 VM)가 ESXi 호스트의 물리 GPU에 직접 연결**되는 방식으로 사용됩니다. ([근거: VCF Blog, VKS 워커 VM 파드의 물리 GPU 연결](https://blogs.vmware.com/cloud-foundation/2025/12/17/deploy-vmware-private-ai-services-in-minimal-vmware-cloud-foundation-environments/)) DLVM의 역할은 2.9절에서 분리해 설명합니다.
+> **여기서 "GPU는 어디에 연결되나"의 답.** 프로덕션 추론에서 GPU는 개발용 DLVM이 아니라 **Endpoint 파드(VKS 워커 VM)가 ESXi 호스트의 물리 GPU에 직접 연결**되는 방식으로 사용됩니다. ([근거: VCF Blog — VKS 워커 VM 파드의 물리 GPU 연결](https://blogs.vmware.com/cloud-foundation/2025/12/17/deploy-vmware-private-ai-services-in-minimal-vmware-cloud-foundation-environments/)) DLVM의 역할은 2.9절에서 분리해 설명합니다.
 
 ---
 
@@ -132,7 +132,7 @@ Model Gallery는 단순 파일 창고가 아니라 **"무엇을 서빙해도 되
 
 > **경계. Gallery는 학습하지 않습니다.** Model Gallery는 모델을 **보관, 반입, 버전관리**할 뿐, 파인튜닝과 학습은 하지 않습니다. 도메인 적응 학습은 PAIS 밖(DLVM, 전용 학습 파이프라인)에서 수행한 뒤 산출 모델을 Gallery로 반입합니다. 학습용 GPU, 노드 사이징은 [⑥ GPU 사이징](../../06-sizing-cost/docs/02-gpu-sizing.md), [①](../../01-infra/README.md)에 위임합니다. 서비스 관점의 모델 선택과 CLI는 [앱 가이드 10](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/10-models-serving.md)에서 다룹니다.
 
-([근거: Broadcom Blog, Harbor as an AI Model Registry](https://blogs.vmware.com/cloud-foundation/2026/03/03/using-harbor-as-an-ai-model-registry/), [Model Gallery, JupyterLab Notebooks](https://blogs.vmware.com/cloud-foundation/2026/02/26/model-gallery-how-to-use-jupyterlab-notebooks-to-simplify-model-deployment-and-management/), [TechDocs, Storing ML Models](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/storing-ml-models-in-vmware-private-ai-foundation.html). 메타데이터 항목과 세부 스키마는 릴리스마다 달라질 수 있으니 적용 직전 공식 문서로 재확인하시기 바랍니다.)
+([근거: Broadcom Blog — Harbor as an AI Model Registry](https://blogs.vmware.com/cloud-foundation/2026/03/03/using-harbor-as-an-ai-model-registry/), [Model Gallery — JupyterLab Notebooks](https://blogs.vmware.com/cloud-foundation/2026/02/26/model-gallery-how-to-use-jupyterlab-notebooks-to-simplify-model-deployment-and-management/), [TechDocs — Storing ML Models](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/storing-ml-models-in-vmware-private-ai-foundation.html). 메타데이터 항목과 세부 스키마는 릴리스마다 달라질 수 있으니 적용 직전 공식 문서로 재확인하시기 바랍니다.)
 
 ---
 
@@ -217,7 +217,7 @@ PAIS는 VCF Automation의 **조직(Organization), 네임스페이스**(2.1절 �
 - **격리.** 한 네임스페이스의 Model Endpoint, Agent, KB는 그 경계 안에서 관리됩니다. 토큰의 권한도 그 경계를 따릅니다.
 - **경계를 넘는 유일한 것, 공유 모델(3.0부터).** 공유 모델 호스팅은 이 격리에서 모델 엔드포인트만 예외로 처리합니다. provider 네임스페이스의 GPU에서 실행되는 모델을 consumer 네임스페이스가 자기 엔드포인트처럼 호출하되, consumer의 지식베이스와 에이전트와 도구는 여전히 consumer 안에 있습니다. 인스턴스 간 호출에는 provider가 발급한 API 토큰이 필요하고 외부 OIDC 토큰은 사용할 수 없습니다(2.5.1절, [05 5.6절](05-auth-and-gateway.md)).
 - **거버넌스 경계.** DEV/PROD를 네임스페이스로 분리하면, 민감한 도구(MCP), 데이터 소스를 PROD에만 허용하는 식의 통제가 가능합니다 → [06 MCP 거버넌스](06-mcp-tools-api.md).
-- **리소스 쿼터.** GPU, 복제본 한도가 네임스페이스 단위로 걸리므로, API 스케일링도 그 한도 안에서 일어납니다. 구체적으로 **네임스페이스당 Model Endpoint 복제본은 최대 15개**이고, **각 복제본이 /24 CIDR 블록을 소비**합니다(더 늘리려면 Supervisor 서비스의 `vks.candidatePodCIDRs`로 대역을 키웁니다) → [07 운영](07-observability-ops.md). ([근거: VCF Blog, Minimal VCF 환경의 PAIS 배포](https://blogs.vmware.com/cloud-foundation/2025/12/17/deploy-vmware-private-ai-services-in-minimal-vmware-cloud-foundation-environments/). 한도 수치는 릴리스마다 달라질 수 있으니 적용 직전 공식 문서로 재확인하시기 바랍니다.)
+- **리소스 쿼터.** GPU, 복제본 한도가 네임스페이스 단위로 걸리므로, API 스케일링도 그 한도 안에서 일어납니다. 구체적으로 **네임스페이스당 Model Endpoint 복제본은 최대 15개**이고, **각 복제본이 /24 CIDR 블록을 소비**합니다(더 늘리려면 Supervisor 서비스의 `vks.candidatePodCIDRs`로 대역을 키웁니다) → [07 운영](07-observability-ops.md). ([근거: VCF Blog — Minimal VCF 환경의 PAIS 배포](https://blogs.vmware.com/cloud-foundation/2025/12/17/deploy-vmware-private-ai-services-in-minimal-vmware-cloud-foundation-environments/). 한도 수치는 릴리스마다 달라질 수 있으니 적용 직전 공식 문서로 재확인하시기 바랍니다.)
 
 > **에어갭 반입, Artifact Mirroring Tool(아티팩트 미러링 도구, PAIS 2.1 신규).** 외부 반출이 불가한 폐쇄망(에어갭)에서는 PAIS 패키지와 NVIDIA GPU Operator 구성요소와 NGC 컨테이너 등 **아티팩트를 로컬 Harbor 레지스트리로 미러링**하는 도구입니다. 이를 통해 GPU 모델 엔드포인트와 에이전트를 포함한 풀 Private AI를 격리망에서 설치하고 운영하고, 외부 SaaS, 외부 MCP는 차단합니다. API 자체는 동일하되 **연동 대상이 내부로 제한**됩니다. 미러링은 pais CLI 플러그인의 **`vcf pais amt pull/push`** 명령으로 수행합니다(이 명령은 VCF CLI 명령 레퍼런스에는 누락돼 있고 Disconnected Environment 배포 문서에 명시). ([근거: PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [Disconnected 환경 구성요소 업로드](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/installing-and-configuring-private-ai-services/upload-the-private-ai-services-components-to-a-disconnected-environment.html). 상세 런북은 [① 06 6.9절](../../01-infra/docs/06-production.md), [앱 가이드 10.4절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/10-models-serving.md))
 

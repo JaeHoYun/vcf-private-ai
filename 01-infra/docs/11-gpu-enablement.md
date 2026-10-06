@@ -38,10 +38,10 @@ PAIS Model Runtime — 모델이 GPU 소비  (11.9절)
 GPU 스택의 버전 호환은 빠르게 변합니다. 그래서 이 문서는 특정 숫자를 기준으로 삼지 않고, **공식 매트릭스를 단일 출처로 삼고** 변하지 않는 **인터락 규칙**(11.6절)을 본문에 기술합니다. 구성 전 아래를 1차 기준으로 확인하십시오.
 
 - **Broadcom 호환성 가이드(GPU, 가속기, AI/ML).** VCF/ESXi가 어떤 GPU, 서버를 지원하는지의 기준: [compatibilityguide.broadcom.com](https://compatibilityguide.broadcom.com/)
-- **PAIF 9.1 배포 요구사항.** PAIF가 요구하는 GPU 전제와 드라이버: [techdocs, Requirements for Deploying PAIF with NVIDIA](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html)
-- **NVIDIA vGPU 제품 지원 매트릭스.** ESXi 버전 ↔ vGPU 소프트웨어 ↔ 지원 GPU: [docs.nvidia.com/vgpu, product-support-matrix](https://docs.nvidia.com/vgpu/latest/product-support-matrix/index.html)
+- **PAIF 9.1 배포 요구사항.** PAIF가 요구하는 GPU 전제와 드라이버: [techdocs — Requirements for Deploying PAIF with NVIDIA](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html)
+- **NVIDIA vGPU 제품 지원 매트릭스.** ESXi 버전 ↔ vGPU 소프트웨어 ↔ 지원 GPU: [docs.nvidia.com/vgpu — product-support-matrix](https://docs.nvidia.com/vgpu/latest/product-support-matrix/index.html)
 - **NVIDIA AI Enterprise(NVAIE) 버전별 지원 매트릭스.** vGPU Manager ↔ 게스트 드라이버 ↔ GPU Operator 조합: NVAIE 릴리스별 `support-matrix`
-- **NVIDIA GPU Operator 플랫폼 지원.** Operator ↔ 쿠버네티스 ↔ 드라이버: [docs.nvidia.com, gpu-operator/platform-support](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html)
+- **NVIDIA GPU Operator 플랫폼 지원.** Operator ↔ 쿠버네티스 ↔ 드라이버: [docs.nvidia.com — gpu-operator/platform-support](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html)
 
 ## 11.3 0단계. 하드웨어와 BIOS 전제
 
@@ -113,13 +113,13 @@ VKS 환경에서는 이 호스트 준비를 바탕으로 GPU Operator가 게스�
 
 ### 11.5.2 Enhanced DirectPath I/O와 vMotion. 9.1의 핵심, 그리고 단서
 
-VCF 9.1에서 Enhanced DirectPath I/O는 near-native 성능을 유지하면서 vMotion, HA, DRS, 스냅샷, Storage vMotion, 핫애드를 지원하도록 설계됐습니다([VCF 블로그, Why Enhanced DirectPath Wins](https://blogs.vmware.com/cloud-foundation/2026/04/20/why-enhanced-directpath-wins-for-high-performance-apps/), [VCF 9.1 vSphere What's New](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes/what-s-new/whats-new-vsphere.html)).
+VCF 9.1에서 Enhanced DirectPath I/O는 near-native 성능을 유지하면서 vMotion, HA, DRS, 스냅샷, Storage vMotion, 핫애드를 지원하도록 설계됐습니다([VCF 블로그 — Why Enhanced DirectPath Wins](https://blogs.vmware.com/cloud-foundation/2026/04/20/why-enhanced-directpath-wins-for-high-performance-apps/), [VCF 9.1 vSphere What's New](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes/what-s-new/whats-new-vsphere.html)).
 
 > **확인 필요:** 공식 문서는 "모든 기능이 모든 장치에서 지원되는 것은 아니다"라고 단서를 답니다. Enhanced DirectPath I/O + vMotion이 공식 매트릭스에서 명시 확인된 장치는 일부(Intel Flex/Gaudi, AMD MI 계열 등)이며, **특정 NVIDIA 데이터센터 GPU의 EDPIO+vMotion 지원은 장치별로 [Broadcom 호환성 가이드](https://compatibilityguide.broadcom.com/)에서 확인**하시기 바랍니다. 라이선스 절감(passthrough=NVAIE 불요)은 경로 특성으로 분명하나, vMotion 보장은 장치 단위로 검증하는 것이 안전합니다.
 
 ### 11.5.3 MIG 활성화 절차(호스트)
 
-MIG는 Ampere 이상(A100, A30, H100, H200, B200, RTX PRO Blackwell 등)에서만 동작합니다([MIG User Guide, Supported GPUs](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-gpus.html)).
+MIG는 Ampere 이상(A100, A30, H100, H200, B200, RTX PRO Blackwell 등)에서만 동작합니다([MIG User Guide — Supported GPUs](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-gpus.html)).
 
 ```bash
 # 1) MIG 모드 활성화 (Ampere는 활성화 후 호스트/GPU 재부팅 필요)
@@ -274,7 +274,7 @@ spec:
 
 ### 11.11.2 vGPU "Unlicensed"
 
-4단계(라이선스)가 실패하는 증상입니다. 원인은 하나가 아니므로 아래를 순서대로 점검합니다([Broadcom, vGPU Unlicensed](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/5-2/private-ai-foundation-5-2/deploying-a-deep-learning-virtual-machine/troubleshooting-deep-learning-vm-deployment/the-nvidia-vgpu-driver-is-shown-as-unlicensed.html), [NVIDIA 라이선싱 트러블슈팅](https://docs.nvidia.com/vgpu/troubleshooting/latest/licensing.html)).
+4단계(라이선스)가 실패하는 증상입니다. 원인은 하나가 아니므로 아래를 순서대로 점검합니다([Broadcom — vGPU Unlicensed](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/5-2/private-ai-foundation-5-2/deploying-a-deep-learning-virtual-machine/troubleshooting-deep-learning-vm-deployment/the-nvidia-vgpu-driver-is-shown-as-unlicensed.html), [NVIDIA 라이선싱 트러블슈팅](https://docs.nvidia.com/vgpu/troubleshooting/latest/licensing.html)).
 
 | 점검 | 내용 |
 |------|------|

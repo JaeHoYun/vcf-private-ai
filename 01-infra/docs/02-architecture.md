@@ -41,7 +41,7 @@
 
 > **공유 서비스 주의:** Harbor, DSM은 본래 범용 Supervisor Service, VCF 데이터 서비스지만, PAIF가 정상 동작하려면 **반드시 있어야 하는 필수 구성요소**입니다. 각 서비스의 역할, 필수성, 근거는 아래 [PAIF 코어 공유 서비스 상세](#paif-코어-공유-서비스-상세)에서, 설치 순서는 [2.6절 구축 Phase 2](#26-구축-phase-개요)에서 다룹니다.
 
-> **용어 주의:** Broadcom 공식 문서(TechDocs)는 PAIS를 설치하는 GPU 워크로드 도메인을 **GPU-Accelerated Workload Domain**으로 표기합니다("Install Private AI Services on the Supervisor of the GPU-Accelerated Workload Domain") ([Broadcom TechDocs, PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [PAIS 상세 설계](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)). 본 문서는 가독성을 위해 이를 **PAIF Workload Domain**으로 약칭하며, "GPU Workload Domain", "AI Domain", "GPU Domain" 등 그 밖의 표현은 비공식 약식으로 간주합니다.
+> **용어 주의:** Broadcom 공식 문서(TechDocs)는 PAIS를 설치하는 GPU 워크로드 도메인을 **GPU-Accelerated Workload Domain**으로 표기합니다("Install Private AI Services on the Supervisor of the GPU-Accelerated Workload Domain") ([Broadcom TechDocs — PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [PAIS 상세 설계](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)). 본 문서는 가독성을 위해 이를 **PAIF Workload Domain**으로 약칭하며, "GPU Workload Domain", "AI Domain", "GPU Domain" 등 그 밖의 표현은 비공식 약식으로 간주합니다.
 
 ### 계층 귀속과 격리 단위
 
@@ -131,8 +131,8 @@ PAIF에서 GPU를 워크로드에 할당하는 방식은 **세 축**으로 나�
 > **세부 분류와 enablement는 기준 문서로 위임:** 위는 결정에 필요한 개념 수준입니다. 할당 모드의 세부 분류와 실제 활성화 절차(BIOS, 드라이버, GPU Operator, PAISConfiguration까지)는 [문서 11 11.5절](11-gpu-enablement.md)가 기준이며, 문서 07과의 정합은 [문서 07 7.4절](07-gpuaas.md)를 참조하세요. 02는 개념과 결정 수준만 다룹니다(중복 금지).
 
 > **멀티호스트 RDMA 결정과 구성 노트:**
-> - **언제 필요한가:** ConnectX-7/BlueField-3 기반 GPUDirect RDMA, 멀티호스트 패브릭은 *대규모 분산 학습*과 *단일 서버 용량을 초과하는 초대형 모델의 분산 추론*에만 필요합니다. 단일노드 추론, RAG, 일반 챗봇에는 불필요하므로 표준 구성으로 시작하세요([VCF 블로그, GPUDirect RDMA 분산 추론](https://blogs.vmware.com/cloud-foundation/2025/09/16/deploy-distributed-llm-inference-with-gpudirect-rdma-over-infiniband-in-private-ai/)).
-> - **VCF 구성 체크포인트:** GPUDirect RDMA 활성화에는 **ESXi의 ACS(Access Control Services) 활성화**와 **ConnectX-7 NIC의 ATS(Address Translation Services) 활성화**가 필요합니다(ATS는 PCIe 장치 간 직접 DMA로 가상화 오버헤드를 낮춥니다) ([VCF 블로그, GPUDirect RDMA 분산 추론](https://blogs.vmware.com/cloud-foundation/2025/09/16/deploy-distributed-llm-inference-with-gpudirect-rdma-over-infiniband-in-private-ai/)).
+> - **언제 필요한가:** ConnectX-7/BlueField-3 기반 GPUDirect RDMA, 멀티호스트 패브릭은 *대규모 분산 학습*과 *단일 서버 용량을 초과하는 초대형 모델의 분산 추론*에만 필요합니다. 단일노드 추론, RAG, 일반 챗봇에는 불필요하므로 표준 구성으로 시작하세요([VCF 블로그 — GPUDirect RDMA 분산 추론](https://blogs.vmware.com/cloud-foundation/2025/09/16/deploy-distributed-llm-inference-with-gpudirect-rdma-over-infiniband-in-private-ai/)).
+> - **VCF 구성 체크포인트:** GPUDirect RDMA 활성화에는 **ESXi의 ACS(Access Control Services) 활성화**와 **ConnectX-7 NIC의 ATS(Address Translation Services) 활성화**가 필요합니다(ATS는 PCIe 장치 간 직접 DMA로 가상화 오버헤드를 낮춥니다) ([VCF 블로그 — GPUDirect RDMA 분산 추론](https://blogs.vmware.com/cloud-foundation/2025/09/16/deploy-distributed-llm-inference-with-gpudirect-rdma-over-infiniband-in-private-ai/)).
 > - **본 문서 범위 밖:** 무손실(lossless) 물리 패브릭 설계(RoCE/InfiniBand 스위치 PFC, ECN 설정 등)는 **네트워크팀 선결요건**이며 본 가이드 범위 밖입니다. 정확한 스위치와 패브릭 구성은 네트워크팀 및 공식 문서로 확인하시기 바랍니다(공식 문서 확인 필요).
 
 ### Kubernetes AI Conformance (DRA)

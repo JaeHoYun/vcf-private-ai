@@ -15,7 +15,7 @@
 
 ### 7.1.1 설계 원칙. 추적성의 3요소
 
-감사 로그의 본질은 "누가(who), 언제(when), 무엇을(what)"을 재구성 가능한 형태로 남기는 것입니다. AI 플랫폼에서는 인프라 계층(VCF/GPU 워크로드 도메인)과 AI 계층(모델 호출, 도구 호출, 데이터 접근)을 모두 포괄해야 추적 체인이 끊기지 않습니다. ISO/IEC 27001:2022 Annex A.8.15(Logging)는 로그를 "생성, 저장, 보호, 분석"하는 탐지 통제로 정의하며, 로그가 사건의 증거로 활용되도록 무결성을 보장하고 무단 접근을 차단할 것을 요구합니다([ISMS.online, A.8.15](https://www.isms.online/iso-27001/annex-a-2022/how-to-implement-iso-27001-2022-annex-a-control-8-15-logging/)). ISO/IEC 42001의 AI 이벤트 로그 통제(A.6.2.8)는 이를 AI 수명주기로 확장해, 프롬프트, 도구 호출, 출력, 영향 받은 리소스를 사용자, 세션, 데이터 소스와 연결된 "재생 가능한 추적(replayable trace)"으로 기록할 것을 권합니다([ISMS.online, ISO 42001 A.6.2.8](https://www.isms.online/iso-42001/annex-a-controls/a-6-ai-system-life-cycle/a-6-2-8-ai-system-recording-of-event-logs/)).
+감사 로그의 본질은 "누가(who), 언제(when), 무엇을(what)"을 재구성 가능한 형태로 남기는 것입니다. AI 플랫폼에서는 인프라 계층(VCF/GPU 워크로드 도메인)과 AI 계층(모델 호출, 도구 호출, 데이터 접근)을 모두 포괄해야 추적 체인이 끊기지 않습니다. ISO/IEC 27001:2022 Annex A.8.15(Logging)는 로그를 "생성, 저장, 보호, 분석"하는 탐지 통제로 정의하며, 로그가 사건의 증거로 활용되도록 무결성을 보장하고 무단 접근을 차단할 것을 요구합니다([ISMS.online — A.8.15](https://www.isms.online/iso-27001/annex-a-2022/how-to-implement-iso-27001-2022-annex-a-control-8-15-logging/)). ISO/IEC 42001의 AI 이벤트 로그 통제(A.6.2.8)는 이를 AI 수명주기로 확장해, 프롬프트, 도구 호출, 출력, 영향 받은 리소스를 사용자, 세션, 데이터 소스와 연결된 "재생 가능한 추적(replayable trace)"으로 기록할 것을 권합니다([ISMS.online — ISO 42001 A.6.2.8](https://www.isms.online/iso-42001/annex-a-controls/a-6-ai-system-life-cycle/a-6-2-8-ai-system-recording-of-event-logs/)).
 
 ### 7.1.2 로그 카테고리와 최소 기록 항목
 
@@ -33,13 +33,13 @@
 
 ### 7.1.3 중앙 수집, 무결성, 보존
 
-VCF 9.1은 로그 관리를 단일 인터페이스로 통합했습니다. "Centralized Log Management"는 VCF Operations for Logs를 VCF Operations 메인 인터페이스로 통합하며, "Audit Trail"은 VKS를 포함한 모든 구성요소의 사용자 활동을 "중앙집중과 시간 구간(time-sliced) 뷰"로 제공해 포렌식 분석을 단순화합니다([VMware, Platform Security for VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/platform-security-vcf-9-1/)). VCF Operations의 감사 기록은 시간 구간으로 상세를 펼쳐 보고 CSV로 내보낼 수 있어, 사고 조사 시 표준화된 로그 아키텍처와 중앙 보관 이력을 제공합니다([Broadcom, VCF 9.1 발표](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)).
+VCF 9.1은 로그 관리를 단일 인터페이스로 통합했습니다. "Centralized Log Management"는 VCF Operations for Logs를 VCF Operations 메인 인터페이스로 통합하며, "Audit Trail"은 VKS를 포함한 모든 구성요소의 사용자 활동을 "중앙집중과 시간 구간(time-sliced) 뷰"로 제공해 포렌식 분석을 단순화합니다([VMware — Platform Security for VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/platform-security-vcf-9-1/)). VCF Operations의 감사 기록은 시간 구간으로 상세를 펼쳐 보고 CSV로 내보낼 수 있어, 사고 조사 시 표준화된 로그 아키텍처와 중앙 보관 이력을 제공합니다([Broadcom — VCF 9.1 발표](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)).
 
 | 통제 목표 | 구현 수단 | 검증 지점 |
 |---|---|---|
-| 중앙 수집 | VCF Operations for Logs 통합 수집 + syslog 포워딩(TCP/TLS/UDP) | 각 구성요소가 중앙 수집기로 이벤트를 보내는지 확인([Broadcom TechDocs, Setup Syslog Configuration](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/infrastructure-operations/network-operationss/configuration/configuring-logs/syslog-configuration.html)) |
-| 무결성 | 전송 구간 TLS, 수집 후 변경 불가(append-only) 저장, 접근 제한 | 비인가 수정과 삭제가 차단되는지, 전송 암호화(syslog TCP over TLS)가 적용되는지([Broadcom TechDocs, Aria Operations for Logs Design](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/1-0/intelligent-logging-and-analytics-for-vmware-cloud-foundation/detailed-design-for-intelligent-logging-and-analytics-for-vmware-cloud-foundation/vmware-aria-operations-for-logs-design-for-intelligent-logging-and-analytics.html)) |
-| 가용성과 재해 대비 | 두 번째 VCF 인스턴스로 로그 포워딩 | 1차 장애 시에도 로그가 보존되는지([Broadcom TechDocs, Configure Log Forwarding Between VCF Instances](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/9-X/configure-event-forwarding-in-region-b.html)) |
+| 중앙 수집 | VCF Operations for Logs 통합 수집 + syslog 포워딩(TCP/TLS/UDP) | 각 구성요소가 중앙 수집기로 이벤트를 보내는지 확인([Broadcom TechDocs — Setup Syslog Configuration](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/infrastructure-operations/network-operationss/configuration/configuring-logs/syslog-configuration.html)) |
+| 무결성 | 전송 구간 TLS, 수집 후 변경 불가(append-only) 저장, 접근 제한 | 비인가 수정과 삭제가 차단되는지, 전송 암호화(syslog TCP over TLS)가 적용되는지([Broadcom TechDocs — Aria Operations for Logs Design](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/1-0/intelligent-logging-and-analytics-for-vmware-cloud-foundation/detailed-design-for-intelligent-logging-and-analytics-for-vmware-cloud-foundation/vmware-aria-operations-for-logs-design-for-intelligent-logging-and-analytics.html)) |
+| 가용성과 재해 대비 | 두 번째 VCF 인스턴스로 로그 포워딩 | 1차 장애 시에도 로그가 보존되는지([Broadcom TechDocs — Configure Log Forwarding Between VCF Instances](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/9-X/configure-event-forwarding-in-region-b.html)) |
 | 보존 기간 | 조직 보존 정책(규제 범주별)에 따른 보존과 아카이브 | 보존 정책이 적용되고 만료 전 삭제가 차단되는지(조직별로 다르므로 확인 필요) |
 
 ---
@@ -48,7 +48,7 @@ VCF 9.1은 로그 관리를 단일 인터페이스로 통합했습니다. "Centr
 
 ### 7.2.1 ③ 관측성 스택 연계
 
-③ 문서의 관측성 기반은 VCF Operations + OpenTelemetry + Grafana입니다. OTel의 GenAI 시맨틱 컨벤션은 LLM 호출, 에이전트 단계, 벡터 DB 질의, 토큰 사용, 비용, 품질 메트릭의 속성명을 표준화합니다. 핵심 속성으로 `gen_ai.provider.name`, `gen_ai.operation.name`, `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens` 등이 있으며, 2026년 3월 기준 대부분이 experimental 상태이므로 버전 고정과 호환성 확인이 필요합니다([OpenTelemetry, GenAI Observability](https://opentelemetry.io/blog/2026/genai-observability/)). 수집된 신호는 Grafana로 시각화와 경보 처리할 수 있습니다([Grafana Labs, Monitoring LLMs in production](https://grafana.com/blog/ai-observability-llms-in-production/)).
+③ 문서의 관측성 기반은 VCF Operations + OpenTelemetry + Grafana입니다. OTel의 GenAI 시맨틱 컨벤션은 LLM 호출, 에이전트 단계, 벡터 DB 질의, 토큰 사용, 비용, 품질 메트릭의 속성명을 표준화합니다. 핵심 속성으로 `gen_ai.provider.name`, `gen_ai.operation.name`, `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens` 등이 있으며, 2026년 3월 기준 대부분이 experimental 상태이므로 버전 고정과 호환성 확인이 필요합니다([OpenTelemetry — GenAI Observability](https://opentelemetry.io/blog/2026/genai-observability/)). 수집된 신호는 Grafana로 시각화와 경보 처리할 수 있습니다([Grafana Labs — Monitoring LLMs in production](https://grafana.com/blog/ai-observability-llms-in-production/)).
 
 ### 7.2.2 관측 대상과 탐지 신호
 
@@ -60,7 +60,7 @@ VCF 9.1은 로그 관리를 단일 인터페이스로 통합했습니다. "Centr
 | 자원 소비 | 토큰/요청 폭증, 비용 급증 | 무한 소비와 DoS | LLM10 Unbounded Consumption |
 | 출력 안전 | 민감정보 패턴 탐지(출력 측) | 데이터 노출 | LLM02 Sensitive Information Disclosure |
 
-품질과 안전 평가는 트레이스에 프로그래매틱 평가자를 추가해 할루시네이션 경보, 사실성 검증, 콘텐츠 품질 점수를 생성할 수 있으며, 이 신호로 배포를 게이팅하거나 품질 드리프트 시 운영자에게 경보를 보낼 수 있습니다([OpenTelemetry, GenAI Observability](https://opentelemetry.io/blog/2026/genai-observability/)). OWASP 분류는 [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/)를 따릅니다.
+품질과 안전 평가는 트레이스에 프로그래매틱 평가자를 추가해 할루시네이션 경보, 사실성 검증, 콘텐츠 품질 점수를 생성할 수 있으며, 이 신호로 배포를 게이팅하거나 품질 드리프트 시 운영자에게 경보를 보낼 수 있습니다([OpenTelemetry — GenAI Observability](https://opentelemetry.io/blog/2026/genai-observability/)). OWASP 분류는 [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/)를 따릅니다.
 
 > 권장: 7.1.2의 감사 로그(누가와 무엇을)와 7.2의 관측 메트릭(얼마나, 어떻게 변했는가)을 동일 trace ID로 연결하면, "이상 신호 → 해당 호출 → 호출자, 도구, 데이터"로 즉시 역추적할 수 있어 사고 대응(7.3)이 빨라집니다.
 
@@ -103,7 +103,7 @@ VCF 9.1은 로그 관리를 단일 인터페이스로 통합했습니다. "Centr
 
 ## 7.3 사고 대응 플레이북 개요 (AI 특유의 사고)
 
-AI 플랫폼 사고 대응은 NIST CSF 2.0의 운영 기능 Detect → Respond → Recover 흐름을 따르며, 여기에 전략과 책임 구조를 정의하는 Govern 기능이 전 기능에 걸쳐 적용됩니다([NIST CSF 2.0, 6 Functions](https://csf.tools/reference/nist-cybersecurity-framework/v2-0/)). 아래는 AI 특유의 사고 세 유형의 플레이북 개요입니다.
+AI 플랫폼 사고 대응은 NIST CSF 2.0의 운영 기능 Detect → Respond → Recover 흐름을 따르며, 여기에 전략과 책임 구조를 정의하는 Govern 기능이 전 기능에 걸쳐 적용됩니다([NIST CSF 2.0 — 6 Functions](https://csf.tools/reference/nist-cybersecurity-framework/v2-0/)). 아래는 AI 특유의 사고 세 유형의 플레이북 개요입니다.
 
 ### 7.3.1 시나리오별 탐지 → 대응 → 복구
 
@@ -115,7 +115,7 @@ AI 플랫폼 사고 대응은 NIST CSF 2.0의 운영 기능 Detect → Respond �
 
 ### 7.3.2 플랫폼 차원의 복구 지원
 
-VCF 9.1의 통합 사이버 복구(Integrated Cyber Recovery)는 온프레미스 격리 클린룸으로 복구하며, 내장 AI/ML 기반 EDR로 복원 지점(restore point)을 검증해 파일과 파일리스 악성코드를 식별함으로써 복구 데이터가 운영 환경에 반영되기 전에 깨끗함을 검증합니다([VMware, Continuous Compliance & Cyber Recovery for VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/continuous-compliance-integrated-cyber-recovery-and-enhanced-platform-security-for-vcf-9-1/)). 사고 조사 단계에서는 7.1.3의 Audit Trail이 표준화된 로그와 중앙 이력을 제공해 "무엇이, 왜 일어났는가"를 재구성하는 포렌식 근거로 활용됩니다([Broadcom, VCF 9.1 발표](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)).
+VCF 9.1의 통합 사이버 복구(Integrated Cyber Recovery)는 온프레미스 격리 클린룸으로 복구하며, 내장 AI/ML 기반 EDR로 복원 지점(restore point)을 검증해 파일과 파일리스 악성코드를 식별함으로써 복구 데이터가 운영 환경에 반영되기 전에 깨끗함을 검증합니다([VMware — Continuous Compliance & Cyber Recovery for VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/continuous-compliance-integrated-cyber-recovery-and-enhanced-platform-security-for-vcf-9-1/)). 사고 조사 단계에서는 7.1.3의 Audit Trail이 표준화된 로그와 중앙 이력을 제공해 "무엇이, 왜 일어났는가"를 재구성하는 포렌식 근거로 활용됩니다([Broadcom — VCF 9.1 발표](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)).
 
 ---
 
@@ -125,7 +125,7 @@ VCF 9.1의 통합 사이버 복구(Integrated Cyber Recovery)는 온프레미스
 
 ### 7.4.1 NIST AI RMF / NIST CSF 2.0 매핑
 
-NIST AI RMF 1.0의 핵심은 Govern, Map, Measure, Manage 4개 기능으로, Govern은 다른 셋 전체에 걸친 정책, 책임, 문화의 기능입니다([NIST AI RMF, 4 Functions](https://www.paloaltonetworks.com/cyberpedia/nist-ai-risk-management-framework)). NIST CSF 2.0은 Govern, Identify, Protect, Detect, Respond, Recover 6개 기능을 가집니다([NIST CSF 2.0](https://csf.tools/reference/nist-cybersecurity-framework/v2-0/)).
+NIST AI RMF 1.0의 핵심은 Govern, Map, Measure, Manage 4개 기능으로, Govern은 다른 셋 전체에 걸친 정책, 책임, 문화의 기능입니다([NIST AI RMF — 4 Functions](https://www.paloaltonetworks.com/cyberpedia/nist-ai-risk-management-framework)). NIST CSF 2.0은 Govern, Identify, Protect, Detect, Respond, Recover 6개 기능을 가집니다([NIST CSF 2.0](https://csf.tools/reference/nist-cybersecurity-framework/v2-0/)).
 
 | 프레임워크 기능 | 의미(요약) | 시리즈 ⑤ 매핑 |
 |---|---|---|
@@ -147,7 +147,7 @@ NIST AI RMF 1.0의 핵심은 Govern, Map, Measure, Manage 4개 기능으로, Gov
 | OWASP LLM06 Excessive Agency | 에이전트 권한 최소화 | [06 앱 계층 가드레일](./06-app-guardrails.md) |
 | OWASP LLM10 Unbounded Consumption | 자원 소비 한계 | 7.2, [02 네트워크, 테넌트, GPU 격리](./02-network-tenant-isolation.md) |
 
-OWASP 2025 갱신본은 System Prompt Leakage(LLM07)와 Vector and Embedding Weaknesses(LLM08)를 신규로 추가했습니다([TrojAI, 2025 OWASP Top 10 for LLMs](https://troj.ai/blog/the-2025-owasp-top-10-for-llms)). 에이전트 위험 목록(OWASP Agentic ASI01–10)의 통제 매핑은 [08 8.1절](./08-agent-governance.md)에 있습니다.
+OWASP 2025 갱신본은 System Prompt Leakage(LLM07)와 Vector and Embedding Weaknesses(LLM08)를 신규로 추가했습니다([TrojAI — 2025 OWASP Top 10 for LLMs](https://troj.ai/blog/the-2025-owasp-top-10-for-llms)). 에이전트 위험 목록(OWASP Agentic ASI01–10)의 통제 매핑은 [08 8.1절](./08-agent-governance.md)에 있습니다.
 
 ### 7.4.3 한국 규제와 지침 매핑
 
@@ -248,20 +248,20 @@ OWASP 2025 갱신본은 System Prompt Leakage(LLM07)와 Vector and Embedding Wea
 
 ## 참고 출처
 
-- [VMware, Strengthen Zero Trust Security and Resilience with VCF 9.1 (Platform Security)](https://blogs.vmware.com/cloud-foundation/2026/05/05/platform-security-vcf-9-1/)
-- [VMware, Continuous Compliance, Integrated Cyber Recovery and Enhanced Platform Security for VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/continuous-compliance-integrated-cyber-recovery-and-enhanced-platform-security-for-vcf-9-1/)
-- [Broadcom, VMware Cloud Foundation 9.1 발표](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
-- [Broadcom TechDocs, Setup Syslog Configuration (VCF 9.0+)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/infrastructure-operations/network-operationss/configuration/configuring-logs/syslog-configuration.html)
-- [Broadcom TechDocs, Configure Log Forwarding Between VCF Instances](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/9-X/configure-event-forwarding-in-region-b.html)
-- [Broadcom TechDocs, Aria Operations for Logs Design (Intelligent Logging and Analytics)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/1-0/intelligent-logging-and-analytics-for-vmware-cloud-foundation/detailed-design-for-intelligent-logging-and-analytics-for-vmware-cloud-foundation/vmware-aria-operations-for-logs-design-for-intelligent-logging-and-analytics.html)
-- [OpenTelemetry, GenAI Observability (2026)](https://opentelemetry.io/blog/2026/genai-observability/)
-- [Grafana Labs, How to monitor LLMs in production with Grafana Cloud, OpenLIT, and OpenTelemetry](https://grafana.com/blog/ai-observability-llms-in-production/)
-- [OWASP, Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/)
-- [TrojAI, The 2025 OWASP Top 10 for LLMs](https://troj.ai/blog/the-2025-owasp-top-10-for-llms)
-- [NIST AI RMF, 4 Functions (Govern/Map/Measure/Manage)](https://www.paloaltonetworks.com/cyberpedia/nist-ai-risk-management-framework)
-- [NIST Cybersecurity Framework v2.0, Functions Reference](https://csf.tools/reference/nist-cybersecurity-framework/v2-0/)
-- [ISMS.online, ISO/IEC 27001 Annex A.8.15 Logging](https://www.isms.online/iso-27001/annex-a-2022/how-to-implement-iso-27001-2022-annex-a-control-8-15-logging/)
-- [ISMS.online, ISO/IEC 42001 A.6.2.8 AI System Event Logs](https://www.isms.online/iso-42001/annex-a-controls/a-6-ai-system-life-cycle/a-6-2-8-ai-system-recording-of-event-logs/)
+- [VMware — Strengthen Zero Trust Security and Resilience with VCF 9.1 (Platform Security)](https://blogs.vmware.com/cloud-foundation/2026/05/05/platform-security-vcf-9-1/)
+- [VMware — Continuous Compliance, Integrated Cyber Recovery and Enhanced Platform Security for VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/continuous-compliance-integrated-cyber-recovery-and-enhanced-platform-security-for-vcf-9-1/)
+- [Broadcom — VMware Cloud Foundation 9.1 발표](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
+- [Broadcom TechDocs — Setup Syslog Configuration (VCF 9.0+)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/infrastructure-operations/network-operationss/configuration/configuring-logs/syslog-configuration.html)
+- [Broadcom TechDocs — Configure Log Forwarding Between VCF Instances](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/9-X/configure-event-forwarding-in-region-b.html)
+- [Broadcom TechDocs — Aria Operations for Logs Design (Intelligent Logging and Analytics)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/1-0/intelligent-logging-and-analytics-for-vmware-cloud-foundation/detailed-design-for-intelligent-logging-and-analytics-for-vmware-cloud-foundation/vmware-aria-operations-for-logs-design-for-intelligent-logging-and-analytics.html)
+- [OpenTelemetry — GenAI Observability (2026)](https://opentelemetry.io/blog/2026/genai-observability/)
+- [Grafana Labs — How to monitor LLMs in production with Grafana Cloud, OpenLIT, and OpenTelemetry](https://grafana.com/blog/ai-observability-llms-in-production/)
+- [OWASP — Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/)
+- [TrojAI — The 2025 OWASP Top 10 for LLMs](https://troj.ai/blog/the-2025-owasp-top-10-for-llms)
+- [NIST AI RMF — 4 Functions (Govern/Map/Measure/Manage)](https://www.paloaltonetworks.com/cyberpedia/nist-ai-risk-management-framework)
+- [NIST Cybersecurity Framework v2.0 — Functions Reference](https://csf.tools/reference/nist-cybersecurity-framework/v2-0/)
+- [ISMS.online — ISO/IEC 27001 Annex A.8.15 Logging](https://www.isms.online/iso-27001/annex-a-2022/how-to-implement-iso-27001-2022-annex-a-control-8-15-logging/)
+- [ISMS.online — ISO/IEC 42001 A.6.2.8 AI System Event Logs](https://www.isms.online/iso-42001/annex-a-controls/a-6-ai-system-life-cycle/a-6-2-8-ai-system-recording-of-event-logs/)
 
 ---
 

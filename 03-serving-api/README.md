@@ -102,7 +102,7 @@ VCF에서 Private AI Foundation을 구축하고(인프라), 이를 기반으로 
 ## 참고 자료
 
 - [VMware Private AI Service API Reference (Broadcom Developer Portal)](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)
-- [Private AI Services, Detailed Design (VCF 9.1, Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)
+- [Private AI Services — Detailed Design (VCF 9.1, Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)
 - [VMware Private AI Foundation with NVIDIA 9.1 (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)
 - [Streamline, Simplify and Protect all your AI workloads with VCF 9.1 (VCF Blog, 2026-05)](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/). llama.cpp CPU 추론, 멀티 액셀러레이터, Grafana AI 메트릭 근거
 - [Broadcom Announces VMware Cloud Foundation 9.1 (Broadcom, 2026-05)](https://www.broadcom.com/company/news/product-releases/64326). AMD, NVIDIA 멀티 액셀러레이터, AMD, Intel, NVIDIA 혼합 컴퓨트 근거

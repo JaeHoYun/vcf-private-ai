@@ -21,25 +21,10 @@
 
 아래 그림은 사용자 요청이 플랫폼을 지나 모델에 도달하고 응답으로 반환되는 경로를 한 장에 그린 것입니다. 각 통제 지점에는 번호(CP)를 붙였고, 그 지점을 설계하는 문서를 표에 적었습니다. 게이트웨이의 0계층, 1계층, 2계층 구분은 [③ 05 5.7절](../../03-serving-api/docs/05-auth-and-gateway.md)의 3계층 모델을 따릅니다.
 
-```mermaid
-flowchart LR
-    U["사용자와 클라이언트"] --> CP1["CP1 0계층 경계<br/>Avi L7, WAF, TLS, 기존 API 관리"]
-    CP1 --> CP2["CP2 1계층 AI 게이트웨이 (선택)<br/>키와 팀 예산, 레이트리밋, 라우팅"]
-    CP2 --> CP3["CP3 앱 BFF<br/>사용자 인증, 세션, 입력 가드"]
-    CP3 --> CP4["CP4 오케스트레이션과 에이전트<br/>자율성 상한, 승인 게이트"]
-    CP4 --> CP5["CP5 도구 게이트웨이<br/>MCP 승인 목록, 호출 단위 인가"]
-    CP5 --> T["사내 시스템, MCP 서버"]
-    CP4 --> CP6["CP6 검색단 권한 필터"]
-    CP6 --> V[("지식베이스, pgvector")]
-    CP4 --> CP7["CP7 2계층 PAIS 서빙 게이트웨이<br/>토큰 검증, 모델 라우팅"]
-    CP7 --> M["Model Runtime<br/>로컬, 공유, 원격"]
-    M -.-> CP8["CP8 원격 모델 반출 경계"]
-    M --> CP9["CP9 출력 가드<br/>PII, 누출, 유해 출력"]
-    CP9 --> CP3
-    CP3 -.-> CP10["CP10 트레이스와 감사<br/>OTel, VCF Operations, SIEM"]
-    CP4 -.-> CP10
-    CP7 -.-> CP10
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/security-control-points-dark.svg">
+  <img src="../../assets/security-control-points-light.svg" alt="요청 경로상의 통제 지점 CP1–CP10. 사용자 요청은 CP1 0계층 경계, CP2 1계층 AI 게이트웨이(선택), CP3 앱 BFF, CP4 오케스트레이션을 지나 CP5 도구 게이트웨이, CP6 검색단 권한 필터, CP7 PAIS 서빙 게이트웨이로 갈라진다. 원격 모델 호출은 CP8 반출 경계를 지나고, 응답은 CP9 출력 가드를 거쳐 CP3으로 반환되며, CP3, CP4, CP7은 CP10 트레이스와 감사로 기록을 보낸다.">
+</picture>
 
 | 지점 | 무엇을 막거나 남기나 | 플랫폼이 주는 것 | 앱과 게이트웨이가 만드는 것 | 설계 문서 |
 |---|---|---|---|---|

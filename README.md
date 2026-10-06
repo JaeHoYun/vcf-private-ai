@@ -47,24 +47,10 @@ Private AI의 본질적 질문은 "어떤 모델인가"가 아니라 **"그 모�
 - **PAIS** — 모델 서빙, RAG, 에이전트(Agent Builder), MCP를 관리형으로 제공하는 서비스 계층.
 - **Agents, MCP** — 모델이 사내 데이터와 도구와 표준 인터페이스로 연결되어 실제 일을 수행하는 실행 계층. 이 계층은 시리즈 본편이 아니라 별도 최상위 [앱과 에이전트 서비스 가이드](https://github.com/JaeHoYun/vcf-private-ai-apps)에서 다룹니다.
 
-```mermaid
-flowchart TB
-    A["Agents, MCP<br/>추론, 도구 호출 실행 계층 &nbsp;｜&nbsp; 별도 앱과 에이전트 서비스 가이드"]
-    P["PAIS — Private AI Services<br/>모델 서빙, RAG, Agent Builder, MCP (관리형) &nbsp;｜&nbsp; 시리즈 ③④"]
-    F["PAIF 코어 기능 계층 — Private AI Foundation with NVIDIA<br/>GPU, 드라이버, 모델, 벡터DB 표준화 &nbsp;｜&nbsp; 시리즈 ①②"]
-    V["VCF — VMware Cloud Foundation<br/>컴퓨트, 스토리지, 네트워크, 쿠버네티스(VKS) &nbsp;｜&nbsp; 시리즈 ①"]
-    A --> P --> F --> V
-    X["보안, 거버넌스 (⑤) &nbsp;｜&nbsp; 사이징, 용량, 비용 (⑥)<br/>— 전 계층을 가로지름 —"]
-    X -.-> A
-    X -.-> P
-    X -.-> F
-    X -.-> V
-    Y["통합 설계 (⑦) — 위 결정을 하나의 플랫폼 설계로 종합"]
-    Y -.-> A
-    Y -.-> P
-    Y -.-> F
-    Y -.-> V
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/series-layers-dark.svg">
+  <img src="assets/series-layers-light.svg" alt="VCF Private AI 4계층 구조. 실행(Agents, MCP), 서비스(PAIS), AI 인프라(PAIF 코어 기능 계층), 플랫폼(VCF) 순서로 쌓이고, 보안과 거버넌스(⑤), 사이징, 용량, 비용(⑥)이 전 계층에 공통으로 적용되며, 통합 설계(⑦)가 이를 종합한다.">
+</picture>
 
 > 위에서 아래로 **실행(에이전트) → 서비스(PAIS) → AI 인프라(PAIF 코어 기능 계층) → 플랫폼(VCF)** 의 4계층이며, 보안과 비용(⑤⑥)이 전 계층에 공통으로 적용되고 통합 설계(⑦)가 이를 종합합니다.
 

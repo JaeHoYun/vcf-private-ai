@@ -33,56 +33,12 @@ RAG는 두 개의 시간대로 나뉩니다.
 
 **(C) 전체 도식 — 2-타임라인 × 4-Tier × 컴포넌트 매핑**
 
-위 두 흐름을 한 그림으로 합치면 다음과 같습니다. 왼쪽은 인덱싱 타임(배치), 오른쪽은 쿼리 타임(요청마다)이며, 4-Tier 앱 계층(05)과 PAIS, pgvector(②), GPU 노드(③)가 어디서 맞물리는지를 표시합니다. (GitHub에서 자동 렌더링됩니다.)
+위 두 흐름을 한 그림으로 합치면 다음과 같습니다. 왼쪽은 인덱싱 타임(배치), 오른쪽은 쿼리 타임(요청마다)이며, 4-Tier 앱 계층(05)과 PAIS, pgvector(②), GPU 노드(③)가 어디서 맞물리는지를 표시합니다.
 
-```mermaid
-flowchart TB
-    subgraph TIER["4-Tier 앱 계층 (05)"]
-        direction TB
-        CLIENT["클라이언트<br/>웹, 모바일, 메신저 봇"]
-        BFF["BFF / 게이트웨이<br/>인증, 세션, 요청 속도 제한"]
-        ORCH["RAG 오케스트레이션<br/>검색(03) + 추론(04)<br/>경로 A: Agent 호출 / 경로 B: 직접 조립"]
-        CLIENT --> BFF --> ORCH
-    end
-
-    subgraph INDEX["인덱싱 타임 — 배치 (02)"]
-        direction TB
-        DOCS["사내 문서<br/>PDF, Office, 위키, 티켓, 보호 문서"]
-        DEC["보호 문서 복호화 존<br/>(격리, 서비스 신원, 문서 단위 권한 확인)"]
-        LOAD["로딩, 청킹, 메타데이터/ACL 태깅"]
-        EMB1["임베딩(배치)"]
-        DOCS -->|"평문"| LOAD
-        DOCS -->|"암호문"| DEC --> LOAD
-        LOAD --> EMB1
-    end
-
-    subgraph PLATFORM["VCF 9.1.1, PAIS 3.0 플랫폼"]
-        direction TB
-        subgraph GPU["GPU 노드 — PAIS Model Runtime (③)"]
-            EMBM["임베딩 모델<br/>vLLM / Infinity"]
-            RERANK["리랭커 모델"]
-            LLM["완성(LLM) 모델<br/>vLLM"]
-        end
-        subgraph DATA["데이터 계층 (②)"]
-            PG[("DSM PostgreSQL<br/>+ pgvector")]
-        end
-        GW["PAIS API Gateway<br/>(OpenAI 호환), MCP Tools Registry"]
-    end
-
-    %% 인덱싱 타임 데이터 흐름
-    EMB1 -->|"임베딩 호출"| EMBM
-    EMBM -->|"벡터"| EMB1
-    EMB1 -->|"벡터 + 원문 + 메타데이터 적재"| PG
-
-    %% 쿼리 타임 데이터 흐름
-    ORCH -->|"질문"| GW
-    GW -->|"질문 임베딩"| EMBM
-    GW -->|"유사도/하이브리드 검색<br/>(권한 필터 선적용)"| PG
-    PG -->|"후보 청크"| RERANK
-    RERANK -->|"top-k 근거"| GW
-    GW -->|"질문 + 근거 프롬프트"| LLM
-    LLM -->|"출처 포함 답변(스트리밍)"| ORCH
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/rag-reference-architecture-dark.svg">
+  <img src="../../assets/rag-reference-architecture-light.svg" alt="RAG 엔드투엔드 레퍼런스 아키텍처. 왼쪽 인덱싱 타임은 사내 문서를 로딩, 청킹, 태깅하고 임베딩 모델로 벡터화해 pgvector에 적재한다. 오른쪽 쿼리 타임은 RAG 오케스트레이션이 PAIS API Gateway로 질문을 보내면 질문 임베딩, 권한 필터를 선적용한 검색, 리랭킹, 프롬프트 생성을 거쳐 출처 포함 답변을 반환한다.">
+</picture>
 
 > 인덱싱 타임은 미리 한 번(또는 증분으로) 실행되고, 쿼리 타임은 사용자 요청마다 GPU 노드의 임베딩, 리랭킹, 완성 모델과 pgvector를 오가며 동작합니다. 경로 A(Agent Builder)를 사용하면 점선 안쪽의 검색→리랭크→생성 오케스트레이션을 플랫폼이 대신 수행하고, 경로 B를 사용하면 오케스트레이션 계층이 같은 흐름을 직접 호출합니다(1.4).
 

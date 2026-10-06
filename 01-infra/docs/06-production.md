@@ -69,7 +69,7 @@ DSM이 PostgreSQL Primary/Standby 동기 복제와 VIP 기반 자동 Failover를
 |------|------|
 | 모델 (Harbor) | Harbor Replication (DR 사이트 복제본) |
 | 벡터 (pgvector/DSM) | DSM 스냅샷 / pg_dump / 스토리지 스냅샷 (대안: 원본 재인덱싱) |
-| 설정 (PAIS) | API Export 또는 **GitOps로 코드화 (권장)** — Endpoint, Agent, KB, **MCP 도구/권한 정책** 포함 |
+| 설정 (PAIS) | API Export 또는 **GitOps로 코드화 (권장)**. Endpoint, Agent, KB, **MCP 도구/권한 정책** 포함 |
 | 앱 데이터 (VKS/앱 DB) | 앱별 DB 백업 정책 |
 
 > **9.1 메모:** MCP 도구 등록과 권한 정책도 DR 자산입니다. GitOps로 코드화하면 DR 사이트 재구성과 감사가 쉬워집니다.
@@ -144,7 +144,7 @@ A100 80GB 기준: 8B ≈ 30초–1분, 70B ≈ 2–5분. **완화:** Min Replica
 - **GPU 메모리**: 모델 가중치(FP16 ≈ 파라미터×2바이트) + KV 캐시(동시성과 컨텍스트 길이에 비례) + 헤드룸. 양자화(GPTQ, AWQ, FP8)로 가중치 절감.
 - **vCPU/RAM**: 토크나이즈, 전처리, 요청 처리용 호스트 자원 확보, 부하 테스트로 조정.
 
-> **상세 사이징의 기준 문서는 [⑥ 사이징, 용량, 비용 가이드](../../06-sizing-cost/README.md)입니다** — 워크로드→GPU/노드/클러스터 환산 산정 표, VKS 클러스터 사이징, 스토리지와 네트워크 용량, 용량 계획, TCO를 다룹니다. 본 절은 출발점 요약이며, 모든 수치는 환경별로 상이하므로 실측이 전제입니다 ([vLLM — Optimization and Tuning](https://docs.vllm.ai/en/stable/configuration/optimization/)).
+> **상세 사이징의 기준 문서는 [⑥ 사이징, 용량, 비용 가이드](../../06-sizing-cost/README.md)입니다**. 이 가이드는 워크로드→GPU/노드/클러스터 환산 산정 표, VKS 클러스터 사이징, 스토리지와 네트워크 용량, 용량 계획, TCO를 다룹니다. 본 절은 출발점 요약이며, 모든 수치는 환경별로 상이하므로 실측이 전제입니다 ([vLLM, Optimization and Tuning](https://docs.vllm.ai/en/stable/configuration/optimization/)).
 
 ---
 
@@ -238,11 +238,11 @@ Artifact Mirroring Tool은 **PAIS Services 패키지와 NVIDIA GPU Operator 구�
 
 흐름은 **미러 호스트에서 `vcf pais amt pull`로 아티팩트를 가져와 오프라인 반입 → 내부망에서 `vcf pais amt push`로 내부 Harbor에 적재 → 모델 갤러리(`vcf pais models`) 적재 → Supervisor에 PAIS 설치**입니다. 용량 경계는 플랫폼 Harbor 프로젝트 **20GB**(PAIS 아티팩트)이며 모델 갤러리와 NIM 이미지는 별도 산정합니다(6.9.2절). Artifact Mirroring Tool이 서명과 다이제스트를 자동 검증한다는 공식 근거는 없으므로, 반입 아티팩트의 무결성과 공급망 점검은 **운영자가 수행하는 별도 절차**입니다(6.9.2절 보안 가이드 딥링크).
 
-> **실행 런북은 [문서 10 10.1.8절](10-operations.md)** 에 있습니다 — 선행조건, 절차 단계 표, `docker login`, `vcf pais amt pull/push`, `vcf pais models` 명령 예시, Supervisor 설치까지의 엔드투엔드 실행은 Day-2 운영으로 이전했습니다. 이 절은 "왜, 무엇을, 어디로"를, 문서 10은 "어떻게 실행하나"를 다룹니다.
+> **실행 런북은 [문서 10 10.1.8절](10-operations.md)** 에 있습니다. 선행조건, 절차 단계 표, `docker login`, `vcf pais amt pull/push`, `vcf pais models` 명령 예시, Supervisor 설치까지의 엔드투엔드 실행은 Day-2 운영으로 이전했습니다. 이 절은 "왜, 무엇을, 어디로"를, 문서 10은 "어떻게 실행하나"를 다룹니다.
 
 ### 6.9.2 갱신과 운영과 인접 가이드
 
-**미러 갱신**은 새 BOM(Bill of Materials)이나 갱신된 `pais.yml`을 기준으로 `pull` → 반입 → `push` 경로(실행 절차는 [문서 10 10.1.8절](10-operations.md))를 재실행하는 방식입니다. 구체적인 갱신 주기는 공식 수치가 없으므로 단정하지 않습니다 — **권장 주기는 환경(보안 정책, BOM 변경 빈도, 반입 절차 비용)에 맞춰 수립**하세요(이는 추론에 따른 운영 권고입니다).
+**미러 갱신**은 새 BOM(Bill of Materials)이나 갱신된 `pais.yml`을 기준으로 `pull` → 반입 → `push` 경로(실행 절차는 [문서 10 10.1.8절](10-operations.md))를 재실행하는 방식입니다. 구체적인 갱신 주기는 공식 수치가 없으므로 단정하지 않습니다. **권장 주기는 환경(보안 정책, BOM 변경 빈도, 반입 절차 비용)에 맞춰 수립**하세요(이는 추론에 따른 운영 권고입니다).
 
 | 운영 항목 | 권장 처리 |
 |----------|----------|
@@ -252,8 +252,8 @@ Artifact Mirroring Tool은 **PAIS Services 패키지와 NVIDIA GPU Operator 구�
 
 **인접 가이드 딥링크:**
 
-- 공급망과 무결성 점검(반입 아티팩트 검증, 서명과 다이제스트 운영 절차): [⑤ 보안과 거버넌스 가이드 — 에어갭 공급망](../../05-security/docs/04-airgap-supply-chain.md)
-- 미러 store/반입 사이징(20GB 기준 산정, 모델과 NIM 저장 용량, 네트워크 반입 계획): [⑥ 사이징, 용량, 비용 가이드 — 스토리지와 네트워크 사이징](../../06-sizing-cost/docs/05-storage-network-sizing.md)
+- 공급망과 무결성 점검(반입 아티팩트 검증, 서명과 다이제스트 운영 절차): [⑤ 보안과 거버넌스 가이드의 에어갭 공급망](../../05-security/docs/04-airgap-supply-chain.md)
+- 미러 store/반입 사이징(20GB 기준 산정, 모델과 NIM 저장 용량, 네트워크 반입 계획): [⑥ 사이징, 용량, 비용 가이드의 스토리지와 네트워크 사이징](../../06-sizing-cost/docs/05-storage-network-sizing.md)
 
 > **용량 구분 주의:** 위 **20GB는 플랫폼 Harbor 프로젝트의 PAIS 아티팩트 용량**이며, 모델 갤러리와 NIM 이미지 저장 용량과는 **별개로 산정**합니다. 모델/NIM 저장 사이징은 ⑥ 가이드를 따르세요.
 
@@ -305,13 +305,13 @@ PAIS:     - Model Endpoint(Replicas≥2) - Embedding Endpoint - KB 인덱싱 - A
 
 ## 6.12 핵심 요약
 
-1. **HA** — Model Endpoint Replicas≥2, DSM HA, VKS Multi-node, 3계층 보호(vSphere HA→VKS→PAIS)
-2. **DR** — Harbor/pgvector/설정(+MCP 정책)/앱 데이터 백업, Pilot Light→Warm Standby→Active-Active
-3. **멀티테넌트** — Namespace 격리 + 리소스 쿼터
-4. **스케일링** — 자동 스케일링, Cold Start 대비 Min Replicas≥1, DRA 활용
-5. **관측성(9.1)** — 모델과 GPU 대시보드 + OTel LLM 트레이싱 기본 제공
-6. **에어갭(PAIS 2.1부터)** — Artifact Mirroring Tool로 폐쇄망 풀 AI 구동
-7. **보안** — TLS, OIDC, RBAC + AI/MCP 특화 통제
+1. **HA.** Model Endpoint Replicas≥2, DSM HA, VKS Multi-node, 3계층 보호(vSphere HA→VKS→PAIS)
+2. **DR.** Harbor/pgvector/설정(+MCP 정책)/앱 데이터 백업, Pilot Light→Warm Standby→Active-Active
+3. **멀티테넌트.** Namespace 격리 + 리소스 쿼터
+4. **스케일링.** 자동 스케일링, Cold Start 대비 Min Replicas≥1, DRA 활용
+5. **관측성(9.1).** 모델과 GPU 대시보드 + OTel LLM 트레이싱 기본 제공
+6. **에어갭(PAIS 2.1부터).** Artifact Mirroring Tool로 폐쇄망 풀 AI 구동
+7. **보안.** TLS, OIDC, RBAC + AI/MCP 특화 통제
 
 > PAIS를 활용하면 프로덕션 복잡성의 상당 부분을 플랫폼이 처리합니다. 인프라팀은 HA/DR/보안과 **거버넌스 정책**에 집중하고, 일상 운영은 PAIS 자동화와 관측성에 맡기세요.
 

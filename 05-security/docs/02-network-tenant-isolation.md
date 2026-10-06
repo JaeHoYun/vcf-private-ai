@@ -43,7 +43,7 @@ Private AI 워크로드의 격리는 단일 통제가 아니라 여러 계층의
    남/북 출입구(스택 외곽): vDefend Gateway Firewall, URL/Geo-IP 필터 (T0 Edge)
 ```
 
-각 계층의 구체 통제는 이어지는 절에서 다룹니다 — 네트워크(2.2절), 동/서 마이크로세그(2.3절), vDefend 탐지(2.4절), 컴퓨트와 GPU(2.5절).
+각 계층의 구체 통제는 이어지는 절에서 네트워크(2.2절), 동/서 마이크로세그(2.3절), vDefend 탐지(2.4절), 컴퓨트와 GPU(2.5절) 순으로 다룹니다.
 
 ---
 
@@ -120,14 +120,14 @@ GPU를 테넌트 간에 공유할 때 어떤 방식을 사용하느냐가 격리
 
 | 방식 | 분리 수준 | 메모리/장애 격리 | 보안 위치 |
 |------|-----------|------------------|-----------|
-| Enhanced DirectPath I/O (Passthrough) | GPU 전체를 단일 VM에 전용 할당 | 완전(공유 없음) | 강 — 공유 자체가 없음 |
-| MIG (Multi-Instance GPU) | GPU를 하드웨어 인스턴스로 공간 분할 | 하드웨어 강제 격리 | 강 — 실리콘 수준 |
-| vGPU (time-sliced, MIG 미적용) | 시간 분할 공유 | 메모리와 장애 격리 없음 | 약 — 동일 신뢰 경계 내만 |
-| MIG-backed vGPU | MIG 슬라이스 기반 vGPU | 슬라이스 단위 하드웨어 격리 | 강 — MIG 경계 상속 |
+| Enhanced DirectPath I/O (Passthrough) | GPU 전체를 단일 VM에 전용 할당 | 완전(공유 없음) | 강함, 공유 자체가 없음 |
+| MIG (Multi-Instance GPU) | GPU를 하드웨어 인스턴스로 공간 분할 | 하드웨어 강제 격리 | 강함, 실리콘 수준 격리 |
+| vGPU (time-sliced, MIG 미적용) | 시간 분할 공유 | 메모리와 장애 격리 없음 | 약함, 동일 신뢰 경계 내에서만 사용 |
+| MIG-backed vGPU | MIG 슬라이스 기반 vGPU | 슬라이스 단위 하드웨어 격리 | 강함, MIG 경계 상속 |
 
 - **Enhanced DirectPath I/O**: GPU(또는 vGPU 프로파일 장치)를 VM에 거의 베어메탈 성능으로 전용 할당합니다. 공유가 없으므로 격리 측면에서는 가장 단순하고 강력하지만 밀도가 낮습니다([PAIF 9.1 문서](https://techdocs.broadcom.com/content/dam/broadcom/techdocs/us/en/pdf/vmware/private-ai/private-ai-nvidia/vmware-private-ai-foundation-with-nvidia-9-1.pdf), [William Lam PAIS 랩](https://williamlam.com/2025/10/ms-a2-vcf-9-0-lab-deploying-model-endpoint-with-directpath-i-o-using-vmware-for-private-ai-services-pais.html)).
 - **MIG 하드웨어 격리**: NVIDIA MIG는 GPU 다이 자체를 공간 분할해 최대 7개의 격리된 GPU 인스턴스로 나눕니다. 각 인스턴스는 전용 SM(Streaming Multiprocessor), L2 캐시 뱅크, 메모리 컨트롤러, DRAM 주소 버스를 별도로 할당받아 메모리 시스템 전체에 걸쳐 분리된 경로를 가집니다. 결과적으로 한 테넌트가 다른 테넌트의 GPU 메모리를 읽거나 덮어쓸 수 없고, 한 인스턴스의 장애가 다른 인스턴스에 영향을 주지 않습니다([NVIDIA MIG User Guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/latest/), [NVIDIA MIG 기술 브리프](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/solutions/resources/documents1/Technical-Brief-Multi-Instance-GPU-NVIDIA-Virtual-Compute-Server.pdf)).
-- **vGPU(time-sliced) vs MIG의 함의**: 시간 분할(time-sliced) vGPU만 사용하는 경우 복제본 간 메모리와 장애 격리가 없습니다. 따라서 서로 다른 신뢰 경계(다른 법인 테넌트)를 같은 GPU에 시간 분할만으로 배치하는 것은 권장되지 않습니다. 신뢰 경계가 다른 테넌트를 한 물리 GPU에 함께 배치할 때는 MIG로 먼저 하드웨어 인스턴스를 나눈 뒤, 필요하면 그 인스턴스 안에서만 시간 분할을 운용하는 MIG-backed 방식을 사용합니다([NVIDIA GPU Operator – Time-Slicing](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/24.9.0/gpu-sharing.html), [NVIDIA MIG-Backed vGPU](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/mig-backed-vgpu.html)).
+- **vGPU(time-sliced) vs MIG의 함의**: 시간 분할(time-sliced) vGPU만 사용하는 경우 복제본 간 메모리와 장애 격리가 없습니다. 따라서 서로 다른 신뢰 경계(다른 법인 테넌트)를 같은 GPU에 시간 분할만으로 배치하는 것은 권장되지 않습니다. 신뢰 경계가 다른 테넌트를 한 물리 GPU에 함께 배치할 때는 MIG로 먼저 하드웨어 인스턴스를 나눈 뒤, 필요하면 그 인스턴스 안에서만 시간 분할을 운용하는 MIG-backed 방식을 사용합니다([NVIDIA GPU Operator, Time-Slicing](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/24.9.0/gpu-sharing.html), [NVIDIA MIG-Backed vGPU](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/mig-backed-vgpu.html)).
 
 원칙: **테넌트 경계 = 신뢰 경계가 다르면 GPU 격리도 하드웨어(MIG 또는 전용 Passthrough)로 강제한다.** 시간 분할 공유는 동일 테넌트 내부의 워크로드끼리만 허용합니다.
 

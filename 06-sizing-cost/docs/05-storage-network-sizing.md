@@ -66,7 +66,7 @@
 pgvector는 차원당 4바이트 float32로 저장하므로, 1536차원 임베딩 1건은 약 6KB입니다([Lantern Blog, "Understanding pgvector's HNSW Index Storage"](https://lantern.dev/blog/pgvector-storage); [pgvector issue #690](https://github.com/pgvector/pgvector/issues/690)).
 
 - **원시 벡터 데이터** ≈ 벡터 수 × 차원 × 4바이트
-- **HNSW 인덱스 오버헤드** ≈ 원시 벡터 크기의 약 1.5–3배(그래프 구조 포함) — 실측 변동이 상당함([DEV Community, "Scaling pgvector"](https://dev.to/philip_mcclarence_2ef9475/scaling-pgvector-memory-quantization-and-index-build-strategies-8m2))
+- **HNSW 인덱스 오버헤드** ≈ 원시 벡터 크기의 약 1.5–3배(그래프 구조 포함)이며 실측 변동이 상당함([DEV Community, "Scaling pgvector"](https://dev.to/philip_mcclarence_2ef9475/scaling-pgvector-memory-quantization-and-index-build-strategies-8m2))
 
 실제 환경 참고치로, 1536차원 벡터 1천만 건의 HNSW 인덱스는 약 80–120GB에 이를 수 있습니다([DEV Community, "Scaling pgvector"](https://dev.to/philip_mcclarence_2ef9475/scaling-pgvector-memory-quantization-and-index-build-strategies-8m2)). 이 값은 그래프 파라미터(m, ef_construction)와 데이터 분포에 따라 변하므로 어림이며 **실측이 필요**합니다.
 
@@ -92,7 +92,7 @@ pgvector는 차원당 4바이트 float32로 저장하므로, 1536차원 임베�
 
 VCF 9.x의 vSAN ESA는 고성능 NVMe, 고속 네트워크를 전제로 한 차세대 아키텍처입니다. 동급 비교 시 합성 I/O에서 약 70% 높은 IOPS, 애플리케이션 레벨에서 약 20% 높은 IOPS를 유사한 서브밀리초 지연으로 제공한 결과가 보고됩니다([VCF Blog, "Performance Recommendations for vSAN ESA"](https://blogs.vmware.com/cloud-foundation/2023/01/01/performance-recommendations-for-vsan-esa/); [VCF Blog, "vSAN ESA Beats Performance of Top Storage Array"](https://blogs.vmware.com/cloud-foundation/2025/04/16/vsan-esa-beats-performance-of-top-storage-array-for-large-financial-firm/)).
 
-또한 vSAN ESA는 압축이 항상 켜진(always-on) 클러스터 단위 기능이며, 데이터는 vSAN 네트워크로 전송되기 전에 압축되어 대역폭 효율을 높입니다([virtualvmx, "Key New vSAN Features in VCF 9.0"](https://www.virtualvmx.com/2025/08/key-new-vsan-features-in-vmware-cloud.html) — VCF 9.0 기준 비공식 정리, 9.1 동작은 공식 vSAN 문서로 재확인 필요). 다만 vSAN 성능은 호스트 하드웨어와 호스트 간 네트워크에서 파생되며 클러스터 호스트 수에 단순 비례하지 않습니다([VMware, "vSAN Design Guide"](https://www.vmware.com/docs/vmware-vsan-design-guide)).
+또한 vSAN ESA는 압축이 항상 켜진(always-on) 클러스터 단위 기능이며, 데이터는 vSAN 네트워크로 전송되기 전에 압축되어 대역폭 효율을 높입니다([virtualvmx, "Key New vSAN Features in VCF 9.0"](https://www.virtualvmx.com/2025/08/key-new-vsan-features-in-vmware-cloud.html). VCF 9.0 기준 비공식 정리이므로 9.1 동작은 공식 vSAN 문서로 재확인 필요). 다만 vSAN 성능은 호스트 하드웨어와 호스트 간 네트워크에서 파생되며 클러스터 호스트 수에 단순 비례하지 않습니다([VMware, "vSAN Design Guide"](https://www.vmware.com/docs/vmware-vsan-design-guide)).
 
 ### 워크로드별 성능 요건(어림)
 
@@ -135,7 +135,7 @@ VCF 9.x의 vSAN ESA는 고성능 NVMe, 고속 네트워크를 전제로 한 차�
 
 > **내부 레지스트리 디스크 ≈ 20GB(PAIS 플랫폼 아티팩트, 고정 하한) + Σ(모델 갤러리: 모델 가중치 × 보존 버전 수) + NVIDIA 컨테이너 이미지(NIM/드라이버)**
 
-모델 가중치 계수는 본 문서 5.5절 산정 표의 입력 가정을 재사용합니다(예: 70B FP16 ≈ 1버전 140GB — [5.5절 입력 가정](#55-규모에서-용량으로-환산하는-사이징-산정-표) 참조). NVIDIA 컨테이너 이미지의 구체 용량은 공식 문서에 고정값이 없으므로 본 문서에서 임의 가정치로 제시하지 않으며, 5.5절의 NIM 항목과 마찬가지로 실측으로 채웁니다.
+모델 가중치 계수는 본 문서 5.5절 산정 표의 입력 가정을 재사용합니다(예: 70B FP16 ≈ 1버전 140GB. [5.5절 입력 가정](#55-규모에서-용량으로-환산하는-사이징-산정-표) 참조). NVIDIA 컨테이너 이미지의 구체 용량은 공식 문서에 고정값이 없으므로 본 문서에서 임의 가정치로 제시하지 않으며, 5.5절의 NIM 항목과 마찬가지로 실측으로 채웁니다.
 
 또한 인터넷 연결 미러 호스트(반입 준비 측)에도 pull 산출물(`pais-store` 패키지)을 담을 스크래치 공간이 필요합니다. 정확한 수치는 공식 문서에 없으므로 **어림**이며, 반입 대상 아티팩트 합계와 같은 차수로 보수적으로 산정한 뒤 **실측으로 보정**하는 것이 안전합니다.
 
@@ -188,7 +188,7 @@ NSX Edge VM(Large)은 흐름, 패킷 크기, 서비스에 따라 게이트웨이
 | **논리 합계** | **약 1,050GB(≈1.05TB)** | 위 합산 |
 | **필요 가용 용량** | **약 1.6TB** | 논리 합계 × 1.5(보호 오버헤드, 압축 절감 미반영) |
 
-> **공식 권장 비율로 교차 점검** — Broadcom 설계 권장(RAG 벡터 DB 저장 용량은 원문의 5–10배, 5.1)을 적용하면 원문 200GB에 대해 약 1–2TB가 산출됩니다. 위 구성요소 합산(문서 코퍼스 300GB + 벡터 인덱스 180GB)보다 크게 높습니다. 이런 차이는 벡터 수(1,000만 건)와 원문 용량(200GB)을 서로 독립적으로 가정했기 때문에 생깁니다. 두 값을 표본 실측으로 한 번에 맞추기 전까지는 **두 계산 중 큰 값을 예산 상한으로** 설정하고, 실측 후 좁힙니다.
+> **공식 권장 비율로 교차 점검.** Broadcom 설계 권장(RAG 벡터 DB 저장 용량은 원문의 5–10배, 5.1)을 적용하면 원문 200GB에 대해 약 1–2TB가 산출됩니다. 위 구성요소 합산(문서 코퍼스 300GB + 벡터 인덱스 180GB)보다 크게 높습니다. 이런 차이는 벡터 수(1,000만 건)와 원문 용량(200GB)을 서로 독립적으로 가정했기 때문에 생깁니다. 두 값을 표본 실측으로 한 번에 맞추기 전까지는 **두 계산 중 큰 값을 예산 상한으로** 설정하고, 실측 후 좁힙니다.
 
 > 위 합계는 단일 예시이며, 모델 규모, 보존 버전 수, 벡터 건수가 바뀌면 선형 이상으로 변합니다. 특히 모델 버전 보존 정책과 벡터 인덱스 오버헤드 가정이 총량을 좌우하므로, 이 두 항목을 가장 먼저 실측하고 확정하세요. 압축과 중복제거를 적용하면 가용 용량 요건은 줄어들 수 있으나(데이터 특성 의존), 본 산정 표는 보수적으로 절감을 반영하지 않았습니다.
 

@@ -160,7 +160,7 @@ def chat(body: dict):
 
 ## 엔드포인트 전체 치트시트
 
-**OpenAI 호환 인터페이스** — `https://{fqdn}/api/v1/compatibility/openai/v1`
+**OpenAI 호환 인터페이스.** `https://{fqdn}/api/v1/compatibility/openai/v1`
 
 | 동작 | 메서드와 경로 |
 |------|------------|
@@ -171,7 +171,7 @@ def chat(body: dict):
 | 에이전트 조회/수정/삭제 | `GET` / `POST` / `DELETE /agents/{id}` |
 | 에이전트 채팅 | `POST /agents/{id}/chat/completions` |
 
-**컨트롤 플레인** — `https://{fqdn}/api/v1/control`
+**컨트롤 플레인.** `https://{fqdn}/api/v1/control`
 
 | 동작 | 메서드와 경로 |
 |------|------------|

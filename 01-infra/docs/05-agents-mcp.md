@@ -84,7 +84,7 @@ PAIS는 2.1부터 MCP 연동에 **중앙 관리와 자동 검색** 기능을 갖
 | **Knowledge Base의 MCP 노출 (KB-as-MCP-tool)** | Knowledge Base를 **MCP 도구로 노출**해, 앱 개발자가 컨텍스트 인식 에이전트를 구성. "exposes knowledge bases over MCP so that AI application developers can build context-aware agents" |
 | **Agentic Retrieval** | Data Indexing & Retrieval이 **MCP 도구로 통합**되어, 에이전트가 *검색 수행 여부와 검색어를 스스로 결정*. "Data Indexing and Retrieval is integrated in Private AI Services as an MCP tool, allowing agents to decide whether to retrieve content from a knowledge base and what search term to use" |
 
-> 위 세 기능은 [Broadcom TechDocs — Private AI Services 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html) 및 [MCP 도구 탐색 가이드](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html) 기준입니다. 이로써 RAG 검색은 고정 파이프라인이 아니라 **에이전트가 도구 설명을 근거로 호출 여부를 판단**하는 흐름으로 동작합니다(5.4절).
+> 위 세 기능은 [Broadcom TechDocs, Private AI Services 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html) 및 [MCP 도구 탐색 가이드](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html) 기준입니다. 이로써 RAG 검색은 고정 파이프라인이 아니라 **에이전트가 도구 설명을 근거로 호출 여부를 판단**하는 흐름으로 동작합니다(5.4절).
 
 ---
 
@@ -155,12 +155,12 @@ PAIS는 **OpenTelemetry(OTel) Collector 기반 LLM 트레이싱**을 제공합�
 
 ## 5.7 에이전트 설계 베스트 프랙티스
 
-1. **읽기 우선, 쓰기 신중** — 부수효과 도구는 승인 게이트와 드라이런으로 시작.
-2. **도구 최소화** — 한 에이전트에 너무 많은 도구를 연결하면 LLM의 도구 선택 정확도가 떨어집니다. 역할별로 분리.
-3. **시스템 프롬프트에 도구 사용 규칙 명시** — "확실하지 않으면 도구를 호출하지 말 것", "민감 작업은 사용자 확인" 등.
-4. **RAG + 도구의 역할 구분** — 사실/문서는 KB(RAG), 실시간/정형 데이터는 MCP 도구.
-5. **트레이싱 상시 활성화** — 환각, 오작동, 비용 급증을 단계별로 추적.
-6. **거버넌스를 코드화(GitOps)** — 도구 등록과 권한 정책을 IaC(Infrastructure as Code, 코드형 인프라)로 관리해 재현과 감사 가능하게.
+1. **읽기 우선, 쓰기 신중.** 부수효과 도구는 승인 게이트와 드라이런으로 시작.
+2. **도구 최소화.** 한 에이전트에 너무 많은 도구를 연결하면 LLM의 도구 선택 정확도가 떨어집니다. 역할별로 분리.
+3. **시스템 프롬프트에 도구 사용 규칙 명시.** "확실하지 않으면 도구를 호출하지 말 것", "민감 작업은 사용자 확인" 등.
+4. **RAG + 도구의 역할 구분.** 사실/문서는 KB(RAG), 실시간/정형 데이터는 MCP 도구.
+5. **트레이싱 상시 활성화.** 환각, 오작동, 비용 급증을 단계별로 추적.
+6. **거버넌스를 코드화(GitOps).** 도구 등록과 권한 정책을 IaC(Infrastructure as Code, 코드형 인프라)로 관리해 재현과 감사 가능하게.
 
 > 위 항목 중 지시문 작성과 도구 선택(3번, 4번)은 앱 설계 영역이므로 구현 지침은 [앱 가이드 08 8.3절, 8.5절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/08-agent-builder.md)과 [앱 가이드 09 9.7절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/09-mcp-tools.md)이 기준입니다. 이 문서는 플랫폼이 강제할 수 있는 통제(도구 등록 승인, 네임스페이스 경계, 감사 로그)에 집중합니다.
 

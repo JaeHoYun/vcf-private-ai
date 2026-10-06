@@ -80,7 +80,7 @@ VCF 9는 기존 vSphere를 **워크로드 이전 없이** VCF로 편입하는 �
 
 - **리스크:** 기존 운영 워크로드에 미치는 영향(유지보수 창 필요), 버전과 하드웨어 호환, 기존 네트워크/스토리지 자원 잠식.
 
-> **적용 전 확인:** VCF의 Convert/Import 두 경로와 기존 VCF에 GPU 워크로드 도메인을 추가하는 방식은 공식 문서 기준입니다. 다만 9.1의 정확한 절차와 전제조건은 적용 전 [Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)로 재확인하시기 바랍니다 ([기존 vSphere의 VCF 9 편입 — VCF 블로그](https://blogs.vmware.com/cloud-foundation/2026/02/05/how-to-converge-a-vmware-vsphere-environment-to-vmware-cloud-foundation-9-0/), [GPU 가속 워크로드 도메인 배포 — TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)).
+> **적용 전 확인:** VCF의 Convert/Import 두 경로와 기존 VCF에 GPU 워크로드 도메인을 추가하는 방식은 공식 문서 기준입니다. 다만 9.1의 정확한 절차와 전제조건은 적용 전 [Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)로 재확인하시기 바랍니다 ([기존 vSphere의 VCF 9 편입, VCF 블로그](https://blogs.vmware.com/cloud-foundation/2026/02/05/how-to-converge-a-vmware-vsphere-environment-to-vmware-cloud-foundation-9-0/), [GPU 가속 워크로드 도메인 배포, TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)).
 
 ---
 
@@ -98,7 +98,7 @@ VCF 9는 기존 vSphere를 **워크로드 이전 없이** VCF로 편입하는 �
 
 > **전환 동인(맥락):** vSphere 8은 2027년 10월 일반 지원 종료가 예고되어, 플랫폼 현대화 시점 판단에 참고할 수 있습니다.
 
-> **적용 전 확인:** Workload Mobility의 비vSphere(경쟁사) 소스 지원 범위와 제품 명칭은 변경이 잦으므로 적용 전 공식 문서로 확인하시기 바랍니다. 경쟁사 고유의 전환 도구와 절차는 본 가이드 범위 밖입니다 ([VCF Operations Workload Mobility — VMware](https://www.vmware.com/products/cloud-infrastructure/vcf-operations-workload-mobility)).
+> **적용 전 확인:** Workload Mobility의 비vSphere(경쟁사) 소스 지원 범위와 제품 명칭은 변경이 잦으므로 적용 전 공식 문서로 확인하시기 바랍니다. 경쟁사 고유의 전환 도구와 절차는 본 가이드 범위 밖입니다 ([VCF Operations Workload Mobility, VMware](https://www.vmware.com/products/cloud-infrastructure/vcf-operations-workload-mobility)).
 
 ---
 

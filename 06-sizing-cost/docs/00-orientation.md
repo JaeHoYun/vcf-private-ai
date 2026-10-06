@@ -18,7 +18,7 @@
 | 개발자/아키텍트 | 기술 사이징과 클러스터 설계 | [01 방법론](01-sizing-methodology.md) → [02 GPU](02-gpu-sizing.md), [03 컴퓨트](03-compute-memory-sizing.md) → [04 클러스터](04-vks-cluster-sizing.md) (+[부록 A1](../appendix/A1-first-order-reference.md)) | 사이징과 토폴로지 설계 |
 | 인프라 담당 | 구축과 용량 운영 | [04 클러스터](04-vks-cluster-sizing.md) → [05 스토리지와 네트워크](05-storage-network-sizing.md) → [06 용량 계획](06-capacity-planning.md) | 구축과 증설 트리거 운영 |
 
-> 처음부터 끝까지 한 시나리오로 살펴보고 싶다면 [08 — 레퍼런스 시나리오](08-reference-scenario.md)가 가장 빠릅니다.
+> 처음부터 끝까지 한 시나리오로 살펴보고 싶다면 [08 레퍼런스 시나리오](08-reference-scenario.md)가 가장 빠릅니다.
 
 ---
 

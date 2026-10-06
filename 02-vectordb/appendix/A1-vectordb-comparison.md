@@ -23,7 +23,7 @@
 | 거리 메트릭 | Cosine, Euclidean, Dot Product |
 | 주요 기능 | Serverless 자동 스케일링, Namespace 기반 멀티테넌시, Metadata 필터링, Hybrid Search (Dense + Sparse), Pinecone Assistant (RAG 파이프라인 내장), Pinecone Inference (임베딩/리랭킹 모델 호스팅) |
 | 보안/컴플라이언스 | SOC 2 Type II, ISO 27001, GDPR, HIPAA |
-| 가격 모델 | 사용량 기반 — Read Units, Write Units, Storage. Standard / Enterprise 티어 제공 (최신 가격은 공식 사이트 참조) |
+| 가격 모델 | Read Units, Write Units, Storage 기준의 사용량 기반. Standard / Enterprise 티어 제공 (최신 가격은 공식 사이트 참조) |
 
 **강점**: 가장 쉬운 시작점. API 키 하나로 즉시 사용 가능하며, 인프라 운영 부담이 전혀 없습니다. RAG 파이프라인 통합(Pinecone Assistant)으로 벡터 검색→LLM 답변 생성까지 단일 엔드포인트로 처리 가능. 2024년 말 Dedicated Read Nodes 출시로 대규모 워크로드의 예측 가능한 성능 제공.
 
@@ -88,7 +88,7 @@
 | GitHub Stars | 15,000+ (2025년 말 기준) |
 | 가격 (Cloud) | Serverless / Enterprise 티어 제공, HIPAA 지원 (AWS) (최신 가격은 공식 사이트 참조) |
 
-**강점**: 내장 하이브리드 검색 — Dense Vector + BM25 Sparse Vector를 단일 쿼리로 결합 가능. Vectorizer 모듈을 통해 데이터 입력 시 자동 임베딩 생성이 가능하며, v1.30부터 Generative Search 모듈로 검색→LLM 답변 생성까지 DB 내부에서 처리합니다. Knowledge Graph 구조로 객체 간 관계를 모델링할 수 있어 복잡한 도메인에 적합합니다.
+**강점**: 내장 하이브리드 검색으로 Dense Vector + BM25 Sparse Vector를 단일 쿼리로 결합 가능. Vectorizer 모듈을 통해 데이터 입력 시 자동 임베딩 생성이 가능하며, v1.30부터 Generative Search 모듈로 검색→LLM 답변 생성까지 DB 내부에서 처리합니다. Knowledge Graph 구조로 객체 간 관계를 모델링할 수 있어 복잡한 도메인에 적합합니다.
 
 **약점**: 그래프 기능의 오버헤드로 인해 순수 벡터 검색 벤치마크에서는 Milvus, Qdrant보다 느립니다. 1억 벡터 이상에서 메모리와 컴퓨트 소비가 급증합니다. 무료 체험 기간이 14일로 가장 짧으며, 가격 구조(AIU, Weaviate의 과금 단위인 AI Unit 기반)가 다소 복잡합니다.
 
@@ -189,7 +189,7 @@
 | 인덱스 알고리즘 | HNSW (Lucene 기반), int8_hnsw (기본값, ES 9.0+), int4_hnsw, bbq_hnsw (Better Binary Quantization) |
 | 최대 차원 | 4,096 (동적 매핑), 수동 설정 시 더 높은 값 가능 |
 | 거리 메트릭 | Cosine (기본값), L2, Dot Product, Max Inner Product |
-| 주요 기능 | knn 검색 옵션 + knn DSL 쿼리 (8.12+), Hybrid Search (knn + BM25 + Retriever), semantic_text 필드 (자동 임베딩), Inference API (내장 모델 배포), ELSER (Elastic Learned Sparse EncodeR), BBQ/Scalar/Binary Quantization, GPU 가속 인덱싱 (NVIDIA cuVS, Tech Preview — ES 9.3 예정²) |
+| 주요 기능 | knn 검색 옵션 + knn DSL 쿼리 (8.12+), Hybrid Search (knn + BM25 + Retriever), semantic_text 필드 (자동 임베딩), Inference API (내장 모델 배포), ELSER (Elastic Learned Sparse EncodeR), BBQ/Scalar/Binary Quantization, GPU 가속 인덱싱 (NVIDIA cuVS, Tech Preview, ES 9.3 예정²) |
 | 가격 | OSS 무료, Elastic Cloud 사용량 기반 |
 
 > ¹ 2024년 9월부터 AGPLv3가 추가되어 트리플 라이선스 체계. Free OSS 버전은 AGPLv3, Basic 이상 바이너리 릴리스는 Elastic License 2.0이 적용됩니다. Elastic License 2.0은 호스팅 서비스 제공 시 제한이 있어 완전한 오픈소스와 차이가 있습니다.
@@ -198,7 +198,7 @@
 
 **강점**: 10년 이상 대규모 프로덕션에서 검증된 운영 성숙도. 기존 Elasticsearch 클러스터에 벡터 기능을 추가하면 검증된 안정성, 모니터링 도구, 장애 패턴을 그대로 활용할 수 있습니다. Dense + Sparse 벡터를 결합한 하이브리드 검색이 가장 성숙하며, 8.x 시리즈에서 sub-50ms kNN 쿼리를 달성했습니다. BBQ(Better Binary Quantization)로 메모리 사용량을 약 95% 절감(최대 32배 압축) 가능.
 
-**약점**: 벡터 검색만을 위해 Elasticsearch를 새로 도입하는 것은 비효율적입니다 — 리소스 오버헤드가 크고, 운영 복잡성이 높습니다. HNSW 그래프 빌드가 연산 집약적이어서 대량 벡터 인덱싱 시 시간이 오래 걸립니다. dense_vector 필드는 aggregation이나 sorting을 지원하지 않습니다. 라이선스 구조가 트리플 라이선스(AGPLv3/SSPL/ELv2)로 복잡하여, 호스팅 서비스를 제공하려는 경우 법적 검토가 필요합니다.
+**약점**: 벡터 검색만을 위해 Elasticsearch를 새로 도입하는 것은 비효율적입니다. 리소스 오버헤드가 크고, 운영 복잡성이 높기 때문입니다. HNSW 그래프 빌드가 연산 집약적이어서 대량 벡터 인덱싱 시 시간이 오래 걸립니다. dense_vector 필드는 aggregation이나 sorting을 지원하지 않습니다. 라이선스 구조가 트리플 라이선스(AGPLv3/SSPL/ELv2)로 복잡하여, 호스팅 서비스를 제공하려는 경우 법적 검토가 필요합니다.
 
 ---
 
@@ -366,12 +366,12 @@
 
 ### A1.4.2 pgvector 도입을 권장하는 핵심 이유 (도입 검토팀 관점)
 
-1. **"새 DB를 배우지 않아도 됩니다"** — SQL로 벡터 검색. 기존 PostgreSQL 스킬 100% 활용.
-2. **"데이터가 한 곳에 있습니다"** — 벡터 + 메타데이터 + 비즈니스 데이터가 동일 DB. 동기화 문제 원천 제거.
-3. **"검증된 엔터프라이즈 기능"** — 백업, PITR, 복제, HA, 보안, 모니터링. 30년간 축적된 PostgreSQL 생태계 전체 활용.
-4. **"비용이 0원"** — pgvector는 오픈소스. 라이선스 비용 없음. TCO 60–80% 절감.
-5. **"규모가 커지면 확장 가능"** — pgvectorscale(StreamingDiskANN)로 50M+ 벡터까지. 정말 부족하면 그때 전용 DB를 검토해도 늦지 않습니다.
-6. **"금융 규제에 적합"** — On-premise 배포, ACID 트랜잭션, 데이터 주권 보장. 금융감독원 규제 대응 가능.
+1. **"새 DB를 배우지 않아도 됩니다".** SQL로 벡터 검색. 기존 PostgreSQL 스킬 100% 활용.
+2. **"데이터가 한 곳에 있습니다".** 벡터 + 메타데이터 + 비즈니스 데이터가 동일 DB. 동기화 문제 원천 제거.
+3. **"검증된 엔터프라이즈 기능".** 백업, PITR, 복제, HA, 보안, 모니터링. 30년간 축적된 PostgreSQL 생태계 전체 활용.
+4. **"비용이 0원".** pgvector는 오픈소스. 라이선스 비용 없음. TCO 60–80% 절감.
+5. **"규모가 커지면 확장 가능".** pgvectorscale(StreamingDiskANN)로 50M+ 벡터까지. 정말 부족하면 그때 전용 DB를 검토해도 늦지 않습니다.
+6. **"금융 규제에 적합".** On-premise 배포, ACID 트랜잭션, 데이터 주권 보장. 금융감독원 규제 대응 가능.
 
 ---
 [← 이전: 08 PoC 가이드](../docs/08-poc-guide.md) | [목차](../README.md)

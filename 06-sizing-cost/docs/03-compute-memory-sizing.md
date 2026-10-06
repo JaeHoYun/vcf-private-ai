@@ -3,7 +3,7 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-본 문서는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 시리즈 약칭 PAIF Workload Domain)에서 **GPU 자체를 제외한 자원** — 호스트 vCPU, 메모리, NUMA, PCIe 배치, 데이터 파이프라인, CPU 추론 경로, 임베딩과 리랭커 같은 RAG 비-LLM 컴포넌트, 그리고 워크로드를 노드 수요로 환산하는 규칙 — 을 사이징합니다. GPU(vGPU 프로파일과 VRAM) 사이징은 [02 — GPU 사이징](./02-gpu-sizing.md)에서 다루며, 본 문서는 그 결과물을 입력으로 받습니다.
+본 문서는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 시리즈 약칭 PAIF Workload Domain)에서 **GPU 자체를 제외한 자원**을 사이징합니다. 대상은 호스트 vCPU, 메모리, NUMA, PCIe 배치, 데이터 파이프라인, CPU 추론 경로, 임베딩과 리랭커 같은 RAG 비-LLM 컴포넌트, 그리고 워크로드를 노드 수요로 환산하는 규칙입니다. GPU(vGPU 프로파일과 VRAM) 사이징은 [02 GPU 사이징](./02-gpu-sizing.md)에서 다루며, 본 문서는 그 결과물을 입력으로 받습니다.
 
 아래 모든 수치는 공신력 출처를 인라인으로 표기했으나, 모델, 토크나이저, 배치 구성, 스토리지 성능에 따라 크게 달라집니다. 따라서 **모든 값은 출발점(어림)이며 실측이 필요합니다.** 불확실한 항목은 본문에 "확인 필요"로 명시했습니다.
 
@@ -18,7 +18,7 @@ GPU가 추론을 수행하더라도, GPU를 굶기지 않으려면(GPU starvatio
 | 구분 | GPU당 권장(어림) | 근거와 비고 |
 | --- | --- | --- |
 | 출발값(공식 설계 권장) | vCPU 4–8개 / GPU | Broadcom VCF 9.1 설계 문서의 권장. 고정 비율이 아니라 출발값이며 CPU 사용률을 관측해 실제 병목에 따라 조정([가속기 설계 PAIF-ACC-RCMD-011](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-compute-detailed-design(1)/accelerator-detailed-design.html)) |
-| 추론 전용(서빙) 하한 | 물리 코어 3–4개 / GPU | d2l.ai는 GPU 2장에 4–6코어급 CPU를 권장하며 코어 수보다 단일 스레드 클럭을 우선합니다([d2l.ai, Selecting Servers and GPUs](https://d2l.ai/chapter_appendix-tools-for-deep-learning/selecting-servers-gpus.html)). 구체 비율(예: GPU당 3코어)은 환경별 상이 — 확인 필요 |
+| 추론 전용(서빙) 하한 | 물리 코어 3–4개 / GPU | d2l.ai는 GPU 2장에 4–6코어급 CPU를 권장하며 코어 수보다 단일 스레드 클럭을 우선합니다([d2l.ai, Selecting Servers and GPUs](https://d2l.ai/chapter_appendix-tools-for-deep-learning/selecting-servers-gpus.html)). 구체 비율(예: GPU당 3코어)은 환경별로 달라 확인 필요 |
 | 에이전트와 RAG 혼합 | 6–8 vCPU / GPU 이상 | 전처리, 툴 호출, 임베딩이 CPU 부하에 더해지면 상향. 실측 필요([Spheron, CPU-to-GPU Ratio](https://www.spheron.network/blog/cpu-to-gpu-ratio-agentic-ai-inference/)) |
 | 데이터 로더 워커 | 4–8 워커 / GPU | PyTorch DataLoader 전형값([AWS, Gluon data loader workers](https://aws.amazon.com/blogs/machine-learning/maximize-training-performance-with-gluon-data-loader-workers/)) |
 
@@ -78,7 +78,7 @@ GPU 없이 **소형 모델과 임베딩**을 서빙해야 하는 경우(예: GPU
 
 | 모델 규모 | 4-bit(Q4) RAM(어림) | 비고 |
 | --- | --- | --- |
-| 7B | 약 5 GB | Q4_K_M는 메모리 약 75% 절감(어림), 품질 손실은 모델과 태스크별 상이 — 실측 필요 |
+| 7B | 약 5 GB | Q4_K_M는 메모리 약 75% 절감(어림), 품질 손실은 모델과 태스크별로 달라 실측 필요 |
 | 13B | 약 9–10 GB | — |
 | 70B | 약 40–45 GB | CPU 단독은 처리량 한계로 비권장 |
 
@@ -107,7 +107,7 @@ GPU 없이 **소형 모델과 임베딩**을 서빙해야 하는 경우(예: GPU
 
 ## 3.6 Replica, 동시성 환산: 워크로드 → Pod Replica → 노드 수요
 
-[02 — GPU 사이징](./02-gpu-sizing.md)에서 "단일 Replica가 수용할 수 있는 동시성(또는 RPS)"을 산출했다는 전제 아래, 본 절은 이를 **Pod Replica 수 → 노드 수**로 환산합니다.
+[02 GPU 사이징](./02-gpu-sizing.md)에서 "단일 Replica가 수용할 수 있는 동시성(또는 RPS)"을 산출했다는 전제 아래, 본 절은 이를 **Pod Replica 수 → 노드 수**로 환산합니다.
 
 ### 환산 단계
 
@@ -140,10 +140,10 @@ GPU 없이 **소형 모델과 임베딩**을 서빙해야 하는 경우(예: GPU
 
 | 원칙 | 권장 | 근거 |
 | --- | --- | --- |
-| GPU 리소스 | `limits`에만 정의(요청=한도, 정수; device-plugin 기준, DRA(Dynamic Resource Allocation, 동적 자원 할당)는 ResourceClaim 청구 — [04](04-vks-cluster-sizing.md) 참조) | [PerfectScale, K8s GPU Best Practices](https://www.perfectscale.io/blog/kubernetes-gpu) |
+| GPU 리소스 | `limits`에만 정의(요청=한도, 정수; device-plugin 기준, DRA(Dynamic Resource Allocation, 동적 자원 할당)는 ResourceClaim으로 청구. [04](04-vks-cluster-sizing.md) 참조) | [PerfectScale, K8s GPU Best Practices](https://www.perfectscale.io/blog/kubernetes-gpu) |
 | 메모리 QoS | 추론 Pod는 **Guaranteed**(requests=limits)로 OOM, 축출 회피 | [Kubernetes Blog, QoS for Memory (1.27)](https://kubernetes.io/blog/2023/05/05/qos-memory-resources/) |
 | 메모리 오버커밋 | 저지연과 임계 워크로드는 **1:1**(오버커밋 금지) | [oneuptime, Resource Requests and Limits](https://oneuptime.com/blog/post/2026-02-20-kubernetes-resource-requests-limits/view) |
-| 스케줄링 기준 | 스케줄러는 `requests`로 배치 — requests를 실제 사용량에 맞게 | [k8s.guide, Scheduling Uses Requests](https://www.k8s.guide/insights/opinion/2026-03-10-kubernetes-scheduling-requests-not-limits/) |
+| 스케줄링 기준 | 스케줄러는 `requests`로 배치하므로 requests를 실제 사용량에 맞게 설정 | [k8s.guide, Scheduling Uses Requests](https://www.k8s.guide/insights/opinion/2026-03-10-kubernetes-scheduling-requests-not-limits/) |
 
 핵심: GPU 추론 Pod와 임베딩과 리랭커 Pod는 모두 저지연과 임계 워크로드이므로 **메모리 requests = limits(Guaranteed)** 로 설정해 노드 메모리를 물리적으로 예약하고, 커널 OOM 킬을 차단합니다([Kubernetes Blog](https://kubernetes.io/blog/2023/05/05/qos-memory-resources/)). 반대로 배치형, 비임계 보조 작업(예: 야간 인덱싱)은 Burstable로 노드 집적도를 높일 수 있으나, 추론 Pod와 같은 노드에 배치하면 메모리 압박 시 추론이 영향을 받으므로 노드 풀을 분리하는 것이 안전합니다.
 
@@ -180,7 +180,7 @@ GPU 없이 **소형 모델과 임베딩**을 서빙해야 하는 경우(예: GPU
 
 ---
 
-> 다음 문서([04 — VKS 클러스터 사이징](./04-vks-cluster-sizing.md))에서는 본 사이징 결과를 VKS 클러스터 토폴로지로 환산합니다. 비용 환산은 [07 — TCO와 비용 모델](./07-tco-cost-model.md)입니다. 사이징 입력(노드 수, 자원)은 본 문서를, GPU 프로파일은 [02 — GPU 사이징](./02-gpu-sizing.md)을 참조하세요.
+> 다음 문서([04 VKS 클러스터 사이징](./04-vks-cluster-sizing.md))에서는 본 사이징 결과를 VKS 클러스터 토폴로지로 환산합니다. 비용 환산은 [07 TCO와 비용 모델](./07-tco-cost-model.md)입니다. 사이징 입력(노드 수, 자원)은 본 문서를, GPU 프로파일은 [02 GPU 사이징](./02-gpu-sizing.md)을 참조하세요.
 
 ---
 [← 이전: 02 GPU 사이징](02-gpu-sizing.md) | [목차](../README.md) | [다음: 04 VKS 클러스터 사이징과 인프라 →](04-vks-cluster-sizing.md)

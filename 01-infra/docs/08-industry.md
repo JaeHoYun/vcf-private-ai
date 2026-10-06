@@ -39,7 +39,7 @@ PAIF는 **데이터를 외부로 반출하지 않고**(온프레미스/에어갭
 
 ## 8.3 방위산업
 
-**외부 반출 절대 불가** — Artifact Mirroring Tool(PAIS 2.1부터)의 가장 직접적인 수혜 산업입니다.
+**외부 반출 절대 불가.** Artifact Mirroring Tool(PAIS 2.1부터)의 가장 직접적인 수혜 산업입니다.
 
 | 시나리오 | 내용 | PAIF 연계 |
 |---------|------|----------|
@@ -61,7 +61,7 @@ PAIF는 **데이터를 외부로 반출하지 않고**(온프레미스/에어갭
 | **개인화 추천** | 멤버십 데이터 기반 | 온프레미스(개인정보보호법 준수) |
 | **고객 응대 챗봇** | CRM 통합 RAG | KB + **MCP(CRM/주문 DB 연동)** |
 | **상품 콘텐츠 자동 생성** | 상세페이지와 카피라이팅 | Completion Endpoint (대량은 GPU, 소량은 CPU) |
-| **업무 자동화 에이전트** | "재고 부족 상품 발주 티켓 생성" | **MCP(ServiceNow/ERP)** — 쓰기 작업 승인 게이트 |
+| **업무 자동화 에이전트** | "재고 부족 상품 발주 티켓 생성" | 쓰기 작업 승인 게이트를 갖춘 **MCP(ServiceNow/ERP)** |
 
 **도입 포인트:** 개인정보 보호 → 온프레미스. 업무 자동화는 **MCP로 사내 ERP/CRM/ITSM 연동**하되, 발주와 전송 등 **쓰기 작업은 거버넌스 승인 게이트** 필수 ([문서 05 5.5절](05-agents-mcp.md#55-거버넌스-가장-중요)).
 
@@ -114,7 +114,7 @@ Phase 3: 그룹 GPU 풀 + 프로덕션
 
 **도입 비용 산정 시 필수 체크:**
 - **NVAIE 별도 구매** 누락 금지 (vGPU 분할과 NIM/NeMo 사용 시). Enhanced DirectPath I/O 전용 패스스루만 사용하면 NVAIE 불필요.
-- **GPU 하드웨어 호환성 목록(BCG/HCL)** 사전 확인 — BCG: Broadcom Compatibility Guide / HCL: Hardware Compatibility List (Blackwell, ConnectX-7, BlueField-3 포함).
+- **GPU 하드웨어 호환성 목록(BCG/HCL)** 사전 확인. BCG: Broadcom Compatibility Guide / HCL: Hardware Compatibility List (Blackwell, ConnectX-7, BlueField-3 포함).
 - **TCO 비교**(퍼블릭 GPU vs 온프레미스 PAIF)는 워크로드와 사용률에 좌우 → 자사 워크로드 실측 기반.
 - **한국어 평가셋** 확보 (글로벌 벤치마크와 한국어 성능 차이가 뚜렷함). 한국어 임베딩(bge-m3 등) 평가.
 

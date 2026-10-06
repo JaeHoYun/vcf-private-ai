@@ -75,7 +75,7 @@ PostgreSQL은 1996년 첫 릴리스 이후 약 30년간 전 세계에서 가장 
 | 운영 영역 | PostgreSQL (pgvector 포함) | 전용 Vector DB (Milvus, Qdrant 등) |
 |---|---|---|
 | **DBA 인력 풀** | 전 세계 수십만 명, 국내 수천 명 | 극소수, 국내 거의 없음 |
-| **백업/복구** | pg_dump, pg_basebackup, PITR — 30년간 검증 | 각 DB별 자체 도구, 성숙도 낮음 |
+| **백업/복구** | 30년간 검증된 pg_dump, pg_basebackup, PITR | 각 DB별 자체 도구, 성숙도 낮음 |
 | **모니터링** | Prometheus, Grafana, Datadog, pganalyze 등 | 제한된 통합, 자체 도구 의존 |
 | **HA/DR** | Streaming Replication, pg_auto_failover, Patroni | 각 DB별 자체 구현, 검증 사례 적음 |
 | **보안** | LDAP/AD 연동, SSL/TLS, Row-Level Security, 감사 로그 | 기본적 인증/인가, 금융 규제 대응 미비 |
@@ -291,15 +291,15 @@ PAIS의 RAG 워크플로우를 단계별로 상세히 설명합니다.
 
 **Phase 1: 지식 기반 구축 (오프라인, 주기적 실행)**
 
-1단계 — 데이터 소스 연결: PAIS의 Data Indexing & Retrieval 서비스가 Google Drive, Confluence, SharePoint, S3 등 기업의 문서 저장소에 연결합니다.
+1단계 데이터 소스 연결: PAIS의 Data Indexing & Retrieval 서비스가 Google Drive, Confluence, SharePoint, S3 등 기업의 문서 저장소에 연결합니다.
 
-2단계 — 문서 청킹: 연결된 문서를 의미 단위로 분할(chunking)합니다. 문서의 구조에 따라 문단, 문장, 테이블 등을 적절한 크기로 나눕니다.
+2단계 문서 청킹: 연결된 문서를 의미 단위로 분할(chunking)합니다. 문서의 구조에 따라 문단, 문장, 테이블 등을 적절한 크기로 나눕니다.
 
-3단계 — 임베딩 생성: Model Runtime에서 서빙되는 임베딩 모델(예: vLLM/Infinity 기반)이 각 chunk를 벡터로 변환합니다.
+3단계 임베딩 생성: Model Runtime에서 서빙되는 임베딩 모델(예: vLLM/Infinity 기반)이 각 chunk를 벡터로 변환합니다.
 
-4단계 — 벡터 저장: 생성된 벡터가 DSM이 관리하는 PostgreSQL + pgvector 데이터베이스에 저장됩니다. 원본 텍스트, 메타데이터, 벡터가 모두 같은 DB에 위치합니다.
+4단계 벡터 저장: 생성된 벡터가 DSM이 관리하는 PostgreSQL + pgvector 데이터베이스에 저장됩니다. 원본 텍스트, 메타데이터, 벡터가 모두 같은 DB에 위치합니다.
 
-5단계 — 주기적 갱신: 데이터 소스의 변경을 감지하여 지식 기반을 자동으로 업데이트합니다. 스케줄 기반 또는 온디맨드 갱신이 가능합니다.
+5단계 주기적 갱신: 데이터 소스의 변경을 감지하여 지식 기반을 자동으로 업데이트합니다. 스케줄 기반 또는 온디맨드 갱신이 가능합니다.
 
 **Phase 2: 질의 응답 (실시간)**
 

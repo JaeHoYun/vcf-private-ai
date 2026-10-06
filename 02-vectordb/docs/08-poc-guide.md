@@ -57,7 +57,7 @@ CREATE INDEX idx_poc_embedding ON poc_documents
 - 각 질문에 대한 기대 답변 문서를 사전 태깅 (Ground Truth)
 - pgvector 검색 결과와 Ground Truth를 비교하여 Recall 측정
 - ef_search 파라미터 조정, 필터 조건 추가 등으로 검색 품질 최적화
-- 검색 지연 시간(Latency) 측정 — 100ms 미만 목표
+- 100ms 미만을 목표로 검색 지연 시간(Latency) 측정
 
 #### Week 3: RAG 파이프라인 구축
 

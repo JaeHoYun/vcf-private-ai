@@ -8,7 +8,7 @@
 
 ## 2.1 전체 계층 구조
 
-"PAIF"는 두 가지 뜻으로 사용됩니다 — 수식어 없이 **PAIF**라 하면 VCF가 제공하는 Private AI Foundation **솔루션 전체**를 가리키고, 큰 구성요소 관점의 인프라와 관리 부분(공식 용어 **PAIF core functionality**)은 본 문서에서 **PAIF 코어 기능 계층**으로 적습니다. 한 줄로:
+"PAIF"는 두 가지 뜻으로 사용됩니다. 수식어 없이 **PAIF**라 하면 VCF가 제공하는 Private AI Foundation **솔루션 전체**를 가리키고, 큰 구성요소 관점의 인프라와 관리 부분(공식 용어 **PAIF core functionality**)은 본 문서에서 **PAIF 코어 기능 계층**으로 적습니다. 한 줄로:
 
 **PAIF(솔루션) = PAIF 코어 기능 계층 + PAIS 서비스 계층**
 
@@ -41,7 +41,7 @@
 
 > **공유 서비스 주의:** Harbor, DSM은 본래 범용 Supervisor Service, VCF 데이터 서비스지만, PAIF가 정상 동작하려면 **반드시 있어야 하는 필수 구성요소**입니다. 각 서비스의 역할, 필수성, 근거는 아래 [PAIF 코어 공유 서비스 상세](#paif-코어-공유-서비스-상세)에서, 설치 순서는 [2.6절 구축 Phase 2](#26-구축-phase-개요)에서 다룹니다.
 
-> **용어 주의:** Broadcom 공식 문서(TechDocs)는 PAIS를 설치하는 GPU 워크로드 도메인을 **GPU-Accelerated Workload Domain**으로 표기합니다("Install Private AI Services on the Supervisor of the GPU-Accelerated Workload Domain") ([Broadcom TechDocs — PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [PAIS 상세 설계](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)). 본 문서는 가독성을 위해 이를 **PAIF Workload Domain**으로 약칭하며, "GPU Workload Domain", "AI Domain", "GPU Domain" 등 그 밖의 표현은 비공식 약식으로 간주합니다.
+> **용어 주의:** Broadcom 공식 문서(TechDocs)는 PAIS를 설치하는 GPU 워크로드 도메인을 **GPU-Accelerated Workload Domain**으로 표기합니다("Install Private AI Services on the Supervisor of the GPU-Accelerated Workload Domain") ([Broadcom TechDocs, PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [PAIS 상세 설계](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)). 본 문서는 가독성을 위해 이를 **PAIF Workload Domain**으로 약칭하며, "GPU Workload Domain", "AI Domain", "GPU Domain" 등 그 밖의 표현은 비공식 약식으로 간주합니다.
 
 ### 계층 귀속과 격리 단위
 
@@ -61,7 +61,7 @@ PAIF 코어 기능 계층의 **공유 서비스 4종**(Harbor, DSM, VCF Automati
 
 | 서비스 | 본질(무엇인가) | PAIF에서의 역할 | PAIS 연계 |
 |--------|----------------|-----------------|-----------|
-| **Harbor** | Supervisor Service(OCI 레지스트리) | 컨테이너 이미지 + **Model Gallery**(검증 모델과 NIM을 OCI 아티팩트로) 저장, HTTPS 필수 | Model Runtime이 여기서 모델을 pull — Model Gallery의 백엔드 |
+| **Harbor** | Supervisor Service(OCI 레지스트리) | 컨테이너 이미지 + **Model Gallery**(검증 모델과 NIM을 OCI 아티팩트로) 저장, HTTPS 필수 | Model Gallery의 백엔드로, Model Runtime이 여기서 모델을 pull |
 | **DSM**(Data Services Manager) | VCF 데이터 서비스(Advanced Service) | **PostgreSQL 16.8 + pgvector 0.8.0** 벡터 DB 프로비저닝, HA, 백업 | Data Indexing & Retrieval의 벡터 저장소(Knowledge Base) |
 | **VCF Automation** | VCF 셀프서비스(관리) 평면 | DLVM/VKS/RAG **카탈로그** 블루프린트, OIDC IdP 연동, 9.1 네임스페이스 단위 PAIS 활성화 UI | 카탈로그로 PAIS, GPU 자원을 셀프서비스 신청 |
 | **VCF Operations** | VCF 관측과 과금 평면 | 모델과 GPU 메트릭 대시보드, GPU 소비 관측, 쇼백/차지백 | 관측성([문서 06 6.8절](06-production.md)), GPUaaS 과금([문서 07 7.6절](07-gpuaas.md)) |
@@ -69,9 +69,9 @@ PAIF 코어 기능 계층의 **공유 서비스 4종**(Harbor, DSM, VCF Automati
 **필수성의 정확한 의미(과장 금지):** 공식 배포 요구사항 문서 기준으로는 위 4종 모두 "최소 GPU 워크로드 배포 자체"에는 강제가 아닙니다. 그러나 **Model Gallery(Harbor), RAG 벡터 DB(DSM)** 는 모델 서빙과 RAG를 하는 순간 사실상 전제 조건이고, **VCF Automation, VCF Operations** 는 셀프서비스, 관측, 거버넌스의 핵심입니다. 즉 "동작하는 최소 구성"이 아니라 "실제로 운영하는 PAIF"를 구성하면 이 4종은 반드시 포함됩니다. Automation, Operations는 없으면 각각 kubectl 직접 배포와 기본 vCenter 관측으로 대체할 수 있습니다.
 
 **서비스별 주의:**
-- **Harbor** — Supervisor Service로 활성화하며 설치 시 인터넷 연결이 필요합니다. 에어갭에서는 외부 레지스트리 대신 **내부 Harbor로 아티팩트를 미러링**해 사용합니다(Artifact Mirroring Tool, [문서 06 6.9절](06-production.md)).
-- **DSM** — DSM은 원래 VCF 코어와 별도 라이선스되는 Advanced Service지만, **PAIS가 벡터 DB(pgvector) 용도의 DSM 사용 권한(entitlement)을 포함**하므로 RAG용 벡터 DB엔 별도 구매가 불필요합니다. 일반 DBaaS로 확장 사용 시에만 별도 라이선스입니다([문서 01](01-concepts.md) 1.2절).
-- **VCF Automation / Operations** — 9.1에서 Automation은 네임스페이스 단위 PAIS 셀프서비스 UI를, Operations는 모델과 GPU 메트릭을 나머지 인프라와 같은 화면으로 제공합니다(9.0.x의 kubectl, 자체 모니터링 부담을 줄임).
+- **Harbor.** Supervisor Service로 활성화하며 설치 시 인터넷 연결이 필요합니다. 에어갭에서는 외부 레지스트리 대신 **내부 Harbor로 아티팩트를 미러링**해 사용합니다(Artifact Mirroring Tool, [문서 06 6.9절](06-production.md)).
+- **DSM.** DSM은 원래 VCF 코어와 별도 라이선스되는 Advanced Service지만, **PAIS가 벡터 DB(pgvector) 용도의 DSM 사용 권한(entitlement)을 포함**하므로 RAG용 벡터 DB엔 별도 구매가 불필요합니다. 일반 DBaaS로 확장 사용 시에만 별도 라이선스입니다([문서 01](01-concepts.md) 1.2절).
+- **VCF Automation / Operations.** 9.1에서 Automation은 네임스페이스 단위 PAIS 셀프서비스 UI를, Operations는 모델과 GPU 메트릭을 나머지 인프라와 같은 화면으로 제공합니다(9.0.x의 kubectl, 자체 모니터링 부담을 줄임).
 
 ---
 
@@ -105,10 +105,10 @@ PAIS(Private AI Services 3.0)는 구성요소를 나열한 평면 박스가 아�
                                    GPU 메트릭, OTel 트레이싱 ───┘
 ```
 
-- **제어 평면 — ML API Gateway.** 모든 요청의 단일 입구입니다. 인증/인가, 엔드포인트와 에이전트로의 라우팅, 로드밸런싱을 담당하고 OpenAI 호환 인터페이스를 노출합니다.
-- **추론(데이터) 평면 — 요청 경로.** 클라이언트 → Gateway → **Completion/Embedding Endpoint** 또는 **Agent**(RAG, Tool-calling)로 흐르고, 끝단에서 모델 런타임(vLLM 0.20.0 / Infinity 0.0.76 / llama.cpp b9309) 또는 Knowledge Base를 호출합니다. Agent는 검색(Knowledge Base)과 외부 도구(MCP)를 결합해 답변을 생성합니다.
-- **인입(인덱싱) 평면 — 지식 적재 경로.** Data Source에서 가져온 문서를 파싱 → 청킹 → 임베딩한 뒤 pgvector(DSM)에 적재하고, 소스 변경을 자동 갱신합니다. 추론 평면의 RAG가 여기서 채운 Knowledge Base를 읽습니다.
-- **관측성 — 횡단 관심사.** 모델 메트릭(캐시, 토큰, 지연), GPU 메트릭, OTel 트레이싱이 제어, 추론 두 평면에 걸쳐 수집됩니다.
+- **제어 평면. ML API Gateway.** 모든 요청의 단일 입구입니다. 인증/인가, 엔드포인트와 에이전트로의 라우팅, 로드밸런싱을 담당하고 OpenAI 호환 인터페이스를 노출합니다.
+- **추론(데이터) 평면. 요청 경로.** 클라이언트 → Gateway → **Completion/Embedding Endpoint** 또는 **Agent**(RAG, Tool-calling)로 흐르고, 끝단에서 모델 런타임(vLLM 0.20.0 / Infinity 0.0.76 / llama.cpp b9309) 또는 Knowledge Base를 호출합니다. Agent는 검색(Knowledge Base)과 외부 도구(MCP)를 결합해 답변을 생성합니다.
+- **인입(인덱싱) 평면. 지식 적재 경로.** Data Source에서 가져온 문서를 파싱 → 청킹 → 임베딩한 뒤 pgvector(DSM)에 적재하고, 소스 변경을 자동 갱신합니다. 추론 평면의 RAG가 여기서 채운 Knowledge Base를 읽습니다.
+- **관측성. 횡단 관심사.** 모델 메트릭(캐시, 토큰, 지연), GPU 메트릭, OTel 트레이싱이 제어, 추론 두 평면에 걸쳐 수집됩니다.
 
 > 서빙 런타임의 깊은 동작 원리(연속 배칭 등)는 ③ 서빙 가이드로 위임합니다. Agent Builder의 MCP, Tool-calling은 [문서 05](05-agents-mcp.md), 관측성은 [문서 06](06-production.md)에서 상세히 다룹니다. 인입 평면의 소스 연결 절차는 [문서 03 3.4절](03-workflows.md), 소비 패턴은 [문서 04](04-dev-scenarios.md)를 참조하세요.
 
@@ -116,7 +116,7 @@ PAIS(Private AI Services 3.0)는 구성요소를 나열한 평면 박스가 아�
 
 ## 2.3 GPU 할당 방식 (주의: 9.1 변경)
 
-PAIF에서 GPU를 워크로드에 할당하는 방식은 **세 축**으로 나뉩니다 — 시간 분할 공유(vGPU), 하드웨어 분할 격리(MIG), 전용 패스스루(Enhanced DirectPath I/O). 어느 것을 사용하느냐에 따라 격리 수준, 라이선스, 성능이 갈립니다. **9.1에서 DirectPath I/O 관련 서술이 바뀌었습니다.**
+PAIF에서 GPU를 워크로드에 할당하는 방식은 **세 축**으로 나뉩니다. 시간 분할 공유(vGPU), 하드웨어 분할 격리(MIG), 전용 패스스루(Enhanced DirectPath I/O)입니다. 어느 것을 사용하느냐에 따라 격리 수준, 라이선스, 성능이 갈립니다. **9.1에서 DirectPath I/O 관련 서술이 바뀌었습니다.**
 
 | 방식 | 설명 | NVAIE 라이선스 | vMotion | 비고 |
 |------|------|:---:|:---:|------|
@@ -131,8 +131,8 @@ PAIF에서 GPU를 워크로드에 할당하는 방식은 **세 축**으로 나�
 > **세부 분류와 enablement는 기준 문서로 위임:** 위는 결정에 필요한 개념 수준입니다. 할당 모드의 세부 분류와 실제 활성화 절차(BIOS, 드라이버, GPU Operator, PAISConfiguration까지)는 [문서 11 11.5절](11-gpu-enablement.md)가 기준이며, 문서 07과의 정합은 [문서 07 7.4절](07-gpuaas.md)를 참조하세요. 02는 개념과 결정 수준만 다룹니다(중복 금지).
 
 > **멀티호스트 RDMA 결정과 구성 노트:**
-> - **언제 필요한가:** ConnectX-7/BlueField-3 기반 GPUDirect RDMA, 멀티호스트 패브릭은 *대규모 분산 학습*과 *단일 서버 용량을 초과하는 초대형 모델의 분산 추론*에만 필요합니다. 단일노드 추론, RAG, 일반 챗봇에는 불필요하므로 표준 구성으로 시작하세요([VCF 블로그 — GPUDirect RDMA 분산 추론](https://blogs.vmware.com/cloud-foundation/2025/09/16/deploy-distributed-llm-inference-with-gpudirect-rdma-over-infiniband-in-private-ai/)).
-> - **VCF 구성 체크포인트:** GPUDirect RDMA 활성화에는 **ESXi의 ACS(Access Control Services) 활성화**와 **ConnectX-7 NIC의 ATS(Address Translation Services) 활성화**가 필요합니다(ATS는 PCIe 장치 간 직접 DMA로 가상화 오버헤드를 낮춥니다) ([VCF 블로그 — GPUDirect RDMA 분산 추론](https://blogs.vmware.com/cloud-foundation/2025/09/16/deploy-distributed-llm-inference-with-gpudirect-rdma-over-infiniband-in-private-ai/)).
+> - **언제 필요한가:** ConnectX-7/BlueField-3 기반 GPUDirect RDMA, 멀티호스트 패브릭은 *대규모 분산 학습*과 *단일 서버 용량을 초과하는 초대형 모델의 분산 추론*에만 필요합니다. 단일노드 추론, RAG, 일반 챗봇에는 불필요하므로 표준 구성으로 시작하세요([VCF 블로그, GPUDirect RDMA 분산 추론](https://blogs.vmware.com/cloud-foundation/2025/09/16/deploy-distributed-llm-inference-with-gpudirect-rdma-over-infiniband-in-private-ai/)).
+> - **VCF 구성 체크포인트:** GPUDirect RDMA 활성화에는 **ESXi의 ACS(Access Control Services) 활성화**와 **ConnectX-7 NIC의 ATS(Address Translation Services) 활성화**가 필요합니다(ATS는 PCIe 장치 간 직접 DMA로 가상화 오버헤드를 낮춥니다) ([VCF 블로그, GPUDirect RDMA 분산 추론](https://blogs.vmware.com/cloud-foundation/2025/09/16/deploy-distributed-llm-inference-with-gpudirect-rdma-over-infiniband-in-private-ai/)).
 > - **본 문서 범위 밖:** 무손실(lossless) 물리 패브릭 설계(RoCE/InfiniBand 스위치 PFC, ECN 설정 등)는 **네트워크팀 선결요건**이며 본 가이드 범위 밖입니다. 정확한 스위치와 패브릭 구성은 네트워크팀 및 공식 문서로 확인하시기 바랍니다(공식 문서 확인 필요).
 
 ### Kubernetes AI Conformance (DRA)
@@ -148,7 +148,7 @@ PAIF에서 GPU를 워크로드에 할당하는 방식은 **세 축**으로 나�
 | 데이터 소스 | 지원 파일 형식 |
 |------------|---------------|
 | Confluence, SharePoint, Google Drive, Amazon S3(S3 호환 포함), 로컬 업로드 | PDF, Word(.docx), PowerPoint(.pptx), 텍스트/CSV/HTML/Markdown |
-| **Google Workspace (Docs/Sheets/Slides)** — 9.1 신규 | **Google Docs/Sheets/Slides** — 9.1 신규 |
+| 9.1 신규 **Google Workspace (Docs/Sheets/Slides)** | 9.1 신규 **Google Docs/Sheets/Slides** |
 
 > PDF는 텍스트 기반이 전제이며 스캔 문서는 별도 OCR이 필요합니다. 소스별 인증 방식(API Token, OAuth 2.0, Access Key 등)과 단계별 연결 절차는 [문서 03 3.4절](03-workflows.md)를 참조하세요.
 
@@ -292,8 +292,8 @@ VCF 9.1
 
 알려진 이슈의 운영 기준 문서는 [문서 10 10.2절 트러블슈팅 런북](10-operations.md)입니다(증상 → 진단 → 조치). PoC에서 가장 흔한 실패 지점의 핸즈온은 [문서 11 11.11절](11-gpu-enablement.md)을 참조하세요.
 
-- **운영 런북(증상→진단→조치)** — [문서 10 10.2절](10-operations.md): ModelRuntime GPU Pod 시작 실패, 업그레이드 후 Endpoint 재배포 실패, LLM 트레이스 미표시, 업그레이드 다운타임 등.
-- **PoC 핸즈온 함정** — [문서 11 11.11절](11-gpu-enablement.md): GPU enablement 단계에서 가장 자주 실패하는 지점.
+- **운영 런북(증상→진단→조치).** [문서 10 10.2절](10-operations.md): ModelRuntime GPU Pod 시작 실패, 업그레이드 후 Endpoint 재배포 실패, LLM 트레이스 미표시, 업그레이드 다운타임 등.
+- **PoC 핸즈온 함정.** [문서 11 11.11절](11-gpu-enablement.md): GPU enablement 단계에서 가장 자주 실패하는 지점.
 
 > GPU Operator가 24.9.0 → **25.10.1**(드라이버 v580.x)로 업그레이드됐으므로, 9.0.x에서 적용했던 드라이버 고정과 MIG 관련 Workaround는 **재검증**이 필요합니다. PAIS 3.0은 25.10.1을 기본값으로 유지하면서 26.3.1을 선택지로 더했고, vLLM 0.20.0이 CUDA 13.0을 기본으로 사용하기 때문에 게스트 드라이버는 580 이상이어야 합니다. 2.1 알려진 이슈였던 CDI 주입 실패는 3.0 릴리스 노트의 알려진 이슈 목록에는 없지만, 25.10.1을 유지하는 한 같은 조합이므로 [문서 11 11.11.1절](11-gpu-enablement.md)의 조치를 준비해 두는 편이 안전합니다. 정확한 증상, Workaround, 해결 여부는 [공식 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)로 재확인하시기 바랍니다.
 

@@ -47,7 +47,7 @@ PAIS는 에이전트가 **외부 데이터와 도구(DB, ITSM(IT 서비스 관�
 ④ 에이전트에 승인된 도구 연결  (에이전트 생성/수정 시 tools[]에 추가 → 04)
 ```
 
-> **승인(approval)이 별도 단계**라는 점이 핵심입니다. 서버를 등록한다고 모든 도구가 자동으로 에이전트에 노출되지 않습니다. `is_approved`를 명시적으로 켜야 사용 가능합니다 — 이것이 거버넌스의 1차 게이트입니다. UI 경로와 전송 요건(Streamable HTTP, SSE 폐기 예고)은 [앱 가이드 09 9.5절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/09-mcp-tools.md)을 참조하십시오.
+> **승인(approval)이 별도 단계**라는 점이 핵심입니다. 서버를 등록한다고 모든 도구가 자동으로 에이전트에 노출되지 않습니다. `is_approved`를 명시적으로 켜야 사용 가능합니다. 이것이 거버넌스의 1차 게이트입니다. UI 경로와 전송 요건(Streamable HTTP, SSE 폐기 예고)은 [앱 가이드 09 9.5절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/09-mcp-tools.md)을 참조하십시오.
 
 ---
 
@@ -64,9 +64,9 @@ PAIS는 에이전트가 **외부 데이터와 도구(DB, ITSM(IT 서비스 관�
 | **감사** | 도구 호출 추적 | 모든 tool call 로깅(누가, 언제, 무엇을, 결과) → [07](07-observability-ops.md) |
 | **데이터 유출 방지** | 외부로 나가는 컨텍스트 통제 | 입출력 필터링, 개인식별정보(PII) 마스킹, 쓰기 승인 게이트 |
 
-> **쓰기(Write) 작업 주의** — 티켓 생성, 메시지 전송, DB 갱신처럼 **부수효과가 있는 도구**는 별도 승인 게이트와 확인 절차를 마련하는 것을 강력히 권장합니다. 읽기 전용으로 시작해 점진적으로 권한을 확대하세요. 승인 게이트의 구현 패턴과 승인 큐, 멱등 키와 다단계 실패의 보상 설계는 [앱 가이드 07 사내 시스템 연동과 쓰기 설계](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md)에서 다룹니다.
+> **쓰기(Write) 작업 주의.** 티켓 생성, 메시지 전송, DB 갱신처럼 **부수효과가 있는 도구**는 별도 승인 게이트와 확인 절차를 마련하는 것을 강력히 권장합니다. 읽기 전용으로 시작해 점진적으로 권한을 확대하세요. 승인 게이트의 구현 패턴과 승인 큐, 멱등 키와 다단계 실패의 보상 설계는 [앱 가이드 07 사내 시스템 연동과 쓰기 설계](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md)에서 다룹니다.
 
-> **에어갭 환경** — 외부 반출이 불가한 환경에서는 MCP 연동 대상을 **내부 시스템(사내 DB, 내부 ITSM)** 으로 한정하고, 외부 SaaS, 외부 MCP 서버 등록을 차단합니다(Artifact Mirroring Tool(아티팩트 미러링 도구)로 미러링한 폐쇄망과 결합 → [근거: PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html)).
+> **에어갭 환경.** 외부 반출이 불가한 환경에서는 MCP 연동 대상을 **내부 시스템(사내 DB, 내부 ITSM)** 으로 한정하고, 외부 SaaS, 외부 MCP 서버 등록을 차단합니다(Artifact Mirroring Tool(아티팩트 미러링 도구)로 미러링한 폐쇄망과 결합 → [근거: PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html)).
 
 ---
 
@@ -89,11 +89,11 @@ PAIS는 에이전트가 **외부 데이터와 도구(DB, ITSM(IT 서비스 관�
 
 앱 측 설계(승인 운영, 보안 경계, 사내 MCP 서버 호스팅)는 [앱 가이드 09](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/09-mcp-tools.md)와 [앱 가이드 03 3.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/03-design-patterns.md)이 기준이며, 여기서는 API 관점의 요점만 정리합니다.
 
-1. **읽기 우선, 쓰기 신중** — 부수효과 도구는 승인 게이트와 시험 실행(dry-run)으로 시작.
-2. **도구 최소화** — 한 에이전트에 도구가 너무 많으면 LLM의 도구 선택 정확도가 떨어집니다. 역할별로 분리.
-3. **시스템 지시에 사용 규칙 명시** — "확실하지 않으면 도구를 호출하지 말 것", "민감 작업은 사용자 확인" 등.
-4. **RAG vs 도구 역할 구분** — 사실과 문서는 KB(RAG), 실시간과 정형 데이터는 MCP 도구.
-5. **거버넌스를 코드화(GitOps)** — `mcp-servers` 등록, `approval`, 도구 연결을 IaC(코드형 인프라, Infrastructure as Code)로 관리해 재현과 감사 가능하게.
+1. **읽기 우선, 쓰기 신중.** 부수효과 도구는 승인 게이트와 시험 실행(dry-run)으로 시작.
+2. **도구 최소화.** 한 에이전트에 도구가 너무 많으면 LLM의 도구 선택 정확도가 떨어집니다. 역할별로 분리.
+3. **시스템 지시에 사용 규칙 명시.** "확실하지 않으면 도구를 호출하지 말 것", "민감 작업은 사용자 확인" 등.
+4. **RAG vs 도구 역할 구분.** 사실과 문서는 KB(RAG), 실시간과 정형 데이터는 MCP 도구.
+5. **거버넌스를 코드화(GitOps).** `mcp-servers` 등록, `approval`, 도구 연결을 IaC(코드형 인프라, Infrastructure as Code)로 관리해 재현과 감사 가능하게.
 
 ---
 

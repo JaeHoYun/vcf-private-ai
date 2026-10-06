@@ -77,7 +77,7 @@ kubectl logs <pod> -n <ns>
 ### A1.1.4 라이선스와 비용
 
 **Q14. GPU 비용 최적화?**
-가장 큰 영향은 **모델 크기 선택**(8B로 충분하면 70B 금지 — 요구량 10배+). 그 외 자동 스케일링, 개발/프로덕션 분리, Embedding, 소규모 Completion **CPU(llama.cpp)**, 야간/주말 Replica 축소.
+가장 큰 영향은 **모델 크기 선택**(8B로 충분하면 70B 금지. 70B의 요구량은 10배+). 그 외 자동 스케일링, 개발/프로덕션 분리, Embedding, 소규모 Completion **CPU(llama.cpp)**, 야간/주말 Replica 축소.
 
 ---
 
@@ -120,41 +120,41 @@ kubectl logs <pod> -n <ns>
 | **Blackwell** | NVIDIA 차세대 GPU 아키텍처 (HGX B200, RTX PRO 4500/6000 등, 9.1 GA) |
 | **Chunk** | 문서를 분할한 텍스트 조각 (RAG용) |
 | **Cold Start** | 새 Replica 시작 시 모델 로딩으로 인한 초기 지연 |
-| **DRA** | Dynamic Resource Allocation — Kubernetes 개방형 GPU 자원 할당 (K8s AI Conformance) |
-| **DSM** | Data Services Manager — 관리형 데이터베이스(pgvector PostgreSQL) 서비스. 별도 라이선스 VCF Advanced Service이나, PAIS가 벡터 DB용 사용 권한 포함 |
-| **DLVM** | Deep Learning VM — GPU 가속 개발 VM |
+| **DRA** | Dynamic Resource Allocation. Kubernetes 개방형 GPU 자원 할당 (K8s AI Conformance) |
+| **DSM** | Data Services Manager. 관리형 데이터베이스(pgvector PostgreSQL) 서비스. 별도 라이선스 VCF Advanced Service이나, PAIS가 벡터 DB용 사용 권한 포함 |
+| **DLVM** | Deep Learning VM. GPU 가속 개발 VM |
 | **E2E 지연(End-to-End Latency)** | 요청 입력부터 최종 응답 완료까지의 전체 경과 시간. AI 서비스 SLI로 TTFT와 함께 추적 (문서 10 10.4절) |
 | **Enhanced DirectPath I/O** | NVAIE 없이 전용 GPU 패스스루 + vMotion 유지 (9.1) |
 | **ML API Gateway** | PAIS의 AI 전용 API 게이트웨이 (인증/인가, LB, OpenAI 호환, SSE 스트리밍) |
 | **GPU-Accelerated Workload Domain** | GPU 호스트로 구성된 VCF AI 워크로드 도메인의 Broadcom 공식 표기. 본 문서는 가독성을 위해 **PAIF Workload Domain**으로 약칭(PAIF Workload Domain 항목 참조) |
-| **GSLB** | Global Server Load Balancing — 지리 분산 사이트 트래픽 분배 (NSX ALB 등) |
+| **GSLB** | Global Server Load Balancing. 지리 분산 사이트 트래픽 분배 (NSX ALB 등) |
 | **Hallucination** | LLM이 사실이 아닌 내용을 생성하는 현상 |
 | **Harbor** | 컨테이너 이미지/모델 레지스트리 |
 | **Infinity** | Embedding 서빙 엔진 (CPU 지원) |
 | **Knowledge Base** | 문서를 벡터화하여 저장하는 PAIS 관리형 저장소 |
 | **LCM(Lifecycle Management)** | 플랫폼 컴포넌트의 설치, 업그레이드, 패치를 SDDC Manager 등으로 일관 관리하는 수명주기 관리 (문서 10 10.1절) |
 | **llama.cpp** | CPU 기반 추론 엔진 (9.1, Completion CPU 추론 가능) |
-| **MCP** | Model Context Protocol — 에이전트가 외부 데이터와 도구를 표준 인터페이스로 연동 (PAIS 2.1) |
+| **MCP** | Model Context Protocol. 에이전트가 외부 데이터와 도구를 표준 인터페이스로 연동 (PAIS 2.1) |
 | **Model Endpoint** | PAIS 관리형 LLM/Embedding 서빙 API |
 | **Network Policy** | 네임스페이스와 파드 간 통신을 허용하거나 차단하는 Kubernetes 네트워크 접근 제어 규칙 (문서 10 10.5절) |
 | **NSX Edge** | 게이트웨이, 로드밸런싱, NAT 등 north-south 네트워크 서비스를 제공하는 NSX 구성 요소 (문서 10 10.5절) |
-| **NVAIE** | NVIDIA AI Enterprise — vGPU 드라이버, NIM, NeMo 등 포함, NVIDIA 별도 구매 |
+| **NVAIE** | NVIDIA AI Enterprise. vGPU 드라이버, NIM, NeMo 등 포함, NVIDIA 별도 구매 |
 | **OpenTelemetry (OTel)** | LLM 트레이싱과 관측성 표준 (PAIS 2.1 LLM 트레이싱) |
-| **PAIF** | Private AI Foundation with NVIDIA — VCF 코어 포함 AI 인프라 |
+| **PAIF** | Private AI Foundation with NVIDIA. VCF 코어 포함 AI 인프라 |
 | **PAIF Workload Domain** | GPU 호스트로 구성된 VCF AI 워크로드 도메인. Broadcom 공식 표기는 **GPU-Accelerated Workload Domain**이며([TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)), 본 문서는 가독성을 위해 PAIF Workload Domain으로 약칭 |
-| **PAIS** | Private AI Services — PAIF에 포함된 관리형 AI 서비스 레이어 |
+| **PAIS** | Private AI Services. PAIF에 포함된 관리형 AI 서비스 레이어 |
 | **pgvector** | PostgreSQL 벡터 검색 확장 |
-| **RAG** | Retrieval-Augmented Generation — 검색 기반 응답 생성 |
+| **RAG** | Retrieval-Augmented Generation. 검색 기반 응답 생성 |
 | **RPO / RTO** | 데이터 손실 허용 시점 / 서비스 복구 허용 시간 |
 | **SDDC Manager** | VCF 플랫폼의 수명주기, 구성, 인벤토리를 통합 관리하는 컨트롤 플레인. LCM, 백업의 기준점 (문서 10 10.1절, 10.3절) |
 | **SLI(Service Level Indicator)** | 서비스 수준을 나타내는 측정 지표(예: TTFT, E2E 지연, 가용성) (문서 10 10.4절) |
 | **SLO(Service Level Objective)** | SLI에 대해 설정한 목표치(예: TTFT P95를 목표값 이내로). 알람과 온콜의 기준 (문서 10 10.4절) |
-| **SPBM(Storage Policy-Based Management)** | 스토리지 정책 기반 관리 — 가용성과 성능 요구를 정책으로 정의해 vSAN에 적용 (문서 10 10.5절) |
+| **SPBM(Storage Policy-Based Management)** | 스토리지 정책 기반 관리. 가용성과 성능 요구를 정책으로 정의해 vSAN에 적용 (문서 10 10.5절) |
 | **Supervisor** | vSphere Kubernetes 컨트롤 플레인 |
 | **Tool-calling** | LLM이 외부 도구를 호출해 작업을 수행하는 패턴 |
 | **Trust Bundle** | PAIS가 신뢰하는 인증서 번들 (OIDC, Harbor, DSM 인증서). 인증서 갱신 시 재구성 (문서 10 10.3.3절) |
 | **TTFT(Time To First Token)** | 요청 후 첫 토큰이 생성되기까지의 지연. LLM 응답성 핵심 SLI (문서 10 10.4절) |
-| **vGPU** | NVIDIA Virtual GPU — GPU 가상화/분할 공유 (NVAIE 필요) |
+| **vGPU** | NVIDIA Virtual GPU. GPU 가상화/분할 공유 (NVAIE 필요) |
 | **VKr / VKS / VKSM** | vSphere Kubernetes release / Service / Service Management |
 | **vLLM** | LLM 추론 최적화 엔진 (PagedAttention) |
 | **vSAN Effective Capacity** | vSAN 9.1의 운영과 재구축 예비를 자동 산정해 안전하게 사용할 수 있는 용량을 보여 주는 뷰 (문서 10 10.5절) |
@@ -180,11 +180,11 @@ kubectl logs <pod> -n <ns>
 ### VCF 9.1 발표/분석
 - [Announcing VCF 9.1 (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2026/05/05/announcing-vcf-9-1-modern-private-cloud-built-for-efficiency-and-resilience/)
 - [Streamline, Simplify and Protect all your AI workloads with VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/)
-- [Broadcom Announces VCF 9.1 — Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
+- [Broadcom Announces VCF 9.1, Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
 
 ### 호환성/지원
-- [Broadcom Compatibility Guide (BCG)](https://compatibilityguide.broadcom.com/) — GPU/하드웨어 호환성 매번 확인
-- Broadcom Support Portal — KB, 기술 지원
+- GPU/하드웨어 호환성을 매번 확인하는 [Broadcom Compatibility Guide (BCG)](https://compatibilityguide.broadcom.com/)
+- KB와 기술 지원을 제공하는 Broadcom Support Portal
 
 ---
 

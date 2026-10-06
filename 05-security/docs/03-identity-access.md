@@ -101,9 +101,9 @@ REX 도구는 생성 시 자동 승인되지만, 외부 MCP 서버의 도구는 
 
 거버넌스 관점에서 권장하는 도구 권한 계층은 다음과 같습니다.
 
-- 등록(register): 외부 MCP 서버 연결과 도구 노출 — VI Admin/플랫폼 운영 책임자.
-- 승인(approve): 노출된 외부 도구를 사용 가능 목록으로 전환 — 직무 분리상 등록자와 다른 승인자 권장.
-- 소비(consume): 승인된 도구를 에이전트에 결합 — 앱 개발자(해당 네임스페이스 내).
+- 등록(register): VI Admin/플랫폼 운영 책임자가 외부 MCP 서버 연결과 도구 노출을 담당.
+- 승인(approve): 노출된 외부 도구를 사용 가능 목록으로 전환. 직무 분리상 등록자와 다른 승인자 권장.
+- 소비(consume): 해당 네임스페이스의 앱 개발자가 승인된 도구를 에이전트에 결합.
 
 KB(지식 베이스) 접근도 같은 원칙입니다. KB는 Google Drive, Confluence, SharePoint, S3 등 데이터 소스에 연결되어 벡터 DB에 인덱싱되며, PAIS 인스턴스의 네임스페이스에 귀속됩니다([Building GenAI Agents with PAIS, Broadcom VCF Blog](https://blogs.vmware.com/cloud-foundation/2025/08/26/vmware-private-ai-services-demo/)). 따라서 원본 데이터 소스의 접근 권한과 KB 소비 권한이 일치하도록 매핑하지 않으면, 에이전트를 통해 권한 없는 사용자가 민감 데이터를 우회 열람할 수 있습니다.
 

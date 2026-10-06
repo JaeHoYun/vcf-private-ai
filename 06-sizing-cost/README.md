@@ -4,7 +4,7 @@
 
 > VMware Cloud Foundation(VCF) 9.1 기반 Private AI(PAIF: Private AI Foundation / PAIS: Private AI Services) 플랫폼을 **워크로드, GPU, VKS 클러스터 사이징부터 용량 계획과 TCO**까지 한 권으로 다루는 정량 설계 레퍼런스
 
-"GPU 몇 장이, 노드와 클러스터를 어떻게 구성해, 얼마에 필요한가"에 답합니다. 프로덕션 배포는 VKS(vSphere Kubernetes Service) 기준이며, 워크로드를 자원 → 노드 → 클러스터 → 비용으로 환산하는 워크시트와, 추정치를 실측으로 보정하는 절차를 제공합니다.
+"GPU 몇 장이, 노드와 클러스터를 어떻게 구성해, 얼마에 필요한가"에 답합니다. 프로덕션 배포는 VKS(vSphere Kubernetes Service) 기준이며, 워크로드를 자원 → 노드 → 클러스터 → 비용으로 환산하는 산정 표와, 추정치를 실측으로 보정하는 절차를 제공합니다.
 
 이 가이드는 **사이징, 용량, TCO의 단일 기준 문서**입니다. 전반 아키텍처와 구축은 [① 인프라](../01-infra/README.md), 데이터는 [② VectorDB](../02-vectordb/README.md), 서빙은 [③ 서빙 API](../03-serving-api/README.md), RAG는 [④ RAG](../04-rag/README.md), 보안은 [⑤ 보안과 거버넌스](../05-security/README.md)를 참조하고, 여기서는 정량 사이징과 비용에 집중합니다.
 
@@ -24,13 +24,12 @@
 | | 04 | [VKS 클러스터 사이징과 인프라](docs/04-vks-cluster-sizing.md) | 컨트롤 플레인, 노드 풀, GPU 노드 풀, 오토스케일, 스케일 한도, 단일 vs 다중 클러스터 |
 | | 05 | [스토리지와 네트워크 용량 사이징](docs/05-storage-network-sizing.md) | vSAN, Harbor 모델 레지스트리, 벡터 인덱스 용량(②), NSX 대역폭 |
 | | 06 | [용량 계획과 운영](docs/06-capacity-planning.md) | 모니터링 지표, 증설 트리거, Reservation/쿼터 용량, PoC→프로덕션 로드맵 |
-| | 07 | [TCO와 비용 모델](docs/07-tco-cost-model.md) | 라이선스, HW, 운영비 분해, 비용 산정 워크시트, 퍼블릭 vs 온프레미스 비교 프레임 |
+| | 07 | [TCO와 비용 모델](docs/07-tco-cost-model.md) | 라이선스, HW, 운영비 분해, 비용 산정 표, 퍼블릭 vs 온프레미스 비교 프레임, 운영 중 AI 지출 점검(AI FinOps) |
 | | 08 | [레퍼런스 시나리오(전 과정 예제)](docs/08-reference-scenario.md) | 입력→GPU→노드→클러스터→스토리지→TCO를 한 시나리오로 끝까지 |
 | | 09 | [역방향 시나리오(공급 제약)](docs/09-reverse-sizing-scenario.md) | 고정 GPU→가용 용량→적재→할당 상한→잔여/증설, 08의 반대 방향 |
 | 부록 | A1 | [1차 가정치 레퍼런스](appendix/A1-first-order-reference.md) | **예산 추정 전용** 처리량, 동시성, KV, 임베딩, 콜드스타트 출발 숫자(출처와 경고 포함) |
 | | A2 | [입력값 환산, 기본값, 모델 선택](appendix/A2-inputs-and-defaults.md) | 사용자 수→동시성 환산, 워크로드 프리셋, SLA 기본값, 모델 선택 1차 가이드 |
-| | A3 | [견적 요청(RFQ) 체크리스트](appendix/A3-rfq-quote-checklist.md) | 단가 칸을 채우려면 무엇을 물어야 하나(라이선스, HW, 시설, 기록 양식) |
-| | A4 | [AI FinOps 스코어카드](appendix/A4-ai-finops-scorecard.md) | 이미 나가고 있는 AI 지출의 역방향 감사. 태깅, 단위경제, 가동률, 구매 방식, 모델 적정성, 이상 탐지의 여섯 점검축과 자산별 회수 판정 입력 |
+| | A3 | [견적 요청(RFQ) 체크리스트](appendix/A3-rfq-quote-checklist.md) | 단가 칸을 채우려면 무엇을 물어야 하나(라이선스, HW, 시설, 견적 출처 기록) |
 | | 워크북 | [계산 워크북(xlsx)](worksheet/) | 입력만 바꾸면 GPU, 노드, 스토리지, TCO 골격이 수식으로 자동 산출되는 스프레드시트 |
 
 > 워크로드를 **자원 → 노드 → 클러스터 → 비용**으로 환산하는 사이징 생애주기 순서입니다. 각 문서는 끝에 추정치를 검증하는 **검증과 실측 방법**을 담습니다.

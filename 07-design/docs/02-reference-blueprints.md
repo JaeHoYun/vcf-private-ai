@@ -66,45 +66,12 @@
 
 **적합** — 대부분의 엔터프라이즈 프로덕션. 성능, 격리, 운영의 균형.
 
-이 중(Standard) 구성을 논리 토폴로지로 나타내면 다음과 같습니다. 관리 도메인과 워크로드 도메인을 분리한 표준 토폴로지(D1)를 기반으로, MIG로 나눈 GPU 노드 풀(D2)에서 PAIS Model Runtime이 모델을 서빙하고, DSM pgvector(D8)가 검색 데이터를 제공합니다. 외부 IdP(D11)가 인증을, AVI(D6)가 부하 분산을, NSX 오버레이, VPC(D5, D10)가 네트워크 경계를 맡습니다. (GitHub에서 자동 렌더링됩니다.)
+이 중(Standard) 구성을 논리 토폴로지로 나타내면 다음과 같습니다. 관리 도메인과 워크로드 도메인을 분리한 표준 토폴로지(D1)를 기반으로, MIG로 나눈 GPU 노드 풀(D2)에서 PAIS Model Runtime이 모델을 서빙하고, DSM pgvector(D8)가 검색 데이터를 제공합니다. 외부 IdP(D11)가 인증을, AVI(D6)가 부하 분산을, NSX 오버레이, VPC(D5, D10)가 네트워크 경계를 맡습니다.
 
-```mermaid
-flowchart TB
-    USER["사내 사용자, 앱"]
-    IDP["외부 IdP<br/>페더레이션 (D11)"]
-    PROXY["이그레스 프록시 (D12)<br/>→ 외부 모델 허브"]
-
-    subgraph MGMT["관리 도메인"]
-        direction TB
-        VC["vCenter"]
-        NSXM["NSX Manager"]
-        AUTO["VCF Automation, Operations"]
-    end
-
-    subgraph WL["워크로드 도메인 — 표준 토폴로지 (D1)"]
-        direction TB
-        AVI["AVI 로드밸런서 (D6)"]
-        subgraph VKS["VKS 클러스터 (D3)"]
-            direction TB
-            GW["PAIS API Gateway (OpenAI 호환)"]
-            subgraph GPUP["GPU 노드 풀 — MIG 분할 (D2)"]
-                RT["PAIS Model Runtime<br/>vLLM (+NIM, D4)"]
-            end
-            PG[("DSM PostgreSQL<br/>+ pgvector (D8)")]
-        end
-        VSAN[("vSAN 스토리지 (D7)")]
-    end
-
-    USER --> AVI --> GW
-    IDP -. 인증 .-> GW
-    GW --> RT
-    GW --> PG
-    RT -. 가중치와 캐시 .-> VSAN
-    PG -. 데이터 .-> VSAN
-    RT --> PROXY
-    AUTO -. 프로비저닝과 정책 .-> VKS
-    NSXM -. NSX가 오버레이, VPC, 마이크로세그 경계 제공 D5, D10 .-> WL
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/design-standard-blueprint-dark.svg">
+  <img src="../../assets/design-standard-blueprint-light.svg" alt="중(Standard) 블루프린트 논리 토폴로지. 관리 도메인과 워크로드 도메인(D1)을 분리하고, AVI(D6)를 거친 요청이 VKS 클러스터(D3)의 PAIS API Gateway에서 MIG GPU 노드 풀(D2)의 Model Runtime(D4)과 DSM pgvector(D8)로 전달된다. 외부 IdP(D11), 이그레스 프록시(D12), vSAN(D7), NSX 경계(D5, D10)를 함께 표시한다.">
+</picture>
 
 소, 대, 전사 블루프린트는 이 그림을 기준으로, 각 절(2.2, 2.4, 2.5절) 표의 결정(D1–D16) 차이만큼 GPU 도메인, 격리, 가용성, 테넌트 경계, 게이트웨이와 가드레일 계층이 가감된 형태입니다.
 

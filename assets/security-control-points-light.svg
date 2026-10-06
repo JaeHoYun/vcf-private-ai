@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="830" viewBox="0 0 1020 830" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'Noto Sans CJK KR', Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">요청 경로상의 통제 지점</title>
+<desc id="d">사용자 요청은 CP1 0계층 경계, CP2 1계층 AI 게이트웨이(선택), CP3 앱 BFF, CP4 오케스트레이션과 에이전트를 지난다. CP4에서 CP5 도구 게이트웨이를 거쳐 사내 시스템과 MCP 서버로, CP6 검색단 권한 필터를 거쳐 지식베이스로, CP7 2계층 PAIS 서빙 게이트웨이를 거쳐 Model Runtime으로 갈라진다. 원격 모델 호출은 CP8 반출 경계를 지나고, 응답은 CP9 출력 가드를 거쳐 CP3으로 반환된다. CP3, CP4, CP7은 CP10 트레이스와 감사로 기록을 보낸다.</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
+<rect x="314" y="24" width="250" height="48" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="439" y="53.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">사용자와 클라이언트</text>
+<rect x="314" y="108" width="250" height="72" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<rect x="328" y="125.04" width="35.6" height="20" rx="10" fill="#0969da"/>
+<text x="345.8" y="139.54" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">CP1</text>
+<text x="371.6" y="140.04" font-size="15" font-weight="700" fill="#1f2328">0계층 경계</text>
+<text x="328" y="158.82" font-size="13" fill="#1f2328">Avi L7, WAF, TLS, 기존 API 관리</text>
+<rect x="314" y="216" width="250" height="72" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5" stroke-dasharray="6 4"/>
+<rect x="328" y="233.04" width="35.6" height="20" rx="10" fill="#0969da"/>
+<text x="345.8" y="247.54" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">CP2</text>
+<text x="371.6" y="248.04" font-size="15" font-weight="700" fill="#1f2328">1계층 AI 게이트웨이</text>
+<text x="328" y="266.82" font-size="13" fill="#1f2328">키와 팀 예산, 레이트리밋, 라우팅</text>
+<rect x="314" y="324" width="250" height="72" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<rect x="328" y="341.04" width="35.6" height="20" rx="10" fill="#0969da"/>
+<text x="345.8" y="355.54" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">CP3</text>
+<text x="371.6" y="356.04" font-size="15" font-weight="700" fill="#1f2328">앱 BFF</text>
+<text x="328" y="374.82" font-size="13" fill="#1f2328">사용자 인증, 세션, 입력 가드</text>
+<rect x="314" y="432" width="250" height="72" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<rect x="328" y="449.04" width="35.6" height="20" rx="10" fill="#0969da"/>
+<text x="345.8" y="463.54" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">CP4</text>
+<text x="371.6" y="464.04" font-size="15" font-weight="700" fill="#1f2328">오케스트레이션과 에이전트</text>
+<text x="328" y="482.82" font-size="13" fill="#1f2328">자율성 상한, 승인 게이트</text>
+<rect x="34" y="324" width="250" height="72" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<rect x="48" y="341.04" width="35.6" height="20" rx="10" fill="#0969da"/>
+<text x="65.8" y="355.54" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">CP9</text>
+<text x="91.6" y="356.04" font-size="15" font-weight="700" fill="#1f2328">출력 가드</text>
+<text x="48" y="374.82" font-size="13" fill="#1f2328">PII, 누출, 유해 출력</text>
+<rect x="34" y="564" width="250" height="72" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<rect x="48" y="581.04" width="35.6" height="20" rx="10" fill="#0969da"/>
+<text x="65.8" y="595.54" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">CP5</text>
+<text x="91.6" y="596.04" font-size="15" font-weight="700" fill="#1f2328">도구 게이트웨이</text>
+<text x="48" y="614.82" font-size="13" fill="#1f2328">MCP 승인 목록, 호출 단위 인가</text>
+<rect x="314" y="564" width="250" height="72" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<rect x="328" y="581.04" width="35.6" height="20" rx="10" fill="#0969da"/>
+<text x="345.8" y="595.54" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">CP6</text>
+<text x="371.6" y="596.04" font-size="15" font-weight="700" fill="#1f2328">검색단 권한 필터</text>
+<text x="328" y="614.82" font-size="13" fill="#1f2328">권한 밖 문서를 프롬프트에서 제외</text>
+<rect x="594" y="564" width="250" height="72" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<rect x="608" y="581.04" width="35.6" height="20" rx="10" fill="#0969da"/>
+<text x="625.8" y="595.54" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">CP7</text>
+<text x="651.6" y="596.04" font-size="15" font-weight="700" fill="#1f2328">PAIS 서빙 게이트웨이</text>
+<text x="608" y="614.82" font-size="13" fill="#1f2328">2계층, 토큰 검증, 모델 라우팅</text>
+<rect x="34" y="672" width="250" height="60" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="159" y="707.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">사내 시스템, MCP 서버</text>
+<path d="M314,676 A125,8 0 0 1 564,676 V728 A125,8 0 0 1 314,728 Z" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<path d="M314,676 A125,8 0 0 0 564,676" fill="none" stroke="#4ac26b" stroke-width="1.5"/>
+<text x="439" y="715.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">지식베이스, pgvector</text>
+<rect x="594" y="672" width="250" height="60" rx="8" fill="#fff1e5" stroke="#fb8f44" stroke-width="1.5"/>
+<text x="719" y="698.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">Model Runtime</text>
+<text x="719" y="716.82" font-size="13" text-anchor="middle" fill="#59636e">로컬, 공유, 원격</text>
+<rect x="880" y="672" width="124" height="60" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="942" y="696.54" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">원격 모델</text>
+<text x="942" y="717.54" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">반출 경계</text>
+<rect x="924.2" y="646" width="35.6" height="20" rx="10" fill="#0969da"/>
+<text x="942" y="660.5" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">CP8</text>
+<rect x="880" y="324" width="124" height="312" rx="8" fill="#fbefff" stroke="#c297ff" stroke-width="1.5"/>
+<rect x="920.6" y="419" width="42.8" height="20" rx="10" fill="#8250df"/>
+<text x="942" y="433.5" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">CP10</text>
+<text x="942" y="460.54" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">트레이스와</text>
+<text x="942" y="481.54" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">감사</text>
+<text x="942" y="500.32" font-size="13" text-anchor="middle" fill="#59636e">OTel,</text>
+<text x="942" y="518.32" font-size="13" text-anchor="middle" fill="#59636e">VCF Operations,</text>
+<text x="942" y="536.32" font-size="13" text-anchor="middle" fill="#59636e">SIEM</text>
+<path d="M439,72 L439,108" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M439,180 L439,216" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M439,288 L439,324" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M439,396 L439,432" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M439,504 L439,564" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M439,534 L159,534 L159,564" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M439,534 L719,534 L719,564" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M159,636 L159,672" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M439,636 L439,668" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M719,636 L719,672" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M844,702 L880,702" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<path d="M679,732 L679,768 L16,768 L16,360 L34,360" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="439" y="760" font-size="12" text-anchor="middle" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">응답 경로: Model Runtime에서 CP9를 거쳐 CP3으로 반환</text>
+<path d="M284,360 L314,360" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M564,360 L880,360" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<path d="M564,468 L880,468" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<path d="M844,600 L880,600" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<rect x="34" y="806" width="18" height="14" rx="3" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text x="60" y="818" font-size="12" fill="#59636e">통제 지점(CP)</text>
+<rect x="168" y="806" width="18" height="14" rx="3" fill="none" stroke="#afb8c1" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="194" y="818" font-size="12" fill="#59636e">선택 구성 또는 경계</text>
+<path d="M335.6,813 L353.6,813" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<text x="361.6" y="818" font-size="12" fill="#59636e">감사 기록 수집, 원격 반출</text>
+</svg>

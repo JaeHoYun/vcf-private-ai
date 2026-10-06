@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="714" viewBox="0 0 1000 714" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'Noto Sans CJK KR', Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">중(Standard) 블루프린트 논리 토폴로지</title>
+<desc id="d">관리 도메인(vCenter, NSX Manager, VCF Automation, Operations)과 워크로드 도메인(표준 토폴로지, D1)을 분리한다. 사내 사용자와 앱의 요청은 AVI 로드밸런서(D6)를 거쳐 VKS 클러스터(D3)의 PAIS API Gateway로 들어가고, Gateway는 MIG로 분할한 GPU 노드 풀(D2)의 PAIS Model Runtime(D4)과 DSM PostgreSQL, pgvector(D8)를 호출한다. 외부 IdP(D11)가 인증을, 이그레스 프록시(D12)가 외부 모델 허브 연결을, vSAN(D7)이 가중치, 캐시, 데이터 저장을, NSX가 오버레이, VPC, 마이크로세그멘테이션 경계(D5, D10)를 맡는다.</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
+<rect x="510" y="24" width="200" height="56" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="610" y="57.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">사내 사용자, 앱</text>
+<rect x="740" y="24" width="236" height="56" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="858" y="48.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">외부 IdP</text>
+<text x="858" y="66.82" font-size="13" text-anchor="middle" fill="#59636e">페더레이션 (D11)</text>
+<rect x="24" y="120" width="196" height="260" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<text x="38" y="142" font-size="13" font-weight="700" fill="#59636e">관리 도메인</text>
+<rect x="40" y="156" width="164" height="48" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="122" y="185.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">vCenter</text>
+<rect x="40" y="226" width="164" height="48" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="122" y="255.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">NSX Manager</text>
+<rect x="40" y="296" width="164" height="60" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="122" y="320.54" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">VCF Automation,</text>
+<text x="122" y="341.54" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">Operations</text>
+<rect x="24" y="440" width="196" height="64" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="122" y="468.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">이그레스 프록시 (D12)</text>
+<text x="122" y="486.82" font-size="13" text-anchor="middle" fill="#59636e">→ 외부 모델 허브</text>
+<rect x="340" y="120" width="636" height="570" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<text x="354" y="142" font-size="13" font-weight="700" fill="#59636e">워크로드 도메인, 표준 토폴로지 (D1)</text>
+<rect x="510" y="164" width="200" height="48" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text x="610" y="193.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">AVI 로드밸런서 (D6)</text>
+<rect x="364" y="248" width="588" height="312" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<text x="378" y="270" font-size="13" font-weight="700" fill="#59636e">VKS 클러스터 (D3)</text>
+<rect x="510" y="284" width="200" height="56" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text x="610" y="308.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">PAIS API Gateway</text>
+<text x="610" y="326.82" font-size="13" text-anchor="middle" fill="#59636e">OpenAI 호환</text>
+<rect x="388" y="392" width="252" height="148" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<text x="402" y="414" font-size="13" font-weight="700" fill="#59636e">GPU 노드 풀, MIG 분할 (D2)</text>
+<rect x="408" y="432" width="212" height="88" rx="8" fill="#fff1e5" stroke="#fb8f44" stroke-width="1.5"/>
+<text x="514" y="472.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">PAIS Model Runtime</text>
+<text x="514" y="490.82" font-size="13" text-anchor="middle" fill="#59636e">vLLM (+NIM, D4)</text>
+<path d="M700,428 A114,8 0 0 1 928,428 V512 A114,8 0 0 1 700,512 Z" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<path d="M700,428 A114,8 0 0 0 928,428" fill="none" stroke="#4ac26b" stroke-width="1.5"/>
+<text x="814" y="474.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">DSM PostgreSQL</text>
+<text x="814" y="492.82" font-size="13" text-anchor="middle" fill="#59636e">+ pgvector (D8)</text>
+<path d="M450,608 A160,8 0 0 1 770,608 V660 A160,8 0 0 1 450,660 Z" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<path d="M450,608 A160,8 0 0 0 770,608" fill="none" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="610" y="647.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">vSAN 스토리지 (D7)</text>
+<path d="M610,80 L610,164" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M610,212 L610,284" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M590,340 L590,432" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M680,340 L680,380 L814,380 L814,420" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M858,80 L858,312 L710,312" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<text x="866" y="200" font-size="12" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">인증</text>
+<path d="M408,472 L220,472" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M514,520 L514,600" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<text x="506" y="584" font-size="12" text-anchor="end" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">가중치, 캐시</text>
+<path d="M814,520 L814,634 L770,634" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<text x="822" y="584" font-size="12" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">데이터</text>
+<path d="M204,250 L340,250" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<text x="272" y="205" font-size="12" text-anchor="middle" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">오버레이, VPC,</text>
+<text x="272" y="222" font-size="12" text-anchor="middle" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">마이크로세그 경계</text>
+<text x="272" y="239" font-size="12" text-anchor="middle" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(D5, D10)</text>
+<path d="M204,326 L364,326" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<text x="284" y="316" font-size="12" text-anchor="middle" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">프로비저닝, 정책</text>
+</svg>

@@ -144,7 +144,7 @@ A100 80GB 기준: 8B ≈ 30초–1분, 70B ≈ 2–5분. **완화:** Min Replica
 - **GPU 메모리**: 모델 가중치(FP16 ≈ 파라미터×2바이트) + KV 캐시(동시성과 컨텍스트 길이에 비례) + 헤드룸. 양자화(GPTQ, AWQ, FP8)로 가중치 절감.
 - **vCPU/RAM**: 토크나이즈, 전처리, 요청 처리용 호스트 자원 확보, 부하 테스트로 조정.
 
-> **상세 사이징의 기준 문서는 [⑥ 사이징, 용량, 비용 가이드](../../06-sizing-cost/README.md)입니다** — 워크로드→GPU/노드/클러스터 환산 워크시트, VKS 클러스터 사이징, 스토리지와 네트워크 용량, 용량 계획, TCO를 다룹니다. 본 절은 출발점 요약이며, 모든 수치는 환경별로 상이하므로 실측이 전제입니다 ([vLLM — Optimization and Tuning](https://docs.vllm.ai/en/stable/configuration/optimization/)).
+> **상세 사이징의 기준 문서는 [⑥ 사이징, 용량, 비용 가이드](../../06-sizing-cost/README.md)입니다** — 워크로드→GPU/노드/클러스터 환산 산정 표, VKS 클러스터 사이징, 스토리지와 네트워크 용량, 용량 계획, TCO를 다룹니다. 본 절은 출발점 요약이며, 모든 수치는 환경별로 상이하므로 실측이 전제입니다 ([vLLM — Optimization and Tuning](https://docs.vllm.ai/en/stable/configuration/optimization/)).
 
 ---
 

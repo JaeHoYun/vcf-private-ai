@@ -120,31 +120,31 @@ OWASP 2025 개정에서 시스템 프롬프트 유출(LLM07)과 벡터와 임베
 
 본 문서의 전경 모델이 실제 환경에서 성립하는지 확인하는 절차입니다. 각 항목은 후속 문서의 상세 검증으로 연결됩니다.
 
-1. **자산과 경계 인벤토리 확인**: PAIF Workload Domain 및 Supervisor에 설치된 Private AI Services 목록을 확인합니다.
+1. **자산과 경계 인벤토리 확인.** PAIF Workload Domain 및 Supervisor에 설치된 Private AI Services 목록을 확인합니다.
    ```bash
    kubectl get ns
    kubectl get supervisorservices -A        # Private AI Services 설치 여부
    ```
    기대값: Model Gallery / Runtime / Vector DB / Indexing / Agent Builder 중 활성 서비스가 인벤토리와 일치.
 
-2. **L1 부팅 무결성**: ESX 호스트의 Secure Boot/TPM 증명 상태를 vCenter에서 확인합니다(미충족 호스트가 있으면 L1 신뢰 기반 가정 위반).
+2. **L1 부팅 무결성.** ESX 호스트의 Secure Boot/TPM 증명 상태를 vCenter에서 확인합니다(미충족 호스트가 있으면 L1 신뢰 기반 가정 위반).
    - 체크포인트: 모든 GPU 호스트가 Attested 상태, GPU 격리 모드(MIG/passthrough) 정책과 일치.
 
-3. **L2 세그멘테이션 적용 확인**: vDefend Distributed Firewall이 워크로드 NIC에 적용 중인지, 테넌트 간 기본 거부(default-deny)인지 확인합니다.
+3. **L2 세그멘테이션 적용 확인.** vDefend Distributed Firewall이 워크로드 NIC에 적용 중인지, 테넌트 간 기본 거부(default-deny)인지 확인합니다.
    - Security Segmentation Report로 전면 허용(allow-any) 규칙 존재 여부 점검([vDefend](https://www.vmware.com/products/cloud-infrastructure/vdefend-distributed-firewall)).
    - 검증 테스트: 테넌트 A 워크로드에서 테넌트 B 추론 엔드포인트로 연결 시도 → 차단되어야 정상(상세는 [02](02-network-tenant-isolation.md)).
 
-4. **L3 권한 최소화 확인**: 네임스페이스/서비스계정의 RBAC가 최소권한인지 점검합니다.
+4. **L3 권한 최소화 확인.** 네임스페이스/서비스계정의 RBAC가 최소권한인지 점검합니다.
    ```bash
    kubectl auth can-i --list --as=system:serviceaccount:<ns>:<sa>
    ```
    기대값: 에이전트/앱 계정이 GPU, 시크릿, 타 네임스페이스에 광범위 권한을 갖지 않음(LLM06 대비, 상세 [03](03-identity-access.md)).
 
-5. **L4 공급망 신뢰 확인**: Harbor/Model Gallery에 등록된 모델, 이미지가 승인, 서명 경로로만 유입되는지, 에어갭 환경은 Artifact Mirroring Tool 단방향 미러링만 사용하는지 확인합니다(상세 [04](04-airgap-supply-chain.md)).
+5. **L4 공급망 신뢰 확인.** Harbor/Model Gallery에 등록된 모델, 이미지가 승인, 서명 경로로만 유입되는지, 에어갭 환경은 Artifact Mirroring Tool 단방향 미러링만 사용하는지 확인합니다(상세 [04](04-airgap-supply-chain.md)).
 
-6. **커버리지 행렬 점검(테이블탑)**: 1.6 표의 OWASP LLM 10개 항목 각각에 대해 "담당 문서가 실제 통제를 명시하는가"를 검토하고, 미커버 항목이 0인지 확인합니다. 신규 위협(ATLAS 갱신 등) 발생 시 본 표에 행을 추가합니다.
+6. **커버리지 행렬 점검(테이블탑).** 1.6 표의 OWASP LLM 10개 항목 각각에 대해 "담당 문서가 실제 통제를 명시하는가"를 검토하고, 미커버 항목이 0인지 확인합니다. 신규 위협(ATLAS 갱신 등) 발생 시 본 표에 행을 추가합니다.
 
-7. **추적 체인 무결성**: 각 위협이 (위협 분류 → 방어 통제 → 검증 절차 → 감사 증빙[07])으로 끊김 없이 연결되는지 확인합니다. 끊긴 고리가 있으면 회귀 불합격으로 간주합니다([07-audit-compliance.md](07-audit-compliance.md)).
+7. **추적 체인 무결성.** 각 위협이 (위협 분류 → 방어 통제 → 검증 절차 → 감사 증빙[07])으로 끊김 없이 연결되는지 확인합니다. 끊긴 고리가 있으면 회귀 불합격으로 간주합니다([07-audit-compliance.md](07-audit-compliance.md)).
 
 ---
 

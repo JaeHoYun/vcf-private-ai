@@ -87,11 +87,11 @@ PostgreSQL은 1996년 첫 릴리스 이후 약 30년간 전 세계에서 가장 
 
 2023년 이후, 전용 벡터 DB에서 PostgreSQL + pgvector로 전환하는 사례가 빠르게 늘고 있으며, 2024–2025년에 이 트렌드가 가속화되고 있습니다. 대표적인 사례를 들면 다음과 같습니다.
 
-**한 온라인 식료품 유통사 (2025년 5월)**: Elasticsearch 기반 검색 인프라를 PostgreSQL + pgvector 기반 하이브리드 검색으로 단계적 전환. 정규화된 데이터 모델 전환을 통해 write workload를 10배 감소시키고, 스토리지 및 인덱싱 비용 80% 절감을 달성했습니다. 또한 pgvector 기반 semantic search 도입으로 zero-result 검색률이 6% 감소하여 증분 매출 증가로 이어졌습니다.
+**한 온라인 식료품 유통사 (2025년 5월).** Elasticsearch 기반 검색 인프라를 PostgreSQL + pgvector 기반 하이브리드 검색으로 단계적 전환. 정규화된 데이터 모델 전환을 통해 write workload를 10배 감소시키고, 스토리지 및 인덱싱 비용 80% 절감을 달성했습니다. 또한 pgvector 기반 semantic search 도입으로 zero-result 검색률이 6% 감소하여 증분 매출 증가로 이어졌습니다.
 
-**한 웹 크롤링 API 스타트업 (2023년)**: Pinecone에서 Supabase 기반 pgvector로 전환. 동일 워크로드에서 비용이 대폭 절감되었으며, 벡터 데이터와 메타데이터의 통합 관리가 가능해졌습니다. 이 회사는 "다른 벡터 DB(Faiss, Weaviate, Pinecone)는 비용이 높고 메타데이터 저장이 불편했다"고 밝혔습니다.
+**한 웹 크롤링 API 스타트업 (2023년).** Pinecone에서 Supabase 기반 pgvector로 전환. 동일 워크로드에서 비용이 대폭 절감되었으며, 벡터 데이터와 메타데이터의 통합 관리가 가능해졌습니다. 이 회사는 "다른 벡터 DB(Faiss, Weaviate, Pinecone)는 비용이 높고 메타데이터 저장이 불편했다"고 밝혔습니다.
 
-**한 LLM 게이트웨이 오픈소스 프로젝트**: 별도 벡터 DB에서 PostgreSQL + pgvector로 통합. 데이터 동기화 문제가 해소되고 운영 부담이 감소했습니다.
+**한 LLM 게이트웨이 오픈소스 프로젝트.** 별도 벡터 DB에서 PostgreSQL + pgvector로 통합. 데이터 동기화 문제가 해소되고 운영 부담이 감소했습니다.
 
 이 트렌드의 배경은 명확합니다. 2022–2023년 ChatGPT 등장과 함께 벡터 DB 시장에 투자가 몰렸지만, 실제 프로덕션 운영을 경험한 기업들이 "별도 벡터 DB의 운영 복잡성 대비 실익이 크지 않다"는 결론을 내리고 있습니다.
 
@@ -210,13 +210,13 @@ VCF 환경에서 pgvector 워크로드를 위한 아키텍처는 다음과 같�
 
 핵심 구성 요소별 역할은 다음과 같습니다.
 
-- **DSM Appliance**: PostgreSQL 라이프사이클 전체를 관리하는 컨트롤 플레인. vCenter 플러그인으로 등록되어 vSphere Client에서 직접 접근 가능합니다.
-- **Infrastructure Policy**: 데이터베이스가 배포될 컴퓨트/스토리지/네트워크를 정의. VCF 9.x에서는 vSphere Namespace 기반 정책도 지원합니다.
-- **PG Primary + pgvector**: 벡터 데이터 저장 및 검색을 수행하는 주 데이터베이스. DSM이 pgvector 확장을 사전 포함하여 프로비저닝합니다.
-- **PG Replica**: 읽기 분산 및 HA를 위한 복제본. 벡터 검색은 읽기 워크로드이므로 Replica로 분산하면 Primary의 부하를 줄일 수 있습니다.
-- **PG Monitor**: pg_auto_failover 기반 장애 감지 및 자동 Failover를 수행하는 모니터링 노드.
-- **vSAN ESA**: Anti-Affinity Rule에 의해 Primary, Replica, Monitor가 서로 다른 호스트에 배치되며, vSAN이 데이터 보호를 제공합니다.
-- **PAIF Workload Domain**: Private AI Foundation 구성 시, 임베딩 모델과 LLM 추론을 위한 GPU 워크로드가 별도 도메인에서 실행됩니다.
+- **DSM Appliance.** PostgreSQL 라이프사이클 전체를 관리하는 컨트롤 플레인. vCenter 플러그인으로 등록되어 vSphere Client에서 직접 접근 가능합니다.
+- **Infrastructure Policy.** 데이터베이스가 배포될 컴퓨트/스토리지/네트워크를 정의. VCF 9.x에서는 vSphere Namespace 기반 정책도 지원합니다.
+- **PG Primary + pgvector.** 벡터 데이터 저장 및 검색을 수행하는 주 데이터베이스. DSM이 pgvector 확장을 사전 포함하여 프로비저닝합니다.
+- **PG Replica.** 읽기 분산 및 HA를 위한 복제본. 벡터 검색은 읽기 워크로드이므로 Replica로 분산하면 Primary의 부하를 줄일 수 있습니다.
+- **PG Monitor.** pg_auto_failover 기반 장애 감지 및 자동 Failover를 수행하는 모니터링 노드.
+- **vSAN ESA.** Anti-Affinity Rule에 의해 Primary, Replica, Monitor가 서로 다른 호스트에 배치되며, vSAN이 데이터 보호를 제공합니다.
+- **PAIF Workload Domain.** Private AI Foundation 구성 시, 임베딩 모델과 LLM 추론을 위한 GPU 워크로드가 별도 도메인에서 실행됩니다.
 
 ---
 
@@ -238,7 +238,7 @@ PAIS의 핵심 구성 요소와 pgvector의 위치를 정리하면 다음과 같
 
 PAIS에서 pgvector는 단순한 저장소에 그치지 않습니다. 사용자의 질문이 들어오면, Agent Builder의 에이전트가 질문을 임베딩 모델(Model Runtime에서 서빙)로 벡터화하고, 이 벡터를 pgvector(DSM에서 관리)에 조회하여 관련 문서를 찾고, 찾은 문서를 LLM(Model Runtime에서 서빙)에 컨텍스트로 전달하여 최종 답변을 생성합니다. pgvector는 이 파이프라인에서 검색 가능한 지식을 저장하는 핵심 저장소입니다.
 
-**GPU 및 라이선스 참고**: PAIS의 소프트웨어 컴포넌트(Model Gallery, Model Runtime, Data Indexing & Retrieval, Agent Builder)는 VCF 9.x 구독에 포함되어 추가 소프트웨어 비용이 없습니다. 단, GPU 기반 모델 추론 및 임베딩 생성을 위한 **NVIDIA AI Enterprise 라이선스는 NVIDIA에서 별도 구매**해야 합니다. 또한 GPU 하드웨어(NVIDIA A100, H100, L40S, Blackwell B200, RTX PRO 6000/4500 등)도 별도 확보가 필요합니다. VCF 9.1/PAIF 9.1에서는 DirectPath GPU enablement와 GPUDirect RDMA/Storage를 지원합니다. DSM을 통한 PostgreSQL + pgvector 프로비저닝 자체는 GPU 없이도 가능하며, PoC 단계에서 임베딩 생성을 외부 API(OpenAI, Cohere 등)로 처리하면 GPU 인프라 없이 벡터 검색 기능을 검증할 수 있습니다.
+**GPU 및 라이선스 참고.** PAIS의 소프트웨어 컴포넌트(Model Gallery, Model Runtime, Data Indexing & Retrieval, Agent Builder)는 VCF 9.x 구독에 포함되어 추가 소프트웨어 비용이 없습니다. 단, GPU 기반 모델 추론 및 임베딩 생성을 위한 **NVIDIA AI Enterprise 라이선스는 NVIDIA에서 별도 구매**해야 합니다. 또한 GPU 하드웨어(NVIDIA A100, H100, L40S, Blackwell B200, RTX PRO 6000/4500 등)도 별도 확보가 필요합니다. VCF 9.1/PAIF 9.1에서는 DirectPath GPU enablement와 GPUDirect RDMA/Storage를 지원합니다. DSM을 통한 PostgreSQL + pgvector 프로비저닝 자체는 GPU 없이도 가능하며, PoC 단계에서 임베딩 생성을 외부 API(OpenAI, Cohere 등)로 처리하면 GPU 인프라 없이 벡터 검색 기능을 검증할 수 있습니다.
 
 ### 3.3.2 PAIS RAG 워크플로우 상세
 
@@ -277,7 +277,7 @@ PAIS와 DSM을 결합하면 퍼블릭 클라우드의 RAG 서비스(AWS Bedrock 
 
 핵심 차별점: 데이터가 한 번도 조직의 네트워크 밖으로 나가지 않습니다. 문서 원본, 벡터 임베딩, LLM 추론 결과가 모두 온프레미스에서 처리됩니다. 이것은 금융감독원 규제, 개인정보보호법, 산업별 컴플라이언스를 준수해야 하는 한국 엔터프라이즈에 결정적인 요소입니다. PAIS의 폐쇄망(Air-gapped) 지원(2.1부터)으로 데이터 반출이 불가한 방산, 금융, 공공 환경에서도 RAG 전체 파이프라인을 외부 연결 없이 구성할 수 있습니다.
 
-**성숙도 참고**: PAIS는 VCF 9.0(2025년 6월)에서 처음 도입된 서비스로, AWS Bedrock(2023년 GA)이나 Azure AI Search(2023년 GA) 대비 에코시스템과 서드파티 통합 측면에서 아직 확장 단계에 있습니다. 데이터 소스 커넥터 수, 지원되는 문서 포맷, 커뮤니티 사례 등이 분기별 업데이트로 확대되고 있습니다. 그러나 **데이터 주권, 네트워크 지연, 비용 예측 가능성** 측면에서의 구조적 우위는 퍼블릭 클라우드 대안이 제공하기 어려운 PAIS의 핵심 가치입니다.
+**성숙도 참고.** PAIS는 VCF 9.0(2025년 6월)에서 처음 도입된 서비스로, AWS Bedrock(2023년 GA)이나 Azure AI Search(2023년 GA) 대비 에코시스템과 서드파티 통합 측면에서 아직 확장 단계에 있습니다. 데이터 소스 커넥터 수, 지원되는 문서 포맷, 커뮤니티 사례 등이 분기별 업데이트로 확대되고 있습니다. 그러나 **데이터 주권, 네트워크 지연, 비용 예측 가능성** 측면에서의 구조적 우위는 퍼블릭 클라우드 대안이 제공하기 어려운 PAIS의 핵심 가치입니다.
 
 ---
 

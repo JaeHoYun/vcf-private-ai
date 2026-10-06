@@ -53,9 +53,9 @@ DCGM 메트릭 정의와 단위는 [NVIDIA DCGM Feature Overview](https://docs.n
 
 헤드룸(headroom)과 버스트(burst) 정책의 권고 방향입니다.
 
-- **헤드룸 확보**: 프로덕션 추론은 평균 사용률을 100%까지 높이지 않습니다. 트래픽 변동, 노드 장애, 롤링 업데이트를 흡수할 여유분(예: 20–30%)을 남깁니다. 헤드룸을 0으로 운영하면 장애 1건이 곧 SLO 위반으로 이어집니다.
-- **버스트 흡수**: 단기 피크는 증설보다 큐잉, 우선순위, MIG(Multi-Instance GPU, 단일 GPU를 격리된 여러 인스턴스로 분할)/vGPU 재분배로 흡수하고, **지속적, 구조적 증가**일 때만 물리 증설로 대응합니다. 순간 피크에 반응해 증설하면 곧 유휴 자원으로 남습니다.
-- **소진 속도 기반 예측**: 쿼터, VRAM, 용량의 "소진 속도"를 추세선으로 분석하면 "며칠 후 고갈"을 미리 알 수 있습니다. VCF Operations의 용량과 비용 인사이트가 이 추세 기반 권고를 제공합니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)).
+- **헤드룸 확보.** 프로덕션 추론은 평균 사용률을 100%까지 높이지 않습니다. 트래픽 변동, 노드 장애, 롤링 업데이트를 흡수할 여유분(예: 20–30%)을 남깁니다. 헤드룸을 0으로 운영하면 장애 1건이 곧 SLO 위반으로 이어집니다.
+- **버스트 흡수.** 단기 피크는 증설보다 큐잉, 우선순위, MIG(Multi-Instance GPU, 단일 GPU를 격리된 여러 인스턴스로 분할)/vGPU 재분배로 흡수하고, **지속적, 구조적 증가**일 때만 물리 증설로 대응합니다. 순간 피크에 반응해 증설하면 곧 유휴 자원으로 남습니다.
+- **소진 속도 기반 예측.** 쿼터, VRAM, 용량의 "소진 속도"를 추세선으로 분석하면 "며칠 후 고갈"을 미리 알 수 있습니다. VCF Operations의 용량과 비용 인사이트가 이 추세 기반 권고를 제공합니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)).
 
 증설의 형태는 두 가지입니다. **GPU/노드 수평 증설**(PAIF Workload Domain에 호스트 추가)과 **활용 효율 개선**(리클레임과 라이트사이징으로 기존 자원 회수). VCF Operations 9.1의 리클레임 대시보드와 라이트사이징 권고는 "증설 전에 회수할 자원"을 먼저 식별해 줍니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)). 하드웨어 공급과 비용 부담이 큰 시기일수록 "증설하기 전에 먼저 회수"하는 것이 비용을 아끼는 첫 번째 조치입니다([VCF 9.1 출시 발표](https://www.broadcom.com/company/news/product-releases/64326)).
 
@@ -63,9 +63,9 @@ DCGM 메트릭 정의와 단위는 [NVIDIA DCGM Feature Overview](https://docs.n
 
 이미 도입했으나 유휴, 사일로 상태인 GPU를 가용 풀로 회수하는 것은 [역방향(공급 제약) 사이징](01-sizing-methodology.md#17-순방향과-역방향-사이징)의 출발점입니다([09](09-reverse-sizing-scenario.md) 9.5절). 진단과 회수는 위 6.1 지표와 6.2 트리거를 그대로 활용합니다.
 
-- **저활용 진단**: 평균 GPU 사용률은 낮은데(6.1) 특정 팀과 네임스페이스가 점유 중이거나, 쿼터 소진율과 물리 사용률의 괴리(6.1, 6.3)가 크면 "정책 때문에 유휴 상태로 남은" 자원입니다.
-- **회수**: VCF Operations 9.1의 리클레임과 라이트사이징 권고로 미사용 예약과 과대 할당을 식별해 공유 풀로 반환합니다(6.2). 예약 점유도 비용이므로 쇼백으로 자발적 반납을 유도합니다(6.4).
-- **재배치**: 회수한 자원을 [09](09-reverse-sizing-scenario.md)의 워크로드 포트폴리오(추론, 멀티모델, 파인튜닝)로 재배분하고, 재사일로화를 방지하기 위해 네임스페이스 쿼터와 Reservation 상한을 다시 설정합니다(6.3).
+- **저활용 진단.** 평균 GPU 사용률은 낮은데(6.1) 특정 팀과 네임스페이스가 점유 중이거나, 쿼터 소진율과 물리 사용률의 괴리(6.1, 6.3)가 크면 "정책 때문에 유휴 상태로 남은" 자원입니다.
+- **회수.** VCF Operations 9.1의 리클레임과 라이트사이징 권고로 미사용 예약과 과대 할당을 식별해 공유 풀로 반환합니다(6.2). 예약 점유도 비용이므로 쇼백으로 자발적 반납을 유도합니다(6.4).
+- **재배치.** 회수한 자원을 [09](09-reverse-sizing-scenario.md)의 워크로드 포트폴리오(추론, 멀티모델, 파인튜닝)로 재배분하고, 재사일로화를 방지하기 위해 네임스페이스 쿼터와 Reservation 상한을 다시 설정합니다(6.3).
 
 > 증설 이전 회수가 원칙입니다(6.2). 고정 풀로도 부족분이 확인될 때만 그 초과분을 순방향으로 추가 산정합니다([01 1.7절](01-sizing-methodology.md#17-순방향과-역방향-사이징)).
 
@@ -131,9 +131,9 @@ VCF Operations 9.1은 애플리케이션 단위 쇼백과 차지백을 제공하
 
 단계별 용량 운영 권고입니다.
 
-- **PoC**: 목표는 "동작하는지"이지 "얼마나 크게"가 아닙니다. 모델 적합성과 VRAM 소요를 측정하고, 이 수치를 파일럿 산정의 기준선으로 삼습니다. 기간은 검증 범위에 따라 달라 고정하지 않으며, 무엇을 검증할 수 있는지는 PoC 형태가 정합니다(6.5.1).
-- **파일럿**: 처음으로 실사용 부하가 유입됩니다. **사용자당과 요청당 자원 소요**를 실측해 "사용자 N명 = GPU M개" 같은 환산식을 만듭니다. 이 환산식이 프로덕션 확보 용량 산정의 핵심입니다. 동시에 쿼터 소진과 대기 큐를 관찰해 증설 트리거 임계를 보정합니다.
-- **프로덕션**: 헤드룸을 포함한 확보 용량으로 출발하고, 6.2의 증설 트리거를 상시 가동합니다. VCF Operations의 용량, 비용 인사이트와 라이트사이징, 리클레임 권고로 "증설 전 회수"를 우선합니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)). 신규 하드웨어는 NVIDIA Blackwell 계열(예: HGX B200) 등 신규 GPU 지원을 고려해 증설 세대를 계획합니다([PAIF with NVIDIA 9.1 가이드](https://techdocs.broadcom.com/content/dam/broadcom/techdocs/us/en/pdf/vmware/private-ai/private-ai-nvidia/vmware-private-ai-foundation-with-nvidia-9-1.pdf)).
+- **PoC.** 목표는 "동작하는지"이지 "얼마나 크게"가 아닙니다. 모델 적합성과 VRAM 소요를 측정하고, 이 수치를 파일럿 산정의 기준선으로 삼습니다. 기간은 검증 범위에 따라 달라 고정하지 않으며, 무엇을 검증할 수 있는지는 PoC 형태가 정합니다(6.5.1).
+- **파일럿.** 처음으로 실사용 부하가 유입됩니다. **사용자당과 요청당 자원 소요**를 실측해 "사용자 N명 = GPU M개" 같은 환산식을 만듭니다. 이 환산식이 프로덕션 확보 용량 산정의 핵심입니다. 동시에 쿼터 소진과 대기 큐를 관찰해 증설 트리거 임계를 보정합니다.
+- **프로덕션.** 헤드룸을 포함한 확보 용량으로 출발하고, 6.2의 증설 트리거를 상시 가동합니다. VCF Operations의 용량, 비용 인사이트와 라이트사이징, 리클레임 권고로 "증설 전 회수"를 우선합니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)). 신규 하드웨어는 NVIDIA Blackwell 계열(예: HGX B200) 등 신규 GPU 지원을 고려해 증설 세대를 계획합니다([PAIF with NVIDIA 9.1 가이드](https://techdocs.broadcom.com/content/dam/broadcom/techdocs/us/en/pdf/vmware/private-ai/private-ai-nvidia/vmware-private-ai-foundation-with-nvidia-9-1.pdf)).
 
 점진 확장의 원칙은 "한 단계의 실측값이 다음 단계의 산정 입력으로 이어진다"입니다. 단계를 생략하면 프로덕션 확보 용량이 추정에 머물러 과소와 과대 산정 위험이 커집니다.
 
@@ -157,11 +157,11 @@ VCF Operations 9.1은 애플리케이션 단위 쇼백과 차지백을 제공하
 
 용량 계획은 문서가 아니라 측정으로 검증됩니다. 아래 절차로 본 문서의 지표, 트리거, 로드맵이 실제 환경에서 성립하는지 확인합니다.
 
-1. **지표 수집 파이프라인 검증**: PAIF Workload Domain 호스트에서 DCGM(또는 DCGM-Exporter)이 `DCGM_FI_DEV_GPU_UTIL`, `DCGM_FI_DEV_FB_USED/FREE`, `DCGM_FI_PROF_SM_ACTIVE`를 노출하는지 확인합니다. VCF Operations에서 동일 GPU, vGPU 메트릭과 AI 메트릭(TTFT, E2E 지연)이 대시보드에 표시되는지 확인합니다. AI 메트릭 대시보드는 Grafana 배포가 전제입니다([VCF 9.1 AI 워크로드 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/), [DCGM Feature Overview](https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/feature-overview.html)).
-2. **부하 시험으로 트리거 검증**: 합성 부하를 점증시키며 평균과 P95 사용률, VRAM, 대기 큐, P95 지연이 6.2 임계에서 의도대로 경보를 발생시키는지 확인합니다. 오탐과 미탐이 있으면 관측 창, 임계를 보정합니다(확정 임계는 조직별 합의 필요).
-3. **예약과 쿼터 한계 검증**: GPU Reservation을 설정한 워크로드가 자원 압박 상황에서도 시작 자원을 확보하는지, 쿼터 소진 시 신규 요청이 정책대로 거부되는지 확인합니다([PAIF with NVIDIA 9.0.x 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-90-release-notes.html)).
-4. **쇼백과 차지백 수치 대사**: VCF Operations에서 테넌트별 GPU 사용량, 예약 점유, VKS 비용이 실제 사용량과 일치하는지 표본 대사(reconciliation)합니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)).
-5. **로드맵 환산식 검증**: 파일럿 실측에서 도출한 "사용자당 자원" 환산식이 프로덕션 초기 부하에서도 오차 범위 내인지 비교하고, 오차 범위를 초과하면 확보 용량과 헤드룸을 재산정합니다.
+1. **지표 수집 파이프라인 검증.** PAIF Workload Domain 호스트에서 DCGM(또는 DCGM-Exporter)이 `DCGM_FI_DEV_GPU_UTIL`, `DCGM_FI_DEV_FB_USED/FREE`, `DCGM_FI_PROF_SM_ACTIVE`를 노출하는지 확인합니다. VCF Operations에서 동일 GPU, vGPU 메트릭과 AI 메트릭(TTFT, E2E 지연)이 대시보드에 표시되는지 확인합니다. AI 메트릭 대시보드는 Grafana 배포가 전제입니다([VCF 9.1 AI 워크로드 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/), [DCGM Feature Overview](https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/feature-overview.html)).
+2. **부하 시험으로 트리거 검증.** 합성 부하를 점증시키며 평균과 P95 사용률, VRAM, 대기 큐, P95 지연이 6.2 임계에서 의도대로 경보를 발생시키는지 확인합니다. 오탐과 미탐이 있으면 관측 창, 임계를 보정합니다(확정 임계는 조직별 합의 필요).
+3. **예약과 쿼터 한계 검증.** GPU Reservation을 설정한 워크로드가 자원 압박 상황에서도 시작 자원을 확보하는지, 쿼터 소진 시 신규 요청이 정책대로 거부되는지 확인합니다([PAIF with NVIDIA 9.0.x 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-90-release-notes.html)).
+4. **쇼백과 차지백 수치 대사.** VCF Operations에서 테넌트별 GPU 사용량, 예약 점유, VKS 비용이 실제 사용량과 일치하는지 표본 대사(reconciliation)합니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)).
+5. **로드맵 환산식 검증.** 파일럿 실측에서 도출한 "사용자당 자원" 환산식이 프로덕션 초기 부하에서도 오차 범위 내인지 비교하고, 오차 범위를 초과하면 확보 용량과 헤드룸을 재산정합니다.
 
 검증 결과는 정량 합격 기준으로 명시적으로 고정해 운영 회귀의 일부로 포함합니다. 예: 핵심 지표 수집 누락 0건, 트리거 오탐률 기준 이내, 차지백 표본 대사 불일치 0건(확정 기준치는 조직별 합의 필요).
 

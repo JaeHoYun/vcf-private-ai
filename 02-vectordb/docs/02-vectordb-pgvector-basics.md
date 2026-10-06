@@ -102,8 +102,8 @@ LLM이 학습하지 않은 사내 문서, 규정, 매뉴얼 등을 벡터로 저
 
 pgvector의 가장 중요한 특징은 **PostgreSQL의 확장으로 동작**한다는 점입니다. 별도의 데이터베이스를 운영할 필요 없이, 기존 PostgreSQL 인프라에서 `CREATE EXTENSION vector;` 한 줄로 활성화되며, SQL 문법 그대로 벡터 연산을 수행할 수 있습니다. 조직의 기존 PostgreSQL 운영 역량, 백업/복구 체계, 모니터링 도구, 보안 정책을 그대로 활용할 수 있습니다.
 
-> **DSM 기준 참고**: VCF DSM 9.1에서 프로비저닝되는 PostgreSQL에는 pgvector 0.8.0이 포함되어 있으며, Iterative Index Scan 등 0.8.0의 핵심 기능을 모두 사용할 수 있습니다. 커뮤니티 최신 버전 0.8.2의 개선 및 보안 수정(CVE-2026-3172)은 향후 VMware Postgres 번들 업데이트 시 반영될 예정이며, 반영 시점은 DSM 릴리스 노트로 확인이 필요합니다.
-> **PostgreSQL 12/13 지원 종료**: DSM 9.1.1에서 PostgreSQL 12와 13이 제거됐습니다. 해당 인스턴스는 9.1.1 배포 전에 14 이상으로 업그레이드합니다([01 1.2절](01-version-compatibility.md)). 신규 배포는 PostgreSQL 15 이상을 권장합니다.
+> **DSM 기준 참고.** VCF DSM 9.1에서 프로비저닝되는 PostgreSQL에는 pgvector 0.8.0이 포함되어 있으며, Iterative Index Scan 등 0.8.0의 핵심 기능을 모두 사용할 수 있습니다. 커뮤니티 최신 버전 0.8.2의 개선 및 보안 수정(CVE-2026-3172)은 향후 VMware Postgres 번들 업데이트 시 반영될 예정이며, 반영 시점은 DSM 릴리스 노트로 확인이 필요합니다.
+> **PostgreSQL 12/13 지원 종료.** DSM 9.1.1에서 PostgreSQL 12와 13이 제거됐습니다. 해당 인스턴스는 9.1.1 배포 전에 14 이상으로 업그레이드합니다([01 1.2절](01-version-compatibility.md)). 신규 배포는 PostgreSQL 15 이상을 권장합니다.
 > 출처: [DSM 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/release-notes/vmware-data-services-manager-91-release-notes.html), [pgvector 0.8.2 릴리스](https://www.postgresql.org/about/news/pgvector-082-released-3245/)
 
 ### 2.2.2 버전 히스토리 및 주요 진화
@@ -196,18 +196,18 @@ HNSW의 세 파라미터(`m`, `ef_construction`, `hnsw.ef_search`)는 recall과 
 
 권장 접근: 빌드 시점 파라미터(`m`, `ef_construction`)는 재생성 비용이 크므로 처음에 다소 넉넉히 설정하고, 런타임 recall 미세조정은 세션 단위로 바꿀 수 있는 `hnsw.ef_search`로 수행합니다. recall 목표(예: Recall@10 95%)를 정한 뒤 `ef_search`를 단계적으로 높이며 지연과의 균형점을 찾습니다.
 
-> **빌드 시 메모리와 병렬 워커 주의**: pgvector 공식 문서는 "그래프가 `maintenance_work_mem`에 들어갈 때 인덱스 빌드가 현저히 빨라진다"고 명시합니다. 빌드 전 `SET maintenance_work_mem = '8GB';`처럼 충분히 높이고(그래프가 메모리를 초과하면 경고가 발생하며 속도가 급락), `SET max_parallel_maintenance_workers = 7;`(기본 2)로 병렬 빌드를 활용합니다. 워커 수를 크게 설정하면 `max_parallel_workers`(기본 8)도 함께 상향해야 합니다. 단, **병렬 HNSW 빌드는 CVE-2026-3172 영향 경로**이므로(2.2.12절 보안 주의 참조) DSM 번들 pgvector의 패치 적용 시점을 확인하시기 바랍니다.
+> **빌드 시 메모리와 병렬 워커 주의.** pgvector 공식 문서는 "그래프가 `maintenance_work_mem`에 들어갈 때 인덱스 빌드가 현저히 빨라진다"고 명시합니다. 빌드 전 `SET maintenance_work_mem = '8GB';`처럼 충분히 높이고(그래프가 메모리를 초과하면 경고가 발생하며 속도가 급락), `SET max_parallel_maintenance_workers = 7;`(기본 2)로 병렬 빌드를 활용합니다. 워커 수를 크게 설정하면 `max_parallel_workers`(기본 8)도 함께 상향해야 합니다. 단, **병렬 HNSW 빌드는 CVE-2026-3172 영향 경로**이므로(2.2.12절 보안 주의 참조) DSM 번들 pgvector의 패치 적용 시점을 확인하시기 바랍니다.
 > 출처: [pgvector README (HNSW Index Options / Indexing Progress)](https://github.com/pgvector/pgvector/blob/master/README.md)
 
 ### 2.2.6 임베딩 차원, 타입, 거리함수 결정 가이드
 
 벡터 컬럼을 설계할 때는 "차원 결정 → 타입 선택 → 거리함수 선택 → 정규화 여부"를 하나의 흐름으로 결정하면 됩니다. 모두 pgvector 공식 동작에 근거합니다.
 
-1. **임베딩 차원 결정**: 사용할 임베딩 모델이 차원을 결정합니다(예: text-embedding-3-small 1,536, bge-large 1,024, all-MiniLM-L6-v2 384). 차원이 클수록 표현력은 높지만 스토리지, 메모리, 검색 비용이 증가하므로, 모델이 차원 축소(Matryoshka 등)를 지원하면 품질이 허용되는 선에서 축소를 검토합니다.
+1. **임베딩 차원 결정.** 사용할 임베딩 모델이 차원을 결정합니다(예: text-embedding-3-small 1,536, bge-large 1,024, all-MiniLM-L6-v2 384). 차원이 클수록 표현력은 높지만 스토리지, 메모리, 검색 비용이 증가하므로, 모델이 차원 축소(Matryoshka 등)를 지원하면 품질이 허용되는 선에서 축소를 검토합니다.
 
-2. **타입 선택 (`vector` vs `halfvec`, 2,000차원 한계)**: pgvector에서 `vector` 타입은 **인덱싱 가능 차원이 2,000까지**입니다. 2,000을 초과하는 차원을 인덱싱하려면 공식 문서가 제시하는 대로 **`halfvec`(반정밀도, 최대 4,000차원 인덱싱)** 를 사용하거나, binary quantization(최대 64,000차원)을 적용합니다. 예를 들어 text-embedding-3-large(3,072차원)는 `vector`로는 인덱싱이 불가하므로 `halfvec(3072)`로 저장하고 인덱싱합니다. `halfvec`은 스토리지를 절반으로 줄이면서도 대부분의 유스케이스에서 recall 손실이 작습니다.
+2. **타입 선택 (`vector` vs `halfvec`, 2,000차원 한계).** pgvector에서 `vector` 타입은 **인덱싱 가능 차원이 2,000까지**입니다. 2,000을 초과하는 차원을 인덱싱하려면 공식 문서가 제시하는 대로 **`halfvec`(반정밀도, 최대 4,000차원 인덱싱)** 를 사용하거나, binary quantization(최대 64,000차원)을 적용합니다. 예를 들어 text-embedding-3-large(3,072차원)는 `vector`로는 인덱싱이 불가하므로 `halfvec(3072)`로 저장하고 인덱싱합니다. `halfvec`은 스토리지를 절반으로 줄이면서도 대부분의 유스케이스에서 recall 손실이 작습니다.
 
-3. **거리함수 선택**: pgvector는 세 가지 주요 연산자와 대응 opclass를 제공합니다.
+3. **거리함수 선택.** pgvector는 세 가지 주요 연산자와 대응 opclass를 제공합니다.
 
    | 거리 | 연산자 | opclass | 권장 용도 |
    |---|---|---|---|
@@ -217,7 +217,7 @@ HNSW의 세 파라미터(`m`, `ef_construction`, `hnsw.ef_search`)는 recall과 
 
    `<#>`는 PostgreSQL이 `ASC` 정렬만 지원하므로 **음수 내적(negative inner product)** 을 반환한다는 점에 유의합니다.
 
-4. **정규화 여부**: 공식 가이드는 "**벡터가 길이 1로 정규화되어 있으면(OpenAI 임베딩처럼) 최고 성능을 위해 inner product를 사용**"하도록 권장합니다. 즉 임베딩을 사전 정규화한다면 `<#>` + `vector_ip_ops` 조합이 가장 빠르고, 정규화를 보장하기 어렵다면 크기에 둔감한 Cosine(`<=>` + `vector_cosine_ops`)을 기본값으로 사용하는 것이 안전합니다. 인덱스 opclass는 실제 쿼리에 사용하는 연산자와 반드시 일치해야 인덱스가 사용됩니다.
+4. **정규화 여부.** 공식 가이드는 "**벡터가 길이 1로 정규화되어 있으면(OpenAI 임베딩처럼) 최고 성능을 위해 inner product를 사용**"하도록 권장합니다. 즉 임베딩을 사전 정규화한다면 `<#>` + `vector_ip_ops` 조합이 가장 빠르고, 정규화를 보장하기 어렵다면 크기에 둔감한 Cosine(`<=>` + `vector_cosine_ops`)을 기본값으로 사용하는 것이 안전합니다. 인덱스 opclass는 실제 쿼리에 사용하는 연산자와 반드시 일치해야 인덱스가 사용됩니다.
 
 > 출처: [pgvector README (Vector Types / Indexing / Distances)](https://github.com/pgvector/pgvector/blob/master/README.md)
 
@@ -245,7 +245,7 @@ SET ivfflat.max_probes = 100;
 
 pgvector 성능은 버전마다 크게 향상되었으며, 최신 벤치마크에서는 전용 Vector DB와 견줄 만한 수준입니다.
 
-> **주의**: 아래 벤치마크는 모두 **pgvector + pgvectorscale** (StreamingDiskANN 인덱스 + Statistical Binary Quantization)을 함께 사용한 결과입니다. pgvector 단독 HNSW/IVFFlat 인덱스만으로는 동일 수준의 성능을 기대하기 어렵습니다. pgvectorscale은 Timescale(현 Tiger Data)이 개발한 별도의 오픈소스 확장입니다.
+> **주의.** 아래 벤치마크는 모두 **pgvector + pgvectorscale** (StreamingDiskANN 인덱스 + Statistical Binary Quantization)을 함께 사용한 결과입니다. pgvector 단독 HNSW/IVFFlat 인덱스만으로는 동일 수준의 성능을 기대하기 어렵습니다. pgvectorscale은 Timescale(현 Tiger Data)이 개발한 별도의 오픈소스 확장입니다.
 
 #### pgvector + pgvectorscale vs Pinecone (50M 벡터, 768차원, Cohere 데이터셋)
 
@@ -398,7 +398,7 @@ SET hnsw.ef_search = 100;  -- 기본 40, 높이면 recall 향상
 | `work_mem` | 256MB | 정렬/해시 조인 작업 메모리 |
 | `max_parallel_maintenance_workers` | CPU 코어 - 1 | 인덱스 병렬 빌드 |
 
-> **보안 주의 (CVE-2026-3172)**: pgvector 0.8.2 미만에서 병렬 HNSW 인덱스 빌드에 buffer overflow 취약점이 있어, 타 릴레이션의 민감 데이터 유출 또는 DB 크래시가 가능합니다. `max_parallel_maintenance_workers`로 병렬 빌드를 사용하는 환경은 DSM 번들 pgvector의 패치 적용 시점을 확인하고, 가능하면 0.8.2 이상을 적용합니다. 출처: [pgvector 0.8.2 릴리스](https://www.postgresql.org/about/news/pgvector-082-released-3245/)
+> **보안 주의 (CVE-2026-3172).** pgvector 0.8.2 미만에서 병렬 HNSW 인덱스 빌드에 buffer overflow 취약점이 있어, 타 릴레이션의 민감 데이터 유출 또는 DB 크래시가 가능합니다. `max_parallel_maintenance_workers`로 병렬 빌드를 사용하는 환경은 DSM 번들 pgvector의 패치 적용 시점을 확인하고, 가능하면 0.8.2 이상을 적용합니다. 출처: [pgvector 0.8.2 릴리스](https://www.postgresql.org/about/news/pgvector-082-released-3245/)
 
 커넥션 관리: pgvector 워크로드에서도 PgBouncer 등 커넥션 풀러를 사용하되, `pool_mode=transaction`으로 설정합니다. 동시 접속 100 이상이면 반드시 커넥션 풀링을 적용해야 합니다.
 

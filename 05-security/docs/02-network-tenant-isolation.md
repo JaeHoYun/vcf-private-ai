@@ -39,8 +39,8 @@ Private AI 워크로드의 격리는 단일 통제가 아니라 여러 계층의
 
 VCF 9.x의 NSX는 두 가지 네트워킹 오브젝트 모델을 제공합니다. 하나는 전통적인 **세그먼트(Segment) 모델**, 다른 하나는 퍼블릭 클라우드형 자기서비스 경험을 제공하는 **VPC(Virtual Private Cloud) 모델**입니다([VCF VPC 블로그](https://blogs.vmware.com/cloud-foundation/2025/07/02/vmware-virtual-private-cloud/)).
 
-- **NSX Project**: NSX에서 테넌트를 정의하는 단위로, 네트워킹과 보안 오브젝트를 그룹화해 멀티테넌시와 관리 권한과 쿼터 위임을 지원합니다. 각 Project는 자체 Transit Gateway를 가집니다. 계열 법인 단위 강격리의 1차 경계로 이 Project를 사용합니다.
-- **VPC**: vCenter 안에서 사용자가 직접 IP 주소, 라우팅, 보안 정책을 가진 논리적으로 격리된 네트워크를 정의하고 관리하는 자기서비스 모델입니다. "VPC 안에 설정한 정책은 그 VPC 안에서만 적용되며 다른 VPC에 영향을 주지 않는다"는 점이 격리의 핵심입니다([VCF VPC 블로그](https://blogs.vmware.com/cloud-foundation/2025/07/02/vmware-virtual-private-cloud/)).
+- **NSX Project.** NSX에서 테넌트를 정의하는 단위로, 네트워킹과 보안 오브젝트를 그룹화해 멀티테넌시와 관리 권한과 쿼터 위임을 지원합니다. 각 Project는 자체 Transit Gateway를 가집니다. 계열 법인 단위 강격리의 1차 경계로 이 Project를 사용합니다.
+- **VPC.** vCenter 안에서 사용자가 직접 IP 주소, 라우팅, 보안 정책을 가진 논리적으로 격리된 네트워크를 정의하고 관리하는 자기서비스 모델입니다. "VPC 안에 설정한 정책은 그 VPC 안에서만 적용되며 다른 VPC에 영향을 주지 않는다"는 점이 격리의 핵심입니다([VCF VPC 블로그](https://blogs.vmware.com/cloud-foundation/2025/07/02/vmware-virtual-private-cloud/)).
 
 서브넷 접근 모드는 인그레스/이그레스 정책의 출발점입니다.
 
@@ -86,9 +86,9 @@ NSX 기본 방화벽이 "허용/차단" 정책 경계라면, **vDefend**는 여�
 | 분산 IDS/IPS | 각 워크로드 vNIC | 동/서 트래픽의 침입 탐지와 차단 |
 | Gateway Firewall | T0 Edge / Provider Gateway | 남/북 트래픽 검사 |
 
-- **분산 IDS/IPS**: 워크로드 단에서 동/서 트래픽을 검사합니다. vDefend 9.1에서 Turbo Mode가 도입되어 9.1 ESXi 호스트의 기본 모드로 더 높은 검사 처리량을 제공합니다. 규칙 액션은 기존 "Detect", "Detect and Prevent"에 더해 특정 트래픽이 검사를 우회하도록 하는 "Exempt"가 추가되어 성능을 최적화할 수 있습니다([vDefend 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-1/release-notes/vmware-vdefend-91-release-notes.html)).
-- **Gateway Firewall**: T0 Edge 및 Provider Gateway에서 남/북 트래픽을 검사하며, 9.1에서 URL 필터링과 Geo-IP 필터링이 추가되었습니다. 외부 모델 허브로 향하는 이그레스를 도메인과 지역 기준으로 통제할 때 활용합니다([vDefend 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-1/release-notes/vmware-vdefend-91-release-notes.html)).
-- **멀티테넌트 위임**: Provider 관리자가 vDefend 방화벽 서비스를 조직/테넌트 관리자에게 위임할 수 있어, 각 법인이 자기 영역의 게이트웨이와 분산 방화벽을 자기서비스로 통제하면서도 상위 거버넌스 경계는 유지됩니다([vDefend 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-1/release-notes/vmware-vdefend-91-release-notes.html)).
+- **분산 IDS/IPS.** 워크로드 단에서 동/서 트래픽을 검사합니다. vDefend 9.1에서 Turbo Mode가 도입되어 9.1 ESXi 호스트의 기본 모드로 더 높은 검사 처리량을 제공합니다. 규칙 액션은 기존 "Detect", "Detect and Prevent"에 더해 특정 트래픽이 검사를 우회하도록 하는 "Exempt"가 추가되어 성능을 최적화할 수 있습니다([vDefend 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-1/release-notes/vmware-vdefend-91-release-notes.html)).
+- **Gateway Firewall.** T0 Edge 및 Provider Gateway에서 남/북 트래픽을 검사하며, 9.1에서 URL 필터링과 Geo-IP 필터링이 추가되었습니다. 외부 모델 허브로 향하는 이그레스를 도메인과 지역 기준으로 통제할 때 활용합니다([vDefend 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-1/release-notes/vmware-vdefend-91-release-notes.html)).
+- **멀티테넌트 위임.** Provider 관리자가 vDefend 방화벽 서비스를 조직/테넌트 관리자에게 위임할 수 있어, 각 법인이 자기 영역의 게이트웨이와 분산 방화벽을 자기서비스로 통제하면서도 상위 거버넌스 경계는 유지됩니다([vDefend 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-1/release-notes/vmware-vdefend-91-release-notes.html)).
 
 분산 방식의 보안 함의: 검사 지점이 경계 단일 초크포인트가 아니라 모든 워크로드 vNIC에 분산되므로, 같은 호스트, 같은 서브넷 안에서 일어나는 횡적 이동도 탐지하고 차단할 수 있습니다. 이는 전통적 경계 방화벽이 탐지하지 못하던 사각지대입니다.
 
@@ -113,9 +113,9 @@ GPU를 테넌트 간에 공유할 때 어떤 방식을 사용하느냐가 격리
 | vGPU (time-sliced, MIG 미적용) | 시간 분할 공유 | 메모리와 장애 격리 없음 | 약함, 동일 신뢰 경계 내에서만 사용 |
 | MIG-backed vGPU | MIG 슬라이스 기반 vGPU | 슬라이스 단위 하드웨어 격리 | 강함, MIG 경계 상속 |
 
-- **Enhanced DirectPath I/O**: GPU(또는 vGPU 프로파일 장치)를 VM에 거의 베어메탈 성능으로 전용 할당합니다. 공유가 없으므로 격리 측면에서는 가장 단순하고 강력하지만 밀도가 낮습니다([PAIF 9.1 문서](https://techdocs.broadcom.com/content/dam/broadcom/techdocs/us/en/pdf/vmware/private-ai/private-ai-nvidia/vmware-private-ai-foundation-with-nvidia-9-1.pdf), [William Lam PAIS 랩](https://williamlam.com/2025/10/ms-a2-vcf-9-0-lab-deploying-model-endpoint-with-directpath-i-o-using-vmware-for-private-ai-services-pais.html)).
-- **MIG 하드웨어 격리**: NVIDIA MIG는 GPU 다이 자체를 공간 분할해 최대 7개의 격리된 GPU 인스턴스로 나눕니다. 각 인스턴스는 전용 SM(Streaming Multiprocessor), L2 캐시 뱅크, 메모리 컨트롤러, DRAM 주소 버스를 별도로 할당받아 메모리 시스템 전체에 걸쳐 분리된 경로를 가집니다. 결과적으로 한 테넌트가 다른 테넌트의 GPU 메모리를 읽거나 덮어쓸 수 없고, 한 인스턴스의 장애가 다른 인스턴스에 영향을 주지 않습니다([NVIDIA MIG User Guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/latest/), [NVIDIA MIG 기술 브리프](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/solutions/resources/documents1/Technical-Brief-Multi-Instance-GPU-NVIDIA-Virtual-Compute-Server.pdf)).
-- **vGPU(time-sliced) vs MIG의 함의**: 시간 분할(time-sliced) vGPU만 사용하는 경우 복제본 간 메모리와 장애 격리가 없습니다. 따라서 서로 다른 신뢰 경계(다른 법인 테넌트)를 같은 GPU에 시간 분할만으로 배치하는 것은 권장되지 않습니다. 신뢰 경계가 다른 테넌트를 한 물리 GPU에 함께 배치할 때는 MIG로 먼저 하드웨어 인스턴스를 나눈 뒤, 필요하면 그 인스턴스 안에서만 시간 분할을 운용하는 MIG-backed 방식을 사용합니다([NVIDIA GPU Operator, Time-Slicing](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/24.9.0/gpu-sharing.html), [NVIDIA MIG-Backed vGPU](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/mig-backed-vgpu.html)).
+- **Enhanced DirectPath I/O.** GPU(또는 vGPU 프로파일 장치)를 VM에 거의 베어메탈 성능으로 전용 할당합니다. 공유가 없으므로 격리 측면에서는 가장 단순하고 강력하지만 밀도가 낮습니다([PAIF 9.1 문서](https://techdocs.broadcom.com/content/dam/broadcom/techdocs/us/en/pdf/vmware/private-ai/private-ai-nvidia/vmware-private-ai-foundation-with-nvidia-9-1.pdf), [William Lam PAIS 랩](https://williamlam.com/2025/10/ms-a2-vcf-9-0-lab-deploying-model-endpoint-with-directpath-i-o-using-vmware-for-private-ai-services-pais.html)).
+- **MIG 하드웨어 격리.** NVIDIA MIG는 GPU 다이 자체를 공간 분할해 최대 7개의 격리된 GPU 인스턴스로 나눕니다. 각 인스턴스는 전용 SM(Streaming Multiprocessor), L2 캐시 뱅크, 메모리 컨트롤러, DRAM 주소 버스를 별도로 할당받아 메모리 시스템 전체에 걸쳐 분리된 경로를 가집니다. 결과적으로 한 테넌트가 다른 테넌트의 GPU 메모리를 읽거나 덮어쓸 수 없고, 한 인스턴스의 장애가 다른 인스턴스에 영향을 주지 않습니다([NVIDIA MIG User Guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/latest/), [NVIDIA MIG 기술 브리프](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/solutions/resources/documents1/Technical-Brief-Multi-Instance-GPU-NVIDIA-Virtual-Compute-Server.pdf)).
+- **vGPU(time-sliced) vs MIG의 함의.** 시간 분할(time-sliced) vGPU만 사용하는 경우 복제본 간 메모리와 장애 격리가 없습니다. 따라서 서로 다른 신뢰 경계(다른 법인 테넌트)를 같은 GPU에 시간 분할만으로 배치하는 것은 권장되지 않습니다. 신뢰 경계가 다른 테넌트를 한 물리 GPU에 함께 배치할 때는 MIG로 먼저 하드웨어 인스턴스를 나눈 뒤, 필요하면 그 인스턴스 안에서만 시간 분할을 운용하는 MIG-backed 방식을 사용합니다([NVIDIA GPU Operator, Time-Slicing](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/24.9.0/gpu-sharing.html), [NVIDIA MIG-Backed vGPU](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/mig-backed-vgpu.html)).
 
 원칙: **테넌트 경계 = 신뢰 경계가 다르면 GPU 격리도 하드웨어(MIG 또는 전용 Passthrough)로 강제한다.** 시간 분할 공유는 동일 테넌트 내부의 워크로드끼리만 허용합니다.
 
@@ -160,10 +160,10 @@ GPU Reservation은 특정 워크로드/테넌트에 GPU 용량을 예약해, 다
 
 검증 도구와 증거 수집 원칙:
 
-- **네트워크(R1–R4)**: NSX 트래픽 흐름 분석과 방화벽 로그로 차단 이벤트를 증거로 남깁니다. 규칙셋 변경은 적용 전후 정책 diff를 보관합니다.
-- **GPU(R5–R6)**: `nvidia-smi`로 MIG 구성과 인스턴스 경계를 확인하고, 인스턴스 간 메모리 접근 실패 및 쿼터 거부 로그를 증거화합니다([NVIDIA MIG User Guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/latest/)).
-- **거버넌스(R7–R8)**: 권한 위임 경계 위반 시도의 거부 감사 로그, TLS 핸드셰이크/인증서 검증 결과를 보관합니다.
-- **추적성**: 각 회귀 케이스는 위협 모델의 위협 ID와 본 문서의 통제(2.x 절)에 양방향으로 연결되어야 하며, 추적 체인이 끊기면 합격으로 간주하지 않습니다.
+- **네트워크(R1–R4).** NSX 트래픽 흐름 분석과 방화벽 로그로 차단 이벤트를 증거로 남깁니다. 규칙셋 변경은 적용 전후 정책 diff를 보관합니다.
+- **GPU(R5–R6).** `nvidia-smi`로 MIG 구성과 인스턴스 경계를 확인하고, 인스턴스 간 메모리 접근 실패 및 쿼터 거부 로그를 증거화합니다([NVIDIA MIG User Guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/latest/)).
+- **거버넌스(R7–R8).** 권한 위임 경계 위반 시도의 거부 감사 로그, TLS 핸드셰이크/인증서 검증 결과를 보관합니다.
+- **추적성.** 각 회귀 케이스는 위협 모델의 위협 ID와 본 문서의 통제(2.x 절)에 양방향으로 연결되어야 하며, 추적 체인이 끊기면 합격으로 간주하지 않습니다.
 
 검증 결과는 버전 변경(NSX/vDefend/PAIF 업그레이드) 시마다 재실행하며, 기대 결과가 바뀌는 항목은 공식 릴리스 노트로 근거를 재확인합니다.
 

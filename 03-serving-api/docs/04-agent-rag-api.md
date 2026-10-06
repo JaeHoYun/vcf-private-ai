@@ -123,7 +123,7 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents/hr-assista
   -d '{"messages":[{"role":"user","content":"연차 휴가는 며칠인가요?"}]}'
 ```
 
-응답에서 Model Endpoint 대비 **추가되는 두 가지**:
+응답에서 Model Endpoint 대비 **추가되는 두 가지.**
 
 | 추가 필드 | 의미 | 활용 |
 |----------|------|------|

@@ -111,8 +111,8 @@ GPU 없이 **소형 모델과 임베딩**을 서빙해야 하는 경우(예: GPU
 
 ### 환산 단계
 
-1. **목표 부하 정의**: 피크 동시 요청 수(또는 RPS)와 SLO(p99 지연).
-2. **Replica당 용량**: vLLM 연속 배칭(continuous batching)은 정적 배칭 대비 처리량을 통상 2–4배 높입니다([vLLM Blog, Anatomy of vLLM](https://blog.vllm.ai/2025/09/05/anatomy-of-vllm.html)). 연속 배칭과 PagedAttention이 왜 이렇게 처리량을 높이는지의 개념 설명은 [③ 서빙 가이드 0.6절](../../03-serving-api/docs/00-serving-primer.md)을 참조하세요. Replica당 유효 최대 동시성은 `max_model_len`, `max_num_batched_tokens`, `gpu_memory_utilization` 튜닝의 결과물입니다([vLLM Blog](https://blog.vllm.ai/2025/09/05/anatomy-of-vllm.html)).
+1. **목표 부하 정의.** 피크 동시 요청 수(또는 RPS)와 SLO(p99 지연).
+2. **Replica당 용량.** vLLM 연속 배칭(continuous batching)은 정적 배칭 대비 처리량을 통상 2–4배 높입니다([vLLM Blog, Anatomy of vLLM](https://blog.vllm.ai/2025/09/05/anatomy-of-vllm.html)). 연속 배칭과 PagedAttention이 왜 이렇게 처리량을 높이는지의 개념 설명은 [③ 서빙 가이드 0.6절](../../03-serving-api/docs/00-serving-primer.md)을 참조하세요. Replica당 유효 최대 동시성은 `max_model_len`, `max_num_batched_tokens`, `gpu_memory_utilization` 튜닝의 결과물입니다([vLLM Blog](https://blog.vllm.ai/2025/09/05/anatomy-of-vllm.html)).
 3. **Replica 수** = ⌈목표 동시성 / Replica당 동시성⌉, 여기에 가용성 여유(N+1) 가산.
 4. **노드 수** = Replica 수 × (Replica당 vGPU 수) ÷ (노드당 vGPU 수). 이때 노드당 vGPU는 02의 프로파일 결정에 따릅니다. 고정 GPU 인벤토리에서 거꾸로 적재량을 역산하는 공급 제약 시나리오는 [02 2.9절 고정 GPU 적재와 패킹](02-gpu-sizing.md#29-고정-gpu-적재와-패킹-공급-제약)과 [09 역방향 사이징 시나리오](09-reverse-sizing-scenario.md)를 참조하세요.
 

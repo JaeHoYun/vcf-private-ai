@@ -9,34 +9,34 @@
 RAG 품질은 **검색(retrieval)** 과 **생성(generation)** 으로 나눠 봐야 병목을 파악할 수 있습니다.
 
 **검색 품질**
-- **Context Recall**: 정답에 필요한 근거가 검색된 top-k 안에 포함되었는가
-- **Context Precision**: 검색된 청크 중 실제로 관련된 비율(노이즈 적은가)
+- **Context Recall.** 정답에 필요한 근거가 검색된 top-k 안에 포함되었는가
+- **Context Precision.** 검색된 청크 중 실제로 관련된 비율(노이즈 적은가)
 
 **생성 품질**
-- **Faithfulness(근거 충실도)**: 답변이 검색된 근거에서만 도출되었는가 ↔ **환각**의 반대
-- **Answer Relevancy**: 답변이 질문에 실제로 답하는가
-- **Citation 정확도**: 답변에 표시된 출처가 실제 근거와 일치하는가
+- **Faithfulness(근거 충실도).** 답변이 검색된 근거에서만 도출되었는가 ↔ **환각**의 반대
+- **Answer Relevancy.** 답변이 질문에 실제로 답하는가
+- **Citation 정확도.** 답변에 표시된 출처가 실제 근거와 일치하는가
 
 > 진단 규칙: **검색 recall이 낮으면** 02–03(청킹, 임베딩, top-k, 하이브리드) 문제, **recall은 높은데 faithfulness가 낮으면** 04(프롬프트, temperature, 모델) 문제.
 
 ## 6.2 평가셋 만들기
 
-- **골든셋**: 실제 사내 질문 + 기대 답변 + 근거 문서를 50–200건 큐레이션. 부서, 난이도, "답 없음" 케이스를 고루 포함.
-- **"답 없음" 케이스 필수**: 사내 문서에 없는 질문에 **모른다고 답하는지**를 반드시 테스트(억지 생성 탐지).
-- **운영 피드백 흡수**: 05의 좋아요/싫어요와 실제 로그에서 실패 사례를 골든셋에 계속 추가.
+- **골든셋.** 실제 사내 질문 + 기대 답변 + 근거 문서를 50–200건 큐레이션. 부서, 난이도, "답 없음" 케이스를 고루 포함.
+- **"답 없음" 케이스 필수.** 사내 문서에 없는 질문에 **모른다고 답하는지**를 반드시 테스트(억지 생성 탐지).
+- **운영 피드백 흡수.** 05의 좋아요/싫어요와 실제 로그에서 실패 사례를 골든셋에 계속 추가.
 
 ## 6.3 평가 방법
 
-- **LLM-as-judge**: 사내 PAIS 모델로 faithfulness/relevancy를 채점. 채점도 사내에서 수행하므로 평가 데이터가 외부로 반출되지 않습니다.
-- **검색 지표는 결정적 계산**: recall/precision은 골든셋의 근거 문서 ID와 검색 결과를 비교해 코드로 산출(모델 불필요).
-- **회귀 테스트**: 청킹, 모델, 프롬프트를 바꿀 때마다 골든셋 전체를 실행해 **점수 회귀가 없는지** 확인. CI에 통합하면 품질 저하를 배포 전에 감지합니다.
+- **LLM-as-judge.** 사내 PAIS 모델로 faithfulness/relevancy를 채점. 채점도 사내에서 수행하므로 평가 데이터가 외부로 반출되지 않습니다.
+- **검색 지표는 결정적 계산.** recall/precision은 골든셋의 근거 문서 ID와 검색 결과를 비교해 코드로 산출(모델 불필요).
+- **회귀 테스트.** 청킹, 모델, 프롬프트를 바꿀 때마다 골든셋 전체를 실행해 **점수 회귀가 없는지** 확인. CI에 통합하면 품질 저하를 배포 전에 감지합니다.
 
 ## 6.4 평가 프레임워크와 정량 합격 임계
 
 6.1의 지표를 손으로 재기는 비현실적입니다. RAG 전용 오픈소스 평가 프레임워크를 사용하면 LLM-as-judge 채점과 검색 지표 계산을 표준화할 수 있습니다.
 
-- **RAGAS**: faithfulness, answer relevancy, context recall, context precision을 핵심 지표로 제공하며, 각 지표는 **0–1(높을수록 좋음)** 스케일입니다([RAGAS Metrics](https://docs.ragas.io/en/v0.1.21/concepts/metrics/), [Faithfulness](https://docs.ragas.io/en/v0.1.21/concepts/metrics/faithfulness.html)). faithfulness는 "답변의 모든 주장이 주어진 컨텍스트에서 추론 가능한가"로 정의됩니다.
-- **DeepEval**: 동일 계열 지표를 제공하고 **임계값 기반 통과/실패(pass/fail)** 와 CI/CD 통합이 깔끔합니다. 예를 들어 `ContextualRecallMetric(threshold=0.7)`, `AnswerRelevancyMetric(threshold=0.8)` 처럼 지표별 임계를 지정합니다([DeepEval Faithfulness](https://deepeval.com/docs/metrics-faithfulness), [Contextual Recall](https://deepeval.com/docs/metrics-contextual-recall), [RAG Evaluation](https://deepeval.com/guides/guides-rag-evaluation)).
+- **RAGAS.** faithfulness, answer relevancy, context recall, context precision을 핵심 지표로 제공하며, 각 지표는 **0–1(높을수록 좋음)** 스케일입니다([RAGAS Metrics](https://docs.ragas.io/en/v0.1.21/concepts/metrics/), [Faithfulness](https://docs.ragas.io/en/v0.1.21/concepts/metrics/faithfulness.html)). faithfulness는 "답변의 모든 주장이 주어진 컨텍스트에서 추론 가능한가"로 정의됩니다.
+- **DeepEval.** 동일 계열 지표를 제공하고 **임계값 기반 통과/실패(pass/fail)** 와 CI/CD 통합이 깔끔합니다. 예를 들어 `ContextualRecallMetric(threshold=0.7)`, `AnswerRelevancyMetric(threshold=0.8)` 처럼 지표별 임계를 지정합니다([DeepEval Faithfulness](https://deepeval.com/docs/metrics-faithfulness), [Contextual Recall](https://deepeval.com/docs/metrics-contextual-recall), [RAG Evaluation](https://deepeval.com/guides/guides-rag-evaluation)).
 
 **정량 합격 임계 예시(반드시 환경별 조정)**
 
@@ -51,15 +51,15 @@ RAG 품질은 **검색(retrieval)** 과 **생성(generation)** 으로 나눠 봐
 
 > 임계는 절대 기준이 아니라 **회귀 게이트의 기준선**으로 사용하는 것이 핵심입니다. 첫 측정값으로 베이스라인을 설정하고, 이후 변경이 그 기준선보다 낮아지면 CI에서 배포를 차단합니다.
 
-**CI 회귀 게이트 정량화**: 골든셋 전체를 프레임워크로 실행해 위 지표를 산출하고, **각 지표가 임계 이상이며 직전 베이스라인 대비 허용 하락폭(예: −0.02)을 넘지 않을 때만 배포 통과** 조건으로 설정합니다. DeepEval처럼 지표별 임계와 pass/fail이 내장된 프레임워크는 이 게이트를 CI 스크립트로 바로 표현할 수 있습니다. 채점 모델은 사내 PAIS 모델을 LLM-as-judge로 사용해 평가 데이터의 외부 반출을 차단합니다(6.3).
+**CI 회귀 게이트 정량화.** 골든셋 전체를 프레임워크로 실행해 위 지표를 산출하고, **각 지표가 임계 이상이며 직전 베이스라인 대비 허용 하락폭(예: −0.02)을 넘지 않을 때만 배포 통과** 조건으로 설정합니다. DeepEval처럼 지표별 임계와 pass/fail이 내장된 프레임워크는 이 게이트를 CI 스크립트로 바로 표현할 수 있습니다. 채점 모델은 사내 PAIS 모델을 LLM-as-judge로 사용해 평가 데이터의 외부 반출을 차단합니다(6.3).
 
 ## 6.5 관측성 (운영 중 품질)
 
 오프라인 평가만으로는 부족합니다. 운영 트래픽을 관측합니다.
 
-- **트레이싱**: 질문→검색→리랭크→프롬프트→응답의 각 단계 지연, 토큰, 검색 점수를 기록. 표준 분산 트레이싱 규격인 OpenTelemetry(약칭 OTel)로 수집해, 운영 단계(07)의 모니터링과 연계합니다.
-- **모니터링 지표**: 검색 평균 점수, "근거 없음 폴백" 비율, 평균 TTFT(Time To First Token, 첫 토큰까지의 응답 시간)/지연, GPU 사용률, 토큰 소비.
-- **드리프트 감지**: 폴백 비율↑ 또는 평균 검색 점수↓는 문서와 질문 분포 변화 신호 → 재인덱싱/골든셋 갱신 트리거.
+- **트레이싱.** 질문→검색→리랭크→프롬프트→응답의 각 단계 지연, 토큰, 검색 점수를 기록. 표준 분산 트레이싱 규격인 OpenTelemetry(약칭 OTel)로 수집해, 운영 단계(07)의 모니터링과 연계합니다.
+- **모니터링 지표.** 검색 평균 점수, "근거 없음 폴백" 비율, 평균 TTFT(Time To First Token, 첫 토큰까지의 응답 시간)/지연, GPU 사용률, 토큰 소비.
+- **드리프트 감지.** 폴백 비율↑ 또는 평균 검색 점수↓는 문서와 질문 분포 변화 신호 → 재인덱싱/골든셋 갱신 트리거.
 
 PAIS 3.0은 문서 임베딩의 진행과 품질 메트릭을 개선했고, 지식베이스와 인덱스 복제를 지원합니다. 운영 중 품질 관측에서는 임베딩 메트릭으로 인덱싱이 끝나지 않은 문서와 실패한 문서를 먼저 걸러 내고, 튜닝 실험은 복제본에서 평가셋으로 검증한 뒤 승격하는 흐름을 권합니다([02 2.5.4절](02-ingestion-indexing.md)).
 

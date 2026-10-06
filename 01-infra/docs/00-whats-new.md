@@ -57,8 +57,8 @@ PAIS 2.1에 도입. VI 관리자가 **폐쇄망(air-gapped)** 환경에서 NVIDI
 기존에는 Embedding만 CPU로 가능했으나, **llama.cpp(b7739)** 엔진 통합으로 **Completion 추론도 CPU 전용** 배포가 가능해졌습니다. 비용 절감, 테스트, 소규모 추론에 활용합니다.
 
 ### (4) 통합 관측성
-- **모델과 GPU 메트릭 대시보드**: 캐시 활용률, 토큰 처리량, 지연시간, GPU 사용률, 온도, 전력을 VCF Operations 콘솔에서 통합 조회.
-- **OpenTelemetry 기반 LLM 트레이싱**: OTel Collector로 LLM 호출 추적.
+- **모델과 GPU 메트릭 대시보드.** 캐시 활용률, 토큰 처리량, 지연시간, GPU 사용률, 온도, 전력을 VCF Operations 콘솔에서 통합 조회.
+- **OpenTelemetry 기반 LLM 트레이싱.** OTel Collector로 LLM 호출 추적.
 → 상세: [문서 06](06-production.md)
 
 ### (5) Enhanced DirectPath I/O (주의: 기존 서술 정정)
@@ -151,8 +151,8 @@ VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱�
 
 | 영역 | 9.1 (PAIS 2.1) | 9.1.1 (PAIS 3.0) |
 |------|----------------|------------------|
-| 모델 위치 | 네임스페이스마다 자기 모델 엔드포인트를 배포 | **공유 모델 호스팅**: 중앙(provider) 인스턴스의 completion / embedding 엔드포인트를 다른 인스턴스와 네임스페이스에서 참조 |
-| 모델 출처 | 사내 Model Gallery의 모델만 | **원격 클라우드 모델**: Google Gemini 네이티브 API, Gemini Enterprise Agent Platform(구 Vertex AI), Google OpenAI 호환 계층, 서드파티 OpenAI 호환 서비스. 토큰 사용량 추적 포함 |
+| 모델 위치 | 네임스페이스마다 자기 모델 엔드포인트를 배포 | **공유 모델 호스팅.** 중앙(provider) 인스턴스의 completion / embedding 엔드포인트를 다른 인스턴스와 네임스페이스에서 참조 |
+| 모델 출처 | 사내 Model Gallery의 모델만 | **원격 클라우드 모델.** Google Gemini 네이티브 API, Gemini Enterprise Agent Platform(구 Vertex AI), Google OpenAI 호환 계층, 서드파티 OpenAI 호환 서비스. 토큰 사용량 추적 포함 |
 | 인증 수단 | OIDC Bearer 토큰, mTLS | **API 토큰** 추가(VCF Automation 계정 `vcfa-<org>-...`, 로컬 PAIS 계정 `pais-<provider>-...`). PAIS API 인증, 인스턴스 간 공유 모델 접근, VCF Consumption CLI 실행에 사용 |
 | 관측성 | 메트릭 대시보드(Grafana 직접 배포 전제), OTel 트레이싱 | 모델과 에이전트 실시간 대시보드, **Grafana 예시 구성 제공**, 백엔드 헬스 실시간, LLM 상호작용 전체 트레이싱. Prometheus 수집은 VKS 클러스터 가용 후 시작 |
 | 데이터 평면 | 고정 구성 | Ingress 독립 스케일링, 커스텀 모델 게이트웨이 주입, Agent Builder와 Data Indexing 개별 on/off |

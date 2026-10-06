@@ -43,7 +43,7 @@ ML API Gateway (LB, Health Check, Failover)
 
 **ML API Gateway**는 PAIS가 제공하는 AI 전용 API 게이트웨이로, 일반 게이트웨이와 달리 LLM 추론에 맞춘 긴 타임아웃(60초+), SSE 네이티브 스트리밍, GPU 사용률 기반 자동 스케일링 연동, 모델명 기반 라우팅을 제공합니다.
 
-**Replica 권장**: 개발 1 / 스테이징 1–2 / 프로덕션 2–3(N+1) / 미션크리티컬 3+. GPU 점유 = 비용이므로 자동 스케일링으로 최소 유지 후 부하 시 증설.
+**Replica 권장.** 개발 1 / 스테이징 1–2 / 프로덕션 2–3(N+1) / 미션크리티컬 3+. GPU 점유 = 비용이므로 자동 스케일링으로 최소 유지 후 부하 시 증설.
 
 위 구성도처럼 레플리카가 서로 다른 ESXi 호스트에 배치돼야 호스트 장애가 한 레플리카에서 끝납니다. vCenter 9.1.1부터는 컴퓨트 정책으로 VM-VM anti-affinity 규칙을 걸어 VKS 워커 VM을 호스트 단위로 분산하도록 강제할 수 있고, 반대로 지연이 중요한 구성요소는 affinity로 같은 호스트에 배치할 수 있습니다. 쿠버네티스 쪽 파드 anti-affinity와 함께 적용하면 파드와 VM 두 층에서 분산이 보장됩니다. 메모리 티어링(NVMe)을 사용하는 호스트에서는 9.1.1의 vSphere HA admission control이 DRAM을 따로 추적하므로, 페일오버 용량 계산에 티어드 메모리가 아니라 DRAM 기준이 적용된다는 점을 사이징에 반영합니다([⑦ 04](../../07-design/docs/04-network-storage-availability.md)).
 
@@ -140,9 +140,9 @@ A100 80GB 기준: 8B ≈ 30초–1분, 70B ≈ 2–5분. **완화:** Min Replica
 
 핵심 흐름만 요약합니다.
 
-- **GPU 수**: 피크 동시성과 목표 처리량 → 단일 Replica 부하 실측 → `필요 Replica ≈ ⌈피크 동시성 / Replica당 안전 동시성⌉`(+HA N+1), 필요 GPU ≈ Replica 수 × Replica당 GPU(단일 GPU 미적합 시 `tensor-parallel`).
-- **GPU 메모리**: 모델 가중치(FP16 ≈ 파라미터×2바이트) + KV 캐시(동시성과 컨텍스트 길이에 비례) + 헤드룸. 양자화(GPTQ, AWQ, FP8)로 가중치 절감.
-- **vCPU/RAM**: 토크나이즈, 전처리, 요청 처리용 호스트 자원 확보, 부하 테스트로 조정.
+- **GPU 수.** 피크 동시성과 목표 처리량 → 단일 Replica 부하 실측 → `필요 Replica ≈ ⌈피크 동시성 / Replica당 안전 동시성⌉`(+HA N+1), 필요 GPU ≈ Replica 수 × Replica당 GPU(단일 GPU 미적합 시 `tensor-parallel`).
+- **GPU 메모리.** 모델 가중치(FP16 ≈ 파라미터×2바이트) + KV 캐시(동시성과 컨텍스트 길이에 비례) + 헤드룸. 양자화(GPTQ, AWQ, FP8)로 가중치 절감.
+- **vCPU/RAM.** 토크나이즈, 전처리, 요청 처리용 호스트 자원 확보, 부하 테스트로 조정.
 
 > **상세 사이징의 기준 문서는 [⑥ 사이징, 용량, 비용 가이드](../../06-sizing-cost/README.md)입니다**. 이 가이드는 워크로드→GPU/노드/클러스터 환산 산정 표, VKS 클러스터 사이징, 스토리지와 네트워크 용량, 용량 계획, TCO를 다룹니다. 본 절은 출발점 요약이며, 모든 수치는 환경별로 상이하므로 실측이 전제입니다 ([vLLM — Optimization and Tuning](https://docs.vllm.ai/en/stable/configuration/optimization/)).
 

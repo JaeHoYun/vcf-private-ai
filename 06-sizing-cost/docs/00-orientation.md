@@ -126,8 +126,8 @@
 
 이 가이드는 두 목적에 모두 활용됩니다. 자세한 구분과 사용법은 [01.1.1](01-sizing-methodology.md#111-예산-추정-vs-확정-사이징-그리고-입력값이-없을-때)을 참조하세요.
 
-- **예산 추정**: 구매 전, 공개 출처 1차 가정치([부록 A1](../appendix/A1-first-order-reference.md))로 규모와 비용 윤곽. 단가는 [부록 A3](../appendix/A3-rfq-quote-checklist.md) 견적으로.
-- **확정 사이징**: [06.5 PoC→파일럿→프로덕션](06-capacity-planning.md#65-poc--파일럿--프로덕션-용량-로드맵) 실측으로 갈음. 발주와 SLA의 근거.
+- **예산 추정.** 구매 전, 공개 출처 1차 가정치([부록 A1](../appendix/A1-first-order-reference.md))로 규모와 비용 윤곽. 단가는 [부록 A3](../appendix/A3-rfq-quote-checklist.md) 견적으로.
+- **확정 사이징.** [06.5 PoC→파일럿→프로덕션](06-capacity-planning.md#65-poc--파일럿--프로덕션-용량-로드맵) 실측으로 갈음. 발주와 SLA의 근거.
 
 > 다음: 목적에 맞는 경로(0.1)로 이동하거나, [08 레퍼런스 시나리오](08-reference-scenario.md)로 전체 흐름을 처음부터 끝까지 확인하세요.
 

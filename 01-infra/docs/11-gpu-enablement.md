@@ -8,7 +8,7 @@
 
 ---
 
-## 11.1 이 문서의 위치 — GPU enablement 수직 경로
+## 11.1 이 문서의 위치. GPU enablement 수직 경로
 
 GPU를 "사용한다"는 것은 한 가지 설정이 아니라 여러 계층을 차례로 통과시키는 일입니다. 한 계층이라도 어긋나면 상위 계층에서 GPU가 보이지 않습니다. 전체 경로는 다음과 같습니다.
 
@@ -33,7 +33,7 @@ PAIS Model Runtime — 모델이 GPU 소비  (11.9절)
 
 각 단계가 끝날 때 "이 계층에서 GPU가 보이나"를 확인하는 검증 경로는 11.10절에 모았습니다. NVLink/NVSwitch, GPUDirect RDMA 같은 멀티호스트 고속 패브릭은 [문서 02 2.3절의 멀티호스트 RDMA 노트](02-architecture.md)가 다루며, 본 문서 범위 밖입니다.
 
-## 11.2 단일 출처 — 호환성은 매트릭스로, 여기서는 규칙으로
+## 11.2 단일 출처. 호환성은 매트릭스로, 여기서는 규칙으로
 
 GPU 스택의 버전 호환은 빠르게 변합니다. 그래서 이 문서는 특정 숫자를 기준으로 삼지 않고, **공식 매트릭스를 단일 출처로 삼고** 변하지 않는 **인터락 규칙**(11.6절)을 본문에 기술합니다. 구성 전 아래를 1차 기준으로 확인하십시오.
 
@@ -43,7 +43,7 @@ GPU 스택의 버전 호환은 빠르게 변합니다. 그래서 이 문서는 �
 - **NVIDIA AI Enterprise(NVAIE) 버전별 지원 매트릭스** — vGPU Manager ↔ 게스트 드라이버 ↔ GPU Operator 조합: NVAIE 릴리스별 `support-matrix`
 - **NVIDIA GPU Operator 플랫폼 지원** — Operator ↔ 쿠버네티스 ↔ 드라이버: [docs.nvidia.com — gpu-operator/platform-support](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html)
 
-## 11.3 0단계 — 하드웨어와 BIOS 전제
+## 11.3 0단계. 하드웨어와 BIOS 전제
 
 GPU enablement에서 가장 흔한 1차 실패는 BIOS입니다. 아래 설정이 누락되면 ESXi가 GPU를 아예 인식하지 못하거나, VRAM이 큰 GPU에서 MMIO 충돌로 GPU가 사라집니다. 항목명은 서버 벤더마다 다릅니다.
 
@@ -67,11 +67,11 @@ pciPassthru.64bitMMIOSizeGB = "512"   # 예시 — GPU 수 × VRAM 합을 수용
 
 이 설정이 부족하면 고용량 GPU 2장 이상에서 CUDA 초기화 실패(Xid 31 / IOMMU Fault)가 보고됩니다([NVIDIA Developer Forum 사례](https://forums.developer.nvidia.com/t/rtx-pro-6000-blackwell-se-iommu-fault-detected-esxi/358104), 커뮤니티 보고).
 
-## 11.4 1단계 — 하이퍼바이저에서 GPU 인식
+## 11.4 1단계. 하이퍼바이저에서 GPU 인식
 
 할당 모드에 따라 호스트 준비가 갈립니다.
 
-### 11.4.1 Passthrough(전용) 경로 — VIB 불필요
+### 11.4.1 Passthrough(전용) 경로. VIB 불필요
 
 물리 GPU 전체를 한 VM에 전용으로 할당합니다. **NVIDIA vGPU Manager(VIB)를 설치하지 않으며, 그래서 NVAIE 라이선스도 필요 없습니다.** 게스트 OS가 표준 NVIDIA 데이터센터 드라이버를 직접 사용합니다.
 
@@ -80,7 +80,7 @@ pciPassthru.64bitMMIOSizeGB = "512"   # 예시 — GPU 수 × VRAM 합을 수용
 3. (고용량 VRAM) 11.3절의 64-bit MMIO 설정 적용.
 4. 게스트 OS에 NVIDIA 데이터센터 드라이버 설치.
 
-### 11.4.2 vGPU, MIG(공유, 격리) 경로 — vGPU Manager VIB 필요
+### 11.4.2 vGPU, MIG(공유, 격리) 경로. vGPU Manager VIB 필요
 
 물리 GPU를 여러 VM에 나눠 주거나 하드웨어 격리(MIG)를 사용하려면 ESXi에 **NVIDIA vGPU Manager VIB**를 설치합니다. 이 경로는 **NVAIE 라이선스가 필요**합니다.
 
@@ -111,7 +111,7 @@ VKS 환경에서는 이 호스트 준비를 바탕으로 GPU Operator가 게스�
 - **vGPU, MIG-backed vGPU** → vGPU VIB 경유이므로 **NVAIE 필요**.
 - 단, 할당 모드와 무관하게 **NVAIE NGC 컨테이너와 NIM 마이크로서비스를 사용하면** 그 자체로 NVAIE 라이선스가 필요합니다(passthrough 환경이라도).
 
-### 11.5.2 Enhanced DirectPath I/O와 vMotion — 9.1의 핵심, 그리고 단서
+### 11.5.2 Enhanced DirectPath I/O와 vMotion. 9.1의 핵심, 그리고 단서
 
 VCF 9.1에서 Enhanced DirectPath I/O는 near-native 성능을 유지하면서 vMotion, HA, DRS, 스냅샷, Storage vMotion, 핫애드를 지원하도록 설계됐습니다([VCF 블로그 — Why Enhanced DirectPath Wins](https://blogs.vmware.com/cloud-foundation/2026/04/20/why-enhanced-directpath-wins-for-high-performance-apps/), [VCF 9.1 vSphere What's New](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes/what-s-new/whats-new-vsphere.html)).
 
@@ -137,7 +137,7 @@ nvidia-smi mig -lgi
 
 주의: Ampere는 MIG 모드가 GPU에 영속되지만 Hopper 이상은 재부팅 시 MIG가 비활성화될 수 있어 운영 자동화가 필요합니다. VM당 MIG 프로파일은 1종만 할당됩니다([MIG-Backed vGPU](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/mig-backed-vgpu.html)).
 
-## 11.6 2단계 — 버전 인터락 규칙 (숫자보다 규칙)
+## 11.6 2단계. 버전 인터락 규칙 (숫자보다 규칙)
 
 GPU 스택은 호스트 VIB → 게스트 드라이버 → GPU Operator → 컨테이너 드라이버가 한 사슬로 맞아야 합니다. 숫자는 변하니 **규칙**을 기억하십시오.
 
@@ -167,11 +167,11 @@ GPU 스택은 호스트 VIB → 게스트 드라이버 → GPU Operator → 컨�
 
 > **확인 필요:** GPU Operator 25.10.x는 NVIDIA 기준 이후 버전(26.x 계열)이 출시되며 deprecated 단계로 전환됩니다. PAIS 3.0이 26.3.1을 정식 선택지로 넣었으므로, 신규 구축은 26.3.1을, 25.10.1에서 CDI 조치(11.11.1절)를 적용해 둔 운영 환경은 회귀 테스트 후 전환을 검토하십시오. 어느 쪽이든 **PAIS가 지정과 검증한 두 버전 밖으로 임의 교체하지 마십시오.** NVAIE 8.2 호스트 드라이버(595 브랜치)와 PAIS 3.0 게스트 드라이버(580 브랜치)의 조합은 규칙 1 범위 안이지만, 릴리스 노트가 직접 검증했다고 밝힌 조합은 아니므로 PoC에서 확인이 필요합니다. VCF 9.1.1 전용 ESXi 빌드번호와 PAIF 9.1.x의 전체 지원 GPU 목록은 [Broadcom 호환성 가이드](https://compatibilityguide.broadcom.com/)에서 확인합니다.
 
-## 11.8 3단계 — VKS에서 GPU Operator 구성
+## 11.8 3단계. VKS에서 GPU Operator 구성
 
 VKS(vSphere Kubernetes Service)는 9.1에서 DRA(Dynamic Resource Allocation) 기반 GPU 스케줄링과 Kubernetes AI Conformance를 지원합니다([문서 02 2.3절](02-architecture.md)). GPU Operator가 노드의 드라이버, 컨테이너 런타임, 디바이스 플러그인, (MIG) 매니저를 자동화합니다.
 
-### 11.8.1 MIG 모드 — 전략 선택
+### 11.8.1 MIG 모드. 전략 선택
 
 ```bash
 # 모든 GPU를 동일 프로파일로
@@ -183,7 +183,7 @@ VKS(vSphere Kubernetes Service)는 9.1에서 DRA(Dynamic Resource Allocation) �
 kubectl label node <node> nvidia.com/mig.config=all-1g.10gb --overwrite
 ```
 
-### 11.8.2 vGPU 모드 — 게스트 드라이버 이미지(규칙 4)
+### 11.8.2 vGPU 모드. 게스트 드라이버 이미지(규칙 4)
 
 vGPU 모드에서는 GPU Operator가 드라이버를 직접 설치하지 않고, **호스트 vGPU 브랜치에 맞춘 게스트 드라이버 컨테이너 이미지**를 별도로 빌드하고 푸시하면 이를 참조합니다.
 
@@ -197,11 +197,11 @@ helm install gpu-operator nvidia/gpu-operator \
 
 > VKS 전용 GPU Operator 값은 공개 페이지에 인라인으로 정리돼 있지 않아, **NVIDIA AI Enterprise vSphere 배포 가이드**를 별도 기준으로 따릅니다(확인 필요).
 
-### 11.8.3 CDI — 25.10부터 기본 활성화
+### 11.8.3 CDI. 25.10부터 기본 활성화
 
 GPU Operator 25.10.0부터 **CDI(Container Device Interface)** 가 기본 활성화되어, `runtimeClassName: nvidia` 없이 컨테이너 런타임이 CDI 스펙(`/var/run/cdi/nvidia.yaml`)으로 GPU를 주입합니다([GPU Operator CDI](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/cdi.html)). 이 기본값이 ESXi 기반 containerd 환경과 충돌하는 사례가 11.11.1절에서 다루는 대표 함정입니다.
 
-## 11.9 4단계 — PAIS가 GPU를 소비
+## 11.9 4단계. PAIS가 GPU를 소비
 
 PAIS Model Runtime Pod가 VKS 워커 노드에 스케줄되어 GPU를 소비합니다. 아래 스택이 모두 맞아야 모델이 GPU를 사용할 수 있습니다.
 
@@ -215,7 +215,7 @@ PAIS Model Runtime Pod  (GPU 리소스 요청)
 
 PAIS의 GPU 전제(드라이버, Operator, vGPU/MIG)는 11.7절 스냅샷을 따르며, 구성 키는 [PAIF 9.1 요구사항 문서](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html)를 따릅니다.
 
-## 11.10 PoC 빠른 검증 경로 — 계층별 "GPU가 보이나"
+## 11.10 PoC 빠른 검증 경로. 계층별 "GPU가 보이나"
 
 문제가 생기면 상위 계층부터가 아니라 **하위 계층부터** 단계별로 확인합니다. 각 단계가 통과해야 다음이 의미가 있습니다.
 
@@ -229,7 +229,7 @@ PAIS의 GPU 전제(드라이버, Operator, vGPU/MIG)는 11.7절 스냅샷을 따
 | 6 | 컨테이너 주입(CDI) | GPU 요청 Pod 생성 | CDI 오류 없이 Running(11.11.1절) |
 | 7 | PAIS | Model Runtime Pod, 추론 | Pod Running, 추론 응답 |
 
-## 11.11 흔한 함정 — PoC에서 가장 자주 실패하는 두 지점
+## 11.11 흔한 함정. PoC에서 가장 자주 실패하는 두 지점
 
 > **이 절은 PoC 핸즈온 깊이입니다.** 같은 두 증상의 **운영 관점 런북**(증상→진단→조치 요약)은 [문서 10 10.2절](10-operations.md)에 있습니다. 운영 중 빠른 분류는 그쪽을, 실제 ConfigMap, 점검표로 PoC 실패 지점을 해결하는 작업은 이 절을 참조하세요.
 

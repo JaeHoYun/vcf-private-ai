@@ -29,7 +29,7 @@ VCF 9.1은 native Kubernetes HA의 현대적 표준으로 **3-Zone 배포 모델
 
 각 Zone은 vSAN, HA 정족수 유지를 위해 최소 3호스트가 필요합니다(출처: [VCF Blog — Architecting VKS on VCF](https://blogs.vmware.com/cloud-foundation/2026/06/09/architecting-vmware-vsphere-kubernetes-service-on-vcf-top-webinar-and-field-questions-answered/)).
 
-### 클러스터 배치 유형 — 통합형, 분리형, 다중 영역형
+### 클러스터 배치 유형. 통합형, 분리형, 다중 영역형
 
 컨트롤 플레인과 일반 워커를 어느 물리 호스트에 배치하느냐에 따라 물리 호스트 수와 라이선스 코어 수가 달라집니다. 공식 문서에는 컨트롤 플레인이나 일반 워커를 GPU가 없는 별도 호스트에 배치하라는 요건이나 권장이 없고, VCF 9.1의 PAIS 소비 블루프린트는 오히려 관리와 워크로드를 한 영역, 한 클러스터에 결합한 구성을 전제로 합니다([PAIS 소비 블루프린트](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/application-modernization/private-ai-services-blueprint(1).html)).
 

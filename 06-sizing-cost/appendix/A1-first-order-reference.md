@@ -8,7 +8,7 @@
 
 ---
 
-## A1.0 이 부록이 존재하는 이유 — 닭과 달걀
+## A1.0 이 부록이 존재하는 이유. 닭과 달걀
 
 사이징의 핵심 숫자(예: "GPU 한 장이 초당 몇 토큰을 생성하는가", "한 Replica가 동시 몇 요청을 처리하는가")는 모델, 정밀도, 엔진 버전, 컨텍스트 분포에 따라 크게 달라지므로, 정답은 **자사 환경 실측**뿐입니다(본문 02, 03의 일관된 원칙).
 
@@ -30,7 +30,7 @@
 
 가장 신뢰할 단일 출처는 VMware가 공개한 LLM 추론 사이징 계산기 가이드입니다. **계산기 추정치이지 실측 벤치마크가 아니므로** 규모 감각용으로만 사용합니다([VMware — LLM Inference Sizing and Performance Guidance, 2024-09-25](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/)).
 
-### 처리량(TPS, tokens/sec) — 가정: 입력 4096 / 출력 256 토큰, GPU 4장
+### 처리량(TPS, tokens/sec). 가정: 입력 4096 / 출력 256 토큰, GPU 4장
 
 | 모델 규모 | GPU(예시) | 처리량(TPS, 어림) | 출처 |
 |---|---|---|---|
@@ -51,7 +51,7 @@
 
 > 출력 길이가 처리량을 가장 크게 좌우합니다. 짧은 출력 벤치마크는 1,000토큰 출력 대비 2–3배 높게 나올 수 있으므로, 자사 출력 분포로 보정하세요.
 
-### 대화형 작동점 측정 — 동시성별 지연 (NVIDIA NIM)
+### 대화형 작동점 측정. 동시성별 지연 (NVIDIA NIM)
 
 최대 처리량 수치는 지연 목표를 반영하지 않으므로, 대화형 서비스의 복제본 수 산정에는 **동시성별 첫 토큰 시간과 토큰 간 지연**을 사용합니다. 아래는 NVIDIA가 공개한 측정값입니다(입력 5,000토큰, 출력 500토큰, FP8, [NVIDIA NIM LLM 벤치마크](https://docs.nvidia.com/nim/benchmarking/llm/1.0.0/performance.html)). 요청당 처리 시간은 첫 토큰 시간 + 토큰 간 지연 × 499로 계산한 값입니다.
 
@@ -65,7 +65,7 @@
 - 평균값이므로 백분위 지연 목표(A2.3)와 비교할 때는 여유를 감안합니다. [08](../docs/08-reference-scenario.md)은 토큰 간 지연 50ms 이하인 가장 높은 동시성을 작동점으로 골랐습니다.
 - 24–35B급 중형 모델을 같은 조건으로 측정한 공개 자료는 찾지 못했습니다. 중형 모델은 PoC에서 직접 측정합니다.
 
-### 동시 요청 수(per GPU) 규칙 — RAG/챗 서빙
+### 동시 요청 수(per GPU) 규칙. RAG/챗 서빙
 
 | 모델 규모 | GPU | 최장 컨텍스트 동시성 | 4096 컨텍스트 동시성 | 출처 |
 |---|---|---|---|---|
@@ -108,7 +108,7 @@
 | NVMe 순차 읽기 | 약 3.5–7 GB/s(단일), RAID0 약 12 GB/s | [Level1Techs 포럼(스펙 범위 교차)](https://forum.level1techs.com/t/has-anybody-able-to-hit-the-advertised-read-speeds-from-nvme-ssd-when-it-comes-to-loading-a-slightly-bigger-llm/239935) |
 | 70B safetensors 로딩 | 약 150초 → 30초 미만(fastsafetensors) | [fastsafetensors(2025)](https://www.alphaxiv.org/overview/2505.23072v1) |
 
-> 콜드스타트 시간 ≈ (모델 GB) / (유효 읽기 GB/s). 단, 단순한 기본 로더는 NVMe 대역폭의 일부만 활용하므로 **로더 방식(스트리밍/fastsafetensors)이 드라이브 스펙보다 더 중요**합니다. 본문 [05.3](../docs/05-storage-network-sizing.md#53-스토리지-성능--모델-로딩과-iops) 참조.
+> 콜드스타트 시간 ≈ (모델 GB) / (유효 읽기 GB/s). 단, 단순한 기본 로더는 NVMe 대역폭의 일부만 활용하므로 **로더 방식(스트리밍/fastsafetensors)이 드라이브 스펙보다 더 중요**합니다. 본문 [05.3](../docs/05-storage-network-sizing.md#53-스토리지-성능-모델-로딩과-iops) 참조.
 
 ---
 

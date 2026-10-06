@@ -5,14 +5,14 @@
 
 이 문서는 VCF 9.1.1 / PAIF 9.1.1 / PAIS 3.0 기반 Private AI 플랫폼에서, 모델, 검색, 도구가 결합된 LLM 애플리케이션의 **앱 계층 가드레일**을 거버넌스/운영 관점으로 통합합니다. 개별 RAG 구현의 인젝션과 출력 방어 절차는 시리즈 ④ RAG 레퍼런스 아키텍처에서 상세히 다루므로, 본 문서는 해당 절을 링크해 상세를 위임하고, 여기서는 플랫폼 전반에 걸친 가드레일 **정책, 운영, 검증**을 다룹니다.
 
-- 입력측 인젝션과 살균 상세: [④ RAG 가이드 03 3.6 — 프롬프트 인젝션 방어와 입력 살균](../../04-rag/docs/03-retrieval-context.md#36-보안--프롬프트-인젝션-방어와-입력-살균)
-- 출력측 가드레일 상세: [④ RAG 가이드 04 4.6 — 출력 가드레일, 민감정보, 출력 안전](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일--민감정보와-출력-안전)
+- 입력측 인젝션과 살균 상세: [④ RAG 가이드 03 3.6 — 프롬프트 인젝션 방어와 입력 살균](../../04-rag/docs/03-retrieval-context.md#36-보안-프롬프트-인젝션-방어와-입력-살균)
+- 출력측 가드레일 상세: [④ RAG 가이드 04 4.6 — 출력 가드레일, 민감정보, 출력 안전](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일-민감정보와-출력-안전)
 
 본 문서의 위험 분류는 OWASP Top 10 for LLM Applications 2025와 MITRE ATLAS를 기준으로 합니다([OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/), [MITRE ATLAS](https://atlas.mitre.org/)). 모든 수치와 기능 단정은 작성 시점(2026-06) 기준이며, 적용 전 공식 문서로 재확인하시기 바랍니다.
 
 ---
 
-## 6.1 가드레일을 왜 앱 계층에 두는가 — 다층 방어 모델
+## 6.1 가드레일을 왜 앱 계층에 두는가. 다층 방어 모델
 
 LLM 애플리케이션의 근본 취약점은 **명령(instruction)과 데이터(data)가 같은 채널로 모델에 전달**된다는 점입니다. 그래서 공격자가 데이터처럼 보이는 입력에 명령을 심으면 모델이 이를 새 지시로 오인합니다. 이것이 OWASP가 두 판 연속 1위로 꼽은 **LLM01 Prompt Injection**의 본질입니다([OWASP LLM01:2025 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/)). 모델 자체로는 이 분리를 보장할 수 없으므로, 방어선은 모델 **바깥의 앱 계층**에 배치해야 합니다.
 
@@ -27,11 +27,11 @@ LLM 애플리케이션의 근본 취약점은 **명령(instruction)과 데이터
 
 이 통제들은 플랫폼 전체에 일관되게 적용되어야 하므로, 애플리케이션마다 재구현하지 않고 **공용 정책, 공용 가드 서비스**로 표준화하는 것이 거버넌스의 출발점입니다.
 
-## 6.2 입력측 가드레일 — 인젝션 방어와 살균
+## 6.2 입력측 가드레일. 인젝션 방어와 살균
 
 입력측은 직접/간접 프롬프트 인젝션을 모두 차단해야 합니다. 직접 인젝션은 사용자 입력에, 간접 인젝션은 **검색된 청크, 외부 문서, 도구 응답**에 명령이 숨어 들어오는 경우입니다. RAG에서는 검색 청크 자체가 인젝션 벡터로 작용하며, MITRE ATLAS는 이를 `AML.T0051 LLM Prompt Injection`으로, RAG 오염을 별도 기법으로 분류합니다([MITRE ATLAS](https://atlas.mitre.org/), [Repello AI: MITRE ATLAS AML.T techniques](https://repello.ai/blog/mitre-atlas-framework)).
 
-핵심 통제는 다음과 같습니다. 구현 절차는 [④ RAG 03 3.6](../../04-rag/docs/03-retrieval-context.md#36-보안--프롬프트-인젝션-방어와-입력-살균)을 참조하고, 본 문서는 플랫폼 정책으로만 규정합니다.
+핵심 통제는 다음과 같습니다. 구현 절차는 [④ RAG 03 3.6](../../04-rag/docs/03-retrieval-context.md#36-보안-프롬프트-인젝션-방어와-입력-살균)을 참조하고, 본 문서는 플랫폼 정책으로만 규정합니다.
 
 | 통제 | 정책 요구사항 | 근거 |
 |---|---|---|
@@ -42,9 +42,9 @@ LLM 애플리케이션의 근본 취약점은 **명령(instruction)과 데이터
 
 > 주의: 살균과 검색 단계 방어만으로는 악성 텍스트 검색을 완전히 차단하지 못한다는 연구가 있습니다. 입력측 단독에 의존하지 말고 출력측(6.3), 도구측(6.4)과 반드시 결합하십시오([Overcoming the Retrieval Barrier: Indirect Prompt Injection in the Wild, arXiv](https://arxiv.org/abs/2601.07072)).
 
-## 6.3 출력측 가드레일 — 민감정보, 누출, 유해 출력
+## 6.3 출력측 가드레일. 민감정보, 누출, 유해 출력
 
-모델이 답을 만든 **직후, 사용자에게 반환하기 전**에 적용하는 방어선입니다. 다층 방어의 나머지 절반이며, 입력측을 통과한 인젝션의 결과를 최종적으로 차단하는 지점이기도 합니다. 구현 절차는 [④ RAG 04 4.6](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일--민감정보와-출력-안전)을 참조하고, 본 문서는 플랫폼 공통 정책 수준에서 다룹니다.
+모델이 답을 만든 **직후, 사용자에게 반환하기 전**에 적용하는 방어선입니다. 다층 방어의 나머지 절반이며, 입력측을 통과한 인젝션의 결과를 최종적으로 차단하는 지점이기도 합니다. 구현 절차는 [④ RAG 04 4.6](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일-민감정보와-출력-안전)을 참조하고, 본 문서는 플랫폼 공통 정책 수준에서 다룹니다.
 
 | 통제 | 정책 요구사항 | 근거 |
 |---|---|---|
@@ -57,7 +57,7 @@ LLM 애플리케이션의 근본 취약점은 **명령(instruction)과 데이터
 
 **독립 계층 원칙**이 핵심입니다. 출력 가드를 생성 모델 자신에게 맡기면 동일한 인젝션에 함께 무력화될 수 있으므로, 가드는 별도 모델 또는 오케스트레이션/BFF 계층에서 강제해야 합니다([Guardrailed LLMs, IJRAI](https://ijrai.org/index.php/ijrai/article/download/79/76)).
 
-## 6.4 에이전트와 도구 사용 안전 — 과도한 에이전시 제어
+## 6.4 에이전트와 도구 사용 안전. 과도한 에이전시 제어
 
 LLM이 도구(파일 I/O, API, 명령 실행)에 접근하면 의도 범위를 초과하는 행위를 할 수 있습니다. OWASP는 이를 **LLM06 Excessive Agency**로 분류하고 세 가지 근본 원인으로 나눕니다. 도구가 과업 범위를 넘는 **과도한 기능**(excessive functionality), 도구가 필요 이상 권한으로 동작하는 **과도한 권한**(excessive permissions), 충분한 감독 없이 자율 동작하는 **과도한 자율성**(excessive autonomy)입니다([OWASP LLM06:2025 Excessive Agency](https://aembit.io/blog/owasp-top-10-llm-risks-explained/)).
 
@@ -109,7 +109,7 @@ PAIS와 VCF는 가드레일을 적용하는 데 활용할 수 있는 플랫폼 �
 
 앱 안 라이브러리와 소형 분류기(입력 인젝션 탐지, 스캐너, PII 마스킹)까지 포함한 가드 기능별 후보 목록과 배치 위치의 기본값은 [앱 가이드 12 12.3절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/12-service-security.md)이 정본이며 서비스별 선택도 그곳에서 합니다. 이 문서는 플랫폼이 공용 가드 서비스로 제공할지의 결정과 정책 표준만 다룹니다.
 
-## 6.6 가드레일 운영 — 정책 버전 관리, 적대적 테스트, 회귀 연계
+## 6.6 가드레일 운영. 정책 버전 관리, 적대적 테스트, 회귀 연계
 
 가드레일은 한 번 설치하고 끝나는 것이 아니라 **공격 기법 진화에 따라 지속 갱신**해야 하는 운영 자산입니다. MITRE ATLAS는 실제 공격 관측을 바탕으로 계속 갱신되는 살아있는 지식 베이스이며, 2025 봄 릴리스에서 RAG 오염과 거짓 RAG 항목 주입과 LLM 프롬프트 크래프팅 등 생성 AI 공격 벡터를 대폭 확장했습니다([MITRE ATLAS, Vectra](https://www.vectra.ai/topics/mitre-atlas)). 가드레일 정책도 이 변화를 추종해야 합니다.
 
@@ -154,8 +154,8 @@ PAIS와 VCF는 가드레일을 적용하는 데 활용할 수 있는 플랫폼 �
 - [OWASP LLM Prompt Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html)
 - [MITRE ATLAS](https://atlas.mitre.org/)
 - [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
-- [④ RAG 가이드 03 3.6 입력 살균](../../04-rag/docs/03-retrieval-context.md#36-보안--프롬프트-인젝션-방어와-입력-살균)
-- [④ RAG 가이드 04 4.6 출력 가드레일](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일--민감정보와-출력-안전)
+- [④ RAG 가이드 03 3.6 입력 살균](../../04-rag/docs/03-retrieval-context.md#36-보안-프롬프트-인젝션-방어와-입력-살균)
+- [④ RAG 가이드 04 4.6 출력 가드레일](../../04-rag/docs/04-inference-integration.md#46-출력-가드레일-민감정보와-출력-안전)
 - [NVIDIA NeMo Guardrails 문서](https://docs.nvidia.com/nemo/guardrails/home)
 - [Llama Guard 4 모델 카드 (Hugging Face)](https://huggingface.co/meta-llama/Llama-Guard-4-12B)
 - [Broadcom TechDocs, Private AI Services 릴리스 노트 (9.1 문서 경로)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)

@@ -42,7 +42,7 @@ Phase D: 앱 개발, 배포 (App Developer + DevOps)
 
 ## 3.3 Phase B: 모델 준비
 
-### Step 1 — DLVM 배포
+### Step 1. DLVM 배포
 
 VCF Automation 카탈로그에서 **AI Workstation** 또는 **AI RAG Workstation**을 요청합니다.
 
@@ -61,7 +61,7 @@ https://<dlvm_ip>:8888          # JupyterLab (토큰: 배포 시 설정)
 
 > **DLVM 이미지 버전 주의** — DLVM 9.1(2026-05)은 Ubuntu 24.04 기반이고 데이터센터 드라이버 580.95.05를 자동 설치하며 passthrough GPU를 지원합니다. DLVM 9.1.1(2026-09)은 Ubuntu 26.04 기반으로 드라이버 595.71.05, Docker 29.6.0, PyTorch 2.12.1(Python 3.14), VCF CLI 9.1.0과 helm, kubectl vSphere 플러그인을 동봉하고, TKG GPU 콘솔 컨테이너의 후속인 Deep Learning Container 이미지를 함께 제공합니다. DLVM 콘솔과 Miniforge는 9.1에서 deprecated가 예고됐으므로, 새 개발 환경은 JupyterLab과 컨테이너 기반으로 구성하는 편이 안전합니다. 단독 `pais` CLI는 9.1 이미지부터 없으며 `vcf pais` 플러그인을 사용합니다(Step 4). 이미지별 구성은 [DLVM 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-deep-learning-vm-image-release-notes.html)로 확인하십시오.
 
-### Step 2 — 모델 다운로드
+### Step 2. 모델 다운로드
 
 ```bash
 # Hugging Face
@@ -72,7 +72,7 @@ huggingface-cli download meta-llama/Llama-3.1-8B-Instruct --local-dir ./llama-3.
 ngc registry model download-version nvidia/nemo/megatron_llama3_8b:1.0
 ```
 
-### Step 3 — 모델 검증
+### Step 3. 모델 검증
 
 ```bash
 sha256sum ./llama-3.1-8b-instruct/model*.safetensors   # 무결성
@@ -82,7 +82,7 @@ curl http://localhost:8000/v1/chat/completions -H "Content-Type: application/jso
   -d '{"model":"./llama-3.1-8b-instruct","messages":[{"role":"user","content":"Hello"}],"max_tokens":100}'
 ```
 
-### Step 4 — Harbor에 모델 Push
+### Step 4. Harbor에 모델 Push
 
 ```bash
 docker login harbor.company.com -u <username> -p <password>
@@ -97,7 +97,7 @@ vcf pais models push \
 
 > **CLI 형태 확인:** 모델 반입 CLI는 VCF Consumption CLI의 `pais` 플러그인(`vcf plugin install pais` 후 `vcf pais models ...`)입니다. 단독 실행 파일 형태의 `pais` CLI는 DLVM 9.1 이미지에서 제거됐고, DLVM 9.1.1 이미지에는 VCF CLI 9.1.0과 확장된 플러그인이 동봉됩니다. 위 인자 이름은 공식 명령 레퍼런스 기준이지만 릴리스마다 바뀔 수 있으니 적용 직전 [VCF CLI pais 명령 레퍼런스](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-consumption/latest/consumer-interfaces-in-vcf/installing-and-using-vcf-cli-v9/command-reference2/pais2.html)로 확인하시기 바랍니다. 신규 작업은 **VCF Automation UI**를 우선 권장합니다. 모델명은 DNS 명명 규칙(소문자, 공백 없음)을 따릅니다. PAIS 3.0부터는 같은 CLI로 kubeconfig 조회와 지원 번들 수집도 간단해졌습니다([문서 10](10-operations.md)).
 
-### Step 5 — Model Endpoint 생성
+### Step 5. Model Endpoint 생성
 
 **방법 A: PAIS UI (권장)** — `VCF Automation > Build & Deploy > [네임스페이스] > Services > Private AI > Model Runtime > New Model Endpoint`에서 Endpoint 이름, Model URL, 타입(Completion/Embedding), 엔진, VM Class, Replicas를 설정합니다.
 
@@ -134,7 +134,7 @@ spec: { modelType: COMPLETIONS, modelEngine: LLAMACPP, vmClass: best-effort-medi
 
 ## 3.4 Phase C: RAG/에이전트 구성
 
-### Step 1 — Data Source 연결
+### Step 1. Data Source 연결
 
 `Services > Private AI > Data Indexing & Retrieval > Data Sources > Add Data Source`. 지원 소스: Confluence, SharePoint, Google Drive, **Google Workspace(9.1)**, S3, 로컬 파일.
 
@@ -144,7 +144,7 @@ Name: company-wiki / URL: https://company.atlassian.net/wiki
 Space Keys: HR, ENGINEERING / Auth: API Token
 ```
 
-### Step 2 — Knowledge Base 생성
+### Step 2. Knowledge Base 생성
 
 | 설정 | 권장값 |
 |------|--------|
@@ -155,7 +155,7 @@ Space Keys: HR, ENGINEERING / Auth: API Token
 
 PAIS가 자동으로 처리합니다: **수집 → 파싱 → 청킹 → 임베딩(Embedding Endpoint) → pgvector 저장 → 주기 갱신**.
 
-### Step 3 — Agent 생성
+### Step 3. Agent 생성
 
 | 설정 | 권장값 |
 |------|--------|
@@ -178,7 +178,7 @@ System Prompt 예시:
 4. 출처 문서명을 항상 언급하세요
 ```
 
-### Step 4 — PAIS Playground 테스트
+### Step 4. PAIS Playground 테스트
 
 Agent 생성 직후 **PAIS Playground**(Agent Builder 내장 테스트 UI)에서 즉시 대화형으로 검증하고, 검색된 청크를 확인하며 프롬프트를 반복 개선합니다. 화면에서 샘플 코드(curl 등)도 복사할 수 있습니다.
 

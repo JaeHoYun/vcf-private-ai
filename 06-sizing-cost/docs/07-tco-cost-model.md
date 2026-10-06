@@ -132,7 +132,7 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 
 **벤더 발표 수치(간접 참고):** Broadcom은 VCF 9.1 발표에서 서버 비용 최대 40% 절감, 스토리지 TCO 39% 절감, 쿠버네티스 운영비 최대 46% 절감, 퍼블릭 클라우드 대비 1X–2X TCO 개선을 제시했습니다. 이는 가장 좋은 조건에서 산출된 최대치("up to")입니다([Broadcom 보도자료 — VCF 9.1](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1); [Virtualization Review — VCF 9.1](https://virtualizationreview.com/articles/2026/05/06/private-ai-not-public-cloud-broadcoms-message-with-vmware-cloud-foundation-9-1.aspx)). 그대로 인용하지 말고, 발표가 전제한 조건(통합 전 환경, 사용률, 비교 기간)과 자사 조건이 어디서 다른지 비교하는 간접 참고로 활용합니다. 최종 판단의 숫자는 자사 실측과 견적으로 도출해야 합니다.
 
-### 한계비용 — 기보유(매몰) GPU 재활용
+### 한계비용. 기보유(매몰) GPU 재활용
 
 역방향 사이징([01 1.7절](01-sizing-methodology.md#17-순방향과-역방향-사이징))에서는 GPU가 이미 구매된 **매몰비용**(sunk cost)이라 재활용의 한계 CapEx가 0에 가깝습니다. 그러나 PAIF에서 그 GPU를 켜는 순간 다음 한계비용이 발생합니다.
 
@@ -151,7 +151,7 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 
 ## 7.7 단위 경제와 비용 귀속(쇼백/차지백)
 
-### 단위 경제(선택) — 토큰/요청당 비용 모델
+### 단위 경제(선택). 토큰/요청당 비용 모델
 
 추론 1천 토큰당 또는 요청당 비용은 "총 연 비용 ÷ 처리량"으로 모델링합니다. 수치는 단정하지 않고 산식만 제시합니다.
 

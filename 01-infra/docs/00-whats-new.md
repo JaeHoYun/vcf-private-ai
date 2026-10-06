@@ -43,13 +43,13 @@ PAIF는 VCF를 기반으로 동작하므로, 플랫폼 레벨 변화가 AI 운�
 
 ---
 
-## 0.3 PAIF 9.1 / PAIS 2.1 — AI 핵심 변화
+## 0.3 PAIF 9.1 / PAIS 2.1. AI 핵심 변화
 
-### (1) MCP(Model Context Protocol) 통합 — 가장 큰 변화
+### (1) MCP(Model Context Protocol) 통합. 가장 큰 변화
 에이전트를 **외부 데이터 소스와 도구**에 표준 인터페이스를 통해 연결합니다. Oracle, Microsoft SQL Server, ServiceNow, GitHub, Slack, PostgreSQL 등을 **커스텀 커넥터 없이** 거버넌스 하에 연동합니다.
 → 상세: [문서 05](05-agents-mcp.md)
 
-### (2) Artifact Mirroring Tool — 에어갭 풀스택
+### (2) Artifact Mirroring Tool. 에어갭 풀스택
 PAIS 2.1에 도입. VI 관리자가 **폐쇄망(air-gapped)** 환경에서 NVIDIA GPU 기반 Model Endpoint와 에이전트를 포함한 **완전한 Private AI 기능**을 설치하고 운영할 수 있습니다. 방산, 금융, 공공처럼 외부 반출이 불가한 환경의 핵심 기능입니다.
 → 상세: [문서 06](06-production.md) | 산업 적용: [문서 08](08-industry.md)
 

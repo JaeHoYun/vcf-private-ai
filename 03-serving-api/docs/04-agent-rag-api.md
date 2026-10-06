@@ -107,7 +107,7 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents' \
 
 ---
 
-## 4.4 에이전트 채팅 — `POST /agents/{id}/chat/completions`
+## 4.4 에이전트 채팅. `POST /agents/{id}/chat/completions`
 
 에이전트를 호출하는 런타임 엔드포인트입니다. 형태는 `chat/completions`와 같지만, **RAG, 세션이 자동으로 적용됩니다.**
 
@@ -160,7 +160,7 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents/hr-assista
 
 ---
 
-## 4.5 Model Endpoint API vs Agent API — 최종 선택표
+## 4.5 Model Endpoint API vs Agent API. 최종 선택표
 
 | 상황 | 선택 |
 |------|------|

@@ -70,7 +70,7 @@
 | 풀 파인튜닝과 사전학습 | 학습셋 의존 | — | 버스트성, 대형 | 다중 GPU(샤딩) | FSDP/ZeRO-3, 노드 인터커넥트 중요(본문 [02 2.10절](../docs/02-gpu-sizing.md#210-학습과-파인튜닝-gpu-메모리)) |
 
 > **RAG 입력과 출력 토큰 계산** — 입력은 고정값보다 식으로 산정합니다. 입력 토큰 = 시스템 프롬프트 + 질문 + 대화 이력 + 청크 크기 × 최종 검색 결과 개수입니다. 공개된 설정 기본값만으로도 검색 컨텍스트가 약 1K(청크 약 250토큰 × 4개)에서 약 5K(512 × 10), 16K(800 × 20)까지 벌어집니다([NVIDIA Enterprise RAG 사이징 가이드](https://docs.nvidia.com/enterprise-reference-architectures/enterprise-rag-retrieval-scaling-and-sizing-guide/latest/rag-retrieval-accuracy-performance.html), [NVIDIA RAG Blueprint 설정](https://docs.nvidia.com/rag/2.4.0/accuracy_perf.html), [Anthropic Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)). 공개된 실제 RAG 서비스 트레이스 1건에서는 입력 중앙값이 약 3K, 90백분위가 약 4K였고, 출력은 중앙값 약 250토큰, 90백분위 약 550–600토큰이었습니다([RAGPulse](https://arxiv.org/pdf/2511.12979), 중국어 대학 서비스). 그래서 출력은 **평균 산정에 약 250–300토큰, 보수 산정에 약 500토큰**으로 나눠 적용합니다.
-> 멀티모달(이미지, 오디오, 문서 업로드)이 섞이면 입력 바이트, 네트워크, 메모리가 급증합니다. 워크로드 믹스를 먼저 고정하세요(본문 [05.4](../docs/05-storage-network-sizing.md#54-네트워크-용량--추론-반입-내부-통신)).
+> 멀티모달(이미지, 오디오, 문서 업로드)이 섞이면 입력 바이트, 네트워크, 메모리가 급증합니다. 워크로드 믹스를 먼저 고정하세요(본문 [05.4](../docs/05-storage-network-sizing.md#54-네트워크-용량-추론-반입-내부-통신)).
 > 학습과 파인튜닝 프리셋은 추론과 메모리 셈법이 다릅니다(가중치 외 그래디언트, 옵티마이저, 활성화). 파라미터당 메모리와 LoRA/QLoRA, 샤딩은 본문 [02 2.10절](../docs/02-gpu-sizing.md#210-학습과-파인튜닝-gpu-메모리)을 참조하세요.
 > **한국어 토큰 팽창 계수** — 위 표의 토큰 수는 영어 기준 어림입니다. 한국어는 토크나이저에 따라 같은 내용이 영어보다 많은 토큰으로 쪼개집니다. 같은 내용 기준으로 구형 토크나이저(GPT-4의 cl100k 등)는 영어의 약 1.8–3.2배([Petrov et al.](https://arxiv.org/abs/2305.15425)), 현행 오픈 모델(Llama 3.1, Gemma 3, Qwen3, gpt-oss)은 공개 측정값으로 환산하면 약 1.3–1.7배([tokka-bench](https://github.com/bgub/tokka-bench) 결과로 환산)이고, 한국어 어휘를 늘린 국내 모델은 이보다 낮은 편입니다(개발사 자체 측정). 이 범위는 출발점일 뿐이므로 한국어 서비스는 후보 모델의 토크나이저로 자사 대표 문서를 직접 세어 **팽창 계수**를 구하고 입력과 출력 토큰에 곱해 사용합니다. 계수는 모델마다 달라 표로 고정하지 않으며, 같은 GPU에서 처리량이 계수만큼 줄고 KV 캐시와 컨텍스트 예산도 그만큼 더 소모된다는 점이 사이징에 미치는 영향입니다. 측정 절차와 모델 선정 기준은 [앱 가이드 10 10.7절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/10-models-serving.md)에 있습니다.
 
@@ -86,7 +86,7 @@
 | TPOT/ITL | 토큰 간 지연 | 100ms 이하(초당 10토큰 이상), 여유 있게 초당 20–30토큰 | MLPerf 8B 대화형 TPOT 100ms, VMware 블로그 TPS 30 |
 | P95/P99 | 백분위 지연 | SLA는 평균이 아닌 백분위로, 어느 백분위인지 명시 | 자료마다 기준이 다름(MLPerf 99백분위, NVIDIA RAG 가이드 90백분위). 본문 [01.3](../docs/01-sizing-methodology.md#13-사이징-입력값-체크리스트) |
 | 가용성 | 다중화 수준 | 최소 N+1(모델 엔드포인트 복제본 2 이상) | 노드 장애와 롤링 업데이트 흡수. VCF 9.1 PAIS 설계는 복제본 2 이상을 서로 다른 워커 노드에 분산하도록 권장([설계 요소](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/application-modernization/private-ai-services-blueprint(1)/design-elements-for-the-private-ai-services-blueprint.html)) |
-| 헤드룸 | 평균 사용률 여유 | 20–30% | 본문 [06.2](../docs/06-capacity-planning.md#62-증설-트리거--임계-헤드룸-버스트-정책) |
+| 헤드룸 | 평균 사용률 여유 | 20–30% | 본문 [06.2](../docs/06-capacity-planning.md#62-증설-트리거-임계-헤드룸-버스트-정책) |
 
 ### 요청당 처리 시간 t는 계산으로 구한다
 

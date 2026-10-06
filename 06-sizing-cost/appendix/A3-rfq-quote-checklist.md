@@ -45,7 +45,7 @@
 | 고속 패브릭 NIC | 포트 수, 속도 | 노드당 포트([07.3](../docs/07-tco-cost-model.md#73-하드웨어-비용capex와-감가)) |
 | GPU 간 인터커넥트 | NVLink/스위치 구성 | 토폴로지([04.3](../docs/04-vks-cluster-sizing.md#43-노드-사양-산정-노드-크기-vs-노드-수)) |
 | 스토리지 | 용량, 미디어(NVMe), 단가 | 필요 가용 용량([05.5](../docs/05-storage-network-sizing.md#55-규모에서-용량으로-환산하는-사이징-산정-표)) |
-| 네트워크 스위치 | 관리/워크로드 토폴로지와 수량 | [05.4](../docs/05-storage-network-sizing.md#54-네트워크-용량--추론-반입-내부-통신) |
+| 네트워크 스위치 | 관리/워크로드 토폴로지와 수량 | [05.4](../docs/05-storage-network-sizing.md#54-네트워크-용량-추론-반입-내부-통신) |
 
 > GPU, 드라이버, 프로파일이 PAIF 지원 매트릭스와 서버 벤더의 BCG(BIOS, 펌웨어 호환성)/HCL(하드웨어 호환성 목록, Hardware Compatibility List)에 부합하는지 함께 확인하세요([02.8](../docs/02-gpu-sizing.md#28-gpu-모델-선택-가이드-hbm-용량과-세대)).
 

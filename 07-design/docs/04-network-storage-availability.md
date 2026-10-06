@@ -91,7 +91,7 @@
 
 ---
 
-## 4.4 결정: VectorDB — DSM pgvector vs 외부 전용 벡터DB
+## 4.4 결정: VectorDB. DSM pgvector vs 외부 전용 벡터DB
 
 **무엇을 정하나** — RAG의 벡터 저장소를 VMware 검증 스택으로 구성할지, 외부 전용 벡터DB로 구성할지.
 
@@ -116,7 +116,7 @@
 
 ---
 
-## 4.5 결정: 가용성과 DR — 단일 사이트 vs vSAN stretched vs 멀티사이트 DR
+## 4.5 결정: 가용성과 DR. 단일 사이트 vs vSAN stretched vs 멀티사이트 DR
 
 **무엇을 정하나** — 가용성과 재해복구를 어느 수준까지 설계할지.
 

@@ -90,7 +90,7 @@ vSphere Namespace로 팀/부서/고객을 격리합니다.
 
 대부분 **Namespace 격리**로 충분하며, 규제, 극보안 시 상위 격리를 검토합니다. 네임스페이스별 **리소스 쿼터**(`nvidia.com/gpu`, CPU/Memory/Storage, Pod/Service 수)로 GPU, 컴퓨팅을 통제합니다. Harbor는 프로젝트 권한, DSM은 인스턴스/스키마로 격리합니다.
 
-### 6.4.1 공유 모델 호스팅 — 테넌트마다 모델을 복제하지 않는 방법 (PAIS 3.0부터)
+### 6.4.1 공유 모델 호스팅. 테넌트마다 모델을 복제하지 않는 방법 (PAIS 3.0부터)
 
 2.1까지는 격리 단위마다 자기 모델 엔드포인트를 배포해야 했습니다. 같은 사내 표준 LLM을 사업부 다섯 곳이 사용하면 GPU도 다섯 벌이 필요했습니다. PAIS 3.0은 한 인스턴스(provider)에서 서빙 중인 completion 또는 embedding 엔드포인트를 다른 PAIS 인스턴스와 네임스페이스(consumer)에서 참조하는 **공유 모델 호스팅**을 도입했습니다. 격리 경계는 유지하고 모델만 공유하는 방식입니다.
 
@@ -202,7 +202,7 @@ OTel Collector로 에이전트 요청을 단계별(RAG 검색 → MCP 도구 호
 
 ---
 
-## 6.9 에어갭(Air-Gapped) 환경 — Artifact Mirroring Tool (PAIS 2.1부터)
+## 6.9 에어갭(Air-Gapped) 환경. Artifact Mirroring Tool (PAIS 2.1부터)
 
 방산, 금융, 공공, 일부 제조처럼 **외부망 연결이 불가**한 환경을 위해 PAIS는 **Artifact Mirroring Tool**을 제공합니다(2.1에서 도입).
 

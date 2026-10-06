@@ -25,7 +25,7 @@ https://{instance-fqdn}/api/v1/compatibility/openai/v1/{...}
 
 ---
 
-## 3.2 모델 목록 — `GET /models`
+## 3.2 모델 목록. `GET /models`
 
 현재 인스턴스에서 호출 가능한 모델과 엔드포인트를 조회합니다.
 
@@ -41,11 +41,11 @@ curl -s 'https://{fqdn}/api/v1/compatibility/openai/v1/models' \
 
 > PAIS 3.0부터 각 항목에 모델 **status** 필드가 추가되어, 엔드포인트가 기동 중인지 서빙 가능한지를 목록 조회만으로 알 수 있습니다. 또한 3.0에서는 다른 인스턴스의 공유 모델과 원격 클라우드 모델도 이 목록에 로컬 모델과 같은 형태로 나타나므로([02 2.5.1절](02-serving-api-architecture.md)), 앱이 모델을 고를 때 이름만으로 데이터 행선지를 짐작할 수는 없습니다. 어느 모델이 원격인지는 플랫폼 팀이 앱 팀에 알려 주어야 합니다.
 >
-> `model_type`(completion/embedding), `model_engine`(vLLM/Infinity/llama.cpp 등)으로 그 모델이 무엇을 할 수 있는지 구분합니다. 앱에서 사용할 `model` 이름은 여기 `id`에서 가져옵니다. 같은 completion 모델이라도 **GPU(vLLM)인지 CPU(llama.cpp)인지**가 `model_engine`에 드러나므로, 지연과 처리량 기대치를 여기서 가늠할 수 있습니다(9.1에서 llama.cpp 기반 CPU 추론 추가 → [02.5](02-serving-api-architecture.md#25-model-runtime--추론-엔진과-멀티-액셀러레이터-91)).
+> `model_type`(completion/embedding), `model_engine`(vLLM/Infinity/llama.cpp 등)으로 그 모델이 무엇을 할 수 있는지 구분합니다. 앱에서 사용할 `model` 이름은 여기 `id`에서 가져옵니다. 같은 completion 모델이라도 **GPU(vLLM)인지 CPU(llama.cpp)인지**가 `model_engine`에 드러나므로, 지연과 처리량 기대치를 여기서 가늠할 수 있습니다(9.1에서 llama.cpp 기반 CPU 추론 추가 → [02.5](02-serving-api-architecture.md#25-model-runtime-추론-엔진과-멀티-액셀러레이터-91)).
 
 ---
 
-## 3.3 임베딩 생성 — `POST /embeddings`
+## 3.3 임베딩 생성. `POST /embeddings`
 
 텍스트를 벡터로 변환합니다. RAG의 색인과 질의 단계 모두에서 사용됩니다.
 
@@ -61,11 +61,11 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/embeddings' \
   -d '{"model":"<embedding-model-id>","input":"사내 보안 정책 문서"}'
 ```
 
-> 임베딩 모델은 CPU 추론 엔진(Infinity, llama.cpp 등)으로도 서빙될 수 있어, GPU 없이도 비용 효율적으로 운영하는 경우가 많습니다. 9.1에서는 **completion 모델도 llama.cpp로 CPU 추론**이 가능하므로, 경량, PoC 워크로드는 GPU 없이 실행할 수 있습니다([02.5](02-serving-api-architecture.md#25-model-runtime--추론-엔진과-멀티-액셀러레이터-91)). 어떤 엔진/리소스로 떠 있는지는 `GET /models`의 `model_engine`과 [① 01 1.5절](../../01-infra/docs/01-concepts.md)의 추론 엔진 비교를 참조하세요.
+> 임베딩 모델은 CPU 추론 엔진(Infinity, llama.cpp 등)으로도 서빙될 수 있어, GPU 없이도 비용 효율적으로 운영하는 경우가 많습니다. 9.1에서는 **completion 모델도 llama.cpp로 CPU 추론**이 가능하므로, 경량, PoC 워크로드는 GPU 없이 실행할 수 있습니다([02.5](02-serving-api-architecture.md#25-model-runtime-추론-엔진과-멀티-액셀러레이터-91)). 어떤 엔진/리소스로 떠 있는지는 `GET /models`의 `model_engine`과 [① 01 1.5절](../../01-infra/docs/01-concepts.md)의 추론 엔진 비교를 참조하세요.
 
 ---
 
-## 3.4 채팅 완성 — `POST /chat/completions`
+## 3.4 채팅 완성. `POST /chat/completions`
 
 핵심 추론 엔드포인트입니다. **OpenAI `chat/completions`와 동일한 형태**입니다.
 

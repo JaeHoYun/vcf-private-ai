@@ -128,7 +128,7 @@
 - **하드 격리** — 별도 Project + 개별 리소스 쿼터 + NSX Project, VPC 기반 네임스페이스별 네트워크 격리. 전사 규모의 기본값.
 - **소프트 격리** — VKS 클러스터 내부의 표준 쿠버네티스 네임스페이스(Pod, Service, Deployment 분리). 같은 테넌트 안의 하위 분리에 사용.
 
-네트워크 경계는 NSX Project, VPC가, 자원과 거버넌스 경계는 vSphere Namespace가 함께 작동합니다. 격리 강도를 어디까지 강제할지(soft 대 hard)는 [05 5.1절 멀티테넌시 격리 결정](05-tenancy-security.md#51-결정-멀티테넌시-격리--soft네임스페이스-vs-hard클러스터와-도메인-분리)으로 위임합니다. (참고: VKS 3.6의 선언형 멀티 NIC는 NetworkPolicy(L4)가 적용되지 않는 노드 NIC 수준 분리를 보완하나, 세부 적용은 적용 전 공식 문서 재확인을 권고합니다.)
+네트워크 경계는 NSX Project, VPC가, 자원과 거버넌스 경계는 vSphere Namespace가 함께 작동합니다. 격리 강도를 어디까지 강제할지(soft 대 hard)는 [05 5.1절 멀티테넌시 격리 결정](05-tenancy-security.md#51-결정-멀티테넌시-격리-soft네임스페이스-vs-hard클러스터와-도메인-분리)으로 위임합니다. (참고: VKS 3.6의 선언형 멀티 NIC는 NetworkPolicy(L4)가 적용되지 않는 노드 NIC 수준 분리를 보완하나, 세부 적용은 적용 전 공식 문서 재확인을 권고합니다.)
 
 **테넌트 온보딩** — Cloud Admin이 VCF Automation에서 Project를 생성하면, 개발자는 SSO 인증 후 할당된 프로젝트만 조회하고, 인프라가 대응 vSphere Namespace를 쿼터를 적용해 자동 프로비저닝합니다. 모델 자산은 Harbor(OCI) 기반 Model Gallery에 저장하고 프로젝트 수준 접근 통제로 학습과 튜닝 데이터 접근을 제한합니다(Model Gallery는 Harbor 기반 모델 레지스트리로, 9.0에서 Model Store로도 표기된 동일 컴포넌트입니다).
 
@@ -146,7 +146,7 @@
 
 **관측과 showback** — AI 관측과 거버넌스가 time-to-first-token, 토큰 처리량, 다종 가속기 GPU 활용 지표를 제공하고, Private AI Model, GPU Metrics가 활용률, 메모리 압박, 모델 수준 가시성을 전체 인프라와 같은 콘솔에서 노출합니다. 다만 별도 showback, 차지백 과금 메커니즘은 명시 확인되지 않았고(앞의 임시 스토리지 미집계 제약이 차지백을 제약), 과금 설계는 이들 메트릭 기반 추정으로 진행하되 적용 전 공식 문서 확인이 필요합니다.
 
-**멀티테넌시와 GPU 공유 설계 결정** — 격리 강도(D10)는 [05 5.1절](05-tenancy-security.md#51-결정-멀티테넌시-격리--soft네임스페이스-vs-hard클러스터와-도메인-분리), GPU 공유 방식(D2)은 [06 6.1 결정 색인](06-decision-forks.md#61-결정-색인-16건)에서 결정 요인에 맞춰 고르시기 바랍니다.
+**멀티테넌시와 GPU 공유 설계 결정** — 격리 강도(D10)는 [05 5.1절](05-tenancy-security.md#51-결정-멀티테넌시-격리-soft네임스페이스-vs-hard클러스터와-도메인-분리), GPU 공유 방식(D2)은 [06 6.1 결정 색인](06-decision-forks.md#61-결정-색인-16건)에서 결정 요인에 맞춰 고르시기 바랍니다.
 
 **적합** — 다수 사업부와 자회사를 한 플랫폼에 수용하는 전사 AI 인프라, 내부 클라우드/플랫폼 팀이 테넌트에 GPU를 서비스로 제공하는 운영 모델.
 

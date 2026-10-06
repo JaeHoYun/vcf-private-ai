@@ -56,7 +56,7 @@ RAG는 두 개의 시간대로 나뉩니다.
 
 > PAIS는 Model Gallery, Model Runtime, **Agent Builder**, **Data Indexing(RAG)**, API Gateway, MCP Tools Registry를 포함합니다. RAG에 필요한 조각이 플랫폼 안에 이미 있습니다.
 
-## 1.4 빌드 vs 바이 — 두 가지 조립 방식
+## 1.4 빌드 vs 바이. 두 가지 조립 방식
 
 VCF에서 RAG를 만드는 방법은 둘입니다. 이 선택이 04–05의 구현을 가릅니다.
 

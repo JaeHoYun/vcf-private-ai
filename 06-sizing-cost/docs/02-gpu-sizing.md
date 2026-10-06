@@ -82,7 +82,7 @@ vLLM 커뮤니티가 정리한 토큰당 KV 캐시 어림식은 다음과 같습
 | RAG/장문 | 약 16–32K 토큰 | 중간 | 가중치에 근접/초과 가능 |
 | 고동시 API | 약 4K 토큰 | 높음(수백) | KV 캐시가 주 병목 |
 
-### 계산 예제 — 8B급 모델 KV 캐시 (구조식 → GB)
+### 계산 예제. 8B급 모델 KV 캐시 (구조식 → GB)
 
 예시 모델 카드 값(GQA): 레이어 32, KV 헤드 8, head_dim 128, 정밀도 FP16(2바이트). (`config.json`에서 구조값 읽는 법은 [부록 A2.5](../appendix/A2-inputs-and-defaults.md#a25-모델-구조값-확인-방법-kv-캐시-계산-입력) 참조.)
 
@@ -229,7 +229,7 @@ GPU 선택의 1차 기준은 **HBM 용량**(2.2–2.4의 가중치+KV 캐시가 
 
 > 이 동시성을 구현하는 엔진 메커니즘(연속 배칭과 PagedAttention)은 [③ 서빙 가이드 0.6절](../../03-serving-api/docs/00-serving-primer.md)에서 개념으로 다룹니다. PagedAttention이 KV 캐시 낭비를 줄여 같은 VRAM에 더 많은 요청을 담는 것이 위 "최대 동시성"의 밑바탕입니다.
 
-### 큰 모델 1개 적재 — 텐서 병렬로 장수 역산
+### 큰 모델 1개 적재. 텐서 병렬로 장수 역산
 
 단일 GPU에 안 들어가는 모델은 텐서 병렬(2.6)로 여러 장에 나눕니다. 고정 풀에서는 "몇 장을 결합해야 들어가는가"를 역산합니다.
 
@@ -241,7 +241,7 @@ GPU 선택의 1차 기준은 **HBM 용량**(2.2–2.4의 가중치+KV 캐시가 
 
 > 최소 장수는 "가중치만 들어가는" 하한입니다. KV 캐시, 활성화, `gpu_memory_utilization` 여유를 더하면 권장 장수가 늘어납니다. 양자화(2.4)는 같은 풀에 더 큰 모델을 담는 핵심 수단입니다.
 
-### 여러 모델 적재 — 합산 또는 MIG 분할
+### 여러 모델 적재. 합산 또는 MIG 분할
 
 작은 모델 여러 개를 한 장(또는 한 풀)에 담을 때는 두 방법이 있습니다.
 
@@ -267,7 +267,7 @@ N장 풀의 1차 천장은 단순 집계 후 플랫폼 기본 소요분(컨트�
 
 추론(2.1–2.9)과 달리 학습과 파인튜닝은 가중치 외에 **그래디언트, 옵티마이저 상태, 활성화**가 GPU 메모리를 크게 차지합니다([01 1.2절](01-sizing-methodology.md#12-워크로드-분류와-자원-특성) 워크로드 분류). 역방향에서 유휴 GPU를 간헐적 파인튜닝에 활용하는 경우가 많으므로([09](09-reverse-sizing-scenario.md) 9.3절), 그 메모리 셈법을 정리합니다.
 
-### 풀 파인튜닝 — 파라미터당 약 16바이트
+### 풀 파인튜닝. 파라미터당 약 16바이트
 
 혼합정밀(mixed precision) + Adam 옵티마이저 풀 파인튜닝의 파라미터당 메모리 구성입니다([Modal — VRAM for fine-tuning](https://modal.com/blog/how-much-vram-need-fine-tuning); DeepSpeed ZeRO 메모리 모델).
 
@@ -284,7 +284,7 @@ N장 풀의 1차 천장은 단순 집계 후 플랫폼 기본 소요분(컨트�
 
 > 위 16바이트는 혼합정밀+Adam의 어림이며, 정밀도, 옵티마이저, 활성화 회계 방식에 따라 달라집니다(범위로 다룰 것). 핵심은 **풀 파인튜닝이 추론 대비 한 자릿수 배 크다**는 점입니다.
 
-### LoRA / QLoRA — 옵티마이저를 어댑터에만
+### LoRA / QLoRA. 옵티마이저를 어댑터에만
 
 LoRA는 베이스 가중치를 동결하고 소형 어댑터만 학습하므로, 그래디언트와 옵티마이저 상태를 **전체 파라미터가 아니라 어댑터에만** 유지합니다. 풀 파인튜닝 대비 메모리가 대폭 줄어듭니다([Towards Data Science — QLoRA on a single GPU](https://towardsdatascience.com/qlora-how-to-fine-tune-an-llm-on-a-single-gpu-4e44d6b5be32/), [RunPod — fine-tuning GPU guide](https://www.runpod.io/blog/llm-fine-tuning-gpu-guide)).
 
@@ -296,7 +296,7 @@ LoRA는 베이스 가중치를 동결하고 소형 어댑터만 학습하므로,
 
 > QLoRA는 4비트 베이스로 LoRA 대비 VRAM을 약 절반으로 줄입니다. 그 결과 7B는 12–16GB GPU에서, 70B는 단일 80GB GPU급에서 파인튜닝할 수 있습니다(어림, 실측 필요). 모든 수치는 모델, 시퀀스 길이, 배치에 따라 달라집니다.
 
-### 멀티 GPU 학습 — 샤딩(FSDP / ZeRO-3)
+### 멀티 GPU 학습. 샤딩(FSDP / ZeRO-3)
 
 단일 GPU에 안 들어가는 풀 파인튜닝과 사전학습은 FSDP(PyTorch) 또는 DeepSpeed ZeRO-3로 **파라미터, 그래디언트, 옵티마이저 상태를 GPU에 분산**합니다. 각 GPU는 전체의 일부 샤드만 보유하고, 계산 시점에 필요한 샤드를 all-gather한 뒤 다시 분할합니다. 이상적으로 GPU당 메모리는 전체를 GPU 수로 나눈 수준(통신 오버헤드 별도)이라, 고정 풀의 장수가 늘수록 더 큰 모델을 학습할 수 있습니다([Spheron — Distributed LLM Training (FSDP/ZeRO/Megatron)](https://www.spheron.network/blog/distributed-llm-training-fsdp-deepspeed-megatron-multi-node/)).
 

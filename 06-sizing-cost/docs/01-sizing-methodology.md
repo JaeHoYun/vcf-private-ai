@@ -24,7 +24,7 @@
 
 > 프로덕션 배포 기준은 **VKS(vSphere Kubernetes Service)** 클러스터입니다. PAIF는 GPU-Accelerated Workload Domain(본 문서 약칭 **PAIF Workload Domain**)에서 VKS로 GPU 가속 클러스터를 프로비저닝하며, 초기 클러스터에는 **최소 3대의 GPU 탑재 ESX 호스트**가 요구됩니다. ([PAIF 요구사항](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html))
 
-### 1.1.1 예산 추정 vs 확정 사이징 — 그리고 입력값이 없을 때
+### 1.1.1 예산 추정 vs 확정 사이징, 그리고 입력값이 없을 때
 
 사이징에는 목적이 다른 두 모드가 있습니다. 이를 구분하지 않으면 "실측이 정답"이라는 원칙과 "장비를 사기 전에 예산을 편성해야 한다"는 현실이 충돌합니다(닭-달걀).
 

@@ -47,7 +47,7 @@ PAIF는 **데이터를 외부로 반출하지 않고**(온프레미스/에어갭
 | **기술문서 자동 생성** | 시방서와 제안서 초안 | 내부 KB + Agent (모델과 데이터 외부 반출 불가) |
 | **시뮬레이션 보조** | 무기체계 시뮬레이션 결과 분석 | GPU 워크로드, 내부 데이터만 |
 
-**도입 포인트:** 인터넷 연결 미러 호스트에서 **Artifact Mirroring Tool로 모델, 컨테이너, 드라이버를 미러링 후 오프라인 반입** → 내부 Harbor → GPU Model Endpoint, 에이전트 구동. **MCP는 내부 시스템으로만 한정**하고, 외부 SaaS 연동은 차단합니다 ([문서 06 6.9절](06-production.md#69-에어갭air-gapped-환경--artifact-mirroring-tool-pais-21부터)).
+**도입 포인트:** 인터넷 연결 미러 호스트에서 **Artifact Mirroring Tool로 모델, 컨테이너, 드라이버를 미러링 후 오프라인 반입** → 내부 Harbor → GPU Model Endpoint, 에이전트 구동. **MCP는 내부 시스템으로만 한정**하고, 외부 SaaS 연동은 차단합니다 ([문서 06 6.9절](06-production.md#69-에어갭air-gapped-환경-artifact-mirroring-tool-pais-21부터)).
 
 ---
 

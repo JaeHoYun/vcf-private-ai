@@ -17,7 +17,7 @@
 | 구분 | 번호 | 문서 | 주요 내용 |
 |------|------|------|-----------|
 | 본문 | 00 | [오리엔테이션](docs/00-orientation.md) | 독자별 경로, 선수지식 체크, 개념 미니맵, 미니 용어집 |
-| | E0 | [임원 브리프(요약 문서)](docs/E0-executive-brief.md) | 의사결정 지점, 손익분기 개념, 비용 구조, 임원 체크리스트 |
+| | E0 | [임원 브리프(요약 문서)](docs/E0-executive-brief.md) | 의사결정 지점, 손익분기 개념, 비용 구조, 임원이 팀에 확인할 질문 |
 | | 01 | [사이징 방법론과 워크로드 분류](docs/01-sizing-methodology.md) | 워크로드 분류, 입력값 체크리스트, 사이징 절차, 추정→실측 원칙 |
 | | 02 | [GPU 사이징](docs/02-gpu-sizing.md) | 모델→VRAM(가중치와 KV캐시), 처리량→GPU 수, Replica, vGPU/MIG/DirectPath 용량 함의 |
 | | 03 | [컴퓨트와 메모리 사이징](docs/03-compute-memory-sizing.md) | 노드 vCPU/RAM, CPU 추론(llama.cpp), 임베딩/리랭커, Replica 환산 |

@@ -814,7 +814,7 @@ def vectordb_dsm_topology(t):
     d.frame(832, 212, 304, 440, "PAIF 워크로드 도메인 (선택)", dashed=True)
     px, pw = 852, 264
     d.box(px, 252, pw, 64, [("DLVM", "title"), ("파인튜닝", "sub")], "orange")
-    d.box(px, 332, pw, 64, [("Model Runtime", "title"), ("NVIDIA NIM", "sub")], "orange")
+    d.box(px, 332, pw, 64, [("Model Runtime", "title"), ("vLLM, Infinity", "sub"), ("NVIDIA NIM 연동 가능", "sub")], "orange")
     d.box(px, 412, pw, 64, [("임베딩 서비스", "title")], "orange")
     d.text(px + pw / 2, 530, "Private AI Foundation 구성 시", 12, 400, "muted", "middle")
     d.text(px + pw / 2, 548, "임베딩 모델과 LLM 추론의", 12, 400, "muted", "middle")

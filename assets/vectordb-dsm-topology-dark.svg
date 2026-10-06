@@ -63,8 +63,9 @@
 <text x="984" y="280.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">DLVM</text>
 <text x="984" y="298.82" font-size="13" text-anchor="middle" fill="#9198a1">파인튜닝</text>
 <rect x="852" y="332" width="264" height="64" rx="8" fill="#2d1c0f" stroke="#bd561d" stroke-width="1.5"/>
-<text x="984" y="360.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">Model Runtime</text>
-<text x="984" y="378.82" font-size="13" text-anchor="middle" fill="#9198a1">NVIDIA NIM</text>
+<text x="984" y="351.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">Model Runtime</text>
+<text x="984" y="369.82" font-size="13" text-anchor="middle" fill="#9198a1">vLLM, Infinity</text>
+<text x="984" y="387.82" font-size="13" text-anchor="middle" fill="#9198a1">NVIDIA NIM 연동 가능</text>
 <rect x="852" y="412" width="264" height="64" rx="8" fill="#2d1c0f" stroke="#bd561d" stroke-width="1.5"/>
 <text x="984" y="449.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">임베딩 서비스</text>
 <text x="984" y="530" font-size="12" text-anchor="middle" fill="#9198a1">Private AI Foundation 구성 시</text>

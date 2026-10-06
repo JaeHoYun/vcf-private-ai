@@ -133,6 +133,7 @@
 - 커밋 전에 guide-tooling을 이 저장소와 같은 상위 폴더에 clone하고 `python3 ../guide-tooling/tools/verify.py --repo .`를 실행해 오류 0건을 확인합니다. 형제 저장소도 같은 폴더에 있으면 저장소 간 링크와 앵커까지 검사합니다.
 - main에는 직접 커밋할 수 없습니다. 브랜치에서 작업하고 PR을 만듭니다.
 - PR을 만들면 GitHub Actions의 `doc-verify` 검사가 실행됩니다. 검사가 통과한 뒤에 머지합니다. 실패하면 PR의 Files changed 화면에 표시된 위치와 규칙을 확인하고, 고친 커밋을 다시 push합니다.
+- PR이 초안(draft)이 아니면 `doc-review`가 실행됩니다. Claude가 바뀐 줄을 [리뷰 체크리스트](https://github.com/JaeHoYun/guide-tooling/blob/main/docs/review-checklist.md)로 판정해 위반한 줄에 댓글을 남기고, 요약 댓글을 하나 남깁니다. 머지를 차단하지 않지만, 지적마다 수정하거나 사유를 답글로 남긴 뒤 머지합니다.
 - 경고가 있어도 머지할 수 있습니다. 경고가 실제 위반이면 고치고, 오탐이면 guide-tooling 레지스트리에 예외로 등록합니다. 문서 안에 무시 주석을 넣지 않습니다.
 
 ## 자동 검사 규칙 목록
@@ -191,4 +192,4 @@
 | PROC-VERIFY-BEFORE-COMMIT | 커밋 전 검증 스크립트를 실행해 오류 0건 확인 | 리뷰 |
 | PROC-MERGE-AFTER-CHECK | 필수 상태 검사 통과 후 머지, Claude 리뷰 지적마다 수정 또는 사유 회신 | 리뷰 |
 | META-REPO-DESCRIPTION | GitHub 저장소 설명(About)에도 기호, 대시, 은유 규칙 적용 | 경고 |
-<!-- guide-tooling:end claude sha256=da32b08f6e81 -->
+<!-- guide-tooling:end claude sha256=0e1579e1ca9d -->

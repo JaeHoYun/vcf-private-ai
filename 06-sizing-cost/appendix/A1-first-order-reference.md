@@ -28,7 +28,7 @@
 
 ## A1.1 추론 처리량과 동시성 1차 가정치
 
-가장 신뢰할 단일 출처는 VMware가 공개한 LLM 추론 사이징 계산기 가이드입니다. **계산기 추정치이지 실측 벤치마크가 아니므로** 규모 감각용으로만 사용합니다([VMware, LLM Inference Sizing and Performance Guidance, 2024-09-25](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/)).
+가장 신뢰할 단일 출처는 VMware가 공개한 LLM 추론 사이징 계산기 가이드입니다. **계산기 추정치이지 실측 벤치마크가 아니므로** 규모 감각용으로만 사용합니다([VMware — LLM Inference Sizing and Performance Guidance, 2024-09-25](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/)).
 
 ### 처리량(TPS, tokens/sec). 가정: 입력 4096 / 출력 256 토큰, GPU 4장
 
@@ -90,9 +90,9 @@
 
 | 컴포넌트 | 처리량/지연(어림) | 출처와 조건 |
 |---|---|---|
-| 임베딩(바이-인코더, 110M급) | GPU 약 4,000 문장/s, CPU 약 270 문장/s | [Hugging Face, Static Embeddings(2025-01)](https://huggingface.co/blog/static-embeddings). `all-mpnet-base-v2` 기준 |
+| 임베딩(바이-인코더, 110M급) | GPU 약 4,000 문장/s, CPU 약 270 문장/s | [Hugging Face — Static Embeddings(2025-01)](https://huggingface.co/blog/static-embeddings). `all-mpnet-base-v2` 기준 |
 | 동일 모델 GPU 대비 CPU 속도 배수 | 약 3–6배 | [Sentence Transformers 효율 문서](https://sbert.net/docs/sentence_transformer/usage/efficiency.html) |
-| 리랭커(크로스-인코더) 짧은 문서 | 약 0.1–0.2초(후보 수십 개) | [Oracle, Cohere Rerank 3.5 벤치](https://docs.oracle.com/en-us/iaas/Content/generative-ai/benchmark-cohere-rerank-3-5.htm) |
+| 리랭커(크로스-인코더) 짧은 문서 | 약 0.1–0.2초(후보 수십 개) | [Oracle — Cohere Rerank 3.5 벤치](https://docs.oracle.com/en-us/iaas/Content/generative-ai/benchmark-cohere-rerank-3-5.htm) |
 | 리랭커 긴 문서(2–4K 토큰) | 수 초까지 상승 | 동 출처 |
 
 > 임베딩과 리랭커는 LLM과 별도 서버로 분리해 독립 확장하는 것이 사이징을 단순화합니다(본문 [03.5](../docs/03-compute-memory-sizing.md#35-임베딩과-리랭커-서버-사이징rag-비-llm-컴포넌트)). 대부분의 프로덕션 RAG 볼륨은 중급 GPU로 처리됩니다.
@@ -114,12 +114,12 @@
 
 ## A1.4 출처 일람 (도입 전 재확인 필수)
 
-- [VMware, LLM Inference Sizing and Performance Guidance (2024-09-25)](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/). 본 부록의 1차 앵커(계산기 추정치)
+- [VMware — LLM Inference Sizing and Performance Guidance (2024-09-25)](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/). 본 부록의 1차 앵커(계산기 추정치)
 - [NVIDIA NIM 성능 문서](https://docs.nvidia.com/nim/llama-3-1-nemotron-safety-guard-8b/latest/performance.html)
-- [databasemart, vLLM H100 벤치(2025)](https://www.databasemart.com/blog/vllm-gpu-benchmark-h100)
-- [silexdata, Llama 70B H100/A100(2025-05-18)](https://blog.silexdata.com/blog/evaluating-llama-33-70b-inference-h100-a100/)
-- [Hugging Face, Static Embeddings(2025-01)](https://huggingface.co/blog/static-embeddings)
-- [Oracle, Cohere Rerank 3.5 벤치](https://docs.oracle.com/en-us/iaas/Content/generative-ai/benchmark-cohere-rerank-3-5.htm)
+- [databasemart — vLLM H100 벤치(2025)](https://www.databasemart.com/blog/vllm-gpu-benchmark-h100)
+- [silexdata — Llama 70B H100/A100(2025-05-18)](https://blog.silexdata.com/blog/evaluating-llama-33-70b-inference-h100-a100/)
+- [Hugging Face — Static Embeddings(2025-01)](https://huggingface.co/blog/static-embeddings)
+- [Oracle — Cohere Rerank 3.5 벤치](https://docs.oracle.com/en-us/iaas/Content/generative-ai/benchmark-cohere-rerank-3-5.htm)
 - [Azure SDK / Run:AI Model Streamer(2026-05)](https://devblogs.microsoft.com/azure-sdk/eliminate-llm-cold-starts-load-models-up-to-6x-faster-with-azure-blob-storage-and-runai-model-streamer/)
 
 ---

@@ -84,7 +84,7 @@ PAIS는 2.1부터 MCP 연동에 **중앙 관리와 자동 검색** 기능을 갖
 | **Knowledge Base의 MCP 노출 (KB-as-MCP-tool)** | Knowledge Base를 **MCP 도구로 노출**해, 앱 개발자가 컨텍스트 인식 에이전트를 구성. "exposes knowledge bases over MCP so that AI application developers can build context-aware agents" |
 | **Agentic Retrieval** | Data Indexing & Retrieval이 **MCP 도구로 통합**되어, 에이전트가 *검색 수행 여부와 검색어를 스스로 결정*. "Data Indexing and Retrieval is integrated in Private AI Services as an MCP tool, allowing agents to decide whether to retrieve content from a knowledge base and what search term to use" |
 
-> 위 세 기능은 [Broadcom TechDocs, Private AI Services 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html) 및 [MCP 도구 탐색 가이드](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html) 기준입니다. 이로써 RAG 검색은 고정 파이프라인이 아니라 **에이전트가 도구 설명을 근거로 호출 여부를 판단**하는 흐름으로 동작합니다(5.4절).
+> 위 세 기능은 [Broadcom TechDocs — Private AI Services 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html) 및 [MCP 도구 탐색 가이드](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html) 기준입니다. 이로써 RAG 검색은 고정 파이프라인이 아니라 **에이전트가 도구 설명을 근거로 호출 여부를 판단**하는 흐름으로 동작합니다(5.4절).
 
 ---
 

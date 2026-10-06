@@ -269,7 +269,7 @@ N장 풀의 1차 천장은 단순 집계 후 플랫폼 기본 소요분(컨트�
 
 ### 풀 파인튜닝. 파라미터당 약 16바이트
 
-혼합정밀(mixed precision) + Adam 옵티마이저 풀 파인튜닝의 파라미터당 메모리 구성입니다([Modal, VRAM for fine-tuning](https://modal.com/blog/how-much-vram-need-fine-tuning); DeepSpeed ZeRO 메모리 모델).
+혼합정밀(mixed precision) + Adam 옵티마이저 풀 파인튜닝의 파라미터당 메모리 구성입니다([Modal — VRAM for fine-tuning](https://modal.com/blog/how-much-vram-need-fine-tuning); DeepSpeed ZeRO 메모리 모델).
 
 | 구성요소 | 정밀도 | 파라미터당 바이트 |
 |---|---|---|
@@ -286,7 +286,7 @@ N장 풀의 1차 천장은 단순 집계 후 플랫폼 기본 소요분(컨트�
 
 ### LoRA / QLoRA. 옵티마이저를 어댑터에만
 
-LoRA는 베이스 가중치를 동결하고 소형 어댑터만 학습하므로, 그래디언트와 옵티마이저 상태를 **전체 파라미터가 아니라 어댑터에만** 유지합니다. 풀 파인튜닝 대비 메모리가 대폭 줄어듭니다([Towards Data Science, QLoRA on a single GPU](https://towardsdatascience.com/qlora-how-to-fine-tune-an-llm-on-a-single-gpu-4e44d6b5be32/), [RunPod, fine-tuning GPU guide](https://www.runpod.io/blog/llm-fine-tuning-gpu-guide)).
+LoRA는 베이스 가중치를 동결하고 소형 어댑터만 학습하므로, 그래디언트와 옵티마이저 상태를 **전체 파라미터가 아니라 어댑터에만** 유지합니다. 풀 파인튜닝 대비 메모리가 대폭 줄어듭니다([Towards Data Science — QLoRA on a single GPU](https://towardsdatascience.com/qlora-how-to-fine-tune-an-llm-on-a-single-gpu-4e44d6b5be32/), [RunPod — fine-tuning GPU guide](https://www.runpod.io/blog/llm-fine-tuning-gpu-guide)).
 
 | 방식 | 베이스 가중치 | 옵티마이저와 그래디언트 | 7B 어림 | 단일 GPU |
 |---|---|---|---|---|
@@ -298,7 +298,7 @@ LoRA는 베이스 가중치를 동결하고 소형 어댑터만 학습하므로,
 
 ### 멀티 GPU 학습. 샤딩(FSDP / ZeRO-3)
 
-단일 GPU에 안 들어가는 풀 파인튜닝과 사전학습은 FSDP(PyTorch) 또는 DeepSpeed ZeRO-3로 **파라미터, 그래디언트, 옵티마이저 상태를 GPU에 분산**합니다. 각 GPU는 전체의 일부 샤드만 보유하고, 계산 시점에 필요한 샤드를 all-gather한 뒤 다시 분할합니다. 이상적으로 GPU당 메모리는 전체를 GPU 수로 나눈 수준(통신 오버헤드 별도)이라, 고정 풀의 장수가 늘수록 더 큰 모델을 학습할 수 있습니다([Spheron, Distributed LLM Training (FSDP/ZeRO/Megatron)](https://www.spheron.network/blog/distributed-llm-training-fsdp-deepspeed-megatron-multi-node/)).
+단일 GPU에 안 들어가는 풀 파인튜닝과 사전학습은 FSDP(PyTorch) 또는 DeepSpeed ZeRO-3로 **파라미터, 그래디언트, 옵티마이저 상태를 GPU에 분산**합니다. 각 GPU는 전체의 일부 샤드만 보유하고, 계산 시점에 필요한 샤드를 all-gather한 뒤 다시 분할합니다. 이상적으로 GPU당 메모리는 전체를 GPU 수로 나눈 수준(통신 오버헤드 별도)이라, 고정 풀의 장수가 늘수록 더 큰 모델을 학습할 수 있습니다([Spheron — Distributed LLM Training (FSDP/ZeRO/Megatron)](https://www.spheron.network/blog/distributed-llm-training-fsdp-deepspeed-megatron-multi-node/)).
 
 - 역방향 함의: 유휴 8-GPU 서버(NVLink) 한 대는 노드 내 샤딩으로 중형 모델 풀 파인튜닝에, 여러 노드는 노드 간 샤딩(통신 비용 상승)으로 대형 학습에 활용할 수 있습니다(few-large, [04 4.3절](04-vks-cluster-sizing.md#43-노드-사양-산정-노드-크기-vs-노드-수)).
 - 파인튜닝은 배치성, 간헐적 부하이므로 추론 노드 풀과 분리하고 선점형으로 운영합니다([03 3.7절](03-compute-memory-sizing.md#37-메모리-오버커밋과-예약쿠버네티스-requestslimits-원칙)).

@@ -180,7 +180,7 @@ kubectl logs <pod> -n <ns>
 ### VCF 9.1 발표/분석
 - [Announcing VCF 9.1 (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2026/05/05/announcing-vcf-9-1-modern-private-cloud-built-for-efficiency-and-resilience/)
 - [Streamline, Simplify and Protect all your AI workloads with VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/)
-- [Broadcom Announces VCF 9.1, Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
+- [Broadcom Announces VCF 9.1 — Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
 
 ### 호환성/지원
 - GPU/하드웨어 호환성을 매번 확인하는 [Broadcom Compatibility Guide (BCG)](https://compatibilityguide.broadcom.com/)

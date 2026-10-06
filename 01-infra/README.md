@@ -99,4 +99,4 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발
 - [VMware Private AI Services Release Notes (3.0, 2.1.2, 2.1)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)
 - [VMware Deep Learning VM Image Release Notes (9.1, 9.1.1)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-deep-learning-vm-image-release-notes.html)
 - [Announcing VCF 9.1 (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2026/05/05/announcing-vcf-9-1-modern-private-cloud-built-for-efficiency-and-resilience/)
-- [Broadcom Announces VCF 9.1, Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
+- [Broadcom Announces VCF 9.1 — Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)

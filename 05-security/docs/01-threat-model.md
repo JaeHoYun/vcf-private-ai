@@ -149,8 +149,8 @@ OWASP 2025 개정에서 시스템 프롬프트 유출(LLM07)과 벡터와 임베
 ---
 
 ### 참고 출처
-- [Broadcom TechDocs, Deploy a GPU-Accelerated Workload Domain](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)
-- [Broadcom VCF Blog, Secure Private AI with Broadcom (Part 2, Artifact Mirroring Tool/에어갭)](https://blogs.vmware.com/cloud-foundation/2026/04/30/guide-to-secure-private-ai-with-broadcom-part-2/)
+- [Broadcom TechDocs — Deploy a GPU-Accelerated Workload Domain](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)
+- [Broadcom VCF Blog — Secure Private AI with Broadcom (Part 2, Artifact Mirroring Tool/에어갭)](https://blogs.vmware.com/cloud-foundation/2026/04/30/guide-to-secure-private-ai-with-broadcom-part-2/)
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
 - [OWASP GenAI LLM Top 10 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/)
 - [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)

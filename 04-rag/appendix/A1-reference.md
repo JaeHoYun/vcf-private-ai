@@ -70,7 +70,7 @@ PAIS(Private AI Services) 2.1부터 제공되는 Artifact Mirroring Tool(아티�
 - [VMware Private AI Service API 레퍼런스 (Broadcom Developer)](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)
 - [VMware Private AI Foundation with NVIDIA 9.1 (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)
 - [Private AI Services Detailed Design (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)
-- [DSM 9.1, 모던 데이터베이스와 Private AI (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2026/05/05/vmware-data-services-manager-9-1-automating-the-modern-databases-that-drive-ai-and-private-cloud/)
+- [DSM 9.1 — 모던 데이터베이스와 Private AI (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2026/05/05/vmware-data-services-manager-9-1-automating-the-modern-databases-that-drive-ai-and-private-cloud/)
 - [Building GenAI Agents on VCF with Private AI Services (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2025/08/26/vmware-private-ai-services-demo/)
 - 시리즈 형제 가이드: [① 인프라](../../01-infra/README.md) | [② VectorDB](../../02-vectordb/README.md) | [③ 서빙 API](../../03-serving-api/README.md)
 

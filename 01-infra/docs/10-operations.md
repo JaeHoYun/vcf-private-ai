@@ -104,7 +104,7 @@ ESX 호스트 패치는 전통적으로 **호스트를 유지보수 모드로 �
 - **모든 패치가 대상은 아닙니다.** 커널의 대규모 변경 등은 폴백 경로(재부팅)를 따릅니다. 그래서 "최대 80%"이지 100%가 아닙니다.
 - 9.0까지 제약이던 **DPU(분산 서비스 엔진)과 병렬 리메디에이션(parallel remediation) 동시 사용**의 9.1 해소 여부는 적용 전 확인이 필요합니다.
 
-> **적용 전 확인:** TPM 지원, 기본 활성, 범위 확장은 9.1 공식 발표 기준입니다. 라이브 패치 적용 가능 여부는 **패치별로 다르므로**, 전제조건과 잔존 제약과 함께 적용 전 공식 문서로 재확인하시기 바랍니다 ([VCF 9.1 vSphere 신기능 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/12/whats-new-with-vsphere-9-1/), [Live patch 확장, VCF 9.0 블로그](https://blogs.vmware.com/cloud-foundation/2025/07/15/live-patch-gets-even-better-in-vsphere-with-vmware-cloud-foundation-9-0/), [라이브 패치 요건 KB](https://knowledge.broadcom.com/external/article/419942/requirements-for-enabling-the-vsphere-li.html)).
+> **적용 전 확인:** TPM 지원, 기본 활성, 범위 확장은 9.1 공식 발표 기준입니다. 라이브 패치 적용 가능 여부는 **패치별로 다르므로**, 전제조건과 잔존 제약과 함께 적용 전 공식 문서로 재확인하시기 바랍니다 ([VCF 9.1 vSphere 신기능 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/12/whats-new-with-vsphere-9-1/), [Live patch 확장 — VCF 9.0 블로그](https://blogs.vmware.com/cloud-foundation/2025/07/15/live-patch-gets-even-better-in-vsphere-with-vmware-cloud-foundation-9-0/), [라이브 패치 요건 KB](https://knowledge.broadcom.com/external/article/419942/requirements-for-enabling-the-vsphere-li.html)).
 
 ### 10.1.5 롤백
 

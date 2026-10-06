@@ -205,7 +205,7 @@ VCF 환경에서 pgvector 워크로드를 위한 아키텍처는 다음과 같�
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="../../assets/vectordb-dsm-topology-dark.svg">
-  <img src="../../assets/vectordb-dsm-topology-light.svg" alt="VCF 관리 도메인에는 vCenter Server, SDDC Manager, DSM Appliance(컨트롤 플레인), VCF Automation(셀프서비스 카탈로그), VCF Operations(DSM Management Pack)가 있고, DSM Appliance는 Infrastructure Policy로 정의한 컴퓨트, 스토리지, 네트워크에 데이터베이스를 배포합니다. VCF 워크로드 도메인의 vSphere Cluster A에서는 PG Primary(pgvector), PG Replica(pgvector, 읽기 전용), PG Monitor(pg_auto_failover)가 Anti-Affinity Rule에 따라 서로 다른 ESXi 호스트에서 실행됩니다. Primary는 Replica로 복제하고, Primary와 같은 호스트의 RAG App VM(LangChain)은 Primary에서 벡터를 검색하며 Replica로 읽기를 분산합니다. 클러스터의 저장은 vSAN ESA(RAID-5/6, 읽기 캐시 최적화)가, 격리와 로드밸런싱은 NSX가 담당합니다. 선택 구성인 PAIF 워크로드 도메인에서는 DLVM(파인튜닝), Model Runtime(NVIDIA NIM), 임베딩 서비스가 GPU 워크로드로 실행됩니다.">
+  <img src="../../assets/vectordb-dsm-topology-light.svg" alt="VCF 관리 도메인에는 vCenter Server, SDDC Manager, DSM Appliance(컨트롤 플레인), VCF Automation(셀프서비스 카탈로그), VCF Operations(DSM Management Pack)가 있고, DSM Appliance는 Infrastructure Policy로 정의한 컴퓨트, 스토리지, 네트워크에 데이터베이스를 배포합니다. VCF 워크로드 도메인의 vSphere Cluster A에서는 PG Primary(pgvector), PG Replica(pgvector, 읽기 전용), PG Monitor(pg_auto_failover)가 Anti-Affinity Rule에 따라 서로 다른 ESXi 호스트에서 실행됩니다. Primary는 Replica로 복제하고, Primary와 같은 호스트의 RAG App VM(LangChain)은 Primary에서 벡터를 검색하며 Replica로 읽기를 분산합니다. 클러스터의 저장은 vSAN ESA(RAID-5/6, 읽기 캐시 최적화)가, 격리와 로드밸런싱은 NSX가 담당합니다. 선택 구성인 PAIF 워크로드 도메인에서는 DLVM(파인튜닝), Model Runtime(vLLM, Infinity, NVIDIA NIM 연동 가능), 임베딩 서비스가 GPU 워크로드로 실행됩니다.">
 </picture>
 
 핵심 구성 요소별 역할은 다음과 같습니다.

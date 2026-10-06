@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1060" height="448" viewBox="0 0 1060 448" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'Noto Sans CJK KR', Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">Agent 구성 요소</title>
+<desc id="d">System Prompt, Model Endpoint, Knowledge Base, MCP Tools, Session Config의 5개 구성 요소가 결합해 하나의 Agent를 구성한다. Agent를 구성하면 REST API 엔드포인트 POST /v1/agents/{name}/chat이 자동 생성된다.</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9198a1"/></marker></defs>
+<text x="24" y="44" font-size="13" font-weight="700" fill="#9198a1">구성 요소</text>
+<rect x="24" y="64" width="456" height="60" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="42" y="99" font-size="15" font-weight="700" fill="#f0f6fc">System Prompt</text>
+<text x="230" y="99" font-size="13" fill="#f0f6fc">규칙, 톤, 제약</text>
+<path d="M480,94 L572,94" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="24" y="138" width="456" height="60" rx="8" fill="#2d1c0f" stroke="#bd561d" stroke-width="1.5"/>
+<text x="42" y="173" font-size="15" font-weight="700" fill="#f0f6fc">Model Endpoint</text>
+<text x="230" y="164" font-size="13" fill="#f0f6fc">Llama 3.1 8B 등</text>
+<text x="230" y="182" font-size="13" fill="#9198a1">Temperature, Max Tokens</text>
+<path d="M480,168 L572,168" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="24" y="212" width="456" height="60" rx="8" fill="#122a1c" stroke="#2f9e4f" stroke-width="1.5"/>
+<text x="42" y="247" font-size="15" font-weight="700" fill="#f0f6fc">Knowledge Base</text>
+<text x="230" y="238" font-size="13" fill="#f0f6fc">RAG 데이터</text>
+<text x="230" y="256" font-size="13" fill="#9198a1">Similarity Cutoff, Chunk 수</text>
+<path d="M480,242 L572,242" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="24" y="286" width="456" height="60" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1.5"/>
+<text x="42" y="321" font-size="15" font-weight="700" fill="#f0f6fc">MCP Tools</text>
+<text x="230" y="312" font-size="13" fill="#f0f6fc">외부 데이터, 도구</text>
+<text x="230" y="330" font-size="13" fill="#9198a1">DB, ITSM, 메신저, 코드</text>
+<path d="M480,316 L572,316" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="24" y="360" width="456" height="60" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="42" y="395" font-size="15" font-weight="700" fill="#f0f6fc">Session Config</text>
+<text x="230" y="395" font-size="13" fill="#f0f6fc">Chat History, 만료 시간</text>
+<path d="M480,390 L572,390" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="572" y="44" font-size="13" font-weight="700" fill="#9198a1">결합</text>
+<rect x="572" y="64" width="180" height="356" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="662" y="229.76" font-size="18" font-weight="700" text-anchor="middle" fill="#f0f6fc">Agent</text>
+<text x="662" y="249.32" font-size="13" text-anchor="middle" fill="#9198a1">5개 구성 요소를</text>
+<text x="662" y="267.32" font-size="13" text-anchor="middle" fill="#9198a1">하나로 결합</text>
+<text x="832" y="44" font-size="13" font-weight="700" fill="#9198a1">자동 생성</text>
+<rect x="832" y="192" width="204" height="100" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="934" y="229.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">REST API</text>
+<text x="934" y="247.82" font-size="13" text-anchor="middle" fill="#f0f6fc">POST</text>
+<text x="934" y="265.82" font-size="13" text-anchor="middle" fill="#f0f6fc">/v1/agents/{name}/chat</text>
+<path d="M752,242 L832,242" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+</svg>

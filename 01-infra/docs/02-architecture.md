@@ -14,28 +14,10 @@
 
 이 둘은 한 솔루션의 두 부분이며, PAIS는 코어 기능과 **별도 설치**되는 Supervisor 서비스 패키지입니다(정의와 공식 인용은 [문서 01 1.1절](01-concepts.md#11-용어-정의), 출처는 [System Architecture of PAIF](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/system-architecture-of-vmware-private-ai-foundation-with-nvidia.html)). 아래는 무엇이 무엇을 기반으로 동작하는지의 **논리 계층**입니다.
 
-```
-[ 고객 AI 앱 ]  PAIF 밖 — PAIS API(OpenAI 호환) 소비
-      │  Frontend(React/Vue), Backend(FastAPI 등)
-══════╪════════════════════ PAIF (솔루션) ═════════════════════════
- PAIS │ 서비스 계층 — Supervisor 서비스 패키지(코어와 별도 설치)
-      │   ML API Gateway, Model Runtime / Model Gallery
-      │   - Data Indexing & Retrieval, Agent Builder, MCP
-      │   - 관측성(모델, GPU 메트릭, OTel 트레이싱)
-──────┼──────────────────────────────────────────────────────────
- PAIF │ 코어 기능 계층 (PAIF core functionality)
- 코어 │   GPU enablement : vGPU 드라이버 / GPU Operator / MIG, EDPIO
-      │                    / DLS 라이선싱 / DRA
-      │   공유 서비스(필수): Harbor(Supervisor Service, 모델/컨테이너
-      │                    저장), DSM(pgvector 벡터 DB)
-      │   관리, 오케스트레이션: VCF Automation(셀프서비스 카탈로그)
-      │                    - VCF Operations(GPU 관측, 쇼백/차지백)
-      │   DLVM 이미지(개발 평면)
-══════╪══════════════════════════════════════════════════════════
- VCF  │ 9.1 기반 플랫폼
-      │   GPU 가속 워크로드 도메인: GPU-enabled ESXi 호스트
-      │   - Supervisor, NSX Edge/VPC, vSAN, VKS(Kubernetes)
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/infra-paif-layers-dark.svg">
+  <img src="../../assets/infra-paif-layers-light.svg" alt="PAIF 논리 계층 구조. 고객 AI 앱(Frontend, Backend)은 PAIF 밖에서 PAIS의 OpenAI 호환 API를 호출해 소비한다. PAIF(솔루션)는 PAIS 서비스 계층과 PAIF 코어 기능 계층으로 구성된다. PAIS 서비스 계층은 코어와 별도로 설치하는 Supervisor 서비스 패키지로, ML API Gateway, Model Runtime과 Model Gallery, Data Indexing &amp; Retrieval, Agent Builder와 MCP, 관측성(모델, GPU 메트릭, OTel 트레이싱)을 제공한다. PAIF 코어 기능 계층은 GPU enablement(vGPU 드라이버, GPU Operator, MIG, EDPIO, DLS 라이선싱, DRA), 필수 공유 서비스(Harbor, DSM pgvector), 관리와 오케스트레이션(VCF Automation 셀프서비스 카탈로그, VCF Operations GPU 관측과 쇼백/차지백), 개발 평면인 DLVM 이미지로 구성된다. 그 기반은 VCF 9.1 플랫폼의 GPU 가속 워크로드 도메인(GPU-enabled ESXi 호스트, Supervisor, NSX Edge와 VPC, vSAN, VKS)이다.">
+</picture>
 
 > **GPUaaS(문서 07)는 별도 계층이 아니라 운영 모델입니다.** 공식 문서에 "GPUaaS / GPU as a Service" 컴포넌트는 없으며, GPUaaS는 위 **PAIF 코어 기능 계층의 GPU 자원**(GPU enablement, VM Class, VCF Automation 카탈로그, VCF Operations 쇼백/차지백)을 사내와 계열사에 셀프서비스로 노출하는 *운영 관점*입니다. PAIS 서비스 계층의 형제 계층도, 코어의 하위 컴포넌트도 아닙니다.
 
@@ -79,31 +61,10 @@ PAIF 코어 기능 계층의 **공유 서비스 4종**(Harbor, DSM, VCF Automati
 
 PAIS(Private AI Services 3.0)는 구성요소를 나열한 평면 박스가 아니라 **세 개의 평면**으로 나눠 살펴보면 "무엇이 무엇을 호출하는가"가 드러납니다. 제어 평면이 입구를 지키고, 추론 평면이 요청을 모델까지 나르며, 인입 평면이 검색에 사용할 지식을 미리 채워 둡니다. 관측성은 제어와 추론 평면에 걸쳐 적용됩니다.
 
-```
-                        클라이언트(고객 AI 앱)
-                               │  OpenAI 호환 요청
-═══════════════════════════════╪═══════════════ PAIS 3.0 ═══════════════
-                               ▼
-  ┌─ 제어 평면 ────────────────────────────────────────────────────┐
-  │  ML API Gateway : 인증/인가, 라우팅, 로드밸런싱, OpenAI 호환     │
-  └───────────────────────────────┬─────────────────────────────────┘
-                                  │  라우팅
-  ┌─ 추론(데이터) 평면 ───────────▼─────────────────────────────────┐
-  │   Completion Endpoint     Embedding Endpoint      Agent          │
-  │   • vLLM 0.20.0           • Infinity 0.0.76       • RAG          │
-  │   • llama.cpp(CPU)        • (CPU 가능)            • Tool-calling │
-  │   • GPU                                           • MCP(외부도구) │
-  │        │                       │                      │          │
-  │        ▼                       ▼                      ▼          │
-  │     모델 런타임            모델 런타임          Knowledge Base    │
-  │                                                  (검색) + 모델   │
-  └─────────────────────────────────────────────────────────────────┘
-  ┌─ 인입(인덱싱) 평면 ──────────────────────────────────────────────┐
-  │   Data Source → 파싱 → 청킹 → 임베딩 → pgvector 적재 → 자동 갱신  │
-  └─────────────────────────────────────────────────────────────────┘
-       └─── 관측성(두 평면 횡단) : 모델 메트릭(캐시, 토큰, 지연),
-                                   GPU 메트릭, OTel 트레이싱 ───┘
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/infra-pais-planes-dark.svg">
+  <img src="../../assets/infra-pais-planes-light.svg" alt="PAIS 3.0의 세 평면. 클라이언트(고객 AI 앱)의 OpenAI 호환 요청은 제어 평면의 ML API Gateway가 인증, 인가한 뒤 추론(데이터) 평면의 Completion Endpoint(vLLM 0.20.0, llama.cpp b9309), Embedding Endpoint(Infinity 0.0.76), Agent(RAG, Tool-calling, MCP)로 라우팅한다. 엔드포인트는 모델 런타임을 호출하고, Agent는 Knowledge Base 검색과 모델 호출을 결합한다. 인입(인덱싱) 평면은 Data Source의 문서를 파싱, 청킹, 임베딩해 pgvector(DSM)에 적재하고 소스 변경 시 자동 갱신하며, 이 데이터를 Knowledge Base로 사용한다. 관측성은 제어와 추론 평면에서 모델 메트릭(캐시, 토큰, 지연), GPU 메트릭, OTel 트레이스를 수집한다.">
+</picture>
 
 - **제어 평면. ML API Gateway.** 모든 요청의 단일 입구입니다. 인증/인가, 엔드포인트와 에이전트로의 라우팅, 로드밸런싱을 담당하고 OpenAI 호환 인터페이스를 노출합니다.
 - **추론(데이터) 평면. 요청 경로.** 클라이언트 → Gateway → **Completion/Embedding Endpoint** 또는 **Agent**(RAG, Tool-calling)로 흐르고, 끝단에서 모델 런타임(vLLM 0.20.0 / Infinity 0.0.76 / llama.cpp b9309) 또는 Knowledge Base를 호출합니다. Agent는 검색(Knowledge Base)과 외부 도구(MCP)를 결합해 답변을 생성합니다.
@@ -162,17 +123,10 @@ PAIS의 ML API Gateway는 OpenAI 호환 인터페이스를 노출하므로 기�
 
 ## 2.6 구축 Phase 개요
 
-```
-Phase 1            Phase 2           Phase 3            Phase 4
-VCF 인프라         지원 서비스        PAIS 설치          개발/운영
-┌─────────┐       ┌─────────┐       ┌─────────┐        ┌─────────┐
-│ VCF 9.1 │──────▶│ Harbor  │──────▶│  PAIS   │───────▶│  DLVM   │
-│ PAIF WD │       │ DSM     │       │ 3.0     │        │  VKS    │
-│Supervisor│      │         │       │ (UI/CLI)│        │  Apps   │
-└─────────┘       └─────────┘       └─────────┘        └─────────┘
-담당: VI Admin    VI Admin          Cloud/Org Admin    DevOps/DS
-기간: 2-3일       1일               1일                지속
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/infra-install-phases-dark.svg">
+  <img src="../../assets/infra-install-phases-light.svg" alt="PAIF 구축 4단계. Phase 1 VCF 인프라(VCF 9.1, PAIF Workload Domain, Supervisor)는 VI Admin이 2-3일, Phase 2 지원 서비스(Harbor, DSM, 권장 구성인 VCF Automation)는 VI Admin이 1일, Phase 3 PAIS 설치(PAIS 3.0 Supervisor Service, Trust Bundle과 PAISConfiguration, UI 또는 CLI 활성화)는 Cloud/Org Admin이 1일, Phase 4 개발/운영(DLVM, VKS, Apps)은 DevOps와 데이터 사이언티스트가 지속적으로 담당한다.">
+</picture>
 
 ### Phase 1: VCF 기반 인프라 (VI Admin, 2-3일)
 

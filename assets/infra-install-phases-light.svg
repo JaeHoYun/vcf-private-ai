@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="460" viewBox="0 0 1100 460" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'Noto Sans CJK KR', Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">PAIF 구축 Phase 개요</title>
+<desc id="d">구축은 Phase 1 VCF 인프라(VCF 9.1, PAIF Workload Domain, Supervisor), Phase 2 지원 서비스(Harbor, DSM, 권장 구성인 VCF Automation), Phase 3 PAIS 3.0 설치와 활성화(UI 또는 CLI), Phase 4 개발과 운영(DLVM, VKS, 앱) 순서로 진행한다. Phase 1과 2는 VI Admin이 각각 2-3일, 1일, Phase 3은 Cloud/Org Admin이 1일, Phase 4는 DevOps와 데이터 사이언티스트가 지속적으로 담당한다.</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
+<rect x="24" y="24" width="236" height="392" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<rect x="109.8" y="40" width="64.4" height="20" rx="10" fill="#59636e"/>
+<text x="142" y="54.5" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">Phase 1</text>
+<text x="142" y="90" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">VCF 인프라</text>
+<rect x="40" y="108" width="204" height="66" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="142" y="137.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">VCF 9.1</text>
+<text x="142" y="155.82" font-size="13" text-anchor="middle" fill="#59636e">배포</text>
+<rect x="40" y="186" width="204" height="66" rx="8" fill="#fff1e5" stroke="#fb8f44" stroke-width="1.5"/>
+<text x="142" y="206.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">PAIF Workload Domain</text>
+<text x="142" y="224.82" font-size="13" text-anchor="middle" fill="#59636e">GPU 호스트 3대 이상</text>
+<text x="142" y="242.82" font-size="13" text-anchor="middle" fill="#59636e">vGPU 호스트 드라이버</text>
+<rect x="40" y="264" width="204" height="66" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="142" y="293.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">Supervisor</text>
+<text x="142" y="311.82" font-size="13" text-anchor="middle" fill="#59636e">NSX VPC, vGPU VM Class</text>
+<line x1="40" y1="350" x2="244" y2="350" stroke="#afb8c1" stroke-width="1"/>
+<text x="44" y="376" font-size="13" font-weight="600" fill="#59636e">담당</text>
+<text x="88" y="376" font-size="13" font-weight="700" fill="#1f2328">VI Admin</text>
+<text x="44" y="400" font-size="13" font-weight="600" fill="#59636e">기간</text>
+<text x="88" y="400" font-size="13" font-weight="700" fill="#1f2328">2-3일</text>
+<path d="M260,219 L300,219" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="300" y="24" width="236" height="392" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<rect x="385.8" y="40" width="64.4" height="20" rx="10" fill="#59636e"/>
+<text x="418" y="54.5" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">Phase 2</text>
+<text x="418" y="90" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">지원 서비스</text>
+<rect x="316" y="108" width="204" height="66" rx="8" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<text x="418" y="128.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">Harbor</text>
+<text x="418" y="146.82" font-size="13" text-anchor="middle" fill="#59636e">컨테이너 이미지,</text>
+<text x="418" y="164.82" font-size="13" text-anchor="middle" fill="#59636e">Model Gallery</text>
+<rect x="316" y="186" width="204" height="66" rx="8" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<text x="418" y="215.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">DSM</text>
+<text x="418" y="233.82" font-size="13" text-anchor="middle" fill="#59636e">pgvector PostgreSQL</text>
+<rect x="316" y="264" width="204" height="66" rx="8" fill="none" stroke="#d0d7de" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="418" y="293.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">VCF Automation</text>
+<text x="418" y="311.82" font-size="13" text-anchor="middle" fill="#59636e">권장, 셀프서비스 카탈로그</text>
+<line x1="316" y1="350" x2="520" y2="350" stroke="#afb8c1" stroke-width="1"/>
+<text x="320" y="376" font-size="13" font-weight="600" fill="#59636e">담당</text>
+<text x="364" y="376" font-size="13" font-weight="700" fill="#1f2328">VI Admin</text>
+<text x="320" y="400" font-size="13" font-weight="600" fill="#59636e">기간</text>
+<text x="364" y="400" font-size="13" font-weight="700" fill="#1f2328">1일</text>
+<path d="M536,219 L576,219" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="576" y="24" width="236" height="392" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<rect x="661.8" y="40" width="64.4" height="20" rx="10" fill="#59636e"/>
+<text x="694" y="54.5" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">Phase 3</text>
+<text x="694" y="90" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">PAIS 설치</text>
+<rect x="592" y="108" width="204" height="66" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text x="694" y="137.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">PAIS 3.0</text>
+<text x="694" y="155.82" font-size="13" text-anchor="middle" fill="#59636e">Supervisor Service 설치</text>
+<rect x="592" y="186" width="204" height="66" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="694" y="213.54" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">Trust Bundle,</text>
+<text x="694" y="234.54" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">PAISConfiguration</text>
+<rect x="592" y="264" width="204" height="66" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="694" y="293.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">활성화 (UI 또는 CLI)</text>
+<text x="694" y="311.82" font-size="13" text-anchor="middle" fill="#59636e">VCF Automation 또는 kubectl</text>
+<line x1="592" y1="350" x2="796" y2="350" stroke="#afb8c1" stroke-width="1"/>
+<text x="596" y="376" font-size="13" font-weight="600" fill="#59636e">담당</text>
+<text x="640" y="376" font-size="13" font-weight="700" fill="#1f2328">Cloud/Org Admin</text>
+<text x="596" y="400" font-size="13" font-weight="600" fill="#59636e">기간</text>
+<text x="640" y="400" font-size="13" font-weight="700" fill="#1f2328">1일</text>
+<path d="M812,219 L852,219" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="852" y="24" width="236" height="392" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<rect x="937.8" y="40" width="64.4" height="20" rx="10" fill="#59636e"/>
+<text x="970" y="54.5" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">Phase 4</text>
+<text x="970" y="90" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">개발/운영</text>
+<rect x="868" y="108" width="204" height="66" rx="8" fill="#fff1e5" stroke="#fb8f44" stroke-width="1.5"/>
+<text x="970" y="137.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">DLVM</text>
+<text x="970" y="155.82" font-size="13" text-anchor="middle" fill="#59636e">AI Workstation</text>
+<rect x="868" y="186" width="204" height="66" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="970" y="215.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">VKS</text>
+<text x="970" y="233.82" font-size="13" text-anchor="middle" fill="#59636e">AI Kubernetes Cluster</text>
+<rect x="868" y="264" width="204" height="66" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text x="970" y="293.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">Apps</text>
+<text x="970" y="311.82" font-size="13" text-anchor="middle" fill="#59636e">PAIS API를 소비하는 앱</text>
+<line x1="868" y1="350" x2="1072" y2="350" stroke="#afb8c1" stroke-width="1"/>
+<text x="872" y="376" font-size="13" font-weight="600" fill="#59636e">담당</text>
+<text x="916" y="376" font-size="13" font-weight="700" fill="#1f2328">DevOps/DS</text>
+<text x="872" y="400" font-size="13" font-weight="600" fill="#59636e">기간</text>
+<text x="916" y="400" font-size="13" font-weight="700" fill="#1f2328">지속</text>
+<rect x="24" y="436" width="18" height="14" rx="3" fill="#fff1e5" stroke="#fb8f44" stroke-width="1.5"/>
+<text x="50" y="448" font-size="12" fill="#59636e">GPU 자원</text>
+<rect x="126.8" y="436" width="18" height="14" rx="3" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<text x="152.8" y="448" font-size="12" fill="#59636e">데이터, 레지스트리</text>
+<rect x="287.2" y="436" width="18" height="14" rx="3" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text x="313.2" y="448" font-size="12" fill="#59636e">PAIS, 앱</text>
+<rect x="392.4" y="436" width="18" height="14" rx="3" fill="none" stroke="#afb8c1" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="418.4" y="448" font-size="12" fill="#59636e">권장 구성(선택)</text>
+</svg>

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="676" viewBox="0 0 1160 676" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'Noto Sans CJK KR', Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">VCF 기반 pgvector 워크로드 구성</title>
+<desc id="d">VCF 관리 도메인에는 vCenter Server, SDDC Manager, DSM Appliance(컨트롤 플레인), VCF Automation(셀프서비스 카탈로그), VCF Operations(DSM Management Pack)가 있다. DSM은 Infrastructure Policy로 정의한 컴퓨트, 스토리지, 네트워크에 데이터베이스를 배포한다. VCF 워크로드 도메인의 vSphere Cluster A에서는 Anti-Affinity Rule에 따라 PG Primary, PG Replica, PG Monitor가 서로 다른 ESXi 호스트에서 실행되고, RAG App VM은 Primary에서 검색하고 Replica로 읽기를 분산한다. 클러스터의 저장은 vSAN ESA가, 격리와 로드밸런싱은 NSX가 맡는다. Private AI 구성 시 DLVM, Model Runtime, 임베딩 서비스의 GPU 워크로드는 별도의 PAIF 워크로드 도메인에서 실행된다.</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
+<rect x="24" y="24" width="1112" height="124" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<text x="38" y="46" font-size="13" font-weight="700" fill="#59636e">VCF 관리 도메인</text>
+<rect x="40" y="60" width="200" height="64" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="140" y="97.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">vCenter Server</text>
+<rect x="260" y="60" width="200" height="64" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="360" y="97.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">SDDC Manager</text>
+<rect x="480" y="60" width="200" height="64" rx="8" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<text x="580" y="88.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">DSM Appliance</text>
+<text x="580" y="106.82" font-size="13" text-anchor="middle" fill="#59636e">컨트롤 플레인, vCenter 플러그인</text>
+<rect x="700" y="60" width="200" height="64" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="800" y="88.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">VCF Automation</text>
+<text x="800" y="106.82" font-size="13" text-anchor="middle" fill="#59636e">셀프서비스 카탈로그</text>
+<rect x="920" y="60" width="200" height="64" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="1020" y="88.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">VCF Operations</text>
+<text x="1020" y="106.82" font-size="13" text-anchor="middle" fill="#59636e">DSM Management Pack</text>
+<rect x="24" y="212" width="784" height="440" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<text x="38" y="234" font-size="13" font-weight="700" fill="#59636e">VCF 워크로드 도메인</text>
+<rect x="40" y="248" width="752" height="388" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<text x="54" y="270" font-size="13" font-weight="700" fill="#59636e">vSphere Cluster A</text>
+<rect x="56" y="284" width="232" height="218" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<text x="70" y="306" font-size="13" font-weight="700" fill="#59636e">ESXi Host 1</text>
+<rect x="304" y="284" width="232" height="218" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<text x="318" y="306" font-size="13" font-weight="700" fill="#59636e">ESXi Host 2</text>
+<rect x="552" y="284" width="232" height="218" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5"/>
+<text x="566" y="306" font-size="13" font-weight="700" fill="#59636e">ESXi Host 3</text>
+<path d="M70,324 A102,8 0 0 1 274,324 V380 A102,8 0 0 1 70,380 Z" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<path d="M70,324 A102,8 0 0 0 274,324" fill="none" stroke="#4ac26b" stroke-width="1.5"/>
+<text x="172" y="356.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">PG Primary</text>
+<text x="172" y="374.82" font-size="13" text-anchor="middle" fill="#59636e">+ pgvector</text>
+<rect x="70" y="422" width="204" height="64" rx="8" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text x="172" y="450.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">RAG App VM</text>
+<text x="172" y="468.82" font-size="13" text-anchor="middle" fill="#59636e">LangChain</text>
+<path d="M318,324 A102,8 0 0 1 522,324 V380 A102,8 0 0 1 318,380 Z" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<path d="M318,324 A102,8 0 0 0 522,324" fill="none" stroke="#4ac26b" stroke-width="1.5"/>
+<text x="420" y="356.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">PG Replica</text>
+<text x="420" y="374.82" font-size="13" text-anchor="middle" fill="#59636e">+ pgvector, 읽기 전용</text>
+<rect x="566" y="320" width="204" height="64" rx="8" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<text x="668" y="348.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">PG Monitor</text>
+<text x="668" y="366.82" font-size="13" text-anchor="middle" fill="#59636e">pg_auto_failover, HA 제어</text>
+<text x="668" y="410" font-size="12" text-anchor="middle" fill="#59636e">장애 감지와</text>
+<text x="668" y="427" font-size="12" text-anchor="middle" fill="#59636e">자동 Failover 수행</text>
+<path d="M274,360 L318,360" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="296" y="353" font-size="12" text-anchor="middle" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">복제</text>
+<path d="M172,422 L172,388" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="180" y="410" font-size="12" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">벡터 검색</text>
+<path d="M274,454 L420,454 L420,388" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="428" y="474" font-size="12" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">읽기 분산</text>
+<text x="416" y="526" font-size="12" text-anchor="middle" fill="#59636e">Anti-Affinity Rule로 Primary, Replica, Monitor를 서로 다른 호스트에 배치</text>
+<path d="M56,552 A180,8 0 0 1 416,552 V612 A180,8 0 0 1 56,612 Z" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<path d="M56,552 A180,8 0 0 0 416,552" fill="none" stroke="#d0d7de" stroke-width="1.5"/>
+<text x="236" y="586.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">vSAN ESA</text>
+<text x="236" y="604.82" font-size="13" text-anchor="middle" fill="#59636e">RAID-5/6, 읽기 캐시 최적화</text>
+<rect x="432" y="548" width="344" height="68" rx="8" fill="#fbefff" stroke="#c297ff" stroke-width="1.5"/>
+<text x="604" y="578.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">NSX</text>
+<text x="604" y="596.82" font-size="13" text-anchor="middle" fill="#59636e">마이크로세그멘테이션, 로드밸런싱</text>
+<rect x="832" y="212" width="304" height="440" rx="10" fill="none" stroke="#afb8c1" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="846" y="234" font-size="13" font-weight="700" fill="#59636e">PAIF 워크로드 도메인 (선택)</text>
+<rect x="852" y="252" width="264" height="64" rx="8" fill="#fff1e5" stroke="#fb8f44" stroke-width="1.5"/>
+<text x="984" y="280.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">DLVM</text>
+<text x="984" y="298.82" font-size="13" text-anchor="middle" fill="#59636e">파인튜닝</text>
+<rect x="852" y="332" width="264" height="64" rx="8" fill="#fff1e5" stroke="#fb8f44" stroke-width="1.5"/>
+<text x="984" y="360.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">Model Runtime</text>
+<text x="984" y="378.82" font-size="13" text-anchor="middle" fill="#59636e">NVIDIA NIM</text>
+<rect x="852" y="412" width="264" height="64" rx="8" fill="#fff1e5" stroke="#fb8f44" stroke-width="1.5"/>
+<text x="984" y="449.04" font-size="15" font-weight="700" text-anchor="middle" fill="#1f2328">임베딩 서비스</text>
+<text x="984" y="530" font-size="12" text-anchor="middle" fill="#59636e">Private AI Foundation 구성 시</text>
+<text x="984" y="548" font-size="12" text-anchor="middle" fill="#59636e">임베딩 모델과 LLM 추론의</text>
+<text x="984" y="566" font-size="12" text-anchor="middle" fill="#59636e">GPU 워크로드를 실행</text>
+<path d="M580,124 L580,248" fill="none" stroke="#59636e" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="592" y="172" font-size="12" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Infrastructure Policy</text>
+<text x="592" y="189" font-size="12" fill="#59636e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">DB를 배포할 컴퓨트, 스토리지, 네트워크 정의</text>
+</svg>

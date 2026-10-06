@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="640" viewBox="0 0 940 640" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'Noto Sans CJK KR', Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">격리 계층 동심 구조</title>
+<desc id="d">바깥에서 안쪽 순으로 멀티테넌트 경계(NSX Project, VCF Automation 조직과 쿼터), 네트워크 논리 격리(NSX VPC, 세그먼트, Transit Gateway), 동/서 마이크로세그(vDefend DFW, 분산 IDS/IPS), 컴퓨트(VKS 네임스페이스, 쿼터, GPU Reservation), GPU 하드웨어(NVIDIA MIG, vGPU 프로파일)가 중첩된다. 남/북 출입구(vDefend Gateway Firewall, URL/Geo-IP 필터링)는 가장 바깥 경계에서 외부와의 인그레스, 이그레스를 통제한다. 바깥 계층은 정책 설정으로 강제되어 설정 실수에 취약하고, 안쪽 계층일수록 하드웨어가 분리를 강제한다.</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9198a1"/></marker></defs>
+<rect x="24" y="150" width="700" height="432" rx="10" fill="none" stroke="#8957e5" stroke-width="2"/>
+<text x="38" y="176" font-size="14" font-weight="700" fill="#ab7df8">멀티테넌트 경계</text>
+<text x="710" y="176" font-size="12" font-weight="600" text-anchor="end" fill="#9198a1">관리와 정책 평면</text>
+<text x="38" y="198" font-size="13" fill="#f0f6fc">NSX Project, VCF Automation 조직과 네임스페이스 쿼터</text>
+<rect x="46" y="214" width="656" height="352" rx="10" fill="none" stroke="#8957e5" stroke-width="2"/>
+<text x="60" y="240" font-size="14" font-weight="700" fill="#ab7df8">네트워크 (논리)</text>
+<text x="688" y="240" font-size="12" font-weight="600" text-anchor="end" fill="#9198a1">NSX 데이터플레인</text>
+<text x="60" y="262" font-size="13" fill="#f0f6fc">NSX VPC, 세그먼트, 서브넷 접근 모드, Transit Gateway</text>
+<rect x="68" y="278" width="612" height="272" rx="10" fill="none" stroke="#8957e5" stroke-width="2"/>
+<text x="82" y="304" font-size="14" font-weight="700" fill="#ab7df8">동/서 마이크로세그</text>
+<text x="666" y="304" font-size="12" font-weight="600" text-anchor="end" fill="#9198a1">ESXi 커널(각 vNIC)</text>
+<text x="82" y="326" font-size="13" fill="#f0f6fc">vDefend 분산 방화벽(DFW), 분산 IDS/IPS</text>
+<rect x="90" y="342" width="568" height="192" rx="10" fill="none" stroke="#8957e5" stroke-width="2"/>
+<text x="104" y="368" font-size="14" font-weight="700" fill="#ab7df8">컴퓨트</text>
+<text x="644" y="368" font-size="12" font-weight="600" text-anchor="end" fill="#9198a1">Supervisor / vSphere</text>
+<text x="104" y="390" font-size="13" fill="#f0f6fc">VKS 네임스페이스, 쿼터, GPU Reservation</text>
+<rect x="112" y="406" width="524" height="112" rx="8" fill="#2d1c0f" stroke="#bd561d" stroke-width="1.5"/>
+<text x="126" y="434" font-size="14" font-weight="700" fill="#f0883e">GPU 하드웨어</text>
+<text x="622" y="434" font-size="12" font-weight="600" text-anchor="end" fill="#9198a1">GPU 실리콘</text>
+<text x="126" y="458" font-size="13" fill="#f0f6fc">NVIDIA MIG, vGPU 프로파일</text>
+<text x="126" y="492" font-size="13" fill="#9198a1">가장 민감한 테넌트 경계일수록 이 계층으로 격리를 강제</text>
+<rect x="222" y="110" width="340" height="70" rx="8" fill="#231c35" stroke="#8957e5" stroke-width="1.5"/>
+<text x="392" y="132.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">남/북 출입구</text>
+<text x="392" y="150.82" font-size="13" text-anchor="middle" fill="#f0f6fc">vDefend Gateway Firewall, URL/Geo-IP 필터링</text>
+<text x="392" y="168.82" font-size="13" text-anchor="middle" fill="#9198a1">T0 Edge / Provider Gateway</text>
+<rect x="272" y="20" width="240" height="50" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1.5"/>
+<text x="392" y="41.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">외부</text>
+<text x="392" y="59.82" font-size="13" text-anchor="middle" fill="#9198a1">인터넷, 외부 모델 허브</text>
+<path d="M392,70 L392,110" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<text x="402" y="96" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">인그레스, 이그레스</text>
+<text x="766" y="94" font-size="13" font-weight="700" fill="#9198a1">강제 방식</text>
+<text x="766" y="133" font-size="13" font-weight="700" fill="#ab7df8">정책(설정)으로 강제</text>
+<text x="766" y="151" font-size="12" fill="#9198a1">설정 실수에 취약</text>
+<defs><linearGradient id="enf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ab7df8"/><stop offset="1" stop-color="#f0883e"/></linearGradient></defs>
+<rect x="772" y="167" width="10" height="266" rx="5" fill="url(#enf)"/>
+<circle cx="777" cy="167" r="6" fill="#0d1117" stroke="#9198a1" stroke-width="1.5"/>
+<text x="794" y="171" font-size="12" fill="#f0f6fc">멀티테넌트 경계</text>
+<circle cx="777" cy="231" r="6" fill="#0d1117" stroke="#9198a1" stroke-width="1.5"/>
+<text x="794" y="235" font-size="12" fill="#f0f6fc">네트워크 (논리)</text>
+<circle cx="777" cy="295" r="6" fill="#0d1117" stroke="#9198a1" stroke-width="1.5"/>
+<text x="794" y="299" font-size="12" fill="#f0f6fc">동/서 마이크로세그</text>
+<circle cx="777" cy="359" r="6" fill="#0d1117" stroke="#9198a1" stroke-width="1.5"/>
+<text x="794" y="363" font-size="12" fill="#f0f6fc">컴퓨트</text>
+<circle cx="777" cy="425" r="6" fill="#0d1117" stroke="#9198a1" stroke-width="1.5"/>
+<text x="794" y="429" font-size="12" fill="#f0f6fc">GPU 하드웨어</text>
+<text x="766" y="461" font-size="13" font-weight="700" fill="#f0883e">하드웨어로 강제</text>
+<text x="766" y="478" font-size="12" fill="#9198a1">강격리, 설정 실수만으로</text>
+<text x="766" y="495" font-size="12" fill="#9198a1">경계가 해제되지 않음</text>
+<text x="24" y="612" font-size="13" fill="#9198a1">각 계층은 독립적으로 동작한다. 한 계층이 잘못 설정되어도 다른 계층이 침범을 차단한다.</text>
+</svg>

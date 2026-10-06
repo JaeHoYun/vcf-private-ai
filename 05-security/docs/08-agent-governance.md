@@ -122,7 +122,7 @@ PAIS 3.0의 MCP 클라이언트는 Streamable HTTP와 SSE 전송, 정적 토큰 
 | 9 | 재승인 조건 | 설명 해시, 버전, 권한 범위 중 하나라도 바뀌면 재승인 |
 | 10 | 퇴역 | 미사용 서버의 승인 해제와 자격증명 폐기 절차 |
 
-이 체크리스트의 서비스 측 사본은 [앱 가이드 A2.3](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/appendix/A2-worksheets.md)에 있습니다.
+이 체크리스트를 서비스 하나에 적용하는 기준(연결 요건, 신원 전달, 재승인 운영)은 [앱 가이드 09 9.10절 MCP 서버 등록 판정 기준](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/09-mcp-tools.md#910-mcp-서버-등록-판정-기준)에 있습니다.
 
 ## 8.6 실행 격리 — 샌드박스, 메모리, 에이전트 간 통신
 

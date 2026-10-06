@@ -13,7 +13,7 @@ VMware Cloud Foundation(VCF) **9.1.x** 기반 **Private AI**를 다루는 공개
 | | ③ | [서빙 API](03-serving-api/README.md) | OpenAI 호환 모델 서빙 API, 추론과 에이전트 엔드포인트, 인증, MCP, 관측성 |
 | | ④ | [통합(RAG)](04-rag/README.md) | ②③을 하나로 연결하는 엔드투엔드 RAG 레퍼런스 아키텍처 |
 | 전 계층 공통 | ⑤ | [보안과 거버넌스](05-security/README.md) | 위협모델, 격리, 접근통제, 공급망, 데이터 거버넌스, 감사 |
-| | ⑥ | [사이징, 용량, 비용](06-sizing-cost/README.md) | 워크로드, GPU, VKS 사이징, 용량 계획, TCO |
+| | ⑥ | [사이징, 용량, 비용](06-sizing-cost/README.md) | 워크로드, GPU, VKS 사이징, 용량 계획, TCO, 운영 중 AI 지출 점검, 계산 워크북(xlsx) |
 | 전 계층 종합 | ⑦ | [통합 설계](07-design/README.md) | 16개 설계 결정, 레퍼런스 블루프린트(소, 중, 대), 설계 결정 기록 카탈로그 |
 
 > 위 ①–⑦이 Private AI **플랫폼**을 구축, 운영, 보호, 설계하는 시리즈 본편이며, 그 플랫폼에 **배포하는 에이전트 서비스**는 아래 '다음 단계'의 별도 최상위 가이드에서 다룹니다.

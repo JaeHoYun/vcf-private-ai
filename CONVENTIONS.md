@@ -18,9 +18,12 @@ VCF Private AI 가이드 시리즈(①–⑦)의 모든 편(서브폴더)은 아
 | 전문/오리엔테이션 | `docs/00-*.md` | `docs/00-orientation.md` |
 | 별도 독자트랙(임원 요약 등) | `docs/E0-*.md` (E = Executive) | `docs/E0-executive-brief.md` |
 | 부록 | `appendix/AN-slug.md` (A1, A2, …) | `appendix/A1-first-order-reference.md` |
+| 계산 도구 | `worksheet/` (⑥에만 배치) | `06-sizing-cost/worksheet/sizing-workbook.xlsx` |
 
 - 본문 흐름상 일반 장(章)에 해당하는 문서는 부록으로 분리하지 않고 `docs/NN`에 배치한다.
 - 진짜 부록(참조표, 체크리스트, 비교자료 등 본문 흐름 밖의 자료)만 `appendix/`로 모은다.
+- 빈칸을 채우는 양식(채워넣기 워크시트)은 작성하지 않는다. 운영에 필요한 기록 항목과 판정 기준은 해당 본문 절에 서술한다.
+- `worksheet/`는 수식으로 연쇄 계산하는 도구 전용이며 ⑥에만 배치한다. 본문 안의 계산 표는 "산정 표"로 부른다.
 
 ## 3. 문서 제목 (H1)
 

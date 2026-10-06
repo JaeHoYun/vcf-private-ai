@@ -22,11 +22,10 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발
 | | 06 | [프로덕션 아키텍처](docs/06-production.md) | HA/DR, 멀티테넌트, 스케일링, 워크로드 사이징, 모델 라이프사이클, 보안, AI 관측성, 에어갭(Artifact Mirroring Tool) |
 | | 07 | [GPUaaS (PAIF GPU 자원 서비스)](docs/07-gpuaas.md) | 책임 경계 2티어, VM+K8s 셀프서비스, GPU 분할 매트릭스, 쇼백과 차지백, 셀프서비스/공유풀 시나리오 |
 | | 08 | [한국 산업군 적용 시나리오](docs/08-industry.md) | 제조, 방산, 유통, 콘텐츠 PAIF 시나리오, 에어갭, Blackwell, MCP 연계 |
-| | 09 | [구축 시나리오](docs/09-deployment-scenarios.md) | 신규(그린필드), 기존 환경에 추가 구축(브라운필드)와 전환(마이그레이션) 구축 출발 상황별 절차 골격, 선결요건, 리스크 |
+| | 09 | [구축 시나리오](docs/09-deployment-scenarios.md) | 신규(그린필드), 기존 환경에 추가 구축(브라운필드)와 전환(마이그레이션) 구축 출발 상황별 절차 골격, 선결요건, 착수 전 현황 파악 기준, 작업기술서(SoW) 정의 기준, 리스크 |
 | | 10 | [Day-2 운영](docs/10-operations.md) | 구축 이후 운영. 업그레이드(LCM), 트러블슈팅, 백업복구, 인증서 회전, SLO/알람, 온콜, 네트워크, 스토리지 Day-2 런북 + 운영자 독자 트랙(상황별 라우터) |
 | | 11 | [GPU Enablement 핸즈온 (딥다이브)](docs/11-gpu-enablement.md) | 시리즈 표준보다 깊은 핸즈온 트랙. BIOS 전제→하이퍼바이저 인식→할당 모드 4종→버전 인터락→GPU Operator→PAIS 소비 수직 경로, known-good 스냅샷, PoC 검증 경로, 흔한 함정(CDI, vGPU 라이선스) |
 | 부록 | A1 | [FAQ, 버전 매트릭스, 용어집](appendix/A1-appendix.md) | 자주 묻는 질문, 호환성, 용어, 참고 링크 |
-| | 워크시트 | [채워넣기 워크시트](worksheet/README.md) | 09 구축 시나리오 결정, 현황 파악, SoW 정의, 10 Day-2 점검, 업그레이드, 복구, SLO 기록용 채워넣기 양식(계산용 xlsx 아님) |
 
 ---
 

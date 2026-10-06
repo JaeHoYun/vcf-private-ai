@@ -163,31 +163,12 @@ PAIS Model Endpoint가 지원하지 않는 추론 엔진, 프레임워크, 모�
 
 AI 애플리케이션 (AI 서비스 계층 추가):
 
-```
-AI 애플리케이션 구조
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/infra-ai-app-structure-dark.svg">
+  <img src="../../assets/infra-ai-app-structure-light.svg" alt="AI 애플리케이션 구조. 사용자의 HTTP Request는 일반 웹앱과 같은 3-Tier인 Frontend(Presentation, React/Vue, 채팅 UI와 대화 이력), Backend(BFF/Business, FastAPI, 파일 업로드), Database(Data, PostgreSQL, 사용자 정보와 세션)를 거친다. AI 앱에는 AI Services(PAIS) 계층이 추가되어, Backend가 Agent API를 호출하면 Agent API가 인증과 인가를 거쳐 질문 이해, 문서 검색(Knowledge Base), 답변 생성(LLM), 출처 제공의 RAG 파이프라인을 자동 처리하고 답변을 스트리밍으로 반환한다.">
+</picture>
 
-  [사용자] → HTTP Request
-  ┌──────────┐   ┌──────────┐   ┌──────────┐
-  │ Frontend │ → │  Backend │ → │ Database │
-  │ React/Vue│   │ FastAPI  │   │PostgreSQL│
-  └──────────┘   └────┬─────┘   └──────────┘
-  (Presentation)  (BFF/Business)  (Data)
-  • 채팅 UI       • 파일 업로드    • 사용자 정보, 세션
-  • 대화 이력          │
-                  AI API 호출
-                       ▼
-  ┌──────────────── AI Services (PAIS) ───────────────┐
-  │  Agent API → (RAG 파이프라인)                      │
-  │  ┌──────────┐ ┌───────────────┐ ┌──────────────┐  │
-  │  │ 질문 이해│ │ 답변 생성(LLM) │ │ 스트리밍 응답│  │
-  │  │ 문서검색 │ │   출처 제공    │ │  인증/인가   │  │
-  │  │  (KB)    │ │               │ │              │  │
-  │  └──────────┘ └───────────────┘ └──────────────┘  │
-  └────────────────────────────────────────────────────┘
-
-특징: 요청-응답이 확률적(Probabilistic), 동일 입력→유사하지만 다른 출력 가능,
-      AI 모델이 "추론"으로 응답 생성, 응답 시간이 상대적으로 길고 가변적(초 단위)
-```
+3-Tier 구조는 일반 웹앱과 같고, Backend가 AI Services(PAIS)의 Agent API를 호출하는 계층이 추가됩니다. 요청과 응답은 확률적(Probabilistic)이어서 동일 입력에도 유사하지만 다른 출력이 나올 수 있습니다. 비즈니스 로직을 코드로 명시하는 대신 AI 모델이 추론으로 응답을 생성하므로, 응답 시간이 상대적으로 길고 가변적입니다(초 단위).
 
 ### 핵심 차이점
 
@@ -329,27 +310,12 @@ curl -X POST 'https://pais.company.com/v1/agents/hr-assistant/chat' \
 
 AI 앱은 **VKS 클러스터**에 배포하는 것이 권장됩니다.
 
-```
-AI 앱 배포 아키텍처
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/infra-ai-app-deployment-dark.svg">
+  <img src="../../assets/infra-ai-app-deployment-light.svg" alt="AI 앱 배포 아키텍처. AI 플레이그라운드(PAIF/PAIS) 안의 VKS Cluster(프로젝트)에서 외부 사용자의 HTTPS 요청이 Ingress Controller(L7 로드밸런싱, TLS 종료), Frontend Pod(React, Nginx), Backend Pod(FastAPI, 인증 처리, AI API 중계)를 거치고, Backend Pod가 PAIS Services(Agent API, Model Endpoints, Knowledge Base)를 호출한다. 공유 서비스인 Harbor가 앱 이미지를 제공하고, DSM PostgreSQL이 앱 데이터와 사용자 정보를 보관한다.">
+</picture>
 
-┌─ AI 플레이그라운드 (PAIF/PAIS) ─────────────────────────┐
-│  [외부 사용자] ─HTTPS─▼                                  │
-│  ┌─ VKS Cluster (프로젝트) ────────────────────────────┐ │
-│  │  Ingress Controller (L7 로드밸런싱, TLS 종료)        │ │
-│  │             ▼                                        │ │
-│  │  ┌ Frontend Pod(s) ┐  →  ┌ Backend Pod(s) ┐         │ │
-│  │  │ • React         │     │ • FastAPI       │         │ │
-│  │  │ • Nginx         │     │ • 인증 처리     │         │ │
-│  │  └─────────────────┘     │ • AI API 중계   │         │ │
-│  │                          └─────────────────┘         │ │
-│  └──────────────── PAIS API 호출 ▼ ────────────────────┘ │
-│  ┌─ PAIS Services ─────────────────────────────────────┐ │
-│  │  Agent API, Model Endpoints, Knowledge Base          │ │
-│  └──────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────┘
-  공유 서비스: Harbor(컨테이너 이미지 저장소),
-              DSM(PostgreSQL — 앱 데이터, 사용자 정보)
-```
+공유 서비스는 두 가지입니다. Harbor는 Frontend, Backend 컨테이너 이미지를 보관하는 저장소이고, DSM(PostgreSQL)은 앱 데이터와 사용자 정보를 저장합니다.
 
 | 배포 방식 | 장점 | 단점 | 권장 |
 |----------|------|------|------|

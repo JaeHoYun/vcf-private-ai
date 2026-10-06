@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="652" viewBox="0 0 1120 652" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'Noto Sans CJK KR', Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">PAIS 4대 모듈과 의존 관계</title>
+<desc id="d">Model Gallery(Harbor, OCI)가 모델 아티팩트를 저장하고 접근통제, 버전관리, 메타데이터를 관리하며, Model Runtime이 모델 리비전을 가져와 배포한다. Runtime의 ML API Gateway는 모든 호출의 진입점으로 인증, 인가, 로드밸런싱, OpenAI 호환 경로, SSE를 처리하고 Completion Endpoint(vLLM, llama.cpp)와 Embedding Endpoint(Infinity, vLLM, llama.cpp)로 요청을 전달한다. Endpoint는 VKS 워커 노드 파드의 복제본으로 실행되어 ESXi 물리 GPU에 연결된다. Agent Builder는 Completion Endpoint를 내부에서 호출하고, Data Indexing &amp; Retrieval은 Embedding Endpoint로 임베딩을 생성해 pgvector에 저장하며, 두 모듈은 서로 연동한다.</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9198a1"/></marker></defs>
+<rect x="200" y="24" width="560" height="72" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1.5"/>
+<text x="480" y="56.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">Model Gallery (Harbor, OCI)</text>
+<text x="480" y="74.82" font-size="13" text-anchor="middle" fill="#9198a1">모델 아티팩트 저장, RBAC 접근통제, 버전관리, 메타데이터</text>
+<path d="M480,96 L480,164" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<circle cx="499" cy="131.5" r="9" fill="#4493f8" stroke="#0d1117" stroke-width="2"/>
+<text x="499" y="136" font-size="11" font-weight="700" text-anchor="middle" fill="#0d1117">1</text>
+<text x="512" y="136" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">모델 리비전을 가져와 배포</text>
+<rect x="24" y="164" width="912" height="284" rx="10" fill="none" stroke="#bd561d" stroke-width="2"/>
+<text x="38" y="186" font-size="13" font-weight="700" fill="#f0883e">Model Runtime</text>
+<text x="922" y="186" font-size="13" font-weight="700" text-anchor="end" fill="#f0883e">stateless, 요청 간 상태 없음</text>
+<rect x="48" y="200" width="864" height="64" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="480" y="228.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">ML API Gateway (모든 호출의 진입점)</text>
+<text x="480" y="246.82" font-size="13" text-anchor="middle" fill="#9198a1">인증, 인가, 로드밸런싱, OpenAI 호환 경로, SSE</text>
+<rect x="976" y="200" width="120" height="64" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1.5"/>
+<text x="1036" y="228.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">앱</text>
+<text x="1036" y="246.82" font-size="13" text-anchor="middle" fill="#9198a1">데이터 평면</text>
+<path d="M976,232 L912,232" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="48" y="304" width="272" height="120" rx="8" fill="#2d1c0f" stroke="#bd561d" stroke-width="1.5"/>
+<text x="184" y="351.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">Completion Endpoint</text>
+<text x="184" y="369.82" font-size="13" text-anchor="middle" fill="#f0f6fc">vLLM (GPU)</text>
+<text x="184" y="387.82" font-size="13" text-anchor="middle" fill="#f0f6fc">llama.cpp (CPU)</text>
+<path d="M184,264 L184,304" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="344" y="304" width="272" height="120" rx="8" fill="#2d1c0f" stroke="#bd561d" stroke-width="1.5"/>
+<text x="480" y="351.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">Embedding Endpoint</text>
+<text x="480" y="369.82" font-size="13" text-anchor="middle" fill="#f0f6fc">Infinity (CPU, GPU)</text>
+<text x="480" y="387.82" font-size="13" text-anchor="middle" fill="#f0f6fc">vLLM, llama.cpp</text>
+<path d="M480,264 L480,304" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="640" y="304" width="272" height="120" rx="8" fill="#2d1c0f" stroke="#bd561d" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="776" y="351.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">복제본 N개</text>
+<text x="776" y="369.82" font-size="13" text-anchor="middle" fill="#f0f6fc">VKS 워커 노드 파드</text>
+<text x="776" y="387.82" font-size="13" text-anchor="middle" fill="#f0f6fc">ESXi 물리 GPU에 연결</text>
+<path d="M776,264 L776,304" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="48" y="532" width="340" height="96" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="218" y="567.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">Agent Builder</text>
+<text x="218" y="585.82" font-size="13" text-anchor="middle" fill="#f0f6fc">RAG, 세션, MCP 도구를 결합해</text>
+<text x="218" y="603.82" font-size="13" text-anchor="middle" fill="#f0f6fc">오케스트레이션, Agent API로 노출</text>
+<rect x="452" y="532" width="460" height="96" rx="8" fill="#122a1c" stroke="#2f9e4f" stroke-width="1.5"/>
+<text x="682" y="567.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">Data Indexing &amp; Retrieval</text>
+<text x="682" y="585.82" font-size="13" text-anchor="middle" fill="#f0f6fc">데이터 소스 → 파싱 → 청킹 → 임베딩</text>
+<text x="682" y="603.82" font-size="13" text-anchor="middle" fill="#f0f6fc">pgvector에 저장 (Knowledge Base, 인덱스)</text>
+<path d="M184,424 L184,532" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<text x="194" y="492" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">모델 호출(내부)</text>
+<path d="M480,424 L480,532" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<text x="490" y="492" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">임베딩 생성</text>
+<path d="M388,580 L452,580" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<text x="420" y="570" font-size="12" text-anchor="middle" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">검색</text>
+</svg>

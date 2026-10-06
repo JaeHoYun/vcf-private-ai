@@ -28,21 +28,10 @@
 
 ## 5.2 Agent 구성 요소 (9.1)
 
-```
-┌──────────────────────────── Agent ─────────────────────────────┐
-│  System Prompt   규칙, 톤, 제약                                  │
-│      +                                                          │
-│  Model Endpoint  Llama 3.1 8B 등 (Temperature, Max Tokens)       │
-│      +                                                          │
-│  Knowledge Base  RAG 데이터 (Similarity Cutoff, Chunk 수)         │
-│      +                                                          │
-│  MCP Tools (9.1) 외부 데이터, 도구 (DB, ITSM, 메신저, 코드)        │
-│      +                                                          │
-│  Session Config  Chat History, 만료 시간                          │
-│  ───────────────────────────────────────────────────────────   │
-│  → REST API 자동 생성: POST /v1/agents/{name}/chat               │
-└─────────────────────────────────────────────────────────────────┘
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/infra-agent-composition-dark.svg">
+  <img src="../../assets/infra-agent-composition-light.svg" alt="Agent 구성 요소. System Prompt(규칙, 톤, 제약), Model Endpoint(Llama 3.1 8B 등, Temperature, Max Tokens), Knowledge Base(RAG 데이터, Similarity Cutoff, Chunk 수), MCP Tools(DB, ITSM, 메신저, 코드 같은 외부 데이터와 도구), Session Config(Chat History, 만료 시간)의 5개 구성 요소가 결합해 하나의 Agent를 구성하고, Agent를 구성하면 REST API 엔드포인트 POST /v1/agents/{name}/chat이 자동 생성된다.">
+</picture>
 
 기본 RAG 설정(KB, 프롬프트, 세션)은 [문서 03 3.4절](03-workflows.md#34-phase-c-rag에이전트-구성)와 동일하며, 여기서는 **MCP 도구 연동**을 더합니다.
 

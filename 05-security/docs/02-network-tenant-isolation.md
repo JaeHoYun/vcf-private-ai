@@ -26,22 +26,10 @@ Private AI 워크로드의 격리는 단일 통제가 아니라 여러 계층의
 
 이 중첩 관계를 그림으로 나타내면 다음과 같습니다. 바깥 계층일수록 정책(설정)으로 강제되어 설정 실수에 취약하고, 안쪽으로 갈수록 하드웨어가 강제해 무너뜨리기 어렵습니다. 한 계층이 뚫려도 다음 안쪽 계층이 침범을 차단하는 다층 방어 구조입니다.
 
-```
-바깥 = 정책으로 강제(설정 실수에 취약)   ── 안으로 갈수록 ──▶   안쪽 = 하드웨어로 강제(강격리)
-
-┌ 멀티테넌트 경계 — NSX Project, VCF Automation 조직/쿼터
-│ ┌ 네트워크(논리) — NSX VPC, 세그먼트, Transit Gateway
-│ │ ┌ 동/서 마이크로세그 — vDefend 분산 방화벽(DFW), 분산 IDS/IPS (각 vNIC)
-│ │ │ ┌ 컴퓨트 — VKS 네임스페이스, 쿼터, GPU Reservation
-│ │ │ │ ┌ GPU 하드웨어 — NVIDIA MIG, vGPU 프로파일 (GPU 실리콘)
-│ │ │ │ │    가장 민감한 테넌트 경계일수록 이 안쪽(하드웨어) 계층에 의존
-│ │ │ │ └─────────────────────────────────────────────
-│ │ │ └───────────────────────────────────────────────
-│ │ └─────────────────────────────────────────────────
-│ └───────────────────────────────────────────────────
-└─────────────────────────────────────────────────────
-   남/북 출입구(스택 외곽): vDefend Gateway Firewall, URL/Geo-IP 필터 (T0 Edge)
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/security-isolation-layers-dark.svg">
+  <img src="../../assets/security-isolation-layers-light.svg" alt="격리 계층을 동심 사각형으로 나타낸 그림. 바깥에서 안쪽 순으로 멀티테넌트 경계(NSX Project, VCF Automation 조직과 네임스페이스 쿼터, 관리와 정책 평면), 네트워크 논리 격리(NSX VPC, 세그먼트, 서브넷 접근 모드, Transit Gateway, NSX 데이터플레인), 동/서 마이크로세그(vDefend 분산 방화벽, 분산 IDS/IPS, ESXi 커널의 각 vNIC), 컴퓨트(VKS 네임스페이스, 쿼터, GPU Reservation, Supervisor와 vSphere), GPU 하드웨어(NVIDIA MIG, vGPU 프로파일, GPU 실리콘)가 중첩된다. 남/북 출입구(vDefend Gateway Firewall, URL/Geo-IP 필터링, T0 Edge와 Provider Gateway)는 가장 바깥 경계에서 외부와의 인그레스, 이그레스를 통제한다. 오른쪽 축은 바깥 계층이 정책 설정으로 강제되어 설정 실수에 취약하고, 안쪽 계층일수록 하드웨어가 분리를 강제하는 강격리라는 점을 보여 준다. 가장 민감한 테넌트 경계일수록 GPU 하드웨어 계층으로 격리를 강제한다.">
+</picture>
 
 각 계층의 구체 통제는 이어지는 절에서 네트워크(2.2절), 동/서 마이크로세그(2.3절), vDefend 탐지(2.4절), 컴퓨트와 GPU(2.5절) 순으로 다룹니다.
 

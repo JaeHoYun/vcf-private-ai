@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="648" viewBox="0 0 1120 648" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'Noto Sans CJK KR', Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">RAG 추론 경로 B와 경로 A</title>
+<desc id="d">왼쪽 경로 B(Model Endpoint)는 앱이 검색을 통제한다. 앱이 질문을 받아 검색과 컨텍스트 조립(03)을 직접 수행하며 pgvector(②)를 검색하고, 질문과 조립된 근거를 Model Endpoint의 완성 모델(③)에 보내 스트리밍 답변을 받은 뒤 실제 검색 청크 메타데이터로 출처를 표기한다(4.5). 오른쪽 경로 A(Agent)는 플랫폼이 검색을 포함한다. 앱은 질문만 전달하고, Agent(Agent Builder)가 검색 호출 여부와 검색어를 동적으로 판단해 MCP 도구로 pgvector(②)를 검색하고 근거를 받아 완성 생성(③)까지 수행한 뒤 답변과 근거를 앱에 반환한다.</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9198a1"/></marker></defs>
+<rect x="24" y="24" width="524" height="600" rx="10" fill="none" stroke="#484f58" stroke-width="1.5"/>
+<text x="38" y="46" font-size="13" font-weight="700" fill="#9198a1">경로 B: Model Endpoint</text>
+<text x="534" y="46" font-size="13" font-weight="700" text-anchor="end" fill="#9198a1">앱이 검색을 통제</text>
+<rect x="40" y="64" width="330" height="236" rx="10" fill="none" stroke="#1f6feb" stroke-width="2"/>
+<text x="54" y="86" font-size="13" font-weight="700" fill="#4493f8">앱이 직접 수행하는 범위</text>
+<rect x="60" y="100" width="290" height="56" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="205" y="133.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">앱, 오케스트레이션</text>
+<rect x="60" y="216" width="290" height="60" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="205" y="251.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">검색, 컨텍스트 조립 (03)</text>
+<path d="M410,210 A60,8 0 0 1 530,210 V282 A60,8 0 0 1 410,282 Z" fill="#122a1c" stroke="#2f9e4f" stroke-width="1.5"/>
+<path d="M410,210 A60,8 0 0 0 530,210" fill="none" stroke="#2f9e4f" stroke-width="1.5"/>
+<text x="470" y="250.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">pgvector</text>
+<text x="470" y="268.82" font-size="13" text-anchor="middle" fill="#9198a1">②</text>
+<rect x="60" y="372" width="290" height="64" rx="8" fill="#2d1c0f" stroke="#bd561d" stroke-width="1.5"/>
+<text x="205" y="400.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">Model Endpoint</text>
+<text x="205" y="418.82" font-size="13" text-anchor="middle" fill="#9198a1">완성 모델 (③)</text>
+<rect x="60" y="536" width="470" height="64" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="295" y="564.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">앱</text>
+<text x="295" y="582.82" font-size="13" text-anchor="middle" fill="#9198a1">출처는 실제 검색 청크 메타데이터로 표기 (4.5)</text>
+<path d="M205,156 L205,216" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<circle cx="224" cy="186.5" r="9" fill="#4493f8" stroke="#0d1117" stroke-width="2"/>
+<text x="224" y="191" font-size="11" font-weight="700" text-anchor="middle" fill="#0d1117">1</text>
+<text x="237" y="191" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">질문</text>
+<path d="M350,246 L410,246" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<text x="380" y="238" font-size="12" text-anchor="middle" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">검색</text>
+<path d="M205,276 L205,372" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<circle cx="224" cy="321.5" r="9" fill="#4493f8" stroke="#0d1117" stroke-width="2"/>
+<text x="224" y="326" font-size="11" font-weight="700" text-anchor="middle" fill="#0d1117">2</text>
+<text x="237" y="326" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">질문 + 근거</text>
+<text x="237" y="343" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(조립된 컨텍스트)</text>
+<path d="M205,436 L205,536" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<circle cx="224" cy="485.5" r="9" fill="#4493f8" stroke="#0d1117" stroke-width="2"/>
+<text x="224" y="490" font-size="11" font-weight="700" text-anchor="middle" fill="#0d1117">3</text>
+<text x="237" y="490" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">답변 (스트리밍)</text>
+<rect x="572" y="24" width="524" height="600" rx="10" fill="none" stroke="#484f58" stroke-width="1.5"/>
+<text x="586" y="46" font-size="13" font-weight="700" fill="#9198a1">경로 A: Agent</text>
+<text x="1082" y="46" font-size="13" font-weight="700" text-anchor="end" fill="#9198a1">플랫폼이 검색을 포함</text>
+<rect x="612" y="100" width="290" height="56" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="757" y="133.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">앱</text>
+<rect x="596" y="196" width="326" height="296" rx="10" fill="none" stroke="#484f58" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="610" y="218" font-size="13" font-weight="700" fill="#9198a1">Agent (Agent Builder)</text>
+<rect x="612" y="236" width="290" height="64" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1.5"/>
+<text x="757" y="264.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">동적 판단</text>
+<text x="757" y="282.82" font-size="13" text-anchor="middle" fill="#9198a1">검색 호출 여부와 검색어 결정</text>
+<rect x="612" y="340" width="290" height="56" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1.5"/>
+<text x="757" y="364.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">KB 검색</text>
+<text x="757" y="382.82" font-size="13" text-anchor="middle" fill="#9198a1">Knowledge Base</text>
+<rect x="612" y="428" width="290" height="48" rx="8" fill="#2d1c0f" stroke="#bd561d" stroke-width="1.5"/>
+<text x="757" y="457.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">완성 생성 (③)</text>
+<path d="M966,332 A57,8 0 0 1 1080,332 V404 A57,8 0 0 1 966,404 Z" fill="#122a1c" stroke="#2f9e4f" stroke-width="1.5"/>
+<path d="M966,332 A57,8 0 0 0 1080,332" fill="none" stroke="#2f9e4f" stroke-width="1.5"/>
+<text x="1023" y="372.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">pgvector</text>
+<text x="1023" y="390.82" font-size="13" text-anchor="middle" fill="#9198a1">②</text>
+<rect x="612" y="536" width="468" height="64" rx="8" fill="#11284a" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="846" y="564.04" font-size="15" font-weight="700" text-anchor="middle" fill="#f0f6fc">앱</text>
+<text x="846" y="582.82" font-size="13" text-anchor="middle" fill="#9198a1">Agent 응답의 근거, 출처 필드 사용 (4.5)</text>
+<path d="M840,156 L840,236" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="850" y="182" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">질문만 전달</text>
+<path d="M757,300 L757,340" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="767" y="324" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">검색이 필요할 때</text>
+<path d="M902,358 L966,358" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="934" y="350" font-size="12" text-anchor="middle" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">MCP 도구</text>
+<path d="M966,382 L902,382" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="934" y="398" font-size="12" text-anchor="middle" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">근거</text>
+<path d="M757,396 L757,428" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M757,476 L757,536" fill="none" stroke="#9198a1" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="767" y="518" font-size="12" fill="#9198a1" stroke="#0d1117" stroke-width="4" stroke-linejoin="round" paint-order="stroke">답변 + 근거</text>
+</svg>

@@ -39,30 +39,10 @@ VCF 9.1.x — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 
 공식 설계 문서(PAIS Detailed Design, VCF 9.1) 기준으로 PAIS는 4개 모듈로 구성됩니다. 단순 나열이 아니라 **각자 무엇을 수행, 유지, 노출하며 무엇에 의존하는지**가 아키텍처의 본체입니다.
 
-```
-                 ┌──────────────── Model Gallery (Harbor / OCI) ───────────────┐
-                 │  모델 아티팩트 저장, RBAC 접근통제, 버전관리, 메타데이터       │
-                 └───────────────────────────┬────────────────────────────────┘
-                                             │ ① 모델 리비전을 가져와 배포
-                                             ▼
-   ┌──────────────────────────────  Model Runtime  ──────────────────────────────┐
-   │                                                                              │
-   │   [ ML API Gateway ]  인증, 인가, 로드밸런싱, OpenAI 호환 경로, SSE           │ ◀── 모든 호출의 진입점
-   │          │                          │                          │             │
-   │          ▼                          ▼                          ▼             │
-   │   Completion Endpoint        Embedding Endpoint          (복제본 N개)         │
-   │   - vLLM (GPU)               - Infinity (CPU/GPU)        VKS 워커 노드 파드    │
-   │   - llama.cpp (CPU)          - vLLM / llama.cpp          → ESXi 물리 GPU 연결  │
-   │          │ stateless                │                                         │
-   └──────────┼──────────────────────────┼─────────────────────────────────────-─┘
-              │ 모델 호출(내부)           │ 임베딩 생성
-              ▼                          ▼
-   ┌─ Agent Builder ─────────┐   ┌─ Data Indexing & Retrieval ─┐
-   │  RAG + 세션 + MCP 도구   │◀─▶│  Data Source → 파싱 → 청킹    │
-   │  를 묶어 오케스트레이션   │   │  → 임베딩 → pgvector 저장     │
-   │  → Agent API            │   │  (Knowledge Base / Index)    │
-   └─────────────────────────┘   └──────────────────────────────┘
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/serving-model-runtime-dark.svg">
+  <img src="../../assets/serving-model-runtime-light.svg" alt="PAIS 4대 모듈의 의존 관계. Model Gallery(Harbor, OCI)가 모델 아티팩트를 저장하고 RBAC 접근통제, 버전관리, 메타데이터를 관리하며, Model Runtime이 모델 리비전을 가져와 배포합니다. Model Runtime 안의 ML API Gateway는 앱이 보내는 모든 호출의 진입점으로 인증, 인가, 로드밸런싱, OpenAI 호환 경로, SSE를 처리하고, 요청을 Completion Endpoint(vLLM GPU, llama.cpp CPU)와 Embedding Endpoint(Infinity CPU/GPU, vLLM, llama.cpp)로 전달합니다. Endpoint는 VKS 워커 노드 파드의 복제본 N개로 실행되어 ESXi 물리 GPU에 연결되며, Runtime은 요청 간 상태가 없는 stateless입니다. Agent Builder는 Completion Endpoint를 내부에서 호출해 RAG, 세션, MCP 도구를 결합한 오케스트레이션을 Agent API로 노출하고, Data Indexing &amp; Retrieval은 Embedding Endpoint로 임베딩을 생성해 데이터 소스를 파싱, 청킹, 임베딩한 결과를 pgvector(Knowledge Base, 인덱스)에 저장합니다. Agent Builder는 이 지식베이스를 검색합니다.">
+</picture>
 
 ### 모듈별 책임표. 수행 / 유지 / 요구(의존) / 노출
 
@@ -94,17 +74,10 @@ VCF 9.1.x — PAIF Workload Domain (GPU 가속 워크로드 도메인)
 
 아키텍처를 "정지 화면"이 아니라 "절차"로 따라가면 가장 빨리 이해됩니다. 모델 하나가 사내 추론 API가 되기까지는 다음 다섯 단계를 거칩니다.
 
-```
- [준비]            [반입]              [배포]                    [노출]         [소비]
- PAIS 밖           Model Gallery       Model Runtime             ML API Gateway  앱/에이전트
-┌────────┐       ┌──────────┐        ┌────────────────────┐    ┌──────────┐   ┌────────┐
-│외부 모델│──①──▶│ Harbor   │──②──▶ │ 추론 엔진 컨테이너로 │─③▶│ 단일 URL │─④▶│  앱     │
-│NGC/HF  │       │ (OCI)    │        │ VKS 워커 노드에      │    │ 인증/인가 │   │ base_url│
-│또는    │       │ 리비전,  │        │ 파드로 스케줄        │    │ 로드밸런싱│   │ 만 교체 │
-│DLVM/학습│      │ 메타데이터│        │ → ESXi 물리 GPU 연결 │    └──────────┘   └────────┘
-└────────┘       └──────────┘        │ (복제본 ≥2)         │
-                                     └────────────────────┘
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../assets/serving-model-pipeline-dark.svg">
+  <img src="../../assets/serving-model-pipeline-light.svg" alt="모델 한 개가 사내 추론 API가 되기까지의 다섯 단계. 준비 단계에서 PAIS 밖의 외부 모델(NGC, Hugging Face) 또는 DLVM, 학습 산출물을 마련하고, ① 반입 단계에서 Model Gallery의 Harbor(OCI)에 리비전, 메타데이터와 함께 업로드합니다. ② 배포 단계에서 Model Runtime이 Endpoint를 생성해 추론 엔진 컨테이너를 VKS 워커 노드에 파드로 스케줄하고 ESXi 물리 GPU에 연결하며 복제본을 2개 이상 배치합니다. ③ 노출 단계에서 ML API Gateway가 단일 URL로 노출하고 인증, 인가, 로드밸런싱을 처리하며, ④ 소비 단계에서 앱과 에이전트는 base_url만 교체해 API를 호출합니다.">
+</picture>
 
 1. **준비 (PAIS 밖).** 모델은 외부 출처(NVIDIA NGC, Hugging Face 등)에서 받거나, 사내에서 파인튜닝과 학습한 산출물입니다. **파인튜닝과 학습 자체는 PAIS 범위 밖**이며 DLVM이나 별도 학습 파이프라인(NeMo 등)에서 수행합니다(2.9절 경계 참조).
 2. **반입 (Model Gallery).** 검증된 모델을 Harbor(OCI 레지스트리)에 업로드합니다. NIM은 JupyterLab 노트북으로 Harbor에 내려받고, 자체 모델은 `vcf pais models push`로 리비전을 등록합니다. Gallery는 이때 **버전, 접근권한(RBAC), 메타데이터**를 함께 관리합니다(2.4절).

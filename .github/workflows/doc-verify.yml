@@ -1,0 +1,77 @@
+# 가이드 저장소 문서 검증 워크플로
+#
+# 원본은 JaeHoYun/guide-tooling의 ci/doc-verify.yml입니다. 각 가이드 저장소의
+# .github/workflows/doc-verify.yml은 이 파일의 복사본이므로 직접 고치지 말고 원본을 고친 뒤 복사합니다.
+#
+# PR이 열리거나 PR에 커밋이 올라오면, 그리고 main에 커밋이 반영되면 실행합니다.
+# guide-tooling의 검증 스크립트와 레지스트리는 항상 main을 사용합니다.
+# 오류가 하나라도 있으면 실패합니다. PR에서는 경고를 변경된 줄에 대해서만 표시합니다.
+name: doc-verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: doc-verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  doc-verify:
+    name: doc-verify
+    runs-on: ubuntu-latest
+    env:
+      REPO: ${{ github.event.repository.name }}
+    steps:
+      - name: 검사 대상 저장소 checkout
+        uses: actions/checkout@v4
+        with:
+          path: ${{ github.event.repository.name }}
+          fetch-depth: 0
+
+      - name: guide-tooling과 형제 저장소 clone
+        run: |
+          for r in guide-tooling vcf-private-ai vcf-private-ai-apps enterprise-ax-methodology JaeHoYun; do
+            if [ ! -d "$r" ]; then
+              git clone --depth 1 --quiet "https://github.com/JaeHoYun/$r.git" "$r"
+            fi
+          done
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 문서 규칙 검사
+        env:
+          CUSTOMER_NAMES: ${{ secrets.CUSTOMER_NAMES }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          args=(--repo "$REPO" --format github)
+          if [ -n "$BASE_REF" ]; then
+            args+=(--diff-base "origin/$BASE_REF" --warn-changed-only)
+          fi
+          set +e
+          python3 guide-tooling/tools/verify.py "${args[@]}" > verify.log
+          status=$?
+          set -e
+          grep '^::' verify.log || true
+          {
+            echo '### 문서 규칙 검사'
+            echo
+            echo '```'
+            grep -v '^::' verify.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $status
+
+      - name: 저장소 설명(About) 검사
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          desc="$(gh api "repos/${{ github.repository }}" --jq '.description // ""')"
+          python3 guide-tooling/tools/verify.py --profile "$REPO" --description "$desc" --format github

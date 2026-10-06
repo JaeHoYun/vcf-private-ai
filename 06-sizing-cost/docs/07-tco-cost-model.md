@@ -22,11 +22,11 @@ TCO를 비교 가능한 형태로 정리하려면 먼저 "무엇을, 몇 년에 
 
 TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다룹니다.
 
-1. 소프트웨어 라이선스/구독 — VCF 코어 구독(PAIF 포함), NVAIE(vGPU나 NIM을 사용할 때 별도), DSM 사용 권한(entitlement)
-2. GPU 하드웨어 — CapEx 및 감가
-3. 서버, 스토리지, 네트워크 — GPU 외 인프라
-4. 운영비(OpEx) — 전력, 상면, 유지보수, 인력(선택)
-5. 도입/마이그레이션 — 일회성 전환 비용
+1. 소프트웨어 라이선스/구독. VCF 코어 구독(PAIF 포함), NVAIE(vGPU나 NIM을 사용할 때 별도), DSM 사용 권한(entitlement)
+2. GPU 하드웨어. CapEx 및 감가
+3. 서버, 스토리지, 네트워크. GPU 외 인프라
+4. 운영비(OpEx). 전력, 상면, 유지보수, 인력(선택)
+5. 도입/마이그레이션. 일회성 전환 비용
 
 ---
 
@@ -41,7 +41,7 @@ TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다�
 | NVIDIA AI Enterprise(NVAIE) | **NVIDIA에서 별도 구매** | **GPU당(per-GPU)** 구독/영구 | vGPU(ESX 호스트 vGPU Manager VIB, vGPU 게스트 드라이버)와 NIM, NGC 엔터프라이즈 컨테이너 사용에 필요합니다. GPU를 VM 하나에 통째로 할당(DirectPath)하고 오픈소스 추론 엔진만 사용하면 필요하지 않습니다. |
 | Data Services Manager(DSM) | VCF Advanced Service(**entitlement**) | VCF 구독에 종속 | VCF 구독자만 프로덕션 사용 가능. 일부 상위 서비스는 별도 조건일 수 있습니다(확인 필요). |
 
-근거: PAIF는 VCF 솔루션 라이선스로 제공되고 NVAIE 라이선스는 NVIDIA에서 별도 구매가 필요하다는 점([Broadcom TechDocs — NVIDIA DLS/CLS Design Considerations](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/1-0/private-ai-ready-infrastructure-for-vmware-cloud-foundation/detailed-design-for-private-ai-foundation-with-nvidia/nvidia-dls-cls-design-considerations.html)), VCF가 코어당 구독 모델이라는 점([Broadcom TechDocs — Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)), NVAIE가 GPU당 라이선스라는 점([NVIDIA AI Enterprise Licensing Guide](https://docs.nvidia.com/ai-enterprise/planning-resource/licensing-guide/latest/licensing.html)), DSM이 VCF Advanced Service라는 점([VMware DSM 9.1 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/vmware-data-services-manager-9-1-automating-the-modern-databases-that-drive-ai-and-private-cloud/)).
+근거: PAIF는 VCF 솔루션 라이선스로 제공되고 NVAIE 라이선스는 NVIDIA에서 별도 구매가 필요하다는 점([Broadcom TechDocs, NVIDIA DLS/CLS Design Considerations](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/1-0/private-ai-ready-infrastructure-for-vmware-cloud-foundation/detailed-design-for-private-ai-foundation-with-nvidia/nvidia-dls-cls-design-considerations.html)), VCF가 코어당 구독 모델이라는 점([Broadcom TechDocs, Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)), NVAIE가 GPU당 라이선스라는 점([NVIDIA AI Enterprise Licensing Guide](https://docs.nvidia.com/ai-enterprise/planning-resource/licensing-guide/latest/licensing.html)), DSM이 VCF Advanced Service라는 점([VMware DSM 9.1 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/vmware-data-services-manager-9-1-automating-the-modern-databases-that-drive-ai-and-private-cloud/)).
 
 ### 라이선스 산정 표(단가 칸은 견적 입력란)
 
@@ -52,7 +52,7 @@ TCO는 다음 5개 대분류로 분해합니다. 7.2–7.5에서 각각을 다�
 | DSM 사용 범위 | VCF entitlement | (조건 확인) | (계산) |
 
 산정 주의(빈 단가와 규칙값을 견적으로 채우는 방법은 [부록 A3 견적 요청 체크리스트](../appendix/A3-rfq-quote-checklist.md) 참조):
-- **코어 최소수량(core minimum):** 코어 수가 적은 CPU에서도 물리 코어당 최소 수량이 적용되어 "장부상 코어"가 늘어날 수 있습니다. 사이징의 물리 코어 수를 그대로 적용하지 말고 최소수량 규칙을 반영합니다(실제 최소수량 값은 [부록 A3.1](../appendix/A3-rfq-quote-checklist.md#a31-소프트웨어-라이선스-견적-broadcom--nvidia)로 견적 확인)([Broadcom TechDocs — Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)).
+- **코어 최소수량(core minimum):** 코어 수가 적은 CPU에서도 물리 코어당 최소 수량이 적용되어 "장부상 코어"가 늘어날 수 있습니다. 사이징의 물리 코어 수를 그대로 적용하지 말고 최소수량 규칙을 반영합니다(실제 최소수량 값은 [부록 A3.1](../appendix/A3-rfq-quote-checklist.md#a31-소프트웨어-라이선스-견적-broadcom--nvidia)로 견적 확인)([Broadcom TechDocs, Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)).
 - **NVAIE가 필요한 경우와 아닌 경우:** GPU를 vGPU로 나눠 사용하거나 NIM 같은 NVAIE 소프트웨어를 사용하면 NVAIE가 필요하고, 이때는 그 서버에 설치된 모든 GPU가 라이선스 대상입니다. vGPU로 몇 조각으로 분할하든 물리 GPU 수가 기준입니다([NVIDIA AI Enterprise Licensing Guide](https://docs.nvidia.com/ai-enterprise/planning-resource/licensing-guide/latest/licensing.html)). 반대로 GPU를 VM이나 쿠버네티스 노드 하나에 통째로 할당(DirectPath)하고 vLLM 같은 오픈소스 추론 엔진만 사용하면, PAIF 9.1부터 NVAIE 없이 운영할 수 있습니다([PAIF 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)). 할당 방식별로 어떤 소프트웨어에 접근할 수 있는지는 [Primer 04 4.3절](../../00-foundations/docs/04-ecosystem-101.md)에 정리돼 있습니다. 따라서 NVAIE 수량은 "총 GPU 수"가 아니라 "vGPU나 NIM을 사용하는 서버의 GPU 수"로 산정합니다.
 - **NVAIE 지원 등급/기간:** 구독, 소비형, 영구(영구는 5년 지원 서비스 필요) 중 무엇인지에 따라 연 환산이 달라집니다(확인 필요).
 - **이중 계상 금지:** PAIF는 VCF 구독에 포함이므로 별도 제품 비용으로 또 더하지 않습니다.
@@ -89,7 +89,7 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 | 데이터 파이프라인 스토리지 | 데이터셋 크기 | 계층/티어별 단가 | (견적 확인) |
 | 백업과 DR | 보호 대상 용량 | 용량 × 단가 | (견적 확인) |
 
-메모: VCF 9는 vSAN(OSA/ESA) 3노드 또는 외부 스토리지(NFS/FC) 2노드 구성을 지원하므로([Broadcom TechDocs — Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)), 스토리지 아키텍처 선택이 노드 수와 라이선스 코어 수에 영향을 줍니다. 스토리지 효율(압축, 중복제거, 메모리 티어링) 기능은 실효 용량을 늘려 단위 용량당 비용을 낮출 수 있으나, 효과는 데이터 특성에 의존하므로 실측이 필요합니다(7.8 참조).
+메모: VCF 9는 vSAN(OSA/ESA) 3노드 또는 외부 스토리지(NFS/FC) 2노드 구성을 지원하므로([Broadcom TechDocs, Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)), 스토리지 아키텍처 선택이 노드 수와 라이선스 코어 수에 영향을 줍니다. 스토리지 효율(압축, 중복제거, 메모리 티어링) 기능은 실효 용량을 늘려 단위 용량당 비용을 낮출 수 있으나, 효과는 데이터 특성에 의존하므로 실측이 필요합니다(7.8 참조).
 
 ---
 
@@ -130,9 +130,9 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 - 퍼블릭은 **간헐적, 버스트성** 수요나 초기 불확실성이 클 때 유리한 구조입니다.
 - 따라서 손익분기점은 "사용률, 기간, 워크로드 패턴"의 함수이며, 특정 % 절감을 단정할 수 없습니다. 두 경우 모두 7.1에서 정한 동일 기간과 동일 항목으로 비교해야 공정합니다.
 
-**벤더 발표 수치(간접 참고):** Broadcom은 VCF 9.1 발표에서 서버 비용 최대 40% 절감, 스토리지 TCO 39% 절감, 쿠버네티스 운영비 최대 46% 절감, 퍼블릭 클라우드 대비 1X–2X TCO 개선을 제시했습니다. 이는 가장 좋은 조건에서 산출된 최대치("up to")입니다([Broadcom 보도자료 — VCF 9.1](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1); [Virtualization Review — VCF 9.1](https://virtualizationreview.com/articles/2026/05/06/private-ai-not-public-cloud-broadcoms-message-with-vmware-cloud-foundation-9-1.aspx)). 그대로 인용하지 말고, 발표가 전제한 조건(통합 전 환경, 사용률, 비교 기간)과 자사 조건이 어디서 다른지 비교하는 간접 참고로 활용합니다. 최종 판단의 숫자는 자사 실측과 견적으로 도출해야 합니다.
+**벤더 발표 수치(간접 참고):** Broadcom은 VCF 9.1 발표에서 서버 비용 최대 40% 절감, 스토리지 TCO 39% 절감, 쿠버네티스 운영비 최대 46% 절감, 퍼블릭 클라우드 대비 1X–2X TCO 개선을 제시했습니다. 이는 가장 좋은 조건에서 산출된 최대치("up to")입니다([Broadcom 보도자료, VCF 9.1](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1); [Virtualization Review, VCF 9.1](https://virtualizationreview.com/articles/2026/05/06/private-ai-not-public-cloud-broadcoms-message-with-vmware-cloud-foundation-9-1.aspx)). 그대로 인용하지 말고, 발표가 전제한 조건(통합 전 환경, 사용률, 비교 기간)과 자사 조건이 어디서 다른지 비교하는 간접 참고로 활용합니다. 최종 판단의 숫자는 자사 실측과 견적으로 도출해야 합니다.
 
-### 한계비용 — 기보유(매몰) GPU 재활용
+### 한계비용. 기보유(매몰) GPU 재활용
 
 역방향 사이징([01 1.7절](01-sizing-methodology.md#17-순방향과-역방향-사이징))에서는 GPU가 이미 구매된 **매몰비용**(sunk cost)이라 재활용의 한계 CapEx가 0에 가깝습니다. 그러나 PAIF에서 그 GPU를 켜는 순간 다음 한계비용이 발생합니다.
 
@@ -151,7 +151,7 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 
 ## 7.7 단위 경제와 비용 귀속(쇼백/차지백)
 
-### 단위 경제(선택) — 토큰/요청당 비용 모델
+### 단위 경제(선택). 토큰/요청당 비용 모델
 
 추론 1천 토큰당 또는 요청당 비용은 "총 연 비용 ÷ 처리량"으로 모델링합니다. 수치는 단정하지 않고 산식만 제시합니다.
 
@@ -165,7 +165,7 @@ GPU 외 인프라는 GPU-Accelerated Workload Domain(GPU 가속 워크로드 도
 
 ### 비용 귀속(쇼백/차지백)
 
-VCF의 비용 관리 기능은 소유 비용(compute, storage, VM 직접비)을 VCF 도메인과 비용 동인(cost driver)별로 분해하고, CPU, 메모리, 스토리지 비용을 애플리케이션 팀으로 귀속(showback)할 수 있도록 지원합니다([Broadcom TechDocs — Cost Overview](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/cost-and-capacity-management/business-management/cost-overview.html)).
+VCF의 비용 관리 기능은 소유 비용(compute, storage, VM 직접비)을 VCF 도메인과 비용 동인(cost driver)별로 분해하고, CPU, 메모리, 스토리지 비용을 애플리케이션 팀으로 귀속(showback)할 수 있도록 지원합니다([Broadcom TechDocs, Cost Overview](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/cost-and-capacity-management/business-management/cost-overview.html)).
 
 비용 귀속의 목적은 조직마다 다르고, 목적에 따라 쇼백으로 충분한지 차지백까지 적용할지가 달라집니다.
 
@@ -229,14 +229,14 @@ GPU 환경에서의 귀속은 GPU 점유(전용 vs vGPU 분할), 토큰 사용�
 
 ### 참고 출처
 
-- [Broadcom TechDocs — Licensing Model (VCF 9)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)
-- [Broadcom TechDocs — NVIDIA DLS/CLS Design Considerations (PAIF)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/1-0/private-ai-ready-infrastructure-for-vmware-cloud-foundation/detailed-design-for-private-ai-foundation-with-nvidia/nvidia-dls-cls-design-considerations.html)
-- [Broadcom TechDocs — Cost Overview (VCF Cost & Capacity Management)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/cost-and-capacity-management/business-management/cost-overview.html)
+- [Broadcom TechDocs, Licensing Model (VCF 9)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/licensing-overview/licensing-model.html)
+- [Broadcom TechDocs, NVIDIA DLS/CLS Design Considerations (PAIF)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vvs/1-0/private-ai-ready-infrastructure-for-vmware-cloud-foundation/detailed-design-for-private-ai-foundation-with-nvidia/nvidia-dls-cls-design-considerations.html)
+- [Broadcom TechDocs, Cost Overview (VCF Cost & Capacity Management)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/cost-and-capacity-management/business-management/cost-overview.html)
 - [NVIDIA AI Enterprise Licensing Guide (per-GPU)](https://docs.nvidia.com/ai-enterprise/planning-resource/licensing-guide/latest/licensing.html)
 - [NVIDIA License System (DLS/CLS)](https://docs.nvidia.com/license-system/latest/nvidia-license-system-user-guide/index.html)
-- [VMware DSM 9.1 — VCF Advanced Service (블로그)](https://blogs.vmware.com/cloud-foundation/2026/05/05/vmware-data-services-manager-9-1-automating-the-modern-databases-that-drive-ai-and-private-cloud/)
-- [Broadcom 보도자료 — VCF 9.1 (TCO 발표 수치)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
-- [Virtualization Review — VCF 9.1 (벤더 수치 보도)](https://virtualizationreview.com/articles/2026/05/06/private-ai-not-public-cloud-broadcoms-message-with-vmware-cloud-foundation-9-1.aspx)
+- [VMware DSM 9.1, VCF Advanced Service (블로그)](https://blogs.vmware.com/cloud-foundation/2026/05/05/vmware-data-services-manager-9-1-automating-the-modern-databases-that-drive-ai-and-private-cloud/)
+- [Broadcom 보도자료, VCF 9.1 (TCO 발표 수치)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
+- [Virtualization Review, VCF 9.1 (벤더 수치 보도)](https://virtualizationreview.com/articles/2026/05/06/private-ai-not-public-cloud-broadcoms-message-with-vmware-cloud-foundation-9-1.aspx)
 
 ---
 [← 이전: 06 용량 계획과 운영](06-capacity-planning.md) | [목차](../README.md) | [다음: 08 레퍼런스 시나리오(전 과정 예제) →](08-reference-scenario.md)

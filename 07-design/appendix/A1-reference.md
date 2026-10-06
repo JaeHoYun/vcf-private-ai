@@ -37,7 +37,7 @@
 | NFS, VMFS on FC, iSCSI, vVol | 외장 스토리지 프로토콜과 포맷 (vVol = 어레이 통합 가상 볼륨) |
 | SAN, NAS | 스토리지 영역 네트워크 / 네트워크 결합 스토리지 |
 | NSX | VCF의 소프트웨어 정의 네트워킹 |
-| 전송 영역(transport zone) | 네트워크 종류를 가르는 단위 — 오버레이(캡슐화) vs VLAN(물리 연결) |
+| 전송 영역(transport zone) | 네트워크 종류를 가르는 단위. 오버레이(캡슐화)와 VLAN(물리 연결)으로 구분 |
 | VPC (Virtual Private Cloud) | NSX의 테넌트 셀프서비스 네트워크 단위 |
 | 마이크로세그멘테이션 | 워크로드 단위로 트래픽을 분리하는 세분화 방화벽 |
 | AVI (NSX Advanced Load Balancer) | 소프트웨어 정의 L7 로드밸런서 |
@@ -102,11 +102,11 @@
 | OIDC, OAuth 2.0 | 표준 인증과 인가 프로토콜 |
 | 페더레이션(federation) | 외부 IdP와 신원을 연동하는 것 |
 | soft, hard 격리 | 네임스페이스 논리 격리 / 클러스터와 도메인 물리 격리 |
-| 멀티테넌시 | 여러 테넌트(팀과 조직)가 한 플랫폼을 공유하는 것. 전사 확장 단계에서 팀과 사업부별 격리와 자원 배분의 기준으로 작용함 (→ [05 5.1](../docs/05-tenancy-security.md#51-결정-멀티테넌시-격리--soft네임스페이스-vs-hard클러스터와-도메인-분리), [02 2.5](../docs/02-reference-blueprints.md#25-전사-확장멀티테넌트)) |
+| 멀티테넌시 | 여러 테넌트(팀과 조직)가 한 플랫폼을 공유하는 것. 전사 확장 단계에서 팀과 사업부별 격리와 자원 배분의 기준으로 작용함 (→ [05 5.1](../docs/05-tenancy-security.md#51-결정-멀티테넌시-격리-soft네임스페이스-vs-hard클러스터와-도메인-분리), [02 2.5](../docs/02-reference-blueprints.md#25-전사-확장멀티테넌트)) |
 
 ## A1.2 참조 링크
 
-- [시리즈 허브](../../README.md) — 7편 전체 목록
+- 7편 전체 목록: [시리즈 허브](../../README.md)
 - 형제 가이드: [① 인프라](../../01-infra/README.md) | [② VectorDB](../../02-vectordb/README.md) | [③ 서빙 API](../../03-serving-api/README.md) | [④ RAG](../../04-rag/README.md) | [⑤ 보안과 거버넌스](../../05-security/README.md) | [⑥ 사이징과 비용](../../06-sizing-cost/README.md)
 - 상위 전략: [기업용 AX 방법론 가이드](https://github.com/JaeHoYun/enterprise-ax-methodology)
 - 버전 단일 기준: [① README 기반 버전표](../../01-infra/README.md#기반-버전)

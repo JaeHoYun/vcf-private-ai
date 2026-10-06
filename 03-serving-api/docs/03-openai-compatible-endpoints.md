@@ -5,7 +5,7 @@
 
 PAIS의 모델 추론은 **OpenAI 호환 인터페이스**로 노출됩니다. OpenAI가 정의한 `models`, `embeddings`, `chat/completions` 형태를 그대로 따르므로, OpenAI SDK, 클라이언트를 거의 수정 없이 사용합니다.
 
-> **① 인프라 가이드와의 경로 차이 안내** — [① 04 4.7절](../../01-infra/docs/04-dev-scenarios.md)은 경로를 `/v1/agents/{name}/chat` 등으로 적되 "9.0.x에서 이어받은 **미검증 예시**"라고 명시합니다. 본 가이드의 경로(`/api/v1/compatibility/openai/v1/...`)는 **공식 API 레퍼런스 기준 검증값**으로, 두 가이드를 함께 참고하신다면 본 문서의 경로를 최신 기준으로 삼으시기 바랍니다.
+> **① 인프라 가이드와의 경로 차이 안내.** [① 04 4.7절](../../01-infra/docs/04-dev-scenarios.md)은 경로를 `/v1/agents/{name}/chat` 등으로 적되 "9.0.x에서 이어받은 **미검증 예시**"라고 명시합니다. 본 가이드의 경로(`/api/v1/compatibility/openai/v1/...`)는 **공식 API 레퍼런스 기준 검증값**으로, 두 가이드를 함께 참고하신다면 본 문서의 경로를 최신 기준으로 삼으시기 바랍니다.
 
 ---
 
@@ -17,15 +17,15 @@ https://{instance-fqdn}/api/v1/compatibility/openai/v1/{...}
         인스턴스          API 버전   OpenAI 호환 API       개별 리소스
 ```
 
-- **인스턴스 FQDN** — PAIS 인스턴스 주소(조직별)
-- **`/api/v1`** — PAIS API 버전 프리픽스
-- **`/compatibility/openai/v1`** — OpenAI 호환 API. OpenAI SDK의 `base_url`에 `…/api/v1/compatibility/openai/v1`까지 넣으면, SDK가 그 뒤에 `chat/completions` 등을 붙입니다.
+- **인스턴스 FQDN.** PAIS 인스턴스 주소(조직별)
+- **`/api/v1`.** PAIS API 버전 프리픽스
+- **`/compatibility/openai/v1`.** OpenAI 호환 API. OpenAI SDK의 `base_url`에 `…/api/v1/compatibility/openai/v1`까지 넣으면, SDK가 그 뒤에 `chat/completions` 등을 붙입니다.
 
 > OpenAI SDK는 `base_url` 뒤에 `/chat/completions`, `/embeddings`, `/models`를 자동으로 붙입니다. 따라서 클라이언트에는 **`…/compatibility/openai/v1`까지만** `base_url`로 지정하면 됩니다.
 
 ---
 
-## 3.2 모델 목록 — `GET /models`
+## 3.2 모델 목록. `GET /models`
 
 현재 인스턴스에서 호출 가능한 모델과 엔드포인트를 조회합니다.
 
@@ -41,11 +41,11 @@ curl -s 'https://{fqdn}/api/v1/compatibility/openai/v1/models' \
 
 > PAIS 3.0부터 각 항목에 모델 **status** 필드가 추가되어, 엔드포인트가 기동 중인지 서빙 가능한지를 목록 조회만으로 알 수 있습니다. 또한 3.0에서는 다른 인스턴스의 공유 모델과 원격 클라우드 모델도 이 목록에 로컬 모델과 같은 형태로 나타나므로([02 2.5.1절](02-serving-api-architecture.md)), 앱이 모델을 고를 때 이름만으로 데이터 행선지를 짐작할 수는 없습니다. 어느 모델이 원격인지는 플랫폼 팀이 앱 팀에 알려 주어야 합니다.
 >
-> `model_type`(completion/embedding), `model_engine`(vLLM/Infinity/llama.cpp 등)으로 그 모델이 무엇을 할 수 있는지 구분합니다. 앱에서 사용할 `model` 이름은 여기 `id`에서 가져옵니다. 같은 completion 모델이라도 **GPU(vLLM)인지 CPU(llama.cpp)인지**가 `model_engine`에 드러나므로, 지연과 처리량 기대치를 여기서 가늠할 수 있습니다(9.1에서 llama.cpp 기반 CPU 추론 추가 → [02.5](02-serving-api-architecture.md#25-model-runtime--추론-엔진과-멀티-액셀러레이터-91)).
+> `model_type`(completion/embedding), `model_engine`(vLLM/Infinity/llama.cpp 등)으로 그 모델이 무엇을 할 수 있는지 구분합니다. 앱에서 사용할 `model` 이름은 여기 `id`에서 가져옵니다. 같은 completion 모델이라도 **GPU(vLLM)인지 CPU(llama.cpp)인지**가 `model_engine`에 드러나므로, 지연과 처리량 기대치를 여기서 가늠할 수 있습니다(9.1에서 llama.cpp 기반 CPU 추론 추가 → [02.5](02-serving-api-architecture.md#25-model-runtime-추론-엔진과-멀티-액셀러레이터-91)).
 
 ---
 
-## 3.3 임베딩 생성 — `POST /embeddings`
+## 3.3 임베딩 생성. `POST /embeddings`
 
 텍스트를 벡터로 변환합니다. RAG의 색인과 질의 단계 모두에서 사용됩니다.
 
@@ -61,15 +61,15 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/embeddings' \
   -d '{"model":"<embedding-model-id>","input":"사내 보안 정책 문서"}'
 ```
 
-> 임베딩 모델은 CPU 추론 엔진(Infinity, llama.cpp 등)으로도 서빙될 수 있어, GPU 없이도 비용 효율적으로 운영하는 경우가 많습니다. 9.1에서는 **completion 모델도 llama.cpp로 CPU 추론**이 가능하므로, 경량, PoC 워크로드는 GPU 없이 실행할 수 있습니다([02.5](02-serving-api-architecture.md#25-model-runtime--추론-엔진과-멀티-액셀러레이터-91)). 어떤 엔진/리소스로 떠 있는지는 `GET /models`의 `model_engine`과 [① 01 1.5절](../../01-infra/docs/01-concepts.md)의 추론 엔진 비교를 참조하세요.
+> 임베딩 모델은 CPU 추론 엔진(Infinity, llama.cpp 등)으로도 서빙될 수 있어, GPU 없이도 비용 효율적으로 운영하는 경우가 많습니다. 9.1에서는 **completion 모델도 llama.cpp로 CPU 추론**이 가능하므로, 경량, PoC 워크로드는 GPU 없이 실행할 수 있습니다([02.5](02-serving-api-architecture.md#25-model-runtime-추론-엔진과-멀티-액셀러레이터-91)). 어떤 엔진/리소스로 떠 있는지는 `GET /models`의 `model_engine`과 [① 01 1.5절](../../01-infra/docs/01-concepts.md)의 추론 엔진 비교를 참조하세요.
 
 ---
 
-## 3.4 채팅 완성 — `POST /chat/completions`
+## 3.4 채팅 완성. `POST /chat/completions`
 
 핵심 추론 엔드포인트입니다. **OpenAI `chat/completions`와 동일한 형태**입니다.
 
-> **PAIS 3.0부터 — 레거시 completions 폐기 예고.** 메시지 배열 없이 프롬프트 문자열 하나를 보내는 non-chat `completions` 형태는 3.0에서 OpenAI 호환 API와 Agent Builder API 양쪽에서 deprecated로 표시됐습니다. 신규 코드는 `chat/completions`만 사용하고, 구형 SDK나 프레임워크 어댑터가 내부적으로 `completions`를 호출하는지(예: LangChain의 `OpenAI` 클래스 대 `ChatOpenAI` 클래스) 점검하십시오. 같은 릴리스에서 boolean 필드 검증이 엄격해져 `"stream": "true"` 같은 문자열 값은 거부됩니다.
+> **PAIS 3.0부터 레거시 completions 폐기 예고.** 메시지 배열 없이 프롬프트 문자열 하나를 보내는 non-chat `completions` 형태는 3.0에서 OpenAI 호환 API와 Agent Builder API 양쪽에서 deprecated로 표시됐습니다. 신규 코드는 `chat/completions`만 사용하고, 구형 SDK나 프레임워크 어댑터가 내부적으로 `completions`를 호출하는지(예: LangChain의 `OpenAI` 클래스 대 `ChatOpenAI` 클래스) 점검하십시오. 같은 릴리스에서 boolean 필드 검증이 엄격해져 `"stream": "true"` 같은 문자열 값은 거부됩니다.
 
 | 항목 | 값 |
 |------|----|
@@ -130,9 +130,9 @@ for chunk in client.chat.completions.create(
 
 OpenAI 호환 인터페이스이므로, `chat/completions`에 **`tools`/`tool_choice`** 를 실어 모델이 외부 함수를 호출하도록 유도하고, 응답의 **`tool_calls`** 를 앱이 실행해 결과를 되돌려주는 표준 함수 호출 흐름을 그대로 따를 수 있습니다.
 
-> **PAIS의 tool calling과의 관계** — PAIS는 에이전트가 **MCP tool calling**을 수행하도록 설계되어 있습니다(2.1부터). 모델이 tool calling을 지원하지 않는 경우를 위해 PAIS는 `x-pais-force-static-tool-execution` 메타데이터 헤더로 정적 도구 실행(레거시 동작)을 강제하는 폴백을 제공합니다(헤더명과 세부 동작은 적용 전 공식 레퍼런스로 확인). 즉 **함수 호출은 ① 앱이 직접 `tools`를 정의해 Model Endpoint로 호출하는 방식**과, **② 에이전트가 등록된 MCP 도구를 호출하는 방식([06](06-mcp-tools-api.md))** 두 갈래로 나타납니다. 이 절은 ①(OpenAI 호환 인터페이스에서의 함수 호출)을 다룹니다. ([PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [OpenAI Function calling](https://developers.openai.com/api/docs/guides/function-calling))
+> **PAIS의 tool calling과의 관계.** PAIS는 에이전트가 **MCP tool calling**을 수행하도록 설계되어 있습니다(2.1부터). 모델이 tool calling을 지원하지 않는 경우를 위해 PAIS는 `x-pais-force-static-tool-execution` 메타데이터 헤더로 정적 도구 실행(레거시 동작)을 강제하는 폴백을 제공합니다(헤더명과 세부 동작은 적용 전 공식 레퍼런스로 확인). 즉 **함수 호출은 ① 앱이 직접 `tools`를 정의해 Model Endpoint로 호출하는 방식**과, **② 에이전트가 등록된 MCP 도구를 호출하는 방식([06](06-mcp-tools-api.md))** 두 갈래로 나타납니다. 이 절은 ①(OpenAI 호환 인터페이스에서의 함수 호출)을 다룹니다. ([PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html), [OpenAI Function calling](https://developers.openai.com/api/docs/guides/function-calling))
 
-**① 요청 — `tools`와 `tool_choice`**
+**① 요청의 `tools`와 `tool_choice`**
 
 `tools[]`에 함수의 이름, 설명, JSON Schema 파라미터를 선언합니다. `tool_choice`로 호출 정책을 정합니다(`auto` 기본 / `none` 미사용 / `required` 강제 / 특정 함수 지정).
 
@@ -162,7 +162,7 @@ OpenAI 호환 인터페이스이므로, `chat/completions`에 **`tools`/`tool_ch
 }
 ```
 
-**② 응답 — `finish_reason: "tool_calls"` + `tool_calls[]`**
+**② 응답에 담기는 `finish_reason: "tool_calls"` + `tool_calls[]`**
 
 모델이 도구가 필요하다고 판단하면, 텍스트 대신 `tool_calls` 배열로 **어떤 함수를 어떤 인자로 부를지**를 반환합니다. `finish_reason`은 `tool_calls`로 설정됩니다.
 
@@ -203,7 +203,7 @@ OpenAI 호환 인터페이스이므로, `chat/completions`에 **`tools`/`tool_ch
 }
 ```
 
-> **면책** — 위 요청/응답 JSON은 OpenAI 함수 호출 표준 형태에 기반한 **예시**입니다. PAIS의 OpenAI 호환 인터페이스에서 `tools`/`tool_choice` 지원 여부, 세부 필드는 **모델, 엔진(vLLM 등)의 tool calling 지원 여부에 따라 달라질 수 있으므로**, 적용 전 [공식 PAIS API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code, 그리고 대상 모델의 tool calling 지원 여부를 반드시 확인하시기 바랍니다. RAG, 세션과 도구를 PAIS가 통합해 처리하길 원하면, 직접 `tools`를 다루는 대신 [04 Agent API](04-agent-rag-api.md) + [06 MCP](06-mcp-tools-api.md)를 사용하는 편이 단순합니다.
+> **면책.** 위 요청/응답 JSON은 OpenAI 함수 호출 표준 형태에 기반한 **예시**입니다. PAIS의 OpenAI 호환 인터페이스에서 `tools`/`tool_choice` 지원 여부, 세부 필드는 **모델, 엔진(vLLM 등)의 tool calling 지원 여부에 따라 달라질 수 있으므로**, 적용 전 [공식 PAIS API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code, 그리고 대상 모델의 tool calling 지원 여부를 반드시 확인하시기 바랍니다. RAG, 세션과 도구를 PAIS가 통합해 처리하길 원하면, 직접 `tools`를 다루는 대신 [04 Agent API](04-agent-rag-api.md) + [06 MCP](06-mcp-tools-api.md)를 사용하는 편이 단순합니다.
 
 > 응답 **본문 자체**를 정해진 JSON 스키마로 받고 싶으면(도구에 전달할 인자가 아니라), 함수 호출과 별개인 **구조화 출력(3.7절)** 을 사용합니다.
 
@@ -215,9 +215,9 @@ OpenAI 호환 인터페이스이므로, `chat/completions`에 **`tools`/`tool_ch
 
 프롬프트로 JSON 형식을 요청하기만 하면, 모델이 앞뒤에 설명을 덧붙이거나 따옴표를 빠뜨려 `json.loads`가 깨지는 일이 잦습니다. 구조화 출력은 이를 **생성 단계에서 원천 차단**합니다.
 
-**동작 원리** — 모델은 토큰마다 "다음에 이어질 단어"의 확률을 계산하는데, 구조화 출력은 **스키마에 맞지 않는 토큰을 후보에서 제거(마스킹)** 합니다. 그래서 결과는 항상 유효한 JSON(또는 지정한 형식)으로 생성됩니다. 이를 제약 디코딩(constrained/guided decoding)이라 하며, vLLM은 `xgrammar`, `outlines` 같은 백엔드로 처리합니다. ([Red Hat Developer](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses), [vLLM Structured Outputs](https://docs.vllm.ai/en/latest/features/structured_outputs.html))
+**동작 원리.** 모델은 토큰마다 "다음에 이어질 단어"의 확률을 계산하는데, 구조화 출력은 **스키마에 맞지 않는 토큰을 후보에서 제거(마스킹)** 합니다. 그래서 결과는 항상 유효한 JSON(또는 지정한 형식)으로 생성됩니다. 이를 제약 디코딩(constrained/guided decoding)이라 하며, vLLM은 `xgrammar`, `outlines` 같은 백엔드로 처리합니다. ([Red Hat Developer](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses), [vLLM Structured Outputs](https://docs.vllm.ai/en/latest/features/structured_outputs.html))
 
-**두 가지 요청 방식** — PAIS의 OpenAI 호환 `chat/completions`에서 다음 중 하나로 지정합니다.
+**두 가지 요청 방식.** PAIS의 OpenAI 호환 `chat/completions`에서 다음 중 하나로 지정합니다.
 
 | 방식 | 형태 | 용도 |
 |------|------|------|
@@ -227,7 +227,7 @@ OpenAI 호환 인터페이스이므로, `chat/completions`에 **`tools`/`tool_ch
 
 > `guided_choice`는 출력을 **미리 정한 라벨 중 하나로** 한정할 때 특히 유용합니다(예: 문의를 `["계정","결제","기술지원"]` 중 하나로). 분류와 라우팅 전처리에 적합합니다.
 
-**예시 — 스키마 강제(`json_schema`)** — 사내 문의를 분류해 `{category, urgency, summary}`로 받는 경우:
+**스키마 강제(`json_schema`) 예시.** 사내 문의를 분류해 `{category, urgency, summary}`로 받는 경우:
 
 ```json
 {
@@ -267,14 +267,14 @@ resp = client.chat.completions.create(
 
 **함정과 주의**
 
-- **형식만 보장, 의미는 아님** — 스키마는 "JSON 모양"을 보장할 뿐, 값이 **사실로 맞는지**는 보장하지 않습니다(환각은 여전히 가능). 값 검증은 앱 몫입니다.
-- **잘린 JSON** — `max_tokens`가 부족하면 JSON이 중간에 끊겨 파싱이 실패합니다. 스키마 크기에 맞춰 넉넉히 설정하십시오.
-- **복잡한 스키마 = 지연, 실패↑** — 깊게 중첩되거나 거대한 스키마는 제약 디코딩 비용을 키우고 모델이 채우기 어려워집니다. 필요한 필드만 정의하십시오.
-- **프롬프트도 함께** — 스키마를 줘도 시스템 프롬프트에 "지정한 형식으로만 답하라"를 함께 적으면 품질이 안정적입니다.
+- **형식만 보장, 의미는 아님.** 스키마는 "JSON 모양"을 보장할 뿐, 값이 **사실로 맞는지**는 보장하지 않습니다(환각은 여전히 가능). 값 검증은 앱 몫입니다.
+- **잘린 JSON.** `max_tokens`가 부족하면 JSON이 중간에 끊겨 파싱이 실패합니다. 스키마 크기에 맞춰 넉넉히 설정하십시오.
+- **복잡한 스키마 = 지연, 실패↑.** 깊게 중첩되거나 거대한 스키마는 제약 디코딩 비용을 키우고 모델이 채우기 어려워집니다. 필요한 필드만 정의하십시오.
+- **프롬프트도 함께.** 스키마를 줘도 시스템 프롬프트에 "지정한 형식으로만 답하라"를 함께 적으면 품질이 안정적입니다.
 
-**언제 사용하나** — 분류, 엔티티 추출, 의도 라우팅, 도구 파이프라인의 중간 산출처럼 **다운스트림이 코드로 소비**하는 단계. 에이전트가 도구 결과를 정형으로 받아 처리하는 패턴은 별도 최상위 [앱과 에이전트 서비스 가이드](https://github.com/JaeHoYun/vcf-private-ai-apps)와 함께 참고하면 좋습니다.
+**언제 사용하나.** 분류, 엔티티 추출, 의도 라우팅, 도구 파이프라인의 중간 산출처럼 **다운스트림이 코드로 소비**하는 단계. 에이전트가 도구 결과를 정형으로 받아 처리하는 패턴은 별도 최상위 [앱과 에이전트 서비스 가이드](https://github.com/JaeHoYun/vcf-private-ai-apps)와 함께 참고하면 좋습니다.
 
-> **PAIS 적용 — 확인 필요** — PAIS Model Runtime은 vLLM 기반이라 구조화 출력을 **엔진 차원에서 지원**합니다(작성 시점 vLLM 기준). 다만 PAIS의 OpenAI 호환 인터페이스가 `response_format`(특히 `json_schema`)과 `guided_*` 중 **무엇을, 어떤 필드까지 노출**하는지는 모델, 엔진, PAIS 버전에 따라 다를 수 있으므로, 적용 전 [공식 PAIS API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code, 대상 모델의 지원 여부를 확인하시기 바랍니다.
+> **PAIS 적용, 확인 필요.** PAIS Model Runtime은 vLLM 기반이라 구조화 출력을 **엔진 차원에서 지원**합니다(작성 시점 vLLM 기준). 다만 PAIS의 OpenAI 호환 인터페이스가 `response_format`(특히 `json_schema`)과 `guided_*` 중 **무엇을, 어떤 필드까지 노출**하는지는 모델, 엔진, PAIS 버전에 따라 다를 수 있으므로, 적용 전 [공식 PAIS API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code, 대상 모델의 지원 여부를 확인하시기 바랍니다.
 
 ---
 
@@ -287,7 +287,7 @@ resp = client.chat.completions.create(
 | 모델 목록 | `GET /compatibility/openai/v1/models` |
 | 임베딩 생성 | `POST /compatibility/openai/v1/embeddings` |
 | 채팅 완성 | `POST /compatibility/openai/v1/chat/completions` |
-| (레거시) 완성 | `POST /compatibility/openai/v1/completions` — PAIS 3.0에서 deprecated, 신규 사용 금지 |
+| (레거시) 완성 | `POST /compatibility/openai/v1/completions`, PAIS 3.0에서 deprecated되어 신규 사용 금지 |
 
 `chat/completions`는 **같은 경로에 옵션을 실어** 동작을 바꿉니다. 각 옵션의 상세는 해당 절을 참고하십시오.
 
@@ -317,7 +317,7 @@ OpenAI 호환 인터페이스이므로 실패도 **HTTP 상태코드 + 에러 �
 
 > 위 상태코드와 바디 형태는 OpenAI 호환 표준 및 일반적 HTTP 규약에 기반한 **예시**입니다. PAIS가 실제로 반환하는 정확한 코드, 에러 스키마는 모델, 게이트웨이 구성에 따라 다를 수 있으므로, 적용 전 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)로 확인하시기 바랍니다.
 
-**에러 응답 바디(예시)** — OpenAI 호환 클라이언트는 보통 다음과 같은 `error` 객체를 기대합니다.
+**에러 응답 바디(예시).** OpenAI 호환 클라이언트는 보통 다음과 같은 `error` 객체를 기대합니다.
 
 ```json
 {
@@ -330,7 +330,7 @@ OpenAI 호환 인터페이스이므로 실패도 **HTTP 상태코드 + 에러 �
 }
 ```
 
-**429/503 지수 백오프 재시도(예시)** — 재시도해도 안전한 코드(429, 503, 일부 5xx)에만 적용하고, 4xx 중 401을 제외한 클라이언트 오류(403/404/422)는 재시도하지 않습니다. 서버가 `Retry-After` 헤더를 주면 그 값을 우선합니다.
+**429/503 지수 백오프 재시도(예시).** 재시도해도 안전한 코드(429, 503, 일부 5xx)에만 적용하고, 4xx 중 401을 제외한 클라이언트 오류(403/404/422)는 재시도하지 않습니다. 서버가 `Retry-After` 헤더를 주면 그 값을 우선합니다.
 
 ```python
 import time, random, httpx
@@ -349,7 +349,7 @@ def call_with_backoff(url, headers, payload, max_attempts=5):
         time.sleep(wait)
 ```
 
-> **타임아웃과 함께** — AI 응답은 초 단위로 길어질 수 있어, 재시도 못지않게 **요청 타임아웃과 동시성 제한**이 중요합니다. 무한 재시도는 과부하를 키우므로 **최대 시도 횟수와 상한 대기시간**을 설정하세요. 게이트웨이 측 속도 제어 현황은 [05.5](05-auth-and-gateway.md#55-레이트리밋-쿼터-로드밸런싱-복제본)를 참조하시기 바랍니다.
+> **타임아웃과 함께.** AI 응답은 초 단위로 길어질 수 있어, 재시도 못지않게 **요청 타임아웃과 동시성 제한**이 중요합니다. 무한 재시도는 과부하를 키우므로 **최대 시도 횟수와 상한 대기시간**을 설정하세요. 게이트웨이 측 속도 제어 현황은 [05.5](05-auth-and-gateway.md#55-레이트리밋-쿼터-로드밸런싱-복제본)를 참조하시기 바랍니다.
 
 ---
 

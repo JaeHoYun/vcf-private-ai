@@ -161,13 +161,13 @@ PAIS Data Indexing & Retrieval이 관리형(네이티브)으로 처리하는 범
 관리형 vs 커스텀 결정
 
 - 4종 관리형으로 충분한 경우: 지식 원천이 Google Drive, Confluence, SharePoint, S3 안에 있고, 문서가 위 지원 형식에 해당하며, 표준 갱신 주기로 운영 가능한 경우입니다. 별도 코드 없이 소스 연결, 청킹, 임베딩, 저장, 갱신이 제품 기능으로 처리됩니다.
-- 커스텀 파이프라인이 필요한 경우: 웹/URL 크롤, 데이터베이스, 범용 파일 서버, 레거시 외부 시스템 등 4종 밖 소스이거나, 지원 목록 밖 형식을 다뤄야 하는 경우입니다. 이때는 PAIS의 OpenAI 호환 임베딩 엔드포인트로 임베딩을 생성한 뒤, 직접 운영하는 pgvector에 자체 스키마로 적재하는 경로를 설계합니다. 커스텀 경로의 추출, 청킹, 적재 설계 상세는 시리즈 ④를 참조합니다([VCF RAG Reference Architecture — Ingestion & Indexing](../../04-rag/docs/02-ingestion-indexing.md)).
+- 커스텀 파이프라인이 필요한 경우: 웹/URL 크롤, 데이터베이스, 범용 파일 서버, 레거시 외부 시스템 등 4종 밖 소스이거나, 지원 목록 밖 형식을 다뤄야 하는 경우입니다. 이때는 PAIS의 OpenAI 호환 임베딩 엔드포인트로 임베딩을 생성한 뒤, 직접 운영하는 pgvector에 자체 스키마로 적재하는 경로를 설계합니다. 커스텀 경로의 추출, 청킹, 적재 설계 상세는 시리즈 ④를 참조합니다([VCF RAG Reference Architecture, Ingestion & Indexing](../../04-rag/docs/02-ingestion-indexing.md)).
 
 > 주의: 임베딩 엔드포인트는 제품 기능으로 존재하나, 직접 pgvector 적재 경로는 Broadcom 공식 문서가 규정한 제품 API가 아니라 설계자 책임의 아키텍처 패턴입니다(별도 표준 인제스트 REST API는 문서화되어 있지 않음).
 
 출처: [Add a Data Source for a Knowledge Base](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-context-to-model-responses-by-using-knowledge-bases/add-a-data-source-for-a-knowledge-base.html); [Create a Knowledge Base with Linked Data Sources](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-context-to-model-responses-by-using-knowledge-bases/create-a-knowledge-base-with-linked-data-sources.html); [Running Completion or Embedding Models by Using Model Endpoints](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/deploying-model-endpoints.html); [PAIS Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html).
 
-**PAIS 3.0에서 더해진 것** — 검색 결과에 인용 노드 ID(citation node ID)가 포함되어 어느 청크가 답의 근거였는지를 앱이 안정적으로 추적할 수 있고, 지식베이스와 인덱스를 복제해 실험용 사본을 만들 수 있으며, 문서 임베딩 진행과 품질 메트릭이 개선됐습니다. 데이터 소스 연결에 TLS 검증 설정도 생겼습니다. 임베딩 모델로 원격 클라우드 모델을 지정할 수도 있지만 그 경우 문서 본문 전체가 사외로 나가므로 [⑤ 05 5.6절](../../05-security/docs/05-data-governance.md)의 허용 목록 안에서만 사용합니다.
+**PAIS 3.0에서 더해진 것.** 검색 결과에 인용 노드 ID(citation node ID)가 포함되어 어느 청크가 답의 근거였는지를 앱이 안정적으로 추적할 수 있고, 지식베이스와 인덱스를 복제해 실험용 사본을 만들 수 있으며, 문서 임베딩 진행과 품질 메트릭이 개선됐습니다. 데이터 소스 연결에 TLS 검증 설정도 생겼습니다. 임베딩 모델로 원격 클라우드 모델을 지정할 수도 있지만 그 경우 문서 본문 전체가 사외로 나가므로 [⑤ 05 5.6절](../../05-security/docs/05-data-governance.md)의 허용 목록 안에서만 사용합니다.
 
 ---
 

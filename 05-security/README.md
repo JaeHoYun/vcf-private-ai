@@ -1,6 +1,6 @@
 # VCF 9.1 Private AI 보안과 거버넌스 통합 가이드
 
-> **이 가이드를 읽기 전에** — 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 익히시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
+> **이 가이드를 읽기 전에.** 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 익히시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
 
 > VMware Cloud Foundation(VCF) 9.1 기반 Private AI(PAIF/PAIS) 플랫폼을 **착수 청사진, 위협 모델, 격리, 접근통제, 공급망, 데이터 거버넌스, 앱 가드레일, 감사, 에이전트 거버넌스** 관점에서 한 권으로 정리한 보안 통합 레퍼런스
 
@@ -8,7 +8,7 @@
 
 본 문서는 새 컴포넌트를 소개하지 않습니다. 형제 가이드에서 만든 것을 **보안과 거버넌스 관점**으로 다시 정리하며, 세부 구현은 해당 가이드로 링크합니다.
 
-> **VCF Private AI 가이드 시리즈 — ⑤ 보안과 거버넌스**, 7부작 중 한 편입니다. [전체 7개 보기 — 시리즈 허브](../README.md), 상위 전략 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)
+> 이 가이드는 VCF Private AI 가이드 시리즈 7편 가운데 **⑤ 보안과 거버넌스** 편입니다. 전체 7편은 [시리즈 허브](../README.md)에서, 상위 전략은 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)에서 확인할 수 있습니다.
 
 ---
 

@@ -1,6 +1,6 @@
 # VCF 9.1 Private AI 사이징, 용량, 비용(TCO) 가이드
 
-> **이 가이드를 읽기 전에** — 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 익히시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
+> **이 가이드를 읽기 전에.** 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 익히시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
 
 > VMware Cloud Foundation(VCF) 9.1 기반 Private AI(PAIF: Private AI Foundation / PAIS: Private AI Services) 플랫폼을 **워크로드, GPU, VKS 클러스터 사이징부터 용량 계획과 TCO**까지 한 권으로 다루는 정량 설계 레퍼런스
 
@@ -8,7 +8,7 @@
 
 이 가이드는 **사이징, 용량, TCO의 단일 기준 문서**입니다. 전반 아키텍처와 구축은 [① 인프라](../01-infra/README.md), 데이터는 [② VectorDB](../02-vectordb/README.md), 서빙은 [③ 서빙 API](../03-serving-api/README.md), RAG는 [④ RAG](../04-rag/README.md), 보안은 [⑤ 보안과 거버넌스](../05-security/README.md)를 참조하고, 여기서는 정량 사이징과 비용에 집중합니다.
 
-> **VCF Private AI 가이드 시리즈 — ⑥ 사이징, 용량, 비용**, 7부작 중 한 편입니다. [전체 7개 보기 — 시리즈 허브](../README.md), 상위 전략 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)
+> 이 가이드는 VCF Private AI 가이드 시리즈 7편 가운데 **⑥ 사이징, 용량, 비용** 편입니다. 전체 7편은 [시리즈 허브](../README.md)에서, 상위 전략은 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)에서 확인할 수 있습니다.
 
 ---
 

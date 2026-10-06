@@ -3,12 +3,12 @@
 > 기반 버전은 [README 버전 기준 문서](../README.md#기반-버전)를 참조하세요.
 > 시리즈 인덱스: [시리즈 허브](../../README.md)
 
-> **중요 — 이 부록의 모든 숫자는 "구매 전 예산(budgetary) 추정" 단 하나의 목적을 위한 1차 가정치입니다.**
-> 본문 [02 — GPU 사이징](../docs/02-gpu-sizing.md), [03 — 컴퓨트와 메모리 사이징](../docs/03-compute-memory-sizing.md)은 "Replica당 처리량은 반드시 실측"이라고 명시해 둡니다. 그 원칙은 그대로입니다. 이 부록은 **실측할 장비가 아직 없는 단계**에서 예산 윤곽을 파악하기 위한 출발 숫자만 제공하며, 확정 사이징, 발주, SLA 약정의 근거로 사용하면 안 됩니다. 모든 값은 PoC, 부하시험 실측값으로 **반드시 교체**해야 합니다.
+> **중요. 이 부록의 모든 숫자는 "구매 전 예산(budgetary) 추정" 단 하나의 목적을 위한 1차 가정치입니다.**
+> 본문 [02 GPU 사이징](../docs/02-gpu-sizing.md), [03 컴퓨트와 메모리 사이징](../docs/03-compute-memory-sizing.md)은 "Replica당 처리량은 반드시 실측"이라고 명시해 둡니다. 그 원칙은 그대로입니다. 이 부록은 **실측할 장비가 아직 없는 단계**에서 예산 윤곽을 파악하기 위한 출발 숫자만 제공하며, 확정 사이징, 발주, SLA 약정의 근거로 사용하면 안 됩니다. 모든 값은 PoC, 부하시험 실측값으로 **반드시 교체**해야 합니다.
 
 ---
 
-## A1.0 이 부록이 존재하는 이유 — 닭과 달걀
+## A1.0 이 부록이 존재하는 이유. 닭과 달걀
 
 사이징의 핵심 숫자(예: "GPU 한 장이 초당 몇 토큰을 생성하는가", "한 Replica가 동시 몇 요청을 처리하는가")는 모델, 정밀도, 엔진 버전, 컨텍스트 분포에 따라 크게 달라지므로, 정답은 **자사 환경 실측**뿐입니다(본문 02, 03의 일관된 원칙).
 
@@ -28,9 +28,9 @@
 
 ## A1.1 추론 처리량과 동시성 1차 가정치
 
-가장 신뢰할 단일 출처는 VMware가 공개한 LLM 추론 사이징 계산기 가이드입니다. **계산기 추정치이지 실측 벤치마크가 아니므로** 규모 감각용으로만 사용합니다([VMware — LLM Inference Sizing and Performance Guidance, 2024-09-25](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/)).
+가장 신뢰할 단일 출처는 VMware가 공개한 LLM 추론 사이징 계산기 가이드입니다. **계산기 추정치이지 실측 벤치마크가 아니므로** 규모 감각용으로만 사용합니다([VMware, LLM Inference Sizing and Performance Guidance, 2024-09-25](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/)).
 
-### 처리량(TPS, tokens/sec) — 가정: 입력 4096 / 출력 256 토큰, GPU 4장
+### 처리량(TPS, tokens/sec). 가정: 입력 4096 / 출력 256 토큰, GPU 4장
 
 | 모델 규모 | GPU(예시) | 처리량(TPS, 어림) | 출처 |
 |---|---|---|---|
@@ -45,13 +45,13 @@
 
 | 구성 | 처리량(어림) | 출처와 조건 |
 |---|---|---|
-| 8B급 / 단일 H100 80GB / 16-bit | 출력 약 5,500–6,300 tok/s, 약 9–10 req/s | [databasemart vLLM H100(2025)](https://www.databasemart.com/blog/vllm-gpu-benchmark-h100) — 입력 100 / 출력 600, 오프라인 |
-| 8B급 / 단일 A100 80GB | H100 대비 약 25–30% 낮음 | [NVIDIA NIM 성능 문서](https://docs.nvidia.com/nim/llama-3-1-nemotron-safety-guard-8b/latest/performance.html) — 동시성 250 |
-| 70B급 / H100×4 (TP=4) / BF16 | 약 2,600(입력 1000/출력 200)–7,000(200/200) TPS | [silexdata 70B(2025-05-18)](https://blog.silexdata.com/blog/evaluating-llama-33-70b-inference-h100-a100/) — 벤더 게시 자료 기반 비교, 상한값으로 해석 주의 |
+| 8B급 / 단일 H100 80GB / 16-bit | 출력 약 5,500–6,300 tok/s, 약 9–10 req/s | [databasemart vLLM H100(2025)](https://www.databasemart.com/blog/vllm-gpu-benchmark-h100). 입력 100 / 출력 600, 오프라인 조건 |
+| 8B급 / 단일 A100 80GB | H100 대비 약 25–30% 낮음 | [NVIDIA NIM 성능 문서](https://docs.nvidia.com/nim/llama-3-1-nemotron-safety-guard-8b/latest/performance.html). 동시성 250 조건 |
+| 70B급 / H100×4 (TP=4) / BF16 | 약 2,600(입력 1000/출력 200)–7,000(200/200) TPS | [silexdata 70B(2025-05-18)](https://blog.silexdata.com/blog/evaluating-llama-33-70b-inference-h100-a100/). 벤더 게시 자료 기반 비교이므로 상한값으로 해석 주의 |
 
 > 출력 길이가 처리량을 가장 크게 좌우합니다. 짧은 출력 벤치마크는 1,000토큰 출력 대비 2–3배 높게 나올 수 있으므로, 자사 출력 분포로 보정하세요.
 
-### 대화형 작동점 측정 — 동시성별 지연 (NVIDIA NIM)
+### 대화형 작동점 측정. 동시성별 지연 (NVIDIA NIM)
 
 최대 처리량 수치는 지연 목표를 반영하지 않으므로, 대화형 서비스의 복제본 수 산정에는 **동시성별 첫 토큰 시간과 토큰 간 지연**을 사용합니다. 아래는 NVIDIA가 공개한 측정값입니다(입력 5,000토큰, 출력 500토큰, FP8, [NVIDIA NIM LLM 벤치마크](https://docs.nvidia.com/nim/benchmarking/llm/1.0.0/performance.html)). 요청당 처리 시간은 첫 토큰 시간 + 토큰 간 지연 × 499로 계산한 값입니다.
 
@@ -65,7 +65,7 @@
 - 평균값이므로 백분위 지연 목표(A2.3)와 비교할 때는 여유를 감안합니다. [08](../docs/08-reference-scenario.md)은 토큰 간 지연 50ms 이하인 가장 높은 동시성을 작동점으로 골랐습니다.
 - 24–35B급 중형 모델을 같은 조건으로 측정한 공개 자료는 찾지 못했습니다. 중형 모델은 PoC에서 직접 측정합니다.
 
-### 동시 요청 수(per GPU) 규칙 — RAG/챗 서빙
+### 동시 요청 수(per GPU) 규칙. RAG/챗 서빙
 
 | 모델 규모 | GPU | 최장 컨텍스트 동시성 | 4096 컨텍스트 동시성 | 출처 |
 |---|---|---|---|---|
@@ -90,9 +90,9 @@
 
 | 컴포넌트 | 처리량/지연(어림) | 출처와 조건 |
 |---|---|---|
-| 임베딩(바이-인코더, 110M급) | GPU 약 4,000 문장/s, CPU 약 270 문장/s | [Hugging Face — Static Embeddings(2025-01)](https://huggingface.co/blog/static-embeddings) — `all-mpnet-base-v2` |
+| 임베딩(바이-인코더, 110M급) | GPU 약 4,000 문장/s, CPU 약 270 문장/s | [Hugging Face, Static Embeddings(2025-01)](https://huggingface.co/blog/static-embeddings). `all-mpnet-base-v2` 기준 |
 | 동일 모델 GPU 대비 CPU 속도 배수 | 약 3–6배 | [Sentence Transformers 효율 문서](https://sbert.net/docs/sentence_transformer/usage/efficiency.html) |
-| 리랭커(크로스-인코더) 짧은 문서 | 약 0.1–0.2초(후보 수십 개) | [Oracle — Cohere Rerank 3.5 벤치](https://docs.oracle.com/en-us/iaas/Content/generative-ai/benchmark-cohere-rerank-3-5.htm) |
+| 리랭커(크로스-인코더) 짧은 문서 | 약 0.1–0.2초(후보 수십 개) | [Oracle, Cohere Rerank 3.5 벤치](https://docs.oracle.com/en-us/iaas/Content/generative-ai/benchmark-cohere-rerank-3-5.htm) |
 | 리랭커 긴 문서(2–4K 토큰) | 수 초까지 상승 | 동 출처 |
 
 > 임베딩과 리랭커는 LLM과 별도 서버로 분리해 독립 확장하는 것이 사이징을 단순화합니다(본문 [03.5](../docs/03-compute-memory-sizing.md#35-임베딩과-리랭커-서버-사이징rag-비-llm-컴포넌트)). 대부분의 프로덕션 RAG 볼륨은 중급 GPU로 처리됩니다.
@@ -108,18 +108,18 @@
 | NVMe 순차 읽기 | 약 3.5–7 GB/s(단일), RAID0 약 12 GB/s | [Level1Techs 포럼(스펙 범위 교차)](https://forum.level1techs.com/t/has-anybody-able-to-hit-the-advertised-read-speeds-from-nvme-ssd-when-it-comes-to-loading-a-slightly-bigger-llm/239935) |
 | 70B safetensors 로딩 | 약 150초 → 30초 미만(fastsafetensors) | [fastsafetensors(2025)](https://www.alphaxiv.org/overview/2505.23072v1) |
 
-> 콜드스타트 시간 ≈ (모델 GB) / (유효 읽기 GB/s). 단, 단순한 기본 로더는 NVMe 대역폭의 일부만 활용하므로 **로더 방식(스트리밍/fastsafetensors)이 드라이브 스펙보다 더 중요**합니다. 본문 [05.3](../docs/05-storage-network-sizing.md#53-스토리지-성능--모델-로딩과-iops) 참조.
+> 콜드스타트 시간 ≈ (모델 GB) / (유효 읽기 GB/s). 단, 단순한 기본 로더는 NVMe 대역폭의 일부만 활용하므로 **로더 방식(스트리밍/fastsafetensors)이 드라이브 스펙보다 더 중요**합니다. 본문 [05.3](../docs/05-storage-network-sizing.md#53-스토리지-성능-모델-로딩과-iops) 참조.
 
 ---
 
 ## A1.4 출처 일람 (도입 전 재확인 필수)
 
-- [VMware — LLM Inference Sizing and Performance Guidance (2024-09-25)](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/) — 본 부록의 1차 앵커(계산기 추정치)
+- [VMware, LLM Inference Sizing and Performance Guidance (2024-09-25)](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/). 본 부록의 1차 앵커(계산기 추정치)
 - [NVIDIA NIM 성능 문서](https://docs.nvidia.com/nim/llama-3-1-nemotron-safety-guard-8b/latest/performance.html)
-- [databasemart — vLLM H100 벤치(2025)](https://www.databasemart.com/blog/vllm-gpu-benchmark-h100)
-- [silexdata — Llama 70B H100/A100(2025-05-18)](https://blog.silexdata.com/blog/evaluating-llama-33-70b-inference-h100-a100/)
-- [Hugging Face — Static Embeddings(2025-01)](https://huggingface.co/blog/static-embeddings)
-- [Oracle — Cohere Rerank 3.5 벤치](https://docs.oracle.com/en-us/iaas/Content/generative-ai/benchmark-cohere-rerank-3-5.htm)
+- [databasemart, vLLM H100 벤치(2025)](https://www.databasemart.com/blog/vllm-gpu-benchmark-h100)
+- [silexdata, Llama 70B H100/A100(2025-05-18)](https://blog.silexdata.com/blog/evaluating-llama-33-70b-inference-h100-a100/)
+- [Hugging Face, Static Embeddings(2025-01)](https://huggingface.co/blog/static-embeddings)
+- [Oracle, Cohere Rerank 3.5 벤치](https://docs.oracle.com/en-us/iaas/Content/generative-ai/benchmark-cohere-rerank-3-5.htm)
 - [Azure SDK / Run:AI Model Streamer(2026-05)](https://devblogs.microsoft.com/azure-sdk/eliminate-llm-cold-starts-load-models-up-to-6x-faster-with-azure-blob-storage-and-runai-model-streamer/)
 
 ---

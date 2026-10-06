@@ -23,7 +23,7 @@
 
 ---
 
-## 9.1 세 가지 구축 시나리오 — 무엇을 고를까
+## 9.1 세 가지 구축 시나리오. 무엇을 고를까
 
 | 시나리오 | 한 줄 설명 | 출발 상태 | 대표 상황 |
 |---------|-----------|----------|----------|
@@ -55,7 +55,7 @@
 
 이미 vSphere나 VCF를 운영 중인 곳에 PAIF/PAIS를 추가하는 경우입니다. 출발점에 따라 두 갈래입니다.
 
-### (A) 이미 VCF를 운영 중 — GPU 워크로드 도메인 추가
+### (A) 이미 VCF를 운영 중. GPU 워크로드 도메인 추가
 
 기존 VCF에 **GPU-Accelerated Workload Domain**(GPU 가속 워크로드 도메인)을 새로 만들고 그 도메인에 PAIS를 설치합니다. 기존 일반 업무 워크로드와는 도메인 단위로 분리한 채 공존합니다.
 
@@ -63,7 +63,7 @@
 - GPU 호스트 증설, NSX, 스토리지(vSAN) 가용 용량 확인.
 - **기존 VKS 클러스터 점검(VCF 9.1.1 / VKS 3.7):** TanzuKubernetesCluster(TKC) API로 만든 구형 클러스터는 VKS 3.7에서 지원이 끝났고(VKr 1.32가 마지막), VKS 3.7은 VKr 1.32 자체를 지원하지 않습니다. 기존 VKS 클러스터가 있다면 ClusterClass 기반으로 전환하고 VKr 1.33 이상으로 업그레이드한 뒤에 PAIS 3.0을 설치합니다([문서 10 10.1.1절](10-operations.md)).
 
-### (B) VCF 없이 vSphere만 운영 중 — 먼저 VCF로 편입
+### (B) VCF 없이 vSphere만 운영 중. 먼저 VCF로 편입
 
 VCF 9는 기존 vSphere를 **워크로드 이전 없이** VCF로 편입하는 두 경로를 제공합니다(기존 구성과 가동 중 워크로드를 보존하므로 이전 리스크가 낮습니다).
 
@@ -80,11 +80,11 @@ VCF 9는 기존 vSphere를 **워크로드 이전 없이** VCF로 편입하는 �
 
 - **리스크:** 기존 운영 워크로드에 미치는 영향(유지보수 창 필요), 버전과 하드웨어 호환, 기존 네트워크/스토리지 자원 잠식.
 
-> **적용 전 확인:** VCF의 Convert/Import 두 경로와 기존 VCF에 GPU 워크로드 도메인을 추가하는 방식은 공식 문서 기준입니다. 다만 9.1의 정확한 절차와 전제조건은 적용 전 [Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)로 재확인하시기 바랍니다 ([기존 vSphere의 VCF 9 편입 — VCF 블로그](https://blogs.vmware.com/cloud-foundation/2026/02/05/how-to-converge-a-vmware-vsphere-environment-to-vmware-cloud-foundation-9-0/), [GPU 가속 워크로드 도메인 배포 — TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)).
+> **적용 전 확인:** VCF의 Convert/Import 두 경로와 기존 VCF에 GPU 워크로드 도메인을 추가하는 방식은 공식 문서 기준입니다. 다만 9.1의 정확한 절차와 전제조건은 적용 전 [Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)로 재확인하시기 바랍니다 ([기존 vSphere의 VCF 9 편입, VCF 블로그](https://blogs.vmware.com/cloud-foundation/2026/02/05/how-to-converge-a-vmware-vsphere-environment-to-vmware-cloud-foundation-9-0/), [GPU 가속 워크로드 도메인 배포, TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)).
 
 ---
 
-## 9.4 전환 — 경쟁사에서 이전 (개요)
+## 9.4 전환. 경쟁사에서 이전 (개요)
 
 타사 하이퍼바이저나 컨테이너 가상화 플랫폼에서 VCF로 전환하며 PAIF/PAIS를 구축하는 시나리오입니다. **본 절은 개요와 골격**이며, 상세 전환 플레이북은 후속 작업 또는 별도 가이드 후보입니다. 이전할 자산별 통합 판단은 [⑦ 08 브라운필드 통합 설계](../../07-design/docs/08-brownfield-integration.md)를 참조합니다.
 
@@ -98,7 +98,7 @@ VCF 9는 기존 vSphere를 **워크로드 이전 없이** VCF로 편입하는 �
 
 > **전환 동인(맥락):** vSphere 8은 2027년 10월 일반 지원 종료가 예고되어, 플랫폼 현대화 시점 판단에 참고할 수 있습니다.
 
-> **적용 전 확인:** Workload Mobility의 비vSphere(경쟁사) 소스 지원 범위와 제품 명칭은 변경이 잦으므로 적용 전 공식 문서로 확인하시기 바랍니다. 경쟁사 고유의 전환 도구와 절차는 본 가이드 범위 밖입니다 ([VCF Operations Workload Mobility — VMware](https://www.vmware.com/products/cloud-infrastructure/vcf-operations-workload-mobility)).
+> **적용 전 확인:** Workload Mobility의 비vSphere(경쟁사) 소스 지원 범위와 제품 명칭은 변경이 잦으므로 적용 전 공식 문서로 확인하시기 바랍니다. 경쟁사 고유의 전환 도구와 절차는 본 가이드 범위 밖입니다 ([VCF Operations Workload Mobility, VMware](https://www.vmware.com/products/cloud-infrastructure/vcf-operations-workload-mobility)).
 
 ---
 

@@ -1,11 +1,11 @@
 # VCF 9.1 Private AI Foundation 가이드
 
-> **이 가이드를 읽기 전에** — 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 익히시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
+> **이 가이드를 읽기 전에.** 임베딩, 벡터, 토큰, RAG, 쿠버네티스(VKS) 같은 용어가 낯설다면, 먼저 [VCF Private AI 입문 (Primer)](../00-foundations/README.md)에서 기초 어휘를 익히시길 권합니다. 이 가이드는 그 개념들을 이미 아는 것으로 전제합니다.
 
 VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발, 운영**을 위한 실무 참조 가이드입니다.
 인프라팀이 AI 플랫폼을 구축하고, 데이터 사이언티스트와 MLOps가 모델과 RAG를 배포하고, 앱 개발자가 API로 서비스를 만드는 전체 여정을 한 권으로 다룹니다.
 
-> **VCF Private AI 가이드 시리즈 — ① 인프라와 운영**, 7부작 중 한 편입니다. [전체 7개 보기 — 시리즈 허브](../README.md), 상위 전략 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)
+> 이 가이드는 VCF Private AI 가이드 시리즈 7편 가운데 **① 인프라와 운영** 편입니다. 전체 7편은 [시리즈 허브](../README.md)에서, 상위 전략은 [AX 방법론](https://github.com/JaeHoYun/enterprise-ax-methodology)에서 확인할 수 있습니다.
 
 ---
 
@@ -33,15 +33,15 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발
 
 | 용어 | 설명 |
 |------|------|
-| **VCF** | VMware Cloud Foundation — 통합 프라이빗 클라우드 플랫폼 |
-| **PAIF** | Private AI Foundation with NVIDIA — VCF가 제공하는 AI 플랫폼(솔루션). **PAIF 코어 기능 계층 + PAIS 서비스 계층**으로 구성되며 VCF 코어 구독에 포함(NVAIE만 별도) |
-| **PAIS** | Private AI Services — Model Runtime, RAG, Agent Builder 등 관리형 AI 서비스 레이어 |
-| **DLVM** | Deep Learning VM — GPU 장착 개발/실험용 VM |
+| **VCF** | VMware Cloud Foundation. 통합 프라이빗 클라우드 플랫폼 |
+| **PAIF** | Private AI Foundation with NVIDIA. VCF가 제공하는 AI 플랫폼(솔루션). **PAIF 코어 기능 계층 + PAIS 서비스 계층**으로 구성되며 VCF 코어 구독에 포함(NVAIE만 별도) |
+| **PAIS** | Private AI Services. Model Runtime, RAG, Agent Builder 등 관리형 AI 서비스 레이어 |
+| **DLVM** | Deep Learning VM. GPU 장착 개발/실험용 VM |
 | **(GPU-Accelerated) Workload Domain** | PAIS를 설치하는 GPU 가속 VCF 워크로드 도메인. Broadcom 공식 표기는 **GPU-Accelerated Workload Domain**이며, 본 문서는 가독성을 위해 **PAIF Workload Domain**으로 약칭합니다 ([TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)) |
-| **VKS** | vSphere Kubernetes Service — vSphere 네이티브 K8s |
-| **MCP** | Model Context Protocol — 에이전트가 외부 데이터와 도구를 표준 인터페이스로 연동하는 프로토콜 (PAIS 2.1 신규) |
+| **VKS** | vSphere Kubernetes Service. vSphere 네이티브 K8s |
+| **MCP** | Model Context Protocol. 에이전트가 외부 데이터와 도구를 표준 인터페이스로 연동하는 프로토콜 (PAIS 2.1 신규) |
 | **Artifact Mirroring Tool** | 에어갭 환경 구동용 아티팩트 미러링 도구 (PAIS 2.1 신규) |
-| **NVAIE** | NVIDIA AI Enterprise — vGPU 드라이버, NIM, NeMo 등을 포함하며 **NVIDIA에서 별도 구매** |
+| **NVAIE** | NVIDIA AI Enterprise. vGPU 드라이버, NIM, NeMo 등을 포함하며 **NVIDIA에서 별도 구매** |
 
 ## 기반 버전
 
@@ -99,4 +99,4 @@ VMware Cloud Foundation(VCF) 9.1 기반 Private AI 인프라의 **구축, 개발
 - [VMware Private AI Services Release Notes (3.0, 2.1.2, 2.1)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)
 - [VMware Deep Learning VM Image Release Notes (9.1, 9.1.1)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-deep-learning-vm-image-release-notes.html)
 - [Announcing VCF 9.1 (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2026/05/05/announcing-vcf-9-1-modern-private-cloud-built-for-efficiency-and-resilience/)
-- [Broadcom Announces VCF 9.1 — Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
+- [Broadcom Announces VCF 9.1, Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)

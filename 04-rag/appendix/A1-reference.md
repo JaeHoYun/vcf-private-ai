@@ -8,7 +8,7 @@
 사내 지식은 자주 바뀝니다. RAG는 문서를 재인덱싱하면 즉시 반영되고(재학습 불필요), 답변에 출처를 표시할 수 있으며, 데이터가 모델 가중치에 내재되지 않아 접근 통제가 쉽습니다. 문체와 도메인 적응이 필요하면 RAG와 파인튜닝을 병행할 수 있습니다.
 
 **Q2. Agent Builder(경로 A)와 직접 구현(경로 B) 중 무엇으로 시작할까?**
-경로 A로 시작하세요. 표준 문서 Q&A는 Agent Builder가 청킹, 검색, 조립을 처리해 빠르게 동작합니다. 검색 품질의 한계가 보이는 단계(하이브리드/리랭킹/커스텀 청킹)에서 해당 부분만 경로 B로 전환해 보완하는 하이브리드가 현실적입니다. ([01 1.4절](../docs/01-reference-architecture.md#14-빌드-vs-바이--두-가지-조립-방식))
+경로 A로 시작하세요. 표준 문서 Q&A는 Agent Builder가 청킹, 검색, 조립을 처리해 빠르게 동작합니다. 검색 품질의 한계가 보이는 단계(하이브리드/리랭킹/커스텀 청킹)에서 해당 부분만 경로 B로 전환해 보완하는 하이브리드가 현실적입니다. ([01 1.4절](../docs/01-reference-architecture.md#14-빌드-vs-바이-두-가지-조립-방식))
 
 **Q3. 답변이 자꾸 지어냅니다(환각).**
 순서대로 점검: (1) 검색 recall이 충분한가(06) → 부족하면 청킹/top-k/하이브리드(02, 03). (2) 근거는 검색되는데 무시하는가 → 프롬프트에 "근거에 있는 내용만, 없으면 모른다" 고정 + temperature 낮춤(04). (3) "근거 없음 폴백"이 동작하는가(03).
@@ -29,7 +29,7 @@ PAIS(Private AI Services) 2.1부터 제공되는 Artifact Mirroring Tool(아티�
 
 | 용어 | 설명 |
 |------|------|
-| RAG | Retrieval-Augmented Generation — 검색으로 찾은 근거를 프롬프트에 넣어 생성 |
+| RAG | Retrieval-Augmented Generation. 검색으로 찾은 근거를 프롬프트에 넣어 생성하는 방식 |
 | Chunk | 임베딩과 검색 단위로 쪼갠 문서 조각 |
 | Embedding | 텍스트를 벡터로 변환한 수치 표현 |
 | pgvector | PostgreSQL 벡터 검색 확장 (DSM(Data Services Manager) 9.1 제공) |
@@ -70,7 +70,7 @@ PAIS(Private AI Services) 2.1부터 제공되는 Artifact Mirroring Tool(아티�
 - [VMware Private AI Service API 레퍼런스 (Broadcom Developer)](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)
 - [VMware Private AI Foundation with NVIDIA 9.1 (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)
 - [Private AI Services Detailed Design (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-library/private-ai-platform-detailed-design/private-ai-services.html)
-- [DSM 9.1 — 모던 데이터베이스와 Private AI (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2026/05/05/vmware-data-services-manager-9-1-automating-the-modern-databases-that-drive-ai-and-private-cloud/)
+- [DSM 9.1, 모던 데이터베이스와 Private AI (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2026/05/05/vmware-data-services-manager-9-1-automating-the-modern-databases-that-drive-ai-and-private-cloud/)
 - [Building GenAI Agents on VCF with Private AI Services (VMware Cloud Foundation Blog)](https://blogs.vmware.com/cloud-foundation/2025/08/26/vmware-private-ai-services-demo/)
 - 시리즈 형제 가이드: [① 인프라](../../01-infra/README.md) | [② VectorDB](../../02-vectordb/README.md) | [③ 서빙 API](../../03-serving-api/README.md)
 

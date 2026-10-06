@@ -16,9 +16,9 @@ VKS 클러스터 한 개는 크게 두 층으로 구성됩니다.
 - **컨트롤 플레인(Control Plane)**: Kubernetes API 서버, etcd, 스케줄러를 호스팅하는 노드. VM으로 프로비저닝됩니다.
 - **워커 노드 풀(Worker Node Pool)**: 실제 파드(워크로드)가 실행되는 노드 그룹. 노드 풀별로 VM Class(노드 1대의 vCPU, RAM, GPU 사양 템플릿)와 노드 수를 따로 지정합니다.
 
-컨트롤 플레인 노드 수는 **반드시 홀수(1 또는 3)** 여야 합니다. 프로덕션과 HA 환경에서는 **3노드 컨트롤 플레인**이 표준입니다. 컨트롤 플레인은 scale-out(노드 추가)은 지원하나 scale-in(노드 축소)은 지원하지 않으므로, 처음부터 3노드로 설계하는 편이 안전합니다(출처: [Broadcom TechDocs — Manually Scale a Cluster Using Kubectl](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vsphere-supervisor-services-and-standalone-components/latest/managing-vsphere-kuberenetes-service-clusters-and-workloads/operating-tkg-service-clusters/manually-scale-a-cluster-using-kubectl.html)).
+컨트롤 플레인 노드 수는 **반드시 홀수(1 또는 3)** 여야 합니다. 프로덕션과 HA 환경에서는 **3노드 컨트롤 플레인**이 표준입니다. 컨트롤 플레인은 scale-out(노드 추가)은 지원하나 scale-in(노드 축소)은 지원하지 않으므로, 처음부터 3노드로 설계하는 편이 안전합니다(출처: [Broadcom TechDocs, Manually Scale a Cluster Using Kubectl](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vsphere-supervisor-services-and-standalone-components/latest/managing-vsphere-kuberenetes-service-clusters-and-workloads/operating-tkg-service-clusters/manually-scale-a-cluster-using-kubectl.html)).
 
-VCF 9.1은 native Kubernetes HA의 현대적 표준으로 **3-Zone 배포 모델**(vSphere Zone 3개에 노드를 분산)을 권장합니다. 노드 풀을 vSphere Zone에 걸쳐 분산하면 단일 클러스터의 워커 노드가 물리 장애 도메인 여러 개에 걸쳐 배치되어 진정한 HA를 확보할 수 있습니다(출처: [VCF Blog — Architecting VKS on VCF](https://blogs.vmware.com/cloud-foundation/2026/06/09/architecting-vmware-vsphere-kubernetes-service-on-vcf-top-webinar-and-field-questions-answered/)).
+VCF 9.1은 native Kubernetes HA의 현대적 표준으로 **3-Zone 배포 모델**(vSphere Zone 3개에 노드를 분산)을 권장합니다. 노드 풀을 vSphere Zone에 걸쳐 분산하면 단일 클러스터의 워커 노드가 물리 장애 도메인 여러 개에 걸쳐 배치되어 진정한 HA를 확보할 수 있습니다(출처: [VCF Blog, Architecting VKS on VCF](https://blogs.vmware.com/cloud-foundation/2026/06/09/architecting-vmware-vsphere-kubernetes-service-on-vcf-top-webinar-and-field-questions-answered/)).
 
 | 구성 요소 | 권장 (프로덕션) | 비고 |
 |---|---|---|
@@ -27,9 +27,9 @@ VCF 9.1은 native Kubernetes HA의 현대적 표준으로 **3-Zone 배포 모델
 | GPU 워커 노드 풀 | 1개 이상 (분리) | GPU 워크로드 전용, taint로 격리 |
 | vSphere Zone | 3 (HA) | Zone당 최소 3호스트(vSAN, HA 정족수) |
 
-각 Zone은 vSAN, HA 정족수 유지를 위해 최소 3호스트가 필요합니다(출처: [VCF Blog — Architecting VKS on VCF](https://blogs.vmware.com/cloud-foundation/2026/06/09/architecting-vmware-vsphere-kubernetes-service-on-vcf-top-webinar-and-field-questions-answered/)).
+각 Zone은 vSAN, HA 정족수 유지를 위해 최소 3호스트가 필요합니다(출처: [VCF Blog, Architecting VKS on VCF](https://blogs.vmware.com/cloud-foundation/2026/06/09/architecting-vmware-vsphere-kubernetes-service-on-vcf-top-webinar-and-field-questions-answered/)).
 
-### 클러스터 배치 유형 — 통합형, 분리형, 다중 영역형
+### 클러스터 배치 유형. 통합형, 분리형, 다중 영역형
 
 컨트롤 플레인과 일반 워커를 어느 물리 호스트에 배치하느냐에 따라 물리 호스트 수와 라이선스 코어 수가 달라집니다. 공식 문서에는 컨트롤 플레인이나 일반 워커를 GPU가 없는 별도 호스트에 배치하라는 요건이나 권장이 없고, VCF 9.1의 PAIS 소비 블루프린트는 오히려 관리와 워크로드를 한 영역, 한 클러스터에 결합한 구성을 전제로 합니다([PAIS 소비 블루프린트](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/application-modernization/private-ai-services-blueprint(1).html)).
 
@@ -52,7 +52,7 @@ GPU 워커 노드 풀과 일반 워커 노드 풀은 **반드시 별도 노드 �
 - **스케줄링 정확성**: GPU 노드에 `taint`를 걸고 GPU 워크로드에만 `toleration`을 부여하면, GPU가 필요 없는 파드는 GPU 노드에 배치되지 않습니다.
 - **오토스케일 분리**: GPU 노드 풀과 일반 노드 풀의 오토스케일 정책(min/max)을 독립적으로 운영할 수 있습니다.
 
-VKS 3.5+는 Kubernetes 1.34에서 **DRA(Dynamic Resource Allocation)가 stable로 승격**된 것을 통합했습니다. DRA에서는 관리자가 `DeviceClass`로 GPU 같은 하드웨어 자원을 분류하고, 워크로드는 `ResourceClaim`/`ResourceClaimTemplate`으로 특정 GPU 디바이스를 선언적으로 요청합니다. 단순 개수(count) 기반 요청보다 CEL(Common Expression Language) 기반 세밀한 필터링이 가능해 GPU 활용도가 높아지고, 여러 파드/컨테이너 간 GPU 공유도 지원합니다(출처: [VCF Blog — VKS 3.5 is Now Live](https://blogs.vmware.com/cloud-foundation/2025/10/29/build-deploy-and-scale-with-confidence-vsphere-kubernetes-service-3-5-is-now-live-with-24-month-support/)).
+VKS 3.5+는 Kubernetes 1.34에서 **DRA(Dynamic Resource Allocation)가 stable로 승격**된 것을 통합했습니다. DRA에서는 관리자가 `DeviceClass`로 GPU 같은 하드웨어 자원을 분류하고, 워크로드는 `ResourceClaim`/`ResourceClaimTemplate`으로 특정 GPU 디바이스를 선언적으로 요청합니다. 단순 개수(count) 기반 요청보다 CEL(Common Expression Language) 기반 세밀한 필터링이 가능해 GPU 활용도가 높아지고, 여러 파드/컨테이너 간 GPU 공유도 지원합니다(출처: [VCF Blog, VKS 3.5 is Now Live](https://blogs.vmware.com/cloud-foundation/2025/10/29/build-deploy-and-scale-with-confidence-vsphere-kubernetes-service-3-5-is-now-live-with-24-month-support/)).
 
 > 약어: DRA = Dynamic Resource Allocation(동적 자원 할당). GPU를 볼륨처럼 선언적으로 청구(claim)하는 Kubernetes 표준 메커니즘입니다.
 
@@ -114,7 +114,7 @@ GPU 노드 풀에는 보통 NVIDIA GPU Operator가 다음 컴포넌트를 **노�
 
 ## 4.4 오토스케일: 헤드룸, 버스트, 스케일 지연
 
-VKS는 Kubernetes Cluster Autoscaler 구현을 제공하며, 워크로드 수요에 따라 **워커 노드 풀의 노드 수를 자동 증감**합니다. VKS 3.5부터 Cluster Autoscaler가 통합 애드온(add-on) 체계로 관리되어 클러스터 버전 업그레이드 시 함께 자동 갱신됩니다(출처: [VCF Blog — VKS 3.5 is Now Live](https://blogs.vmware.com/cloud-foundation/2025/10/29/build-deploy-and-scale-with-confidence-vsphere-kubernetes-service-3-5-is-now-live-with-24-month-support/)).
+VKS는 Kubernetes Cluster Autoscaler 구현을 제공하며, 워크로드 수요에 따라 **워커 노드 풀의 노드 수를 자동 증감**합니다. VKS 3.5부터 Cluster Autoscaler가 통합 애드온(add-on) 체계로 관리되어 클러스터 버전 업그레이드 시 함께 자동 갱신됩니다(출처: [VCF Blog, VKS 3.5 is Now Live](https://blogs.vmware.com/cloud-foundation/2025/10/29/build-deploy-and-scale-with-confidence-vsphere-kubernetes-service-3-5-is-now-live-with-24-month-support/)).
 
 핵심 동작과 제약:
 
@@ -122,7 +122,7 @@ VKS는 Kubernetes Cluster Autoscaler 구현을 제공하며, 워크로드 수요
 - **scale-from-zero / scale-to-zero**(노드 0개에서 시작과 축소)는 **VKS 3.3+ 및 VKr 1.31.4+** 에서 지원됩니다.
 - **버전 일치 요건**: VKr(vSphere Kubernetes release)의 마이너 버전과 Cluster Autoscaler 패키지의 마이너 버전이 일치해야 합니다.
 
-(출처: [Broadcom TechDocs — About Cluster Autoscaling](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-service-administration-and-development/9-0/managing-vsphere-kuberenetes-service-clusters-and-workloads/autoscaling-tkg-service-clusters/about-cluster-autoscaling.html))
+(출처: [Broadcom TechDocs, About Cluster Autoscaling](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-service-administration-and-development/9-0/managing-vsphere-kuberenetes-service-clusters-and-workloads/autoscaling-tkg-service-clusters/about-cluster-autoscaling.html))
 
 ### GPU 노드 오토스케일에서 특히 주의할 점
 
@@ -147,7 +147,7 @@ VKS는 Kubernetes Cluster Autoscaler 구현을 제공하며, 워크로드 수요
 | 단일 VKS 클러스터 워커 노드 수 | 최대 **250** (VKS 3.7부터, 이전 150) | VKS 3.7 릴리스 노트. 250노드 규모는 컨트롤 플레인 6 vCPU / 12 GiB 이상(Calico, Multus, Avi 조합 기준), etcd 4 GB 이상, Pod CIDR /15 이상 권고 |
 | PAIS 3.0 관리 클러스터 | VKr 1.34, ClusterClass builtin-generic-v3.5.0, 컨트롤 플레인 VM 클래스 best-effort-large 이상 | PAIS 3.0 릴리스 노트. PAIS가 만드는 클러스터는 이 값을 따르며 사용자가 임의로 바꾸지 않음 |
 
-VCF 9.1은 클러스터 수를 약 2.5배 늘려 **Supervisor 한 개당 최대 500 VKS 클러스터, 최대 4,000 VKS 클러스터 노드**를 지원합니다. 수평 확장을 위해 Supervisor를 여러 개 배포하지 않아도 되어 운영 부담이 줄어듭니다(출처: [Broadcom TechDocs — VMware vSphere Kubernetes Service Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-service-administration-and-development/9-0/release-notes/vmware-tanzu-kubernetes-grid-service-release-notes.html); [VCF Blog — Deploy Modern Apps Faster with VKS on VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/deploy-modern-apps-faster-scale-smarter-and-lower-your-tco-with-vks-on-vcf-9-1/)).
+VCF 9.1은 클러스터 수를 약 2.5배 늘려 **Supervisor 한 개당 최대 500 VKS 클러스터, 최대 4,000 VKS 클러스터 노드**를 지원합니다. 수평 확장을 위해 Supervisor를 여러 개 배포하지 않아도 되어 운영 부담이 줄어듭니다(출처: [Broadcom TechDocs, VMware vSphere Kubernetes Service Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-service-administration-and-development/9-0/release-notes/vmware-tanzu-kubernetes-grid-service-release-notes.html); [VCF Blog, Deploy Modern Apps Faster with VKS on VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/deploy-modern-apps-faster-scale-smarter-and-lower-your-tco-with-vks-on-vcf-9-1/)).
 
 > 위 500/4,000 수치는 VCF 9.1과 함께 출하된 VKS 3.6 릴리스 노트 기준입니다. 한도는 릴리스와 환경별로 상이할 수 있으므로 도입 시점의 공식 Configuration Maximums 문서로 반드시 재확인하시기 바랍니다. 본 문서는 4.2–4.4절에서 VKS 3.5+ 기능을, 4.5절에서 VKS 3.6 동반 한도를 함께 다루므로 단일 릴리스로 오해하지 마세요.
 

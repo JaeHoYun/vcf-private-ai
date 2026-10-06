@@ -21,17 +21,17 @@ PAIS API에 접근하는 방식은 공식 자료에서 **세 가지**가 확인�
 
 ---
 
-## 5.2 OIDC Bearer 토큰 — 획득과 사용
+## 5.2 OIDC Bearer 토큰. 획득과 사용
 
 PAIS는 인스턴스에 설정된 **OIDC Identity Provider(IdP)** 로부터 토큰을 받습니다.
 
-**① OIDC 설정 확인** — 인스턴스의 OIDC 구성(토큰 엔드포인트, client-id, scope)은 다음에서 조회합니다.
+**① OIDC 설정 확인.** 인스턴스의 OIDC 구성(토큰 엔드포인트, client-id, scope)은 다음에서 조회합니다.
 
 ```
 GET https://{fqdn}/env.json
 ```
 
-**② 토큰 발급** — 공식 레퍼런스의 파이썬 예시는 OAuth2 Resource Owner Password 방식(사용자명 + API 토큰)을 보여줍니다.
+**② 토큰 발급.** 공식 레퍼런스의 파이썬 예시는 OAuth2 Resource Owner Password 방식(사용자명 + API 토큰)을 보여줍니다.
 
 ```python
 import httpx_auth
@@ -45,7 +45,7 @@ oidc_auth = httpx_auth.OAuth2ResourceOwnerPasswordCredentials(
 )
 ```
 
-**③ 호출** — 발급받은 액세스 토큰을 모든 요청 헤더에 넣습니다.
+**③ 호출.** 발급받은 액세스 토큰을 모든 요청 헤더에 넣습니다.
 
 ```
 Authorization: Bearer <access-token>
@@ -64,7 +64,7 @@ Authorization: Bearer <access-token>
 
 ---
 
-## 5.3 토큰 운영 — 만료, 갱신, 보관
+## 5.3 토큰 운영. 만료, 갱신, 보관
 
 | 항목 | 권장 |
 |------|------|
@@ -97,24 +97,24 @@ Authorization: Bearer <access-token>
 
 **① 로드밸런싱과 스케일링 (Gateway/플랫폼 제공)**
 
-- **로드밸런싱** — 같은 모델의 여러 복제본에 Gateway가 요청을 분산합니다. 앱은 복제본 수를 몰라도 됩니다.
-- **스케일링** — 트래픽 증가는 복제본 증설로 흡수합니다. 복제본은 GPU를 점유하므로 비용과 직결됩니다 → [07 운영](07-observability-ops.md).
+- **로드밸런싱.** 같은 모델의 여러 복제본에 Gateway가 요청을 분산합니다. 앱은 복제본 수를 몰라도 됩니다.
+- **스케일링.** 트래픽 증가는 복제본 증설로 흡수합니다. 복제본은 GPU를 점유하므로 비용과 직결됩니다 → [07 운영](07-observability-ops.md).
 
 **② 리소스 쿼터 (네임스페이스 경계)**
 
-- PAIS는 VCF Automation의 **네임스페이스 단위 리소스 쿼터**(GPU, 복제본 한도)를 기반으로 동작합니다([02.8](02-serving-api-architecture.md#28-멀티테넌시와-네임스페이스-경계)). 즉 한 네임스페이스가 무한정 자원을 점유하지 못하도록 **용량 상한**이 걸립니다. 다만 이는 "초당 요청 수(RPS)"를 직접 제한하는 **API 레이트리밋과는 다른 축**입니다 — 용량(capacity) 통제이지 호출 빈도(rate) 통제가 아닙니다.
+- PAIS는 VCF Automation의 **네임스페이스 단위 리소스 쿼터**(GPU, 복제본 한도)를 기반으로 동작합니다([02.8](02-serving-api-architecture.md#28-멀티테넌시와-네임스페이스-경계)). 즉 한 네임스페이스가 무한정 자원을 점유하지 못하도록 **용량 상한**이 걸립니다. 다만 이는 "초당 요청 수(RPS)"를 직접 제한하는 **API 레이트리밋과는 다른 축**입니다. 용량(capacity) 통제이지 호출 빈도(rate) 통제가 아닙니다.
 
-**③ API 레이트리밋 — 현황과 보완**
+**③ API 레이트리밋의 현황과 보완**
 
-- **게이트웨이 측 레이트리밋 현황** — 작성 시점([PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html)) 기준, PAIS API Gateway가 **사용자/토큰별 요청 속도 제한(per-key rate limit)** 을 표준 기능으로 노출한다는 점은 공식 문서에서 명시 확인되지 않습니다. 따라서 외부 LLM SaaS처럼 "분당 토큰/요청 한도"가 게이트웨이에서 보장된다고 **가정하지 마세요**. (정책 제공 여부는 PAIS 버전과 배포 구성에 따라 다를 수 있으므로 적용 직전 공식 레퍼런스로 확인 필요.) 2026-08 Explore에서 프롬프트 라우팅과 사용자 단위 토큰 제한과 OpenID Connect 기반 앱 인가를 갖춘 AI Gateway가 발표됐지만 PAIS 3.0 릴리스 노트에는 없는 향후 기능이므로([① 00 0.7.4절](../../01-infra/docs/00-whats-new.md)), 이 절의 결론은 그대로입니다. 한편 서드파티 AI 게이트웨이(멀티 LLM 라우팅, 토큰 귀속과 레이트리밋, 팀별 예산 상한, 응답 캐시)를 VCF의 VKS에서 검증한 사례가 2026-08에 공개됐습니다([Solo.io agentgateway와 kagent, VCF 블로그](https://blogs.vmware.com/cloud-foundation/2026/08/07/running-solo-io-enterprise-agentgateway-and-kagent-on-vmware-cloud-foundation/), [TrueFoundry AI Gateway](https://www.truefoundry.com/blog/truefoundry-ai-gateway-on-vmware-cloud-foundation)). 두 사례 모두 참조 아키텍처는 작성 중이고 PAIS 엔드포인트를 백엔드로 사용했는지는 밝히지 않았으므로, 게이트웨이 계층을 PAIS 앞단에 별도로 배치할지는 조직의 요건(여러 팀의 차지백, 토큰 예산, 모델 혼용 라우팅)에 따라 판단합니다.
-- **혼잡 시 신호** — 용량을 초과하면 요청은 `429`(속도 초과/큐 포화), `503`(복제본 기동 중, 일시 과부하)으로 반환될 수 있습니다. 앱은 이를 **지수 백오프로 재시도**해야 합니다([03.9 에러 처리](03-openai-compatible-endpoints.md#39-에러-처리와-재시도)).
-- **앱 측 보호(필수 보완)** — 게이트웨이 레이트리밋에 의존할 수 없으므로, 폭주 트래픽으로부터 백엔드와 GPU를 보호하는 1차 방어선은 **앱**입니다. 다음을 권장합니다.
-  - **동시성 제한** — 백엔드에서 PAIS로 나가는 동시 요청 수에 상한(세마포어/커넥션 풀)을 설정합니다.
-  - **클라이언트 측 레이트리밋** — 사용자/테넌트별 요청 속도를 앱이 토큰버킷 등으로 제한합니다.
-  - **타임아웃과 서킷브레이커** — AI 응답은 초 단위로 길어질 수 있어 타임아웃이 특히 중요합니다. 연속 실패 시 서킷을 열어 폭주를 차단합니다.
-  - **백프레셔/큐잉** — 처리 한도를 넘는 요청은 큐잉하거나 즉시 거절(`429` 반환)해 GPU 포화를 방지합니다.
+- **게이트웨이 측 레이트리밋 현황.** 작성 시점([PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-services-release-notes.html)) 기준, PAIS API Gateway가 **사용자/토큰별 요청 속도 제한(per-key rate limit)** 을 표준 기능으로 노출한다는 점은 공식 문서에서 명시 확인되지 않습니다. 따라서 외부 LLM SaaS처럼 "분당 토큰/요청 한도"가 게이트웨이에서 보장된다고 **가정하지 마세요**. (정책 제공 여부는 PAIS 버전과 배포 구성에 따라 다를 수 있으므로 적용 직전 공식 레퍼런스로 확인 필요.) 2026-08 Explore에서 프롬프트 라우팅과 사용자 단위 토큰 제한과 OpenID Connect 기반 앱 인가를 갖춘 AI Gateway가 발표됐지만 PAIS 3.0 릴리스 노트에는 없는 향후 기능이므로([① 00 0.7.4절](../../01-infra/docs/00-whats-new.md)), 이 절의 결론은 그대로입니다. 한편 서드파티 AI 게이트웨이(멀티 LLM 라우팅, 토큰 귀속과 레이트리밋, 팀별 예산 상한, 응답 캐시)를 VCF의 VKS에서 검증한 사례가 2026-08에 공개됐습니다([Solo.io agentgateway와 kagent, VCF 블로그](https://blogs.vmware.com/cloud-foundation/2026/08/07/running-solo-io-enterprise-agentgateway-and-kagent-on-vmware-cloud-foundation/), [TrueFoundry AI Gateway](https://www.truefoundry.com/blog/truefoundry-ai-gateway-on-vmware-cloud-foundation)). 두 사례 모두 참조 아키텍처는 작성 중이고 PAIS 엔드포인트를 백엔드로 사용했는지는 밝히지 않았으므로, 게이트웨이 계층을 PAIS 앞단에 별도로 배치할지는 조직의 요건(여러 팀의 차지백, 토큰 예산, 모델 혼용 라우팅)에 따라 판단합니다.
+- **혼잡 시 신호.** 용량을 초과하면 요청은 `429`(속도 초과/큐 포화), `503`(복제본 기동 중, 일시 과부하)으로 반환될 수 있습니다. 앱은 이를 **지수 백오프로 재시도**해야 합니다([03.9 에러 처리](03-openai-compatible-endpoints.md#39-에러-처리와-재시도)).
+- **앱 측 보호(필수 보완).** 게이트웨이 레이트리밋에 의존할 수 없으므로, 폭주 트래픽으로부터 백엔드와 GPU를 보호하는 1차 방어선은 **앱**입니다. 다음을 권장합니다.
+  - **동시성 제한.** 백엔드에서 PAIS로 나가는 동시 요청 수에 상한(세마포어/커넥션 풀)을 설정합니다.
+  - **클라이언트 측 레이트리밋.** 사용자/테넌트별 요청 속도를 앱이 토큰버킷 등으로 제한합니다.
+  - **타임아웃과 서킷브레이커.** AI 응답은 초 단위로 길어질 수 있어 타임아웃이 특히 중요합니다. 연속 실패 시 서킷을 열어 폭주를 차단합니다.
+  - **백프레셔/큐잉.** 처리 한도를 넘는 요청은 큐잉하거나 즉시 거절(`429` 반환)해 GPU 포화를 방지합니다.
 
-> **요약** — PAIS는 **로드밸런싱과 용량 쿼터**를 제공하지만, **"초당 몇 건까지"를 게이트웨이가 끊어준다는 보장은 현재 명시되어 있지 않습니다.** 그러므로 호출 빈도 제어와 과부하 방지는 **앱 측 보호로 반드시 보완**하시기 바랍니다. 게이트웨이 레이트리밋 정책이 향후 제공/변경될 수 있으니 적용 직전 공식 문서로 재확인하세요.
+> **요약.** PAIS는 **로드밸런싱과 용량 쿼터**를 제공하지만, **"초당 몇 건까지"를 게이트웨이가 끊어준다는 보장은 현재 명시되어 있지 않습니다.** 그러므로 호출 빈도 제어와 과부하 방지는 **앱 측 보호로 반드시 보완**하시기 바랍니다. 게이트웨이 레이트리밋 정책이 향후 제공/변경될 수 있으니 적용 직전 공식 문서로 재확인하세요.
 
 ---
 
@@ -140,7 +140,7 @@ Authorization: Bearer <access-token>
 
 ---
 
-## 5.7 게이트웨이 계층 설계 — 3계층 모델과 현 시점 선택지
+## 5.7 게이트웨이 계층 설계. 3계층 모델과 현 시점 선택지
 
 5.4절과 5.5절은 PAIS 내장 게이트웨이가 무엇을 하고 무엇을 하지 않는지를 밝혔습니다. 이 절은 "그럼 무엇으로 대신하나"에 답합니다. 팀 하나가 앱 하나를 배포할 때는 5.5절의 앱 측 보호로 충분하지만, 여러 사업부가 같은 플랫폼을 사용하는 순간 차지백, 팀별 토큰 예산, 온프레미스와 클라우드 모델 혼용, 공용 가드레일이 필요해지고, 이것을 앱마다 재구현하는 구조는 오래가지 못합니다. 그래서 게이트웨이를 **별도 계층**으로 설계합니다.
 
@@ -188,7 +188,7 @@ Authorization: Bearer <access-token>
 
 1계층은 GPU가 없는 별도 VKS 네임스페이스(또는 VPC)에 레플리카 2 이상으로 배치하고 Avi VIP를 통해 노출합니다. PostgreSQL이나 Redis 같은 상태 저장 의존성은 HA 범위에 포함합니다. PAIS는 zone 수준 HA가 없으므로 모델 엔드포인트 레플리카 2 이상과 짝을 맞춥니다. vDefend 분산 방화벽으로 앱 클러스터, 게이트웨이, 모델 클러스터, 벡터 DB 사이를 기본 거부로 나눕니다([⑤ 02](../../05-security/docs/02-network-tenant-isolation.md)). 원격 클라우드 모델로의 라우팅은 NSX egress 명시 허용이 전제이며 폐쇄망에서는 성립하지 않고, 반출 통제는 [⑤ 05 5.6절](../../05-security/docs/05-data-governance.md)을 따릅니다. 논리 배치도는 [⑦ 04 4.2절](../../07-design/docs/04-network-storage-availability.md)에 있습니다.
 
-### 5.7.5 전환 원칙 — 나중에 싸게 바꾸기
+### 5.7.5 전환 원칙. 나중에 싸게 바꾸기
 
 어느 선택지를 고르든 다음을 지키면 Broadcom AI Gateway가 출시되었을 때 1계층을 교체하거나 축소하는 비용이 작습니다.
 
@@ -196,7 +196,7 @@ Authorization: Bearer <access-token>
 2. 모델 이름은 게이트웨이의 별칭 계층으로 고정해, 백엔드를 교체해도 앱은 같은 이름으로 호출합니다.
 3. 텔레메트리는 OpenTelemetry GenAI 시맨틱 컨벤션으로 통일해 PAIS 트레이싱과 한 파이프라인으로 통합합니다. 컨벤션이 아직 안정 상태가 아니므로 스키마 변경을 흡수할 수집 계층을 마련합니다.
 4. 라우팅 설정은 가능한 한 Gateway API 자원(HTTPRoute, InferencePool)으로 표현합니다.
-5. Broadcom AI Gateway 출시 시 점검표 — 키와 팀 예산과 차지백, 시맨틱 캐시, 가드레일 훅, MCP 정책, 클라우드 모델 라우팅, OpenTelemetry 호환. 충족되는 항목은 1계층에서 제거하고, 부족한 항목은 1계층에 남깁니다.
+5. Broadcom AI Gateway가 출시되면 키와 팀 예산과 차지백, 시맨틱 캐시, 가드레일 훅, MCP 정책, 클라우드 모델 라우팅, OpenTelemetry 호환 항목을 점검합니다. 충족되는 항목은 1계층에서 제거하고, 부족한 항목은 1계층에 남깁니다.
 
 앱 팀이 이 계층들을 어떻게 소비하는지(온보딩, 별칭, 예산, 절감)는 [앱 가이드 05 플랫폼 소비](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/05-platform-consumption.md)에서 다룹니다.
 

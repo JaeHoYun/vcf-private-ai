@@ -4,7 +4,7 @@
 
 조립한 근거 + 질문을 모델에 보내 답을 받는 단계입니다. 여기서 ③ 서빙 API를 직접 호출합니다.
 
-## 4.1 Agent vs Model Endpoint — 무엇을 호출할까
+## 4.1 Agent vs Model Endpoint. 무엇을 호출할까
 
 PAIS는 두 수준의 추론 인터페이스를 제공합니다(③ 상세).
 
@@ -79,7 +79,7 @@ Agent를 사용하면 검색이 호출 안에 포함됩니다. 앱은 Knowledge 
 
 > 같은 OpenAI 호환 인터페이스를 사용하므로, OpenWeb UI 같은 표준 클라이언트를 Agent에 연결하는 것도 가능합니다(③ 참조).
 
-**에이전틱 검색(agentic retrieval)** — PAIS 2.1부터 Data Indexing, Retrieval이 **MCP 도구**로 통합되어, 각 Knowledge Base마다 검색 도구를 노출하는 MCP 서버로 구현됩니다. 이 구조에서는 검색이 파이프라인에 고정된 단계가 아니라 **에이전트가 스스로 호출 여부와 검색어를 결정하는 행위**로 바뀝니다. 모델은 도구 설명과 지시에 따라 적절한 MCP 도구를 선택하고, 에이전트가 그 도구를 호출해 결과를 컨텍스트에 추가합니다([Broadcom TechDocs — Explore the MCP Tools Available in Your Namespace](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html)). 단순 질의는 검색을 생략하고, 근거가 필요한 질의에서만 검색어를 만들어 KB를 조회하는 동적 판단이 가능합니다. 이는 시리즈 ①의 **MCP Tools Registry**와 직접 연결되는 경로로, 같은 메커니즘으로 사내 API, 다른 데이터 소스를 추가 도구로 연결해 에이전트의 검색 범위를 확장할 수 있습니다(① 05). 도구 스키마와 구성 절차는 위 공식 문서와 ①을 따릅니다.
+**에이전틱 검색(agentic retrieval).** PAIS 2.1부터 Data Indexing, Retrieval이 **MCP 도구**로 통합되어, 각 Knowledge Base마다 검색 도구를 노출하는 MCP 서버로 구현됩니다. 이 구조에서는 검색이 파이프라인에 고정된 단계가 아니라 **에이전트가 스스로 호출 여부와 검색어를 결정하는 행위**로 바뀝니다. 모델은 도구 설명과 지시에 따라 적절한 MCP 도구를 선택하고, 에이전트가 그 도구를 호출해 결과를 컨텍스트에 추가합니다([Broadcom TechDocs, Explore the MCP Tools Available in Your Namespace](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/what-is-private-ai-services/adding-mcp-servers-for-real-time-data-access-and-specialized-ai-capabilities/exploring-the-mcp-tools-avaiable-in-your-namespace.html)). 단순 질의는 검색을 생략하고, 근거가 필요한 질의에서만 검색어를 만들어 KB를 조회하는 동적 판단이 가능합니다. 이는 시리즈 ①의 **MCP Tools Registry**와 직접 연결되는 경로로, 같은 메커니즘으로 사내 API, 다른 데이터 소스를 추가 도구로 연결해 에이전트의 검색 범위를 확장할 수 있습니다(① 05). 도구 스키마와 구성 절차는 위 공식 문서와 ①을 따릅니다.
 
 ## 4.4 스트리밍
 
@@ -89,14 +89,14 @@ Agent를 사용하면 검색이 호출 안에 포함됩니다. 앱은 Knowledge 
 
 RAG의 신뢰는 **"이 답의 근거가 어디냐"** 에서 비롯됩니다.
 
-- **경로 B**: 03에서 청크에 붙인 출처 라벨을 모델이 답변에 인용하도록 프롬프트로 유도하고, 앱은 사용된 청크의 메타데이터로 출처 카드(문서명과 링크)를 별도 렌더링합니다(모델 환각 인용 방지 — 실제 검색된 청크 메타데이터를 신뢰).
+- **경로 B**: 03에서 청크에 붙인 출처 라벨을 모델이 답변에 인용하도록 프롬프트로 유도하고, 앱은 사용된 청크의 메타데이터로 출처 카드(문서명과 링크)를 별도 렌더링합니다(실제 검색된 청크 메타데이터를 신뢰해 모델의 환각 인용을 방지).
 - **경로 A**: Agent 응답에 포함되는 근거/출처 필드를 사용. 스키마는 공식 API로 확인.
 
 > 권장: 모델이 본문에 표시한 인용 텍스트보다 **앱이 실제 검색 결과 메타데이터로 만든 출처**를 1차 진실로 삼으세요. 모델 인용은 보조 표시.
 
-## 4.6 출력 가드레일 — 민감정보와 출력 안전
+## 4.6 출력 가드레일. 민감정보와 출력 안전
 
-검색 단계의 입력측 방어([03 3.6](03-retrieval-context.md#36-보안--프롬프트-인젝션-방어와-입력-살균))만으로는 충분하지 않습니다. 모델이 답을 만든 **직후**, 사용자에게 내보내기 전에 출력측 방어선도 함께 갖춰야 합니다.
+검색 단계의 입력측 방어([03 3.6](03-retrieval-context.md#36-보안-프롬프트-인젝션-방어와-입력-살균))만으로는 충분하지 않습니다. 모델이 답을 만든 **직후**, 사용자에게 내보내기 전에 출력측 방어선도 함께 갖춰야 합니다.
 
 - **PII, 민감정보 마스킹**: 답변(및 로그)에 개인정보, 인증정보, 내부 비밀이 새어 나가지 않게 검사하고 치환합니다. RAG는 벡터 DB가 테넌트 간 공유될 때 유사도 검색이 경계를 넘어 데이터를 노출할 수 있어 위험이 가중되므로([OWASP LLM02:2025 Sensitive Information Disclosure](https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/)), 검색 단계 권한 필터(03)와 출력 마스킹을 **함께** 적용합니다. Presidio 기반 PII 레닥션 등 독립 가드 도구를 출력단에 적용하는 패턴이 널리 사용됩니다.
 - **시스템 프롬프트 누출 차단**: 알려진 시스템 프롬프트 조각이 답변에 재출력되는지 모니터링하고 차단합니다. 시스템 프롬프트 유출은 OWASP LLM07로 별도 분류되며, 인젝션 공격의 흔한 1차 목표입니다.

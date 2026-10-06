@@ -10,7 +10,7 @@ GPU-Accelerated Workload Domain(GPU 가속 워크로드 도메인, 이하 시리
 
 ---
 
-## 6.1 용량 모니터링 지표 — 무엇을 측정해야 의사결정이 가능한가
+## 6.1 용량 모니터링 지표. 무엇을 측정해야 의사결정이 가능한가
 
 용량 의사결정은 감(感)이 아니라 측정값에서 출발해야 합니다. VCF 9.1의 VCF Operations는 GPU, vGPU 메트릭을 기본 수집하며, 모델과 에이전트 단위의 AI 메트릭(토큰 처리량, 첫 토큰까지 시간(TTFT), E2E 요청 지연)까지 대시보드로 제공합니다([VCF 9.1 AI 워크로드 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/)). 더 낮은 계층의 정밀 지표는 NVIDIA DCGM(Data Center GPU Manager)이 담당합니다.
 
@@ -36,7 +36,7 @@ DCGM 메트릭 정의와 단위는 [NVIDIA DCGM Feature Overview](https://docs.n
 
 ---
 
-## 6.2 증설 트리거 — 임계, 헤드룸, 버스트 정책
+## 6.2 증설 트리거. 임계, 헤드룸, 버스트 정책
 
 지표를 모니터링한다는 것은 "어느 임계를 초과하면 조치한다"는 규칙이 있다는 뜻입니다. 증설 트리거는 단일 순간값이 아니라 **지속 시간, 헤드룸, 소진 속도**를 함께 고려해야 오탐(false positive)을 줄일 수 있습니다.
 
@@ -59,7 +59,7 @@ DCGM 메트릭 정의와 단위는 [NVIDIA DCGM Feature Overview](https://docs.n
 
 증설의 형태는 두 가지입니다. **GPU/노드 수평 증설**(PAIF Workload Domain에 호스트 추가)과 **활용 효율 개선**(리클레임과 라이트사이징으로 기존 자원 회수). VCF Operations 9.1의 리클레임 대시보드와 라이트사이징 권고는 "증설 전에 회수할 자원"을 먼저 식별해 줍니다([VCF 9.1 Operations 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/scale-simplify-and-secure-your-private-cloud-operations-with-vcf-9-1/)). 하드웨어 공급과 비용 부담이 큰 시기일수록 "증설하기 전에 먼저 회수"하는 것이 비용을 아끼는 첫 번째 조치입니다([VCF 9.1 출시 발표](https://www.broadcom.com/company/news/product-releases/64326)).
 
-### 역방향 진입 — 유휴, 사일로 자원 진단과 회수
+### 역방향 진입. 유휴, 사일로 자원 진단과 회수
 
 이미 도입했으나 유휴, 사일로 상태인 GPU를 가용 풀로 회수하는 것은 [역방향(공급 제약) 사이징](01-sizing-methodology.md#17-순방향과-역방향-사이징)의 출발점입니다([09](09-reverse-sizing-scenario.md) 9.5절). 진단과 회수는 위 6.1 지표와 6.2 트리거를 그대로 활용합니다.
 
@@ -71,7 +71,7 @@ DCGM 메트릭 정의와 단위는 [NVIDIA DCGM Feature Overview](https://docs.n
 
 ---
 
-## 6.3 GPU Reservation, 쿼터 용량 전략 — 예약분과 가용분의 균형
+## 6.3 GPU Reservation, 쿼터 용량 전략. 예약분과 가용분의 균형
 
 GPU Reservation(GPU 예약)은 미션 크리티컬 AI 워크로드가 시작에 필요한 GPU 자원을 확보하도록 GPU 슬롯을 사전 확보하는 기능입니다([PAIF with NVIDIA 9.0.x 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-90-release-notes.html)). 용량 관점에서 예약은 양날의 검입니다. 예약을 많이 설정하면 중요 워크로드의 가용성은 보장되지만, 미사용 예약분이 전체 가용 용량을 잠식합니다.
 
@@ -137,7 +137,7 @@ VCF Operations 9.1은 애플리케이션 단위 쇼백과 차지백을 제공하
 
 점진 확장의 원칙은 "한 단계의 실측값이 다음 단계의 산정 입력으로 이어진다"입니다. 단계를 생략하면 프로덕션 확보 용량이 추정에 머물러 과소와 과대 산정 위험이 커집니다.
 
-### 6.5.1 PoC 형태 — 형태가 검증 범위를 정한다
+### 6.5.1 PoC 형태. 형태가 검증 범위를 정한다
 
 같은 "PoC"라도 어떤 장비 구성으로 하느냐에 따라 확인할 수 있는 것이 크게 다릅니다. PAIF 공식 요건은 워크로드 도메인 초기 클러스터에 **GPU 탑재 ESX 호스트 최소 3대**이며([PAIF 9.1 요건](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html)), 이보다 작은 PoC용 축소 구성에 대한 공식 안내는 없습니다. 따라서 PoC 목적을 정할 때 형태를 함께 정합니다.
 

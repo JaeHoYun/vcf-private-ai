@@ -36,20 +36,20 @@ PAIF는 VCF를 기반으로 동작하므로, 플랫폼 레벨 변화가 AI 운�
 | **Enhanced NVMe Memory Tiering** | DRAM+NVMe 통합 메모리 모델, 콜드 페이지를 NVMe로 오프로드 | 메모리 바운드 AI/벡터 DB 워크로드 직접 대응 |
 | **VKS 스케일 확장** | Supervisor당 최대 500 클러스터, 배포 70%↑, 업그레이드 창 75%↓ | 대규모 AI 클러스터 운영 비용 절감 |
 | **Topology Aware Scheduling** | NUMA, 가속기 로컬리티 고려 배치 | GPU/메모리 인접성 기반 추론 성능 ↑ |
-| **Native S3 Object Storage** | S3 호환 오브젝트 스토리지 (**9.1.x Tech Preview**) | 데이터 레이크/학습셋 저장 용도로 활용 전망 — **프로덕션 비적용** |
+| **Native S3 Object Storage** | S3 호환 오브젝트 스토리지 (**9.1.x Tech Preview**) | 데이터 레이크/학습셋 저장 용도로 활용 전망. **프로덕션 비적용** |
 | **CrowdStrike EDR 연동 복구** | 클린룸에서 복구 워크로드 스캔 후 운영 복귀 | AI 데이터/모델 자산 랜섬웨어 복구 강화 |
 
 > **Broadcom 발표 수치 (보수적 해석 필요):** 인텔리전트 메모리 티어링으로 서버비용 최대 약 40%↓, vSAN ESA 압축과 중복제거로 스토리지 TCO 약 39%↓, 대규모 AI K8s 운영비 최대 약 46%↓. 모두 "up to"(최대) 값이며 **Broadcom 내부 추정과 테스트(2026년 4월) 기준으로 변경될 수 있습니다.** **실제 효과는 워크로드, 사용률, 환경에 따라 달라지며 고객 실측 검증이 필요합니다.**
 
 ---
 
-## 0.3 PAIF 9.1 / PAIS 2.1 — AI 핵심 변화
+## 0.3 PAIF 9.1 / PAIS 2.1. AI 핵심 변화
 
-### (1) MCP(Model Context Protocol) 통합 — 가장 큰 변화
+### (1) MCP(Model Context Protocol) 통합. 가장 큰 변화
 에이전트를 **외부 데이터 소스와 도구**에 표준 인터페이스를 통해 연결합니다. Oracle, Microsoft SQL Server, ServiceNow, GitHub, Slack, PostgreSQL 등을 **커스텀 커넥터 없이** 거버넌스 하에 연동합니다.
 → 상세: [문서 05](05-agents-mcp.md)
 
-### (2) Artifact Mirroring Tool — 에어갭 풀스택
+### (2) Artifact Mirroring Tool. 에어갭 풀스택
 PAIS 2.1에 도입. VI 관리자가 **폐쇄망(air-gapped)** 환경에서 NVIDIA GPU 기반 Model Endpoint와 에이전트를 포함한 **완전한 Private AI 기능**을 설치하고 운영할 수 있습니다. 방산, 금융, 공공처럼 외부 반출이 불가한 환경의 핵심 기능입니다.
 → 상세: [문서 06](06-production.md) | 산업 적용: [문서 08](08-industry.md)
 
@@ -257,7 +257,7 @@ VCF 9.1.1.0은 BOM(Bill of Materials, 구성 컴포넌트 버전 목록)을 갱�
 - [Announcing VCF 9.1 (VMware Cloud Foundation Blog, 2026-05)](https://blogs.vmware.com/cloud-foundation/2026/05/05/announcing-vcf-9-1-modern-private-cloud-built-for-efficiency-and-resilience/)
 - [Streamline, Simplify and Protect all your AI workloads with VCF 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/)
 - [VMware Private AI Foundation with NVIDIA 9.1 (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1.html)
-- [Broadcom Announces VCF 9.1 — Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
+- [Broadcom Announces VCF 9.1, Production AI (Broadcom News)](https://news.broadcom.com/releases/broadcom-announces-vmware-cloud-foundation-9-1)
 - [VMware Cloud Foundation 9.1.1.0 Release Notes (Broadcom TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html)
 - [VMware Private AI Foundation with NVIDIA 9.1 / 9.1.1 Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)
 - [VMware Private AI Services Release Notes (3.0, 2.1.2, 2.1)](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)

@@ -14,7 +14,7 @@
 
 | ID | 결정 | 경로 | 빠른 권고 트리거 | 상세 |
 |----|------|------|-----------------|------|
-| D1 | VCF 토폴로지 | 표준(기본) vs 통합(비권고) | 표준이 기본 — 통합은 최소 VCF용이라 Private AI 비권고 | [03](03-compute-gpu-topology.md) |
+| D1 | VCF 토폴로지 | 표준(기본) vs 통합(비권고) | 표준이 기본. 통합은 최소 VCF용이라 Private AI 비권고 | [03](03-compute-gpu-topology.md) |
 | D2 | GPU 공유 | MIG vs 타임슬라이싱 vs 패스스루 | 멀티테넌트 추론 → MIG / dev 가변부하 → 타임슬라이싱 / 대형 단일 → 패스스루 | [03](03-compute-gpu-topology.md) |
 | D3 | 서빙 배치 | VKS vs DLVM | 프로덕션, 다수 모델 → VKS / PoC, 단일 → DLVM | [03](03-compute-gpu-topology.md) |
 | D4 | 서빙 방식 | PAIS Runtime vs NIM vs 자가 vLLM. PAIS Runtime 안에서는 모델 위치를 한 번 더 결정함: 로컬 vs 중앙 공유 vs 원격 클라우드(3.0부터) | 표준 운영 → PAIS / 최고 성능과 지원 → NIM / 최신 OSS → 자가. 여러 테넌트가 같은 모델 → 중앙 공유 / 사내에 배포할 수 없는 모델 → 원격(반출 통제 전제) | [03](03-compute-gpu-topology.md) |
@@ -65,4 +65,4 @@
 16건 전체의 진행 상황은 한 표로 관리합니다. 표는 결정 번호, 채택한 경로, 근거가 된 결정 요인([01 1.2절](01-design-process.md#12-결정-요인-수집)), 상태(미정, 결정, 확인 필요) 네 칸으로 구성합니다. 위 형식의 상세 기록은 되돌리기 어렵거나 트레이드오프가 큰 결정(D1 토폴로지, D2 GPU 공유, D5 네트워킹, D7 스토리지, D12 에어갭)부터 작성합니다. 모든 결정이 "결정" 상태가 되고 주요 결정에 상세 기록이 갖춰지면 [07 설계 리뷰](07-design-review.md)의 관문을 진행합니다.
 
 ---
-[← 이전: 05 설계 결정 — 멀티테넌시와 보안 설계](05-tenancy-security.md) | [목차](../README.md) | [다음: 07 설계 리뷰 기준과 검증 관문 →](07-design-review.md)
+[← 이전: 05 설계 결정: 멀티테넌시와 보안 설계](05-tenancy-security.md) | [목차](../README.md) | [다음: 07 설계 리뷰 기준과 검증 관문 →](07-design-review.md)

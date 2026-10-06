@@ -29,7 +29,7 @@
 
 PAIF/PAIS는 **여러 계층이 서로 의존**합니다(VCF 코어 → 관리 서비스 → Kubernetes → GPU → PAIS). 그래서 업그레이드는 **순서가 가장 중요**합니다. 순서를 어기면 호환성 오류, 기동 실패가 발생합니다.
 
-### 10.1.1 업그레이드 순서 — 기반(VCF)부터 상위 계층으로
+### 10.1.1 업그레이드 순서. 기반(VCF)부터 상위 계층으로
 
 | 순서 | 계층 | 대상 | 수행 위치 |
 |:---:|------|------|-----------|
@@ -59,7 +59,7 @@ PAIF/PAIS는 **여러 계층이 서로 의존**합니다(VCF 코어 → 관리 �
 
 업그레이드마다 대상 환경, 현재 버전과 목표 버전, 유지보수 창을 먼저 기록하고, 위 항목의 확인값과 10.1.1 순서별 완료 시각을 변경 기록에 남깁니다. 변경 기록은 롤백 판단(10.1.5)과 다음 업그레이드의 영향 분석 입력입니다.
 
-### 10.1.3 다운타임과 영향 — 가장 중요
+### 10.1.3 다운타임과 영향. 가장 중요
 
 업그레이드는 무중단이 아닙니다. 특히 **PAIS 단계의 다운타임을 사전 계획**해야 합니다.
 
@@ -74,21 +74,21 @@ PAIF/PAIS는 **여러 계층이 서로 의존**합니다(VCF 코어 → 관리 �
 
 > ESX 호스트의 보안과 버그 패치는 **라이브 패치**(10.1.4절)로 재부팅이나 VM 이전 없이 적용할 수 있습니다. 위 표의 다운타임은 주로 PAIS, GPU 계층에 해당합니다.
 
-### 10.1.4 라이브 패치 — ESX 무중단 패치 (9.1에서 실용화)
+### 10.1.4 라이브 패치. ESX 무중단 패치 (9.1에서 실용화)
 
 ESX 호스트 패치는 전통적으로 **호스트를 유지보수 모드로 비우고(vMotion) → 재부팅**하는 절차였습니다. **라이브 패치**(ESX Live Patch)는 실행 중인 하이퍼바이저 메모리에 패치를 적용하고 **필요한 sub-process만 재시작**하므로, **호스트 재부팅도 VM 이전도 없이** 보안과 버그 패치를 온라인으로 반영합니다. 정기 보안 패치를 다운타임 없이 적용할 수 있어, 9.1 LCM에서 가장 체감되는 개선입니다.
 
 **동작 방식**
 
 - 대상 호스트는 전체 유지보수 모드가 아니라 **부분 유지보수 모드**(partial maintenance mode)로 들어갑니다 → 기존 VM은 계속 실행되고, 신규 VM 생성, 해당 호스트로의 vMotion만 잠시 제한됩니다.
-- VM은 **비우지 않습니다.** 패치가 VM 실행 런타임(vmx)을 건드릴 때만 VM이 **FSR**(Fast-Suspend-Resume, 빠른 일시정지와 재개)를 한 번 거칩니다 — 게스트 재부팅이 아니라 아주 짧은 멈춤이라 사실상 무중단입니다. vmkernel, user-space, NSX 패치는 FSR 없이 적용될 수 있습니다.
+- VM은 **비우지 않습니다.** 패치가 VM 실행 런타임(vmx)을 건드릴 때만 VM이 **FSR**(Fast-Suspend-Resume, 빠른 일시정지와 재개)를 한 번 거칩니다. 게스트 재부팅이 아니라 아주 짧은 멈춤이라 사실상 무중단입니다. vmkernel, user-space, NSX 패치는 FSR 없이 적용될 수 있습니다.
 - 라이브 패치 대상이 아닌 패치는 **자동으로 "유지보수 모드 + 재부팅"으로 폴백**합니다(또는 enforce 설정으로 비대상 패치를 차단).
 
-**버전 경계 — 왜 "9.1부터"인가**
+**버전 경계. 왜 "9.1부터"인가**
 
 | 버전 | 라이브 패치 범위 |
 |------|------------------|
-| vSphere 8.0 U3 | 최초 도입 — vmx(VM 실행 컴포넌트) 패치만 대상 |
+| vSphere 8.0 U3 | 최초 도입. vmx(VM 실행 컴포넌트) 패치만 대상 |
 | VCF 9.0 | vmkernel, user-space 데몬, NSX 컴포넌트까지 확장, vGPU VM의 FSR 가속(AI/ML 워크로드 무중단) |
 | **VCF 9.1** | **TPM 활성 호스트 지원 + 클러스터 기본 활성**, vSAN, 코어 스토리지 데몬까지 확장. 벤더 기준 **ESX 패치의 최대 80**%가 라이브 패치 대상 |
 
@@ -101,10 +101,10 @@ ESX 호스트 패치는 전통적으로 **호스트를 유지보수 모드로 �
 **범위와 한계**
 
 - **ESX 호스트 패치 계층 한정**입니다. PAIS 2.0.x → 2.1처럼 **VKS 재생성과 모델 재다운로드가 따르는 단계의 다운타임(10.1.3절)은 라이브 패치로 줄일 수 없습니다.**
-- **모든 패치가 대상은 아닙니다.** 커널의 대규모 변경 등은 폴백 경로(재부팅)를 따릅니다 — 그래서 "최대 80%"이지 100%가 아닙니다.
+- **모든 패치가 대상은 아닙니다.** 커널의 대규모 변경 등은 폴백 경로(재부팅)를 따릅니다. 그래서 "최대 80%"이지 100%가 아닙니다.
 - 9.0까지 제약이던 **DPU(분산 서비스 엔진)과 병렬 리메디에이션(parallel remediation) 동시 사용**의 9.1 해소 여부는 적용 전 확인이 필요합니다.
 
-> **적용 전 확인:** TPM 지원, 기본 활성, 범위 확장은 9.1 공식 발표 기준입니다. 라이브 패치 적용 가능 여부는 **패치별로 다르므로**, 전제조건과 잔존 제약과 함께 적용 전 공식 문서로 재확인하시기 바랍니다 ([VCF 9.1 vSphere 신기능 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/12/whats-new-with-vsphere-9-1/), [Live patch 확장 — VCF 9.0 블로그](https://blogs.vmware.com/cloud-foundation/2025/07/15/live-patch-gets-even-better-in-vsphere-with-vmware-cloud-foundation-9-0/), [라이브 패치 요건 KB](https://knowledge.broadcom.com/external/article/419942/requirements-for-enabling-the-vsphere-li.html)).
+> **적용 전 확인:** TPM 지원, 기본 활성, 범위 확장은 9.1 공식 발표 기준입니다. 라이브 패치 적용 가능 여부는 **패치별로 다르므로**, 전제조건과 잔존 제약과 함께 적용 전 공식 문서로 재확인하시기 바랍니다 ([VCF 9.1 vSphere 신기능 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/12/whats-new-with-vsphere-9-1/), [Live patch 확장, VCF 9.0 블로그](https://blogs.vmware.com/cloud-foundation/2025/07/15/live-patch-gets-even-better-in-vsphere-with-vmware-cloud-foundation-9-0/), [라이브 패치 요건 KB](https://knowledge.broadcom.com/external/article/419942/requirements-for-enabling-the-vsphere-li.html)).
 
 ### 10.1.5 롤백
 
@@ -139,7 +139,7 @@ Artifact Mirroring Tool은 **PAIS Services 패키지와 NVIDIA GPU Operator 구�
 
 **선행조건** ([같은 출처](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/installing-and-configuring-private-ai-services/upload-the-private-ai-services-components-to-a-disconnected-environment.html)):
 
-1. PAIS용 **Harbor 프로젝트 사전 생성** — 플랫폼 Harbor 프로젝트는 PAIS 아티팩트용으로 **20GB**가 필요합니다(모델 갤러리/NIM 이미지는 별도 산정).
+1. PAIS용 **Harbor 프로젝트 사전 생성**. 플랫폼 Harbor 프로젝트는 PAIS 아티팩트용으로 **20GB**가 필요합니다(모델 갤러리/NIM 이미지는 별도 산정).
 2. **로컬 Ubuntu 패키지 저장소** 미러 + 인덱스 파일.
 3. `pais` 플러그인이 포함된 **VCF Consumption CLI**.
 4. bastion/admin 호스트에 **Docker 설치**.
@@ -235,7 +235,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 | 설치나 업그레이드 직후 메트릭이 비어 있음 | PAIS 3.0 동작 변경: Prometheus 수집이 PAIS 관리 VKS 클러스터 가용 이후 시작 | 장애가 아님. 클러스터 READY 확인 후 수집 재개를 기다리고, 알람 규칙에 유예 구간을 설정함 |
 | 원격 클라우드 모델 호출이 실패 | `InferenceGatewayRoute`의 TLS 검증 모드와 발급자 인증서 불일치, 자격증명 Secret 만료 | 네임스페이스 CA 신뢰 번들에 발급자 인증서 추가, Secret 갱신 ([③ 02 2.5.1절](../../03-serving-api/docs/02-serving-api-architecture.md)) |
 
-### 10.2.5 DLVM, 드라이버 (9.0.x 보고 — 재확인 필요)
+### 10.2.5 DLVM, 드라이버 (9.0.x 보고, 재확인 필요)
 
 | 증상 | 가능 원인 | 조치 |
 |------|----------|------|
@@ -252,7 +252,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 
 구축 후 상시 수행해야 하는 두 위생 작업입니다. (1) 플랫폼 구성과 데이터의 백업과 **복구 가능성** 보장, (2) 인증서와 시크릿의 정기 회전. 둘 다 "필요할 때 안 되면 치명적"이라 평소에 점검해 두어야 합니다.
 
-### 10.3.1 백업 대상 — 플랫폼 구성까지 확장
+### 10.3.1 백업 대상. 플랫폼 구성까지 확장
 
 [문서 06 6.3절](06-production.md)이 AI 자산(모델, 벡터, PAIS 설정, 앱 데이터) 백업을 다룹니다. 운영자는 여기에 **플랫폼 구성 백업**을 더해야 전체 복구가 가능합니다.
 
@@ -263,7 +263,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 
 > **보안 주의:** VCF 백업 파일에는 **평문 비밀번호 등 민감정보**가 포함됩니다. 접근을 통제하고, 복구용으로 복호화한 파일은 작업 후 안전 삭제하세요(거버넌스 → [⑤ 보안과 거버넌스 가이드](../../05-security/README.md)).
 
-### 10.3.2 복구 훈련 — "백업"이 아니라 "복구"를 검증
+### 10.3.2 복구 훈련. "백업"이 아니라 "복구"를 검증
 
 백업이 있다고 복구되는 것은 아닙니다. 정기 훈련으로 **복구 가능성**을 검증합니다.
 
@@ -287,7 +287,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 
 만료된 인증서는 UI 접근 불가, 기동 실패로 이어집니다. VCF 9는 자동 갱신을 제공하나, 수동 교체 경로도 알아야 합니다.
 
-**VCF 9 인증서 — 자동 갱신 우선:**
+**VCF 9 인증서, 자동 갱신 우선:**
 
 - VCF 9의 **Fleet Management 어플라이언스가 관리 컴포넌트의 CA 역할**을 하여 만료 전 자동 갱신합니다. Microsoft CA로 발급한 인증서도 자동 갱신 대상입니다.
 - 관리 컴포넌트는 **Microsoft CA만** 지원하고, 인스턴스 컴포넌트는 Microsoft CA 또는 OpenSSL을 지원합니다.
@@ -308,7 +308,7 @@ vcf pais models pull|push|list --modelStore <harbor>/<project>
 
 [문서 06 6.8절 관측성](06-production.md)은 "무엇을 확인할 수 있나"(대시보드)를 다룹니다. 운영 단계에서는 **"어떤 값이 나쁘면 누가 언제 깨어나나"** 를 별도로 정해야 합니다. 즉 SLI/SLO 정의 → 알람 임계치 → 온콜과 에스컬레이션입니다. ([문서 06 6.11절](06-production.md) 배포 체크리스트의 "알림 규칙과 On-call"을 운영 절차로 구체화한 것입니다.)
 
-### 10.4.1 SLI/SLO — 무엇을 약속하나
+### 10.4.1 SLI/SLO. 무엇을 약속하나
 
 PAIS가 노출하는 AI 지표에서 SLI(서비스 수준 지표)를 고릅니다(지표 자체는 [문서 06 6.8절](06-production.md)).
 
@@ -323,7 +323,7 @@ PAIS가 노출하는 AI 지표에서 SLI(서비스 수준 지표)를 고릅니�
 
 SLI마다 측정 방법과 출처를 함께 정해 두어야 담당자가 바뀌어도 같은 값을 재현할 수 있습니다. 기준선은 측정일과 함께 기록하고, 모델 교체, 하드웨어 증설, 업그레이드 뒤에는 다시 측정해 SLO를 조정합니다.
 
-### 10.4.2 알람 — VCF Operations 알람 정의
+### 10.4.2 알람. VCF Operations 알람 정의
 
 VCF Operations의 **Alert Definition(Symptom + 임계치), Notification**으로 알람을 구성합니다. AI, GPU 지표가 나머지 인프라와 같은 콘솔에 있어 통합 알람이 가능합니다.
 
@@ -381,10 +381,10 @@ PAIF 네트워크는 **NSX(Edge, VPC, 세그먼트)** + **모델 엔드포인트
 
 | 운영 영역 | 무엇을 확인하나 | 조치와 연계 |
 |----------|------------|-----------|
-| NSX Edge, Transport Node 건전성 | VCF Operations가 Edge 메트릭을 20초 주기로 수집 — VTEP 상태, DataPath IPC Thread, Edge Agent 상태 등 | 임계 초과 시 알람(10.4절), 장애 시 10.2절 |
+| NSX Edge, Transport Node 건전성 | VCF Operations가 VTEP 상태, DataPath IPC Thread, Edge Agent 상태 등 Edge 메트릭을 20초 주기로 수집 | 임계 초과 시 알람(10.4절), 장애 시 10.2절 |
 | 모델 엔드포인트 로드밸런서(NSX Edge/ALB) | TLS 종단, 백엔드 헬스, 세션, 인증서 만료 임박 | 인증서 회전 → 10.3.3절, 알람 → 10.4절 |
 | East-West 정책(Network Policy) | replica ↔ pgvector ↔ PAIS 통신, 정책 변경에 따른 단절 | 통신 장애는 10.2절, 마이크로세그와 보안 정책 운영은 ⑤ |
-| GPU 분산 패브릭(GPUDirect RDMA, RoCE) — 해당 시 | 링크 상태, 대역폭, 드롭 등 **운영 증상 1차 확인** | 무손실 물리 패브릭 설계와 튜닝(PFC/ECN)은 **네트워크팀 영역**([문서 02](02-architecture.md)) — 증상 식별 후 위임 |
+| 해당 시 GPU 분산 패브릭(GPUDirect RDMA, RoCE) | 링크 상태, 대역폭, 드롭 등 **운영 증상 1차 확인** | 무손실 물리 패브릭 설계와 튜닝(PFC/ECN)은 **네트워크팀 영역**([문서 02](02-architecture.md)). 증상 식별 후 위임 |
 
 > **업그레이드 연계:** VCF 9의 **NSX Edge Host Affinity**는 vSphere LCM 호스트 업그레이드 중 Edge를 통한 트래픽 중단을 최소화합니다 → 10.1절 LCM과 함께 계획하세요.
 
@@ -415,13 +415,13 @@ PAIF 스토리지는 **vSAN(플랫폼, VM, VKS 노드)** + **AI 자산 store(모
 - **보안 네트워크**(마이크로세그멘테이션, 접근통제, 감사) → [⑤ 보안과 거버넌스 가이드](../../05-security/README.md)
 - **백업과 복구 타깃** → 10.3절
 
-> **적용 전 확인:** vSAN 9.1의 Effective Capacity 뷰, Auto-RAID, Automatic Rebalance(최대 30분 대기), Adaptive Resync(ESA 10G 20% 목표), NSX Edge 메트릭의 VCF Operations 수집(20초 주기)와 Edge Host Affinity는 공식 문서와 블로그 기준이나, 정확한 임계치, 메트릭 명칭, 절차는 적용 전 공식 문서로 재확인하시기 바랍니다 — [vSAN 운영 가이드(VCF 9)](https://www.vmware.com/docs/vmw-vsan-operations-guide), [vSAN Effective Capacity(VCF 9.1 블로그)](https://blogs.vmware.com/cloud-foundation/2026/05/11/effective-capacity-view-in-vsan-for-vcf-9-1/), [vSAN 용량 모니터링(TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/vsan-deployment-administration-and-monitoring/vsan-monitoring-and-troubleshooting/monitor-the-vsan-cluster/monitor-vsan-capacity.html), [VCF Operations 신규 기능(NSX Edge 메트릭, TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/release-notes/vmware-cloud-foundation-90-release-notes/platform-whats-new/whats-new-vcf-ops.html).
+> **적용 전 확인:** vSAN 9.1의 Effective Capacity 뷰, Auto-RAID, Automatic Rebalance(최대 30분 대기), Adaptive Resync(ESA 10G 20% 목표), NSX Edge 메트릭의 VCF Operations 수집(20초 주기)와 Edge Host Affinity는 공식 문서와 블로그 기준이나, 정확한 임계치, 메트릭 명칭, 절차는 적용 전 공식 문서로 재확인하시기 바랍니다. 근거 문서는 [vSAN 운영 가이드(VCF 9)](https://www.vmware.com/docs/vmw-vsan-operations-guide), [vSAN Effective Capacity(VCF 9.1 블로그)](https://blogs.vmware.com/cloud-foundation/2026/05/11/effective-capacity-view-in-vsan-for-vcf-9-1/), [vSAN 용량 모니터링(TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/vsan-deployment-administration-and-monitoring/vsan-monitoring-and-troubleshooting/monitor-the-vsan-cluster/monitor-vsan-capacity.html), [VCF Operations 신규 기능(NSX Edge 메트릭, TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/release-notes/vmware-cloud-foundation-90-release-notes/platform-whats-new/whats-new-vcf-ops.html)입니다.
 
 ---
 
 ## 10.6 운영자 독자 트랙
 
-**무슨 일이 생기면 어디로 가나** — 이 문서(및 ① 전반)의 Day-2 운영 내용을 **인프라 운영자 관점의 진입 경로**로 정리합니다. 처음 운영을 맡았거나, 특정 상황에서 어디를 확인해야 할지 빠르게 찾을 때 사용하세요.
+**무슨 일이 생기면 어디로 가나?** 이 문서(및 ① 전반)의 Day-2 운영 내용을 **인프라 운영자 관점의 진입 경로**로 정리합니다. 처음 운영을 맡았거나, 특정 상황에서 어디를 확인해야 할지 빠르게 찾을 때 사용하세요.
 
 ### 10.6.1 상황별 라우터
 

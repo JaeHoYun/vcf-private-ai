@@ -10,10 +10,10 @@
 
 ## 4.1 결정: NSX 오버레이/VPC vs 물리망 VLAN 기반
 
-**무엇을 정하나** — 워크로드 네트워킹을 NSX 오버레이(+VPC)로 소프트웨어 정의할지, 기존 물리 VLAN에 기반한 세그먼트로 구성할지.
+**무엇을 정하나.** 워크로드 네트워킹을 NSX 오버레이(+VPC)로 소프트웨어 정의할지, 기존 물리 VLAN에 기반한 세그먼트로 구성할지.
 
-- **경로 A — NSX 오버레이/VPC**: 소프트웨어 정의 네트워킹. VPC로 테넌트 셀프서비스와 자동 IPAM, 마이크로세그멘테이션을 제공. NSX Edge, 오버레이 전송 영역(TZ)이 필요하며 VKS와 통합이 긴밀함.
-- **경로 B — 물리망 VLAN 기반**: 기존 물리 VLAN에 직접 연결(VLAN 전송 영역). 오버레이 캡슐화 오버헤드와 Edge, 터널이 불필요. 단 자동화, 격리, 확장에 제약이 있고 VLAN을 수동 관리해야 함.
+- **경로 A. NSX 오버레이/VPC**: 소프트웨어 정의 네트워킹. VPC로 테넌트 셀프서비스와 자동 IPAM, 마이크로세그멘테이션을 제공. NSX Edge, 오버레이 전송 영역(TZ)이 필요하며 VKS와 통합이 긴밀함.
+- **경로 B. 물리망 VLAN 기반**: 기존 물리 VLAN에 직접 연결(VLAN 전송 영역). 오버레이 캡슐화 오버헤드와 Edge, 터널이 불필요. 단 자동화, 격리, 확장에 제약이 있고 VLAN을 수동 관리해야 함.
 
 | 차원 | NSX 오버레이/VPC | 물리망 VLAN |
 |------|-----------------|-------------|
@@ -28,7 +28,7 @@
 - 멀티테넌트와 셀프서비스, VKS VPC, 마이크로세그 규제 대응 → **NSX 오버레이/VPC**
 - 기존 VLAN에 대규모 투자, 단순 토폴로지, NSX 스킬 부족, 초저지연 요구 → **물리망 VLAN**
 
-**함정** — VKS의 VPC 모드는 오버레이 전송 영역을 전제로 합니다. VLAN만으로는 VPC 기반 테넌트 셀프서비스를 구성할 수 없으므로, 셀프서비스가 목표라면 오버레이를 전제해야 합니다.
+**함정.** VKS의 VPC 모드는 오버레이 전송 영역을 전제로 합니다. VLAN만으로는 VPC 기반 테넌트 셀프서비스를 구성할 수 없으므로, 셀프서비스가 목표라면 오버레이를 전제해야 합니다.
 
 관련: [⑤ 네트워크 보안과 격리](../../05-security/README.md) | [① 네트워크 Day-2](../../01-infra/docs/10-operations.md)
 
@@ -36,11 +36,11 @@
 
 ## 4.2 결정: AVI(NSX ALB) vs 내장 기본 LB + 서드파티 LB
 
-**무엇을 정하나** — 쿠버네티스 인그레스와 모델 엔드포인트의 로드밸런싱을 무엇으로 처리할지.
+**무엇을 정하나.** 쿠버네티스 인그레스와 모델 엔드포인트의 로드밸런싱을 무엇으로 처리할지.
 
-- **경로 A — AVI(NSX Advanced Load Balancer)**: VKS 클러스터 생성 시 AKO(Avi Kubernetes Operator)가 자동 설치되어 L7 로드밸런싱, WAF, Gateway API, DNS, 분석을 제공. 별도 라이선스와 Service Engine이 필요.
-- **경로 B — 내장 L4 LB**: Foundation Load Balancer(VDS 네트워킹 기본 L4) 또는 NSX Load Balancer(VCF 기본 L4). 단순하고 추가 비용이 적으나 L4에 한정.
-- **경로 C — 서드파티(클러스터 내장형) LB**: kube-vip, MetalLB 등을 클러스터 내부에 직접 배포해 VMware LB를 우회. 기존 표준 재사용, 특수 요구에 유연하나 직접 운영.
+- **경로 A. AVI(NSX Advanced Load Balancer)**: VKS 클러스터 생성 시 AKO(Avi Kubernetes Operator)가 자동 설치되어 L7 로드밸런싱, WAF, Gateway API, DNS, 분석을 제공. 별도 라이선스와 Service Engine이 필요.
+- **경로 B. 내장 L4 LB**: Foundation Load Balancer(VDS 네트워킹 기본 L4) 또는 NSX Load Balancer(VCF 기본 L4). 단순하고 추가 비용이 적으나 L4에 한정.
+- **경로 C. 서드파티(클러스터 내장형) LB**: kube-vip, MetalLB 등을 클러스터 내부에 직접 배포해 VMware LB를 우회. 기존 표준 재사용, 특수 요구에 유연하나 직접 운영.
 
 | 차원 | AVI | 내장 L4(Foundation, NSX) | 서드파티(kube-vip, MetalLB) |
 |------|-----|------------------------|---------------------------|
@@ -55,7 +55,7 @@
 - 단순 L4, 소규모, 랩, 테스트 → **내장 L4(Foundation, NSX)**
 - 특수 요구, 기존 LB 표준 재사용 → **서드파티(클러스터 내장형)**
 
-**L7 로드밸런서와 AI 게이트웨이는 다른 층입니다(D13)** — 위 결정은 인그레스와 엔드포인트의 로드밸런싱, 즉 경계(0계층)의 선택입니다. 키와 팀별 토큰 예산, 모델 별칭과 라우팅, 시맨틱 캐시, 가드레일 훅 같은 AI 특화 정책은 그 후단의 별도 계층(1계층 AI 게이트웨이)이 맡으며, PAIS 내장 게이트웨이(2계층)는 PAIS 자원의 인증과 복제본 로드밸런싱을 맡습니다. Avi 32.1.1은 MCP 로드밸런싱(세션 지속)과 MCP용 JWT 검증, Gateway API를 제공하지만 LLM 토큰 단위 한도는 문서화되어 있지 않으므로, 토큰 예산이 필요하면 1계층을 도입합니다. 세 계층의 책임 매트릭스와 현 시점 선택지는 [③ 05 5.7절](../../03-serving-api/docs/05-auth-and-gateway.md), 결정은 [D13](06-decision-forks.md)입니다.
+**L7 로드밸런서와 AI 게이트웨이는 다른 층입니다(D13).** 위 결정은 인그레스와 엔드포인트의 로드밸런싱, 즉 경계(0계층)의 선택입니다. 키와 팀별 토큰 예산, 모델 별칭과 라우팅, 시맨틱 캐시, 가드레일 훅 같은 AI 특화 정책은 그 후단의 별도 계층(1계층 AI 게이트웨이)이 맡으며, PAIS 내장 게이트웨이(2계층)는 PAIS 자원의 인증과 복제본 로드밸런싱을 맡습니다. Avi 32.1.1은 MCP 로드밸런싱(세션 지속)과 MCP용 JWT 검증, Gateway API를 제공하지만 LLM 토큰 단위 한도는 문서화되어 있지 않으므로, 토큰 예산이 필요하면 1계층을 도입합니다. 세 계층의 책임 매트릭스와 현 시점 선택지는 [③ 05 5.7절](../../03-serving-api/docs/05-auth-and-gateway.md), 결정은 [D13](06-decision-forks.md)입니다.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="../../assets/design-gateway-tiers-dark.svg">
@@ -68,10 +68,10 @@
 
 ## 4.3 결정: vSAN vs 서드파티와 외장 스토리지
 
-**무엇을 정하나** — 워크로드 도메인의 프린시플(주) 스토리지를 무엇으로 구성할지.
+**무엇을 정하나.** 워크로드 도메인의 프린시플(주) 스토리지를 무엇으로 구성할지.
 
-- **경로 A — vSAN**: 하이퍼컨버지드(HCI). VCF와 깊게 통합되고 SPBM(스토리지 정책)으로 관리, ESA로 고성능. 별도 SAN 없이 노드 디스크를 풀링.
-- **경로 B — 서드파티와 외장(NFS, VMFS on FC, vVol)**: 기존 스토리지 자산을 재사용하고 전용 데이터 서비스(중복제거, 스냅샷, 복제)를 활용. VCF 9.1은 워크로드 도메인 프린시플로 vSAN, NFS, VMFS on FC, vVol 4종을 지원.
+- **경로 A. vSAN**: 하이퍼컨버지드(HCI). VCF와 깊게 통합되고 SPBM(스토리지 정책)으로 관리, ESA로 고성능. 별도 SAN 없이 노드 디스크를 풀링.
+- **경로 B. 서드파티와 외장(NFS, VMFS on FC, vVol)**: 기존 스토리지 자산을 재사용하고 전용 데이터 서비스(중복제거, 스냅샷, 복제)를 활용. VCF 9.1은 워크로드 도메인 프린시플로 vSAN, NFS, VMFS on FC, vVol 4종을 지원.
 
 | 차원 | vSAN | 외장(NFS, FC, vVol) |
 |------|------|-------------------|
@@ -85,18 +85,18 @@
 - 그린필드, HCI 단순화, VCF 일원 운영 → **vSAN**
 - 기존 SAN/NAS 대규모 투자, 전용 데이터 서비스, 기존 운영팀 → **외장(NFS, FC, vVol)**
 
-**함정** — iSCSI는 VCF 9.1에서 프린시플 스토리지로 그린필드 배포하는 워크플로를 지원하지 않아 **보조(supplemental) 스토리지로만** 추가할 수 있습니다. 또한 모델 가중치, Harbor 미러, pgvector 용량은 별도 산정이 필요합니다 → ⑥ 스토리지 사이징.
+**함정.** iSCSI는 VCF 9.1에서 프린시플 스토리지로 그린필드 배포하는 워크플로를 지원하지 않아 **보조(supplemental) 스토리지로만** 추가할 수 있습니다. 또한 모델 가중치, Harbor 미러, pgvector 용량은 별도 산정이 필요합니다 → ⑥ 스토리지 사이징.
 
 관련: [⑥ 스토리지와 용량 사이징](../../06-sizing-cost/README.md) | [② VectorDB](../../02-vectordb/README.md)
 
 ---
 
-## 4.4 결정: VectorDB — DSM pgvector vs 외부 전용 벡터DB
+## 4.4 결정: VectorDB. DSM pgvector vs 외부 전용 벡터DB
 
-**무엇을 정하나** — RAG의 벡터 저장소를 VMware 검증 스택으로 구성할지, 외부 전용 벡터DB로 구성할지.
+**무엇을 정하나.** RAG의 벡터 저장소를 VMware 검증 스택으로 구성할지, 외부 전용 벡터DB로 구성할지.
 
-- **경로 A — DSM pgvector**: Data Services Manager의 PostgreSQL + pgvector(PAIS 검증 조합). PAIS Data Indexing과 통합되고 수명주기가 관리형이며, 관계형 SQL과 벡터 검색을 단일 DB에서 처리.
-- **경로 B — 외부 전용 벡터DB**: Milvus, Weaviate, Qdrant 등. 대규모 ANN, 고급 필터링, 샤딩에 강하나 VKS에 직접 배포해 자가 운영해야 하고 PAIS 공식 통합이 아닌 커스텀 경로.
+- **경로 A. DSM pgvector**: Data Services Manager의 PostgreSQL + pgvector(PAIS 검증 조합). PAIS Data Indexing과 통합되고 수명주기가 관리형이며, 관계형 SQL과 벡터 검색을 단일 DB에서 처리.
+- **경로 B. 외부 전용 벡터DB**: Milvus, Weaviate, Qdrant 등. 대규모 ANN, 고급 필터링, 샤딩에 강하나 VKS에 직접 배포해 자가 운영해야 하고 PAIS 공식 통합이 아닌 커스텀 경로.
 
 | 차원 | DSM pgvector | 외부 전용 벡터DB |
 |------|-------------|-----------------|
@@ -110,19 +110,19 @@
 - 표준 RAG, PAIS Data Indexing 활용, 운영 단순화 → **DSM pgvector**
 - 초대규모 벡터, 고급 ANN, 샤딩, 특수 기능 → **외부 전용 벡터DB**(자가 운영 감수)
 
-**Agent Builder, RAG 파이프라인 영향** — PAIS의 Data Indexing, Retrieval과 Agent Builder의 Knowledge Base는 검증된 pgvector 스택을 전제로 한 관리형 통합입니다. 외부 전용 벡터DB를 택하면 이 관리형 경로 대신 임베딩, 적재, 검색 파이프라인을 직접 구성해야 합니다. PAIS 2.1부터 검색이 MCP 도구로 노출되므로([④ 04 4.3절](../../04-rag/docs/04-inference-integration.md) 에이전틱 검색), 외부 벡터DB를 커스텀 MCP 검색 도구로 감싸 에이전트에 연결하는 구성은 가능합니다. 다만 이는 공식 제품 통합이 아닌 커스텀 경로이며, 관리형 Knowledge Base의 수명주기와 권한 통합 이점은 포기해야 합니다.
+**Agent Builder, RAG 파이프라인 영향.** PAIS의 Data Indexing, Retrieval과 Agent Builder의 Knowledge Base는 검증된 pgvector 스택을 전제로 한 관리형 통합입니다. 외부 전용 벡터DB를 택하면 이 관리형 경로 대신 임베딩, 적재, 검색 파이프라인을 직접 구성해야 합니다. PAIS 2.1부터 검색이 MCP 도구로 노출되므로([④ 04 4.3절](../../04-rag/docs/04-inference-integration.md) 에이전틱 검색), 외부 벡터DB를 커스텀 MCP 검색 도구로 감싸 에이전트에 연결하는 구성은 가능합니다. 다만 이는 공식 제품 통합이 아닌 커스텀 경로이며, 관리형 Knowledge Base의 수명주기와 권한 통합 이점은 포기해야 합니다.
 
 관련: [② VectorDB 가이드](../../02-vectordb/README.md) | [④ RAG 레퍼런스](../../04-rag/README.md)
 
 ---
 
-## 4.5 결정: 가용성과 DR — 단일 사이트 vs vSAN stretched vs 멀티사이트 DR
+## 4.5 결정: 가용성과 DR. 단일 사이트 vs vSAN stretched vs 멀티사이트 DR
 
-**무엇을 정하나** — 가용성과 재해복구를 어느 수준까지 설계할지.
+**무엇을 정하나.** 가용성과 재해복구를 어느 수준까지 설계할지.
 
-- **경로 A — 단일 사이트**: vSphere HA + vSAN FTT(장애 허용)로 호스트 장애를 흡수하고 백업과 복구로 데이터를 보호. 가장 단순과 저비용이나 사이트 전체 장애는 미보호.
-- **경로 B — vSAN stretched cluster**: 두 사이트 동기 복제 + witness로 RPO 0과 자동 페일오버. 사이트 간 저지연 링크가 필요하고 비용이 약 2배.
-- **경로 C — 멀티사이트 DR(active-passive)**: 별도 사이트로 비동기 복제, VCF Operations 기반 복구. RPO가 0보다 크고 GPU 자원 재배치를 함께 설계.
+- **경로 A. 단일 사이트**: vSphere HA + vSAN FTT(장애 허용)로 호스트 장애를 흡수하고 백업과 복구로 데이터를 보호. 가장 단순과 저비용이나 사이트 전체 장애는 미보호.
+- **경로 B. vSAN stretched cluster**: 두 사이트 동기 복제 + witness로 RPO 0과 자동 페일오버. 사이트 간 저지연 링크가 필요하고 비용이 약 2배.
+- **경로 C. 멀티사이트 DR(active-passive)**: 별도 사이트로 비동기 복제, VCF Operations 기반 복구. RPO가 0보다 크고 GPU 자원 재배치를 함께 설계.
 
 | 차원 | 단일 사이트 | stretched | 멀티사이트 DR |
 |------|------------|-----------|--------------|
@@ -131,7 +131,7 @@
 | 링크 요건 | 없음 | 저지연 동기 | 비동기 |
 | 복잡도 | 낮음 | 높음 | 중, 높음 |
 
-**GPU 가용성 주의** — vGPU VM은 vMotion이 일부 지원되지만 풀 패스스루(DirectPath) VM은 vMotion, HA에 제약이 있습니다(→ [3.2](03-compute-gpu-topology.md)). GPU 서빙의 무중단은 인프라 HA보다 **앱 레벨 replica(다중 인스턴스)** 로 확보하는 설계가 현실적입니다.
+**GPU 가용성 주의.** vGPU VM은 vMotion이 일부 지원되지만 풀 패스스루(DirectPath) VM은 vMotion, HA에 제약이 있습니다(→ [3.2](03-compute-gpu-topology.md)). GPU 서빙의 무중단은 인프라 HA보다 **앱 레벨 replica(다중 인스턴스)** 로 확보하는 설계가 현실적입니다.
 
 **상황별 권고**
 - 내부 PoC, 비핵심 → **단일 사이트 + 백업**
@@ -147,4 +147,4 @@
 또 하나는 메모리 티어링(NVMe)입니다. 9.1.1의 vSphere HA admission control은 DRAM을 티어드 메모리와 분리해 추적하므로, 페일오버 시 DRAM이 모자라 VM이 기동되지 않는 상황을 미리 방지합니다. 티어링으로 메모리를 확장한 GPU 호스트라면 N+1 계산을 총 메모리가 아니라 DRAM 기준으로 다시 해야 합니다([⑥ 03](../../06-sizing-cost/docs/03-compute-memory-sizing.md)). 운영 절차는 [① 06 6.2절](../../01-infra/docs/06-production.md)에 있습니다.
 
 ---
-[← 이전: 03 설계 결정 — 컴퓨트, GPU, VKS 토폴로지](03-compute-gpu-topology.md) | [목차](../README.md) | [다음: 05 설계 결정 — 멀티테넌시와 보안 설계 →](05-tenancy-security.md)
+[← 이전: 03 설계 결정: 컴퓨트, GPU, VKS 토폴로지](03-compute-gpu-topology.md) | [목차](../README.md) | [다음: 05 설계 결정: 멀티테넌시와 보안 설계 →](05-tenancy-security.md)

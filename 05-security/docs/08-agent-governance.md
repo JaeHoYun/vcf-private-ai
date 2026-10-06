@@ -9,7 +9,7 @@
 
 ---
 
-## 8.1 무엇이 달라지는가 — 모델 위험에서 행위자 위험으로
+## 8.1 무엇이 달라지는가. 모델 위험에서 행위자 위험으로
 
 2025년까지 OWASP의 LLM Top 10 하나로 다루던 위험 목록이 2026년에는 둘로 나뉘었습니다. LLM Top 10 2026 에디션(2026-08 공개)은 모델을 애플리케이션 안의 부품으로 간주하고 프롬프트 인젝션을 1위, 민감정보 노출을 2위, 과도한 권한을 3위로 선정했으며, 실제 사고 데이터를 반영해 순위를 다시 매겼습니다([OWASP GenAI LLM Top 10 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/)). 여기에 더해 OWASP Top 10 for Agentic Applications 2026(2025-12-09 공개)이 행위자 단위 위험을 따로 정의했습니다([OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)). 이 문서는 후자를 기본 구조로 사용합니다. [01 1.2절](01-threat-model.md)의 파이프라인 공격면 표는 2025 에디션 코드로 유지하되, 에이전트 단계는 이 표로 위임합니다.
 
@@ -28,7 +28,7 @@
 
 MITRE ATLAS는 2026년 갱신에서 에이전트 도구 호출을 통한 유출, 자격증명 수확, 오염된 도구 배포 같은 에이전트 기법을 추가했습니다([MITRE ATLAS](https://atlas.mitre.org/)). 탐지 규칙과 레드팀 시나리오를 만들 때 ASI 코드와 ATLAS 기법 ID를 함께 적어 두면 SOC와 같은 언어로 이야기할 수 있습니다.
 
-## 8.2 에이전트 신원 — 비인간 신원과 자격증명
+## 8.2 에이전트 신원. 비인간 신원과 자격증명
 
 에이전트 보안의 첫 원칙은 **에이전트마다 고유한 비인간 신원(NHI, Non-Human Identity)** 을 부여하는 것입니다. 사람 계정이나 다른 에이전트와 자격증명을 공유하면 사고가 났을 때 누구의 행위인지 가릴 수 없고, 권한이 누적되어도 알 수 없습니다. 원칙은 넷입니다.
 
@@ -88,7 +88,7 @@ PAIS는 네임스페이스별 에이전트 목록과 Tool Gallery의 "이 도구
 
 퇴역은 권한 회수로 끝나지 않습니다. 서비스 계정과 토큰 폐기, 도구 승인 해제, 지식베이스 연결 해제, 네트워크 정책 정리, 그리고 감사 로그와 게이트 기록의 보존까지가 절차입니다([앱 가이드 14](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/14-operations.md)).
 
-## 8.5 MCP 도구 공급망 — 사양, 도구 오염, 제3자 서버
+## 8.5 MCP 도구 공급망. 사양, 도구 오염, 제3자 서버
 
 MCP(Model Context Protocol)는 에이전트가 도구와 데이터에 연결되는 표준이며, 2025-12-09부터 Linux Foundation 산하 Agentic AI Foundation이 관리합니다([MCP 블로그, 2025-12-09](https://blog.modelcontextprotocol.io/posts/2025-12-09-mcp-joins-agentic-ai-foundation/)). 보안 관점에서 알아야 할 사양의 변화는 셋입니다.
 
@@ -124,7 +124,7 @@ PAIS 3.0의 MCP 클라이언트는 Streamable HTTP와 SSE 전송, 정적 토큰 
 
 이 체크리스트를 서비스 하나에 적용하는 기준(연결 요건, 신원 전달, 재승인 운영)은 [앱 가이드 09 9.10절 MCP 서버 등록 판정 기준](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/09-mcp-tools.md#910-mcp-서버-등록-판정-기준)에 있습니다.
 
-## 8.6 실행 격리 — 샌드박스, 메모리, 에이전트 간 통신
+## 8.6 실행 격리. 샌드박스, 메모리, 에이전트 간 통신
 
 **코드 실행 도구**(인터프리터, 셸, 스크립트 생성)는 ASI05의 직접 대상입니다. 실행은 커널 수준 격리(gVisor, Kata Containers, Firecracker 급)에서 네트워크 기본 거부, 읽기 전용 파일시스템, 시간과 CPU와 메모리 한도를 적용해 실행하며, 결과만 에이전트 컨텍스트로 반환합니다. VKS에서는 Pod Security Admission의 restricted 프로파일을 기본으로 적용하고([Configure PSA for VKS, Broadcom TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vsphere-supervisor-services-and-standalone-components/latest/managing-vsphere-kuberenetes-service-clusters-and-workloads/managing-security-for-tkg-service-clusters/configure-psa-for-tkr-1-25-and-later.html)), 정책 번들로 예외를 관리합니다([VKS Policy Bundle, Broadcom VCF Blog, 2026-08-04](https://blogs.vmware.com/cloud-foundation/2026/08/04/simplify-kubernetes-security-with-the-vmware-vsphere-kubernetes-service-policy-bundle/)). 격리 수준은 도구의 위험 등급에 비례하며, 첫 유스케이스에는 코드 실행 도구를 넣지 않는 것이 가장 싼 통제입니다.
 
@@ -142,7 +142,7 @@ PAIS 3.0의 MCP 클라이언트는 Streamable HTTP와 SSE 전송, 정적 토큰 
 
 연쇄 실패(ASI08)는 사람의 개입만으로 방지하지 못합니다. 단계 수와 시간 상한, 실패율 기반 차단기, 다단계 쓰기의 보상 매트릭스([앱 가이드 07 7.4절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/07-integration-write-design.md))가 함께 있어야 합니다.
 
-## 8.8 정책 집행 계층 — 도구 게이트웨이의 위치
+## 8.8 정책 집행 계층. 도구 게이트웨이의 위치
 
 [⑦ 06 D13](../../07-design/docs/06-decision-forks.md)의 AI 게이트웨이는 앱에서 모델로 가는 방향의 계층입니다. 에이전트 거버넌스에는 반대 방향, 곧 **에이전트에서 도구로 가는 경로**의 정책 집행 계층이 따로 필요합니다. 하는 일은 호출 단위 인가(이 에이전트가 이 사용자를 위해 이 도구를 이 인자로 불러도 되는가), 인자 검사와 레이트리밋, 승인 게이트의 강제, 모든 호출의 감사입니다. 두 게이트웨이는 다른 트래픽 평면에 있으므로 하나로 합치려 하지 않습니다.
 

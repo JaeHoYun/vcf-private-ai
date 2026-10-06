@@ -7,7 +7,7 @@
 
 ---
 
-## 8.1 curl — 가장 빠른 확인
+## 8.1 curl. 가장 빠른 확인
 
 ```bash
 # 공통 변수
@@ -32,7 +32,7 @@ curl -s -X POST "$BASE/agents/hr-assistant/chat/completions" \
 
 ---
 
-## 8.2 OpenAI Python SDK — base_url만 교체
+## 8.2 OpenAI Python SDK. base_url만 교체
 
 ```python
 from openai import OpenAI
@@ -63,7 +63,7 @@ for chunk in client.chat.completions.create(
 
 ---
 
-## 8.3 에이전트 호출 — RAG를 직접 안 짜는 경우
+## 8.3 에이전트 호출. RAG를 직접 안 짜는 경우
 
 에이전트의 OpenAI 호환 경로는 `agents/{id}` 하위에 위치합니다. 호출 방법은 두 가지입니다. SDK의 `base_url`을 에이전트 경로까지 포함하도록 지정하거나, 전체 경로를 직접 호출하면 됩니다.
 
@@ -84,11 +84,11 @@ print("세션:", data.get("session_id"))            # 다음 턴에 이어 붙�
 print("출처:", data.get("index_context_info"))    # 답변 근거 문서 → UI에 표시
 ```
 
-> 응답의 `session_id`, `index_context_info`가 Model Endpoint 대비 추가되는 핵심입니다([04.4](04-agent-rag-api.md#44-에이전트-채팅--post-agentsidchatcompletions)).
+> 응답의 `session_id`, `index_context_info`가 Model Endpoint 대비 추가되는 핵심입니다([04.4](04-agent-rag-api.md#44-에이전트-채팅-post-agentsidchatcompletions)).
 
 ---
 
-## 8.4 LangChain — 기존 자산 재사용 (패턴 2)
+## 8.4 LangChain. 기존 자산 재사용 (패턴 2)
 
 기존 LangChain RAG 코드가 있다면, LLM과 임베딩의 `base_url`만 사내 PAIS로 바꾸면 됩니다.
 
@@ -114,7 +114,7 @@ embeddings = OpenAIEmbeddings(
 
 ## 8.5 백엔드 중계(BFF, Backend For Frontend) 최소 골격
 
-프론트엔드가 PAIS를 직접 호출하지 않도록, 백엔드가 토큰을 보관하고 중계합니다([05.3](05-auth-and-gateway.md#53-토큰-운영--만료-갱신-보관)).
+프론트엔드가 PAIS를 직접 호출하지 않도록, 백엔드가 토큰을 보관하고 중계합니다([05.3](05-auth-and-gateway.md#53-토큰-운영-만료-갱신-보관)).
 
 ```python
 # FastAPI 예시 — 토큰은 서버에서만, 프론트는 이 엔드포인트만 호출
@@ -160,7 +160,7 @@ def chat(body: dict):
 
 ## 엔드포인트 전체 치트시트
 
-**OpenAI 호환 인터페이스** — `https://{fqdn}/api/v1/compatibility/openai/v1`
+**OpenAI 호환 인터페이스.** `https://{fqdn}/api/v1/compatibility/openai/v1`
 
 | 동작 | 메서드와 경로 |
 |------|------------|
@@ -171,7 +171,7 @@ def chat(body: dict):
 | 에이전트 조회/수정/삭제 | `GET` / `POST` / `DELETE /agents/{id}` |
 | 에이전트 채팅 | `POST /agents/{id}/chat/completions` |
 
-**컨트롤 플레인** — `https://{fqdn}/api/v1/control`
+**컨트롤 플레인.** `https://{fqdn}/api/v1/control`
 
 | 동작 | 메서드와 경로 |
 |------|------------|

@@ -84,7 +84,7 @@ UI로 구성할 수도 있지만, GitOps, 자동화를 위해 API로 구성하�
 | `name`, `description` | 에이전트 식별과 설명 |
 | `model` | 사용할 Completion Model Endpoint |
 | `instructions` | 시스템 지시(규칙, 톤, 제약) |
-| `tools[]` | 연결할 도구 (`link_type`, `tool_id`) — KB, MCP 도구 → [06](06-mcp-tools-api.md) |
+| `tools[]` | KB, MCP 도구 등 연결할 도구 (`link_type`, `tool_id`) → [06](06-mcp-tools-api.md) |
 | `session_max_length` | 세션 최대 길이(대화 맥락 한도) |
 | `session_summarization_strategy` | 맥락 초과 시 요약 전략 |
 | `index_reference_format` | 출처(참조) 표기 형식 (예: `structured` 또는 `null`) |
@@ -107,7 +107,7 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents' \
 
 ---
 
-## 4.4 에이전트 채팅 — `POST /agents/{id}/chat/completions`
+## 4.4 에이전트 채팅. `POST /agents/{id}/chat/completions`
 
 에이전트를 호출하는 런타임 엔드포인트입니다. 형태는 `chat/completions`와 같지만, **RAG, 세션이 자동으로 적용됩니다.**
 
@@ -130,7 +130,7 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents/hr-assista
 | `session_id` | PAIS가 관리하는 세션 식별자 | 다음 요청에 이어 붙이면 대화 맥락 유지 |
 | `index_context_info` | 답변에 사용된 출처(검색된 문서/청크) | 답변 UI에 "근거 문서" 표시, 환각 검증 |
 
-**두 번째 턴 — `session_id`를 이어 붙이기**
+**두 번째 턴에서 `session_id`를 이어 붙이기**
 
 첫 응답에서 받은 `session_id`를 **후속 요청에 그대로 실어 보내면** PAIS가 이전 맥락을 이어받습니다. 앱은 이전 `messages`를 다시 누적할 필요 없이, **이번 턴의 사용자 발화만** 보내면 됩니다(Model Endpoint와의 결정적 차이).
 
@@ -154,13 +154,13 @@ curl -s -X POST 'https://{fqdn}/api/v1/compatibility/openai/v1/agents/hr-assista
   -d '{"messages":[{"role":"user","content":"그럼 반차도 연차에서 차감되나요?"}]}'
 ```
 
-> **면책** — 위 `session_id`의 전달 위치(바디 필드명 `session_id` / 헤더명 `x-pais-session-id`)는 **예시**입니다. PAIS 버전에 따라 필드명, 헤더명, 전달 위치가 다를 수 있으므로, 적용 전 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 정확한 키를 확인하시기 바랍니다. `session_id`를 생략하면 매 요청이 **새 세션**으로 처리되어 맥락이 끊깁니다.
+> **면책.** 위 `session_id`의 전달 위치(바디 필드명 `session_id` / 헤더명 `x-pais-session-id`)는 **예시**입니다. PAIS 버전에 따라 필드명, 헤더명, 전달 위치가 다를 수 있으므로, 적용 전 [공식 API 레퍼런스](https://developer.broadcom.com/xapis/vmware-private-ai-service-api/latest/)와 제품 내 Sample Code로 정확한 키를 확인하시기 바랍니다. `session_id`를 생략하면 매 요청이 **새 세션**으로 처리되어 맥락이 끊깁니다.
 
-> **세션을 PAIS가 관리**하므로, 앱은 대화 이력을 직접 누적하지 않아도 됩니다(Model Endpoint와의 가장 큰 차이). 다만 사용자에게 보여줄 **대화 이력의 영구 저장**(감사와 재현용)은 여전히 앱이 자체 DB에 남기는 것을 권장합니다 — PAIS 세션은 운영용 맥락이지 앱의 영구 기록이 아닙니다.
+> **세션을 PAIS가 관리**하므로, 앱은 대화 이력을 직접 누적하지 않아도 됩니다(Model Endpoint와의 가장 큰 차이). 다만 사용자에게 보여줄 **대화 이력의 영구 저장**(감사와 재현용)은 여전히 앱이 자체 DB에 남기는 것을 권장합니다. PAIS 세션은 운영용 맥락이지 앱의 영구 기록이 아닙니다.
 
 ---
 
-## 4.5 Model Endpoint API vs Agent API — 최종 선택표
+## 4.5 Model Endpoint API vs Agent API. 최종 선택표
 
 | 상황 | 선택 |
 |------|------|

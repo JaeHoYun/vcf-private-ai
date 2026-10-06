@@ -6,11 +6,11 @@
 
 ---
 
-## 3.1 왜 PostgreSQL + pgvector인가 — 기술적 근거
+## 3.1 왜 PostgreSQL + pgvector인가. 기술적 근거
 
 부록의 경쟁 비교에서 10개의 Vector DB 솔루션을 비교했습니다. 이 섹션에서는 비교표 이면의 핵심 논리를 자세히 설명합니다. 도입 검토팀이 "왜 새로운 전용 벡터 DB가 아니라 PostgreSQL 확장을 선택해야 하는가"라는 질문에 명확히 답할 수 있도록 구성했습니다.
 
-### 3.1.1 전용 벡터 DB의 숨겨진 비용 — "빙산의 일각" 문제
+### 3.1.1 전용 벡터 DB의 숨겨진 비용. "빙산의 일각" 문제
 
 벡터 검색이 필요하다고 해서 Pinecone이나 Milvus 같은 전용 벡터 DB를 도입하면, 눈에 보이는 것보다 훨씬 많은 인프라와 운영 비용이 발생합니다. 이를 "빙산의 일각" 문제라 합니다.
 
@@ -31,7 +31,7 @@
 
 실제 사례 기반으로 비용을 비교하면, 전용 벡터 DB 구성의 경우 DB 서비스 비용에 더해 별도 PostgreSQL 인스턴스(메타데이터용), 데이터 동기화 인프라, 엔지니어링 오버헤드(월 20–40시간)가 추가됩니다. 반면 PostgreSQL + pgvector 단일 구성의 경우 단일 PostgreSQL 인스턴스에 pgvector 확장 비용 무료(오픈소스), 동기화 인프라 불필요, 엔지니어링 오버헤드도 월 5–10시간에 그칩니다. 실제 마이그레이션 사례에서 60–80%의 비용 절감이 보고되고 있습니다.
 
-### 3.1.2 "하나의 쿼리로 모든 것을" — SQL 통합의 실질적 가치
+### 3.1.2 "하나의 쿼리로 모든 것을". SQL 통합의 실질적 가치
 
 pgvector의 핵심 차별점은 벡터 검색과 관계형 데이터 조회를 **하나의 SQL 문으로 처리**할 수 있다는 것입니다. 이것이 왜 중요한지 실제 시나리오로 설명합니다.
 
@@ -58,7 +58,7 @@ LIMIT 10;
 
 이 차이는 프로덕션 환경의 안정성, 성능, 유지보수성에 직결됩니다.
 
-### 3.1.3 "80% 워크로드에 충분" — 현실적 규모 판단
+### 3.1.3 "80% 워크로드에 충분". 현실적 규모 판단
 
 벡터 DB 시장의 마케팅은 "수십억 벡터를 밀리초 단위로 검색"하는 극단적 시나리오를 강조합니다. 그러나 실제 엔터프라이즈 AI 워크로드의 규모는 다릅니다.
 
@@ -68,14 +68,14 @@ LIMIT 10;
 
 정리하면, "나중에 규모가 커지면 전용 벡터 DB로 전환하면 된다"기보다 "대부분의 경우 전환이 필요 없을 만큼 pgvector가 충분하다"가 현실에 더 가깝습니다.
 
-### 3.1.4 운영 전문성 — 30년 생태계의 힘
+### 3.1.4 운영 전문성. 30년 생태계의 힘
 
 PostgreSQL은 1996년 첫 릴리스 이후 약 30년간 전 세계에서 가장 활발하게 운영되어 온 오픈소스 데이터베이스입니다. 이 기간 동안 축적된 운영 지식, 도구, 인력 풀은 다른 어떤 벡터 DB도 단기간에 갖추기 어려운 자산입니다.
 
 | 운영 영역 | PostgreSQL (pgvector 포함) | 전용 Vector DB (Milvus, Qdrant 등) |
 |---|---|---|
 | **DBA 인력 풀** | 전 세계 수십만 명, 국내 수천 명 | 극소수, 국내 거의 없음 |
-| **백업/복구** | pg_dump, pg_basebackup, PITR — 30년간 검증 | 각 DB별 자체 도구, 성숙도 낮음 |
+| **백업/복구** | 30년간 검증된 pg_dump, pg_basebackup, PITR | 각 DB별 자체 도구, 성숙도 낮음 |
 | **모니터링** | Prometheus, Grafana, Datadog, pganalyze 등 | 제한된 통합, 자체 도구 의존 |
 | **HA/DR** | Streaming Replication, pg_auto_failover, Patroni | 각 DB별 자체 구현, 검증 사례 적음 |
 | **보안** | LDAP/AD 연동, SSL/TLS, Row-Level Security, 감사 로그 | 기본적 인증/인가, 금융 규제 대응 미비 |
@@ -83,7 +83,7 @@ PostgreSQL은 1996년 첫 릴리스 이후 약 30년간 전 세계에서 가장 
 
 실질적 의미: 금요일 밤에 벡터 DB 장애가 발생했을 때, PostgreSQL이면 기존 DBA가 대응할 수 있습니다. Milvus나 Weaviate면 해외 커뮤니티에 영어로 질문을 게시하고 답변을 기다려야 할 수 있습니다. 엔터프라이즈 환경에서는 이 차이가 장애 대응 속도를 좌우합니다.
 
-### 3.1.5 실제 마이그레이션 트렌드 — 이미 전환이 진행 중이다
+### 3.1.5 실제 마이그레이션 트렌드. 이미 전환이 진행 중이다
 
 2023년 이후, 전용 벡터 DB에서 PostgreSQL + pgvector로 전환하는 사례가 빠르게 늘고 있으며, 2024–2025년에 이 트렌드가 가속화되고 있습니다. 대표적인 사례를 들면 다음과 같습니다.
 
@@ -97,7 +97,7 @@ PostgreSQL은 1996년 첫 릴리스 이후 약 30년간 전 세계에서 가장 
 
 ---
 
-## 3.2 VCF DSM 기반 아키텍처 — pgvector의 가치를 극대화하는 방법
+## 3.2 VCF DSM 기반 아키텍처. pgvector의 가치를 극대화하는 방법
 
 앞 섹션에서 "왜 PostgreSQL + pgvector인가"를 설명했습니다. 이 섹션에서는 **왜 PostgreSQL을 직접 설치하지 않고 VCF DSM(Data Services Manager)을 통해 운영해야 하는가**를 설명합니다.
 
@@ -121,7 +121,7 @@ SQL Server는 DSM 9.1에서 Tech Preview 단계를 마치고 정식 GA되었으�
 
 핵심: **DSM은 VCF Add-on으로 확보하면 pgvector가 내장된 PostgreSQL을 프로비저닝할 수 있습니다.** 별도 벡터 DB를 추가 도입할 필요 없이, DSM에서 활성화하면 됩니다.
 
-### 3.2.2 DSM이 해결하는 문제 — "PostgreSQL을 직접 설치하면 안 되나요?"
+### 3.2.2 DSM이 해결하는 문제. "PostgreSQL을 직접 설치하면 안 되나요?"
 
 PostgreSQL을 VM에 직접 설치하여 pgvector를 사용하는 것은 기술적으로 가능합니다. 그러나 프로덕션 환경에서 이 접근은 많은 수동 작업과 리스크를 수반합니다. DSM이 이 문제를 어떻게 해결하는지 영역별로 살펴보겠습니다.
 
@@ -163,7 +163,7 @@ DSM은 PostgreSQL 엔진 업데이트와 OS 패치를 통합된 번들로 제공
 
 DSM에서는 UI 또는 API로 리소스 크기를 변경하면 DSM이 자동으로 VM 리소스를 조정하고, PostgreSQL 파라미터(shared_buffers, max_connections 등)를 재설정합니다. Standalone(1노드)과 Clustered(3노드) 간 Scale Out/In, VM Class 변경을 통한 Scale Up/Down이 가능하며, 디스크 확장도 온라인으로 처리할 수 있습니다.
 
-### 3.2.3 DSM의 아키텍처 구성 — 세 가지 페르소나
+### 3.2.3 DSM의 아키텍처 구성. 세 가지 페르소나
 
 DSM은 세 가지 역할(페르소나)에 최적화된 인터페이스를 제공합니다.
 
@@ -179,27 +179,27 @@ DSM UI에서 PostgreSQL 인스턴스 생성, HA 구성, 백업/복구, 파라미
 
 VCF Automation의 셀프서비스 카탈로그에서 데이터베이스를 요청합니다. Jira 티켓을 만들고 DBA의 수동 작업을 기다리는 대신, 카탈로그에서 "PostgreSQL + pgvector"를 선택하면 수 분 내에 접속 정보(Connection String)를 받아 즉시 개발을 시작할 수 있습니다. REST API를 통한 프로그래밍 방식 프로비저닝도 지원되어 CI/CD 파이프라인에 통합 가능합니다. DSM 9.1에서는 PostgreSQL/MySQL/SQL Server 전 엔진의 셀프서비스 프로비저닝이 지원됩니다.
 
-### 3.2.4 VCF 풀스택 통합 — DSM이 만드는 시너지
+### 3.2.4 VCF 풀스택 통합. DSM이 만드는 시너지
 
 DSM은 단독으로 동작하는 것이 아니라, VCF의 전체 소프트웨어 스택과 긴밀하게 통합됩니다. 각 컴포넌트가 독립 동작할 때보다 통합 구성에서 운영 효율이 높아집니다.
 
-#### vSAN — 스토리지 레이어
+#### vSAN. 스토리지 레이어
 
 vSAN Express Storage Architecture(ESA)가 pgvector 워크로드의 스토리지 기반을 제공합니다. FTT(Failures To Tolerate, 허용 가능 장애 수) 1(RAID-5) 또는 2(RAID-6)로 데이터 보호 수준을 선택할 수 있습니다. HNSW 인덱스는 읽기 집중 워크로드이므로 vSAN의 읽기 캐시 최적화가 직접적으로 벡터 검색 성능에 기여합니다. 별도의 SAN/NAS 스토리지를 구매하거나 관리할 필요가 없습니다. VCF 9.1에서는 vSAN ESA Global Deduplication과 향상된 압축이 GA되어 저장 시 암호화와 병행 가능하며, 대용량 벡터 테이블과 HNSW 인덱스의 스토리지 TCO 절감에 기여합니다.
 
-#### NSX — 네트워크 레이어
+#### NSX. 네트워크 레이어
 
 마이크로세그멘테이션을 통해 벡터 DB 트래픽을 격리합니다. 예를 들어 "RAG 애플리케이션 → pgvector DB"와 "일반 업무 → ERP DB" 트래픽을 네트워크 레벨에서 분리할 수 있습니다. 로드밸런싱, 방화벽 규칙이 소프트웨어 정의 방식으로 관리되므로 물리 네트워크 변경 없이 보안 정책을 적용할 수 있습니다.
 
-#### VCF Operations — 모니터링 레이어
+#### VCF Operations. 모니터링 레이어
 
 DSM은 PostgreSQL 및 MySQL 전용 VCF Operations Management Pack을 제공합니다. 데이터베이스 성능 메트릭(쿼리 지연, 연결 수, 버퍼 히트율 등)이 기존 인프라 모니터링 대시보드에 통합됩니다. DSM 9.x에서는 모든 메트릭이 VCF Operations로 전송되며, Prometheus 엔드포인트로도 내보낼 수 있습니다. 로그는 한 번에 DSM 어플라이언스와 모든 DB의 로그를 SYSLOG 엔드포인트로 전송할 수 있습니다. 벡터 검색 쿼리의 성능 이상을 기존 운영 워크플로우 내에서 감지하고 대응할 수 있습니다.
 
-#### VCF Automation — 자동화 레이어
+#### VCF Automation. 자동화 레이어
 
 DSM은 VCF Automation과 통합되어 셀프서비스 카탈로그, 블루프린트 기반 배포, 멀티테넌시를 지원합니다. Data Service Policy를 통해 특정 조직(Organization)이나 프로젝트에 할당되는 데이터 서비스 유형, 리소스 한도, 스토리지 정책을 정의할 수 있습니다. Terraform 등 IaC 도구와의 통합도 API를 통해 가능하여, 데이터베이스 라이프사이클을 코드로 관리하는 GitOps 워크플로우를 구현할 수 있습니다.
 
-### 3.2.5 VCF 아키텍처 레퍼런스 — pgvector 워크로드 구성
+### 3.2.5 VCF 아키텍처 레퍼런스. pgvector 워크로드 구성
 
 VCF 환경에서 pgvector 워크로드를 위한 아키텍처는 다음과 같이 구성됩니다.
 
@@ -265,7 +265,7 @@ VCF 환경에서 pgvector 워크로드를 위한 아키텍처는 다음과 같�
 
 ---
 
-## 3.3 Private AI Services — DSM + pgvector의 완성형
+## 3.3 Private AI Services. DSM + pgvector의 완성형
 
 ### 3.3.1 VMware Private AI Services(PAIS)와 pgvector의 관계
 
@@ -291,21 +291,21 @@ PAIS의 RAG 워크플로우를 단계별로 상세히 설명합니다.
 
 **Phase 1: 지식 기반 구축 (오프라인, 주기적 실행)**
 
-1단계 — 데이터 소스 연결: PAIS의 Data Indexing & Retrieval 서비스가 Google Drive, Confluence, SharePoint, S3 등 기업의 문서 저장소에 연결합니다.
+1단계 데이터 소스 연결: PAIS의 Data Indexing & Retrieval 서비스가 Google Drive, Confluence, SharePoint, S3 등 기업의 문서 저장소에 연결합니다.
 
-2단계 — 문서 청킹: 연결된 문서를 의미 단위로 분할(chunking)합니다. 문서의 구조에 따라 문단, 문장, 테이블 등을 적절한 크기로 나눕니다.
+2단계 문서 청킹: 연결된 문서를 의미 단위로 분할(chunking)합니다. 문서의 구조에 따라 문단, 문장, 테이블 등을 적절한 크기로 나눕니다.
 
-3단계 — 임베딩 생성: Model Runtime에서 서빙되는 임베딩 모델(예: vLLM/Infinity 기반)이 각 chunk를 벡터로 변환합니다.
+3단계 임베딩 생성: Model Runtime에서 서빙되는 임베딩 모델(예: vLLM/Infinity 기반)이 각 chunk를 벡터로 변환합니다.
 
-4단계 — 벡터 저장: 생성된 벡터가 DSM이 관리하는 PostgreSQL + pgvector 데이터베이스에 저장됩니다. 원본 텍스트, 메타데이터, 벡터가 모두 같은 DB에 위치합니다.
+4단계 벡터 저장: 생성된 벡터가 DSM이 관리하는 PostgreSQL + pgvector 데이터베이스에 저장됩니다. 원본 텍스트, 메타데이터, 벡터가 모두 같은 DB에 위치합니다.
 
-5단계 — 주기적 갱신: 데이터 소스의 변경을 감지하여 지식 기반을 자동으로 업데이트합니다. 스케줄 기반 또는 온디맨드 갱신이 가능합니다.
+5단계 주기적 갱신: 데이터 소스의 변경을 감지하여 지식 기반을 자동으로 업데이트합니다. 스케줄 기반 또는 온디맨드 갱신이 가능합니다.
 
 **Phase 2: 질의 응답 (실시간)**
 
 사용자가 질문을 입력하면 → Agent Builder의 에이전트가 질문을 수신하고 → 임베딩 모델이 질문을 벡터로 변환하며 → pgvector에서 유사도 검색을 수행하여 관련 문서 chunk를 추출하고 → (선택적) Re-ranker가 검색 결과를 재정렬한 뒤 → LLM이 검색된 문서를 컨텍스트로 사용하여 답변을 생성하면 → 사용자에게 출처와 함께 답변이 전달됩니다.
 
-### 3.3.3 PAIS + DSM 구성 시 얻는 것 — "풀 매니지드 Private RAG"
+### 3.3.3 PAIS + DSM 구성 시 얻는 것. "풀 매니지드 Private RAG"
 
 PAIS와 DSM을 결합하면 퍼블릭 클라우드의 RAG 서비스(AWS Bedrock Knowledge Base, Azure AI Search 등)와 동등한 기능을 프라이빗 클라우드에서 제공합니다.
 
@@ -326,27 +326,27 @@ PAIS와 DSM을 결합하면 퍼블릭 클라우드의 RAG 서비스(AWS Bedrock 
 
 ---
 
-## 3.4 Why VMware — pgvector 가치 극대화의 6가지 이유
+## 3.4 Why VMware. pgvector 가치 극대화의 6가지 이유
 
 기초 분석에서 pgvector의 기술적 우수성을, 부록에서 경쟁 대비 포지셔닝을, 이 문서에서 VCF DSM 아키텍처를 설명했습니다. 이를 종합하여 "왜 VMware VCF + DSM 환경에서 pgvector를 사용해야 하는가"에 대한 6가지 이유를 정리합니다.
 
-### 3.4.1 "이미 가지고 있다" — 추가 도입 최소화
+### 3.4.1 "이미 가지고 있다". 추가 도입 최소화
 
 VCF에 DSM Add-on을 더하면 pgvector가 내장된 PostgreSQL을 프로비저닝할 수 있고, PAIS의 소프트웨어 서비스도 VCF 구독에 포함됩니다. 단, GPU 워크로드 실행을 위한 NVIDIA AI Enterprise 라이선스와 GPU 하드웨어는 별도로 확보해야 합니다. 별도의 전용 벡터 DB 라이선스, SaaS 구독, 오픈소스 벡터 DB 운영 인력을 추가로 확보할 필요가 없습니다. Pinecone, Zilliz Cloud 등 상용 벡터 DB는 별도 구독 비용이 발생하지만, DSM의 pgvector는 VCF + DSM 구성 내에서 추가 벡터 DB 없이 사용할 수 있습니다.
 
-### 3.4.2 "Day-0부터 Day-2까지 자동화" — 운영 부담 최소화
+### 3.4.2 "Day-0부터 Day-2까지 자동화". 운영 부담 최소화
 
 DB를 직접 설치하면 프로비저닝, HA 구성, 백업 설정, 패치 적용, 스케일링을 모두 수동으로 해야 합니다. Milvus를 Kubernetes에 배포하면 etcd, MinIO, Pulsar 등의 의존성을 함께 관리해야 합니다. DSM은 이 모든 라이프사이클을 자동화합니다. 프로비저닝부터 패치, 백업, HA, 스케일링까지 UI 또는 API 한 번으로 처리됩니다. 인프라팀은 벡터 DB 운영 부담 대신 서비스 개선에 집중할 수 있습니다.
 
-### 3.4.3 "인프라 통제권 유지" — VI Admin의 거버넌스
+### 3.4.3 "인프라 통제권 유지". VI Admin의 거버넌스
 
 개발팀이 각자 Chroma, Qdrant, Pinecone을 도입하면 인프라팀 입장에서 "데이터 스프롤"이 발생합니다. 어디에 어떤 데이터가 있는지 파악이 어렵고, 보안 정책 적용이 일관되지 않으며, 비용 예측과 청구가 복잡해집니다. DSM의 Infrastructure Policy는 데이터베이스가 배포될 컴퓨트, 스토리지, 네트워크를 VI Admin이 중앙에서 정의합니다. 개발팀은 셀프서비스로 DB를 프로비저닝하되, 인프라팀이 설정한 가드레일 안에서만 동작합니다.
 
-### 3.4.4 "Private AI 풀스택 통합" — 엔드투엔드 RAG 파이프라인
+### 3.4.4 "Private AI 풀스택 통합". 엔드투엔드 RAG 파이프라인
 
 pgvector 단독이 아니라, PAIS의 Model Gallery → Model Runtime → Data Indexing & Retrieval → Agent Builder → DSM(pgvector)가 하나의 통합된 RAG 파이프라인을 구성합니다. 각 컴포넌트를 별도로 조합하는 DIY 방식 대비 구축 시간이 대폭 단축되고, 단일 벤더 지원을 받을 수 있습니다. VCF Automation을 통해 "PostgreSQL + pgvector 데이터베이스", "RAG 워크스테이션", "Kubernetes RAG 클러스터"를 카탈로그 아이템으로 원클릭 프로비저닝할 수 있습니다.
 
-### 3.4.5 "금융 규제 대응" — 데이터 주권과 컴플라이언스
+### 3.4.5 "금융 규제 대응". 데이터 주권과 컴플라이언스
 
 한국 금융권은 금융감독원의 클라우드 컴퓨팅 이용 가이드라인, 전자금융감독규정, 개인정보보호법에 의해 데이터 위치와 접근에 대한 엄격한 규제를 받습니다. VCF + DSM + pgvector 구성은 다음으로 대응합니다.
 
@@ -358,7 +358,7 @@ pgvector 단독이 아니라, PAIS의 Model Gallery → Model Runtime → Data I
 
 Pinecone(SaaS)이나 Zilliz Cloud는 데이터가 해외 클라우드에 저장되므로 금융권 도입에 근본적인 장벽이 있습니다. Milvus나 Qdrant를 Self-hosted로 구성해도 HA, 백업, 보안, 모니터링을 자체 구현해야 하며, 금융감독원의 감사 요구에 대응하기 위한 증적 확보가 어렵습니다.
 
-### 3.4.6 "점진적 확장 경로" — 시작은 작게, 필요하면 크게
+### 3.4.6 "점진적 확장 경로". 시작은 작게, 필요하면 크게
 
 DSM에서 pgvector로 시작하면 다음과 같은 점진적 확장 경로가 열립니다.
 

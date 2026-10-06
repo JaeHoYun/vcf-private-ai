@@ -4,7 +4,7 @@
 
 "답이 그럴듯하다"와 "답이 맞다"는 다릅니다. 측정 없이는 어디가 문제인지 알 수 없습니다. 02–05의 모든 결정(청크 크기, top-k, 리랭킹, 프롬프트)은 여기서 검증과 조정됩니다.
 
-## 6.1 무엇을 측정하나 — RAG는 두 부분
+## 6.1 무엇을 측정하나. RAG는 두 부분
 
 RAG 품질은 **검색(retrieval)** 과 **생성(generation)** 으로 나눠 봐야 병목을 파악할 수 있습니다.
 
@@ -27,7 +27,7 @@ RAG 품질은 **검색(retrieval)** 과 **생성(generation)** 으로 나눠 봐
 
 ## 6.3 평가 방법
 
-- **LLM-as-judge**: 사내 PAIS 모델로 faithfulness/relevancy를 채점. 채점도 사내에서 — 평가 데이터가 외부로 안 나갑니다.
+- **LLM-as-judge**: 사내 PAIS 모델로 faithfulness/relevancy를 채점. 채점도 사내에서 수행하므로 평가 데이터가 외부로 반출되지 않습니다.
 - **검색 지표는 결정적 계산**: recall/precision은 골든셋의 근거 문서 ID와 검색 결과를 비교해 코드로 산출(모델 불필요).
 - **회귀 테스트**: 청킹, 모델, 프롬프트를 바꿀 때마다 골든셋 전체를 실행해 **점수 회귀가 없는지** 확인. CI에 통합하면 품질 저하를 배포 전에 감지합니다.
 
@@ -38,7 +38,7 @@ RAG 품질은 **검색(retrieval)** 과 **생성(generation)** 으로 나눠 봐
 - **RAGAS**: faithfulness, answer relevancy, context recall, context precision을 핵심 지표로 제공하며, 각 지표는 **0–1(높을수록 좋음)** 스케일입니다([RAGAS Metrics](https://docs.ragas.io/en/v0.1.21/concepts/metrics/), [Faithfulness](https://docs.ragas.io/en/v0.1.21/concepts/metrics/faithfulness.html)). faithfulness는 "답변의 모든 주장이 주어진 컨텍스트에서 추론 가능한가"로 정의됩니다.
 - **DeepEval**: 동일 계열 지표를 제공하고 **임계값 기반 통과/실패(pass/fail)** 와 CI/CD 통합이 깔끔합니다. 예를 들어 `ContextualRecallMetric(threshold=0.7)`, `AnswerRelevancyMetric(threshold=0.8)` 처럼 지표별 임계를 지정합니다([DeepEval Faithfulness](https://deepeval.com/docs/metrics-faithfulness), [Contextual Recall](https://deepeval.com/docs/metrics-contextual-recall), [RAG Evaluation](https://deepeval.com/guides/guides-rag-evaluation)).
 
-**정량 합격 임계 — 예시(반드시 환경별 조정)**
+**정량 합격 임계 예시(반드시 환경별 조정)**
 
 아래 값은 **출발점 예시**일 뿐, 도메인, 모델, 골든셋 난이도에 따라 반드시 보정해야 합니다. "답 없음" 케이스가 많은 보수적 Q&A는 faithfulness를 더 높게, 폭넓은 탐색형은 recall을 더 높게 설정하는 식입니다.
 

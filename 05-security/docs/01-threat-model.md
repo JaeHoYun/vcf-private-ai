@@ -110,9 +110,9 @@ OWASP 2025 개정에서 시스템 프롬프트 유출(LLM07)과 벡터와 임베
 
 모든 위협을 동시에 차단할 수는 없으므로, 자산 가치 × 발생 가능성 × 노출도로 우선순위를 정합니다.
 
-- 즉시(P0): 교차테넌트 누수(LLM08), 공급망 변조(LLM03) — 격리와 서명이 깨지면 피해가 비가역적.
-- 단기(P1): 간접 프롬프트 인젝션(LLM01), 과도한 권한(LLM06) — RAG, 에이전트 도입 시 노출면 급증.
-- 지속(P2): 무한 소비(LLM10), 오정보(LLM09) — 가용성과 신뢰도 저하, 운영 모니터링으로 흡수.
+- 즉시(P0): 교차테넌트 누수(LLM08), 공급망 변조(LLM03). 격리와 서명이 깨지면 피해가 비가역적.
+- 단기(P1): 간접 프롬프트 인젝션(LLM01), 과도한 권한(LLM06). RAG, 에이전트 도입 시 노출면 급증.
+- 지속(P2): 무한 소비(LLM10), 오정보(LLM09). 가용성과 신뢰도 저하, 운영 모니터링으로 흡수.
 
 우선순위는 조직 데이터 민감도와 규제 환경(예: 금융, 공공, 제조)에 따라 재평가가 필요하며, "확인 필요" 항목은 단정하지 말고 PoC로 검증합니다.
 
@@ -149,8 +149,8 @@ OWASP 2025 개정에서 시스템 프롬프트 유출(LLM07)과 벡터와 임베
 ---
 
 ### 참고 출처
-- [Broadcom TechDocs — Deploy a GPU-Accelerated Workload Domain](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)
-- [Broadcom VCF Blog — Secure Private AI with Broadcom (Part 2, Artifact Mirroring Tool/에어갭)](https://blogs.vmware.com/cloud-foundation/2026/04/30/guide-to-secure-private-ai-with-broadcom-part-2/)
+- [Broadcom TechDocs, Deploy a GPU-Accelerated Workload Domain](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-0/private-ai-foundation-9-x/deploying-private-ai-foundation-with-nvidia/deploy-a-vi-workload-domain-in-vmware-cloud-foundation.html)
+- [Broadcom VCF Blog, Secure Private AI with Broadcom (Part 2, Artifact Mirroring Tool/에어갭)](https://blogs.vmware.com/cloud-foundation/2026/04/30/guide-to-secure-private-ai-with-broadcom-part-2/)
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
 - [OWASP GenAI LLM Top 10 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/)
 - [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)

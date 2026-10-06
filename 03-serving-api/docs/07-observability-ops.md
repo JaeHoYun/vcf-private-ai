@@ -6,7 +6,7 @@
 
 ---
 
-## 7.1 토큰 사용량 — 응답에 들어 있는 1차 신호
+## 7.1 토큰 사용량. 응답에 들어 있는 1차 신호
 
 모든 추론 응답의 `usage` 필드가 가장 기본적인 운영 신호입니다. 별도 도구 없이 바로 사용할 수 있습니다.
 
@@ -39,7 +39,7 @@ PAIS 3.0은 트레이싱 범위를 "LLM 상호작용 전체"로 넓혔다고 밝
 
 ---
 
-## 7.3 Grafana 기반 PAIS 관측성 — 모델 health, quality, behavior
+## 7.3 Grafana 기반 PAIS 관측성. 모델 health, quality, behavior
 
 PAIS는 OTel 트레이싱과 더불어 **관측성 프레임워크로 AI 메트릭 대시보드**를 제공합니다(2.1부터). 에이전트에 사용되는 모델의 **health(가용성), quality(품질), behavior(동작)** 을 추적하도록 설계되어 있으며, 메트릭 시각화는 **Grafana**에 띄우는 것을 전제로 합니다. (VCF 9.1 블로그: "These AI Metrics dashboards require enterprises to deploy Grafana".)
 
@@ -62,9 +62,9 @@ OpenTelemetry Collector ──▶ 메트릭 백엔드(Prometheus 등)
                         (모델 health, quality, behavior)
 ```
 
-> **전제 조건** — AI 메트릭 대시보드는 조직이 **Grafana를 직접 배포**해야 동작합니다. 즉 관측성은 "켜져 있는" 기능이 아니라 **배포하고 연결해야 하는** 구성입니다. 정확한 메트릭 항목과 대시보드 구성은 적용 직전 [PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)와 [VCF 9.1 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/)로 확인하시기 바랍니다.
+> **전제 조건.** AI 메트릭 대시보드는 조직이 **Grafana를 직접 배포**해야 동작합니다. 즉 관측성은 "켜져 있는" 기능이 아니라 **배포하고 연결해야 하는** 구성입니다. 정확한 메트릭 항목과 대시보드 구성은 적용 직전 [PAIS 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-services-release-notes.html)와 [VCF 9.1 블로그](https://blogs.vmware.com/cloud-foundation/2026/05/05/streamline-simplify-and-protect-all-your-ai-workloads-with-vcf-9-1/)로 확인하시기 바랍니다.
 
-**PAIS 3.0에서 달라진 것** — Grafana를 직접 배포해야 한다는 전제는 같지만, 3.0은 직접 배포한 Grafana에 적용할 **예시 Grafana 구성**을 제공하고, 모델과 에이전트 메트릭을 PAIS UI에서 실시간 대시보드로 바로 보여 주며, 추론 백엔드의 헬스를 실시간으로 노출합니다. 2.1에서 "대시보드를 어떻게 구성하나"가 조직의 몫이었다면 3.0은 출발점을 줍니다. 같은 시기에 나온 VCF Operations 9.1.1은 Grafana 대시보드 임포트와 VKS 메트릭의 OpenTelemetry 2초 간격 스트리밍을 더해, 아래 7.4절의 인프라 레벨과 AI 서비스 레벨이 같은 표준(OTel)으로 연결됩니다.
+**PAIS 3.0에서 달라진 것.** Grafana를 직접 배포해야 한다는 전제는 같지만, 3.0은 직접 배포한 Grafana에 적용할 **예시 Grafana 구성**을 제공하고, 모델과 에이전트 메트릭을 PAIS UI에서 실시간 대시보드로 바로 보여 주며, 추론 백엔드의 헬스를 실시간으로 노출합니다. 2.1에서 "대시보드를 어떻게 구성하나"가 조직의 몫이었다면 3.0은 출발점을 줍니다. 같은 시기에 나온 VCF Operations 9.1.1은 Grafana 대시보드 임포트와 VKS 메트릭의 OpenTelemetry 2초 간격 스트리밍을 더해, 아래 7.4절의 인프라 레벨과 AI 서비스 레벨이 같은 표준(OTel)으로 연결됩니다.
 
 ---
 
@@ -100,7 +100,7 @@ AI 서비스 레벨 (PAIS)
 
 ---
 
-## 7.6 비용 — GPU가 핵심
+## 7.6 비용. GPU가 핵심
 
 | 비용 요소 | 비중 | 최적화 |
 |----------|------|--------|
@@ -124,7 +124,7 @@ AI 서비스 레벨 (PAIS)
 
 ---
 
-## 7.8 게이트웨이 메트릭과 캐싱 — 쇼백의 두 번째 원천
+## 7.8 게이트웨이 메트릭과 캐싱. 쇼백의 두 번째 원천
 
 7.1절의 `usage` 필드가 호출 단위 신호라면, 게이트웨이 계층([05 5.7절](05-auth-and-gateway.md))을 도입했을 때 얻는 것은 **키와 팀 단위로 집계된** 신호입니다. 게이트웨이 메트릭은 최소 다음을 담아야 쇼백과 용량 계획에 사용할 수 있습니다.
 
@@ -138,7 +138,7 @@ AI 서비스 레벨 (PAIS)
 
 이 지표를 VCF Operations의 GPU와 네임스페이스 지표와 합치면 "어느 팀이 어느 모델로 GPU를 얼마나 사용했는가"가 한 대시보드에서 집계됩니다([⑦ 05 5.1.1절 showback](../../07-design/docs/05-tenancy-security.md)).
 
-**캐싱의 두 층** — 추론 엔진 쪽의 **프리픽스 캐싱**(같은 앞부분의 계산을 재사용)과 게이트웨이나 앱 쪽의 **응답 캐시**(같은 질문의 답을 재사용)는 다른 층입니다. 앞쪽은 Model Runtime의 엔진 설정에 달려 있어 플랫폼 팀이 켜고 앱은 고정 프리픽스를 프롬프트 앞에 배치하는 것으로 협조합니다. 어떤 캐싱 옵션이 PAIS Model Runtime에서 노출되는지는 공식 문서로 확인하십시오. 뒤쪽은 게이트웨이나 앱이 구현하며, 사용자 범위 데이터가 포함된 응답은 캐시하지 않는 조건이 붙습니다. 앱 쪽의 절감 수단은 [앱 가이드 05 5.5절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/05-platform-consumption.md)에 있습니다.
+**캐싱의 두 층.** 추론 엔진 쪽의 **프리픽스 캐싱**(같은 앞부분의 계산을 재사용)과 게이트웨이나 앱 쪽의 **응답 캐시**(같은 질문의 답을 재사용)는 다른 층입니다. 앞쪽은 Model Runtime의 엔진 설정에 달려 있어 플랫폼 팀이 켜고 앱은 고정 프리픽스를 프롬프트 앞에 배치하는 것으로 협조합니다. 어떤 캐싱 옵션이 PAIS Model Runtime에서 노출되는지는 공식 문서로 확인하십시오. 뒤쪽은 게이트웨이나 앱이 구현하며, 사용자 범위 데이터가 포함된 응답은 캐시하지 않는 조건이 붙습니다. 앱 쪽의 절감 수단은 [앱 가이드 05 5.5절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/05-platform-consumption.md)에 있습니다.
 
 ## 7.9 배치 추론 실행 경로와 온라인 우선순위
 

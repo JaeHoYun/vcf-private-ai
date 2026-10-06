@@ -17,7 +17,7 @@
 | **VKS** | vSphere Kubernetes Service | 프로덕션용 GPU 가속 K8s 클러스터 | 프로덕션 서버팜 |
 | **DSM** | VMware Data Services Manager | 데이터베이스 서비스 (pgvector 포함) | 데이터베이스 관리 시스템 |
 
-> **PAIS는 별도 제품이 아니라 PAIF에 포함된 서비스 레이어입니다.** 그리고 "PAIF"는 두 가지 뜻으로 사용됩니다 — 수식어 없이 **PAIF**라 하면 VCF가 제공하는 Private AI Foundation **솔루션 전체**(GPU 인프라부터 서비스까지)를 가리키고, 큰 구성요소를 가를 때의 GPU, 지원 인프라 부분(공식 용어 **PAIF core functionality**)은 **"PAIF 코어 기능 계층"**(GPU, 지원 인프라를 포괄하는 PAIF의 인프라와 관리 계층)으로 구분해 적습니다. 한 줄로: **PAIF(솔루션) = PAIF 코어 기능 계층 + PAIS 서비스 계층**. PAIS는 공식 문서상 *"a Supervisor service ... installed as a package, separately from the VMware Private AI Foundation with NVIDIA core functionality"* 로 코어 기능과 **별도 설치**됩니다. 둘 다 VCF 코어 구독에 포함됩니다(1.2절). 계층 구조도는 [문서 02 2.1절](02-architecture.md#21-전체-계층-구조).
+> **PAIS는 별도 제품이 아니라 PAIF에 포함된 서비스 레이어입니다.** 그리고 "PAIF"는 두 가지 뜻으로 사용됩니다. 수식어 없이 **PAIF**라 하면 VCF가 제공하는 Private AI Foundation **솔루션 전체**(GPU 인프라부터 서비스까지)를 가리키고, 큰 구성요소를 가를 때의 GPU, 지원 인프라 부분(공식 용어 **PAIF core functionality**)은 **"PAIF 코어 기능 계층"**(GPU, 지원 인프라를 포괄하는 PAIF의 인프라와 관리 계층)으로 구분해 적습니다. 한 줄로: **PAIF(솔루션) = PAIF 코어 기능 계층 + PAIS 서비스 계층**. PAIS는 공식 문서상 *"a Supervisor service ... installed as a package, separately from the VMware Private AI Foundation with NVIDIA core functionality"* 로 코어 기능과 **별도 설치**됩니다. 둘 다 VCF 코어 구독에 포함됩니다(1.2절). 계층 구조도는 [문서 02 2.1절](02-architecture.md#21-전체-계층-구조).
 
 ---
 
@@ -43,12 +43,12 @@ VMware Cloud Foundation 9.1 (코어 구독)
 
 | 항목 | 포함 여부 | 비고 |
 |------|----------|------|
-| PAIF 코어 기능 계층 | 포함 — VCF 코어 구독 | 별도 구매 불필요 |
-| PAIS, DLVM 이미지 | 포함 — PAIF에 포함 | — |
-| 벡터 DB(pgvector) via DSM | 포함 — PAIS 사용분 한정 | DSM은 본래 별도 라이선스 Advanced Service이나, **PAIS가 벡터 DB용 DSM 사용 권한(entitlement)을 포함** |
-| **NVIDIA AI Enterprise (NVAIE)** | 미포함 — 별도 (NVIDIA 구매) | vGPU 드라이버, NIM, NeMo 등 |
-| GPU 하드웨어 | 미포함 — 별도 | BCG/HCL 확인 |
-| DSM 일반 DBaaS 확장 사용 | 미포함 — 별도 | 벡터 DB 외 용도로 DSM 확장 시 Advanced Service 라이선스 |
+| PAIF 코어 기능 계층 | VCF 코어 구독에 포함 | 별도 구매 불필요 |
+| PAIS, DLVM 이미지 | PAIF에 포함 | — |
+| 벡터 DB(pgvector) via DSM | PAIS 사용분에 한정해 포함 | DSM은 본래 별도 라이선스 Advanced Service이나, **PAIS가 벡터 DB용 DSM 사용 권한(entitlement)을 포함** |
+| **NVIDIA AI Enterprise (NVAIE)** | 미포함, NVIDIA에서 별도 구매 | vGPU 드라이버, NIM, NeMo 등 |
+| GPU 하드웨어 | 미포함, 별도 구매 | BCG/HCL 확인 |
+| DSM 일반 DBaaS 확장 사용 | 미포함, 별도 구매 | 벡터 DB 외 용도로 DSM 확장 시 Advanced Service 라이선스 |
 
 > **자주 틀리는 부분 1:** "PAIF는 Add-on이다" → 틀립니다. PAIF는 VCF 코어 포함입니다.
 > **자주 틀리는 부분 2:** "NVAIE도 VCF에 포함된다" → 틀립니다. NVAIE는 NVIDIA에서 별도 구매합니다. 도입 비용 산정 시 NVAIE 누락이 가장 흔한 실수입니다.
@@ -72,7 +72,7 @@ VMware Cloud Foundation 9.1 (코어 구독)
 
 **핵심:**
 - DLVM은 PAIS와 **독립적**으로 배포 가능 (vSphere 하이퍼바이저에 직접)
-- DLVM은 **모든 개발자가 사용하는 것이 아님** — 주로 Data Scientist, MLOps Engineer가 사용
+- DLVM은 **모든 개발자가 사용하는 것이 아님**. 주로 Data Scientist, MLOps Engineer가 사용
 - **App Developer는 DLVM 없이** PAIS API URL만으로 앱 개발 가능
 
 ---
@@ -192,10 +192,10 @@ App Developer가 MLOps/Data Scientist로부터 받는 것: **① PAIS Base URL �
 
 우리 모델을 사내 도메인과 데이터에 맞추는 방법은 세 가지이고, 이것이 **Private AI 설계의 첫 분기**입니다. 무엇을 고르느냐가 인프라 요구(학습용 GPU 여부), 일정, 비용을 좌우하므로, 구현 패턴([문서 04](04-dev-scenarios.md))을 정하기 전에 먼저 정리해야 합니다.
 
-- **프롬프트 엔지니어링** — 모델과 지식은 바꾸지 않고 **지시문(프롬프트)만** 다듬어 출력을 개선합니다. 가장 싸고 빠릅니다. 시스템 프롬프트로 역할, 규칙, 형식을 명시하고, 필요하면 예시 몇 개를 프롬프트에 넣습니다(예시를 주면 **few-shot**, 안 주고 바로 시키면 **zero-shot**). 추가 학습 없이 프롬프트 안에서만 유도하는 이 방식을 **인컨텍스트 러닝(in-context learning)** 이라 합니다.
-- **RAG** — 지식을 모델 밖(벡터 DB)에 저장하고 질문 시 검색해 프롬프트에 끼워 넣습니다. **자주 바뀌는 사내 지식, 출처 표기, 접근통제**가 중요할 때 적합합니다(상세 [④ RAG 레퍼런스](../../04-rag/README.md)).
-- **파인튜닝(fine-tuning)** — 모델 **가중치 자체를 사내 데이터로 추가 학습**해 도메인 능력을 심습니다. 문체, 특수 형식, 고정된 전문 도메인이 필요하고 지식이 자주 안 바뀔 때입니다. 비용과 시간이 가장 큽니다.
-  - **LoRA, QLoRA, 풀 파인튜닝** — 풀 파인튜닝은 전체 가중치를 갱신해 메모리와 비용이 최대입니다(다중 GPU). **LoRA**는 기존 가중치를 얼리고 작은 '어댑터'만 학습해 비용을 크게 줄이고, **QLoRA**는 거기에 양자화를 더해 단일 GPU로도 가능합니다. 대부분의 도메인 적응은 LoRA로 충분합니다.
+- **프롬프트 엔지니어링.** 모델과 지식은 바꾸지 않고 **지시문(프롬프트)만** 다듬어 출력을 개선합니다. 가장 싸고 빠릅니다. 시스템 프롬프트로 역할, 규칙, 형식을 명시하고, 필요하면 예시 몇 개를 프롬프트에 넣습니다(예시를 주면 **few-shot**, 안 주고 바로 시키면 **zero-shot**). 추가 학습 없이 프롬프트 안에서만 유도하는 이 방식을 **인컨텍스트 러닝(in-context learning)** 이라 합니다.
+- **RAG.** 지식을 모델 밖(벡터 DB)에 저장하고 질문 시 검색해 프롬프트에 끼워 넣습니다. **자주 바뀌는 사내 지식, 출처 표기, 접근통제**가 중요할 때 적합합니다(상세 [④ RAG 레퍼런스](../../04-rag/README.md)).
+- **파인튜닝(fine-tuning).** 모델 **가중치 자체를 사내 데이터로 추가 학습**해 도메인 능력을 심습니다. 문체, 특수 형식, 고정된 전문 도메인이 필요하고 지식이 자주 안 바뀔 때입니다. 비용과 시간이 가장 큽니다.
+  - **LoRA, QLoRA, 풀 파인튜닝.** 풀 파인튜닝은 전체 가중치를 갱신해 메모리와 비용이 최대입니다(다중 GPU). **LoRA**는 기존 가중치를 얼리고 작은 '어댑터'만 학습해 비용을 크게 줄이고, **QLoRA**는 거기에 양자화를 더해 단일 GPU로도 가능합니다. 대부분의 도메인 적응은 LoRA로 충분합니다.
 
 | 신호 | 우선 선택 |
 |------|-----------|
@@ -203,7 +203,7 @@ App Developer가 MLOps/Data Scientist로부터 받는 것: **① PAIS Base URL �
 | 일반적, 간단, 빨리 시작 | 프롬프트(+ few-shot) |
 | 문체, 형식, 전문 도메인 고정, 지식 안정 | 파인튜닝(RAG 병행 가능) |
 
-셋은 배타적이지 않습니다 — 흔히 **프롬프트 + RAG**를 기본으로 하고, 그래도 부족할 때만 파인튜닝을 더합니다. 파인튜닝 학습은 PAIS 밖(DLVM, NeMo)에서 수행해 Model Gallery로 반입하며(워크로드 위치는 [문서 04 4.3절](04-dev-scenarios.md)), 학습 GPU, 노드 비용은 [⑥ 사이징](../../06-sizing-cost/docs/02-gpu-sizing.md)을 참조합니다.
+셋은 배타적이지 않습니다. 흔히 **프롬프트 + RAG**를 기본으로 하고, 그래도 부족할 때만 파인튜닝을 더합니다. 파인튜닝 학습은 PAIS 밖(DLVM, NeMo)에서 수행해 Model Gallery로 반입하며(워크로드 위치는 [문서 04 4.3절](04-dev-scenarios.md)), 학습 GPU, 노드 비용은 [⑥ 사이징](../../06-sizing-cost/docs/02-gpu-sizing.md)을 참조합니다.
 
 ---
 

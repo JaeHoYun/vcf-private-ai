@@ -24,7 +24,7 @@
 
 > 프로덕션 배포 기준은 **VKS(vSphere Kubernetes Service)** 클러스터입니다. PAIF는 GPU-Accelerated Workload Domain(본 문서 약칭 **PAIF Workload Domain**)에서 VKS로 GPU 가속 클러스터를 프로비저닝하며, 초기 클러스터에는 **최소 3대의 GPU 탑재 ESX 호스트**가 요구됩니다. ([PAIF 요구사항](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/requirements-for-deploying-private-ai-foundation-with-nvidia.html))
 
-### 1.1.1 예산 추정 vs 확정 사이징 — 그리고 입력값이 없을 때
+### 1.1.1 예산 추정 vs 확정 사이징, 그리고 입력값이 없을 때
 
 사이징에는 목적이 다른 두 모드가 있습니다. 이를 구분하지 않으면 "실측이 정답"이라는 원칙과 "장비를 사기 전에 예산을 편성해야 한다"는 현실이 충돌합니다(닭-달걀).
 
@@ -33,9 +33,9 @@
 | **예산 추정(budgetary)** | 구매, 기안 전 규모, 비용 윤곽 | 1차 어림(오차 범위 넓음) | 공개 출처 1차 가정치 | 예산 레인지, 발주 전 검토안 |
 | **확정 사이징** | 발주와 SLA 약정의 근거 | 실측 기반 | 자사 PoC, 부하시험 | 확정 용량, 구성, 단가 |
 
-- 본 가이드의 산식과 표는 두 모드 모두에 적용되되, **확정값은 반드시 실측으로 갈음**합니다(1.5, 1.6). 실측을 못 하는 예산 단계에서는 출발 숫자가 필요하며, 이를 위해 **출처를 명시한 1차 가정치**를 [부록 A1 — 1차 가정치 레퍼런스](../appendix/A1-first-order-reference.md)에 격리해 두었습니다(예산 추정 전용, 강한 경고 포함).
-- **입력값 자체를 모를 때**(예: 사용자 수만 알고 동시성, QPS, SLA를 모를 때)는 [부록 A2 — 입력값 환산, 기본값, 모델 선택](../appendix/A2-inputs-and-defaults.md)으로 사업 언어를 사이징 입력으로 환산합니다.
-- 입력에서 비용까지 한 시나리오로 끝까지 다룬 예제는 [08 — 레퍼런스 시나리오](08-reference-scenario.md)에 있습니다.
+- 본 가이드의 산식과 표는 두 모드 모두에 적용되되, **확정값은 반드시 실측으로 갈음**합니다(1.5, 1.6). 실측을 못 하는 예산 단계에서는 출발 숫자가 필요하며, 이를 위해 **출처를 명시한 1차 가정치**를 [부록 A1 1차 가정치 레퍼런스](../appendix/A1-first-order-reference.md)에 격리해 두었습니다(예산 추정 전용, 강한 경고 포함).
+- **입력값 자체를 모를 때**(예: 사용자 수만 알고 동시성, QPS, SLA를 모를 때)는 [부록 A2 입력값 환산, 기본값, 모델 선택](../appendix/A2-inputs-and-defaults.md)으로 사업 언어를 사이징 입력으로 환산합니다.
+- 입력에서 비용까지 한 시나리오로 끝까지 다룬 예제는 [08 레퍼런스 시나리오](08-reference-scenario.md)에 있습니다.
 - 본 가이드 곳곳의 "실측 필요"는 [06.5 PoC→파일럿→프로덕션 로드맵](06-capacity-planning.md#65-poc--파일럿--프로덕션-용량-로드맵)에서 해소됩니다. 즉 예산 추정 → PoC 실측 → 확정의 순서입니다. PoC를 먼저 하고 그 결과로 예산을 산정해 프로젝트로 배정하는 조직도 있으며, 어느 순서든 확정값은 실측에서 나옵니다.
 
 ---
@@ -46,19 +46,19 @@ AI 워크로드는 자원 소비 패턴이 유형마다 크게 다릅니다. 사
 
 | 유형 | 설명 | 지배 자원 | GPU 메모리 압박 | 비고 |
 | --- | --- | --- | --- | --- |
-| 추론 — 단일 모델 | 1개 모델을 여러 요청에 서빙 | GPU 메모리 대역폭(decode), GPU 연산(prefill) | 모델 가중치 + KV 캐시 | 동시성↑ → KV 캐시 급증 |
-| 추론 — 멀티 모델 | 여러 모델을 한 인프라에서 서빙 | GPU 메모리(모델 수만큼 합산) | 높음 | MIG/vGPU 분할로 격리 검토 |
+| 단일 모델 추론 | 1개 모델을 여러 요청에 서빙 | GPU 메모리 대역폭(decode), GPU 연산(prefill) | 모델 가중치 + KV 캐시 | 동시성↑ → KV 캐시 급증 |
+| 멀티 모델 추론 | 여러 모델을 한 인프라에서 서빙 | GPU 메모리(모델 수만큼 합산) | 높음 | MIG/vGPU 분할로 격리 검토 |
 | RAG(검색증강생성) | 추론 + 임베딩 + 벡터 검색 | 추론 GPU + 벡터DB(CPU, RAM, 스토리지) | 추론과 동일 + 임베딩 모델 | 지식은 모델 밖 벡터DB에 저장 |
-| 추론 — 배치(오프라인) | 대량 문서를 일괄 요약, 분류, 추출. 대화가 없고 지연 목표 대신 처리량과 완료 시한이 목표 | GPU 연산(prefill 비중 높음), 처리량 | 장문 입력으로 KV 캐시 증가, 동시성은 드라이버가 고정 | 온라인과 GPU를 분리하거나 야간 윈도우. 임베딩 인덱싱도 같은 유형 |
+| 배치 추론(오프라인) | 대량 문서를 일괄 요약, 분류, 추출. 대화가 없고 지연 목표 대신 처리량과 완료 시한이 목표 | GPU 연산(prefill 비중 높음), 처리량 | 장문 입력으로 KV 캐시 증가, 동시성은 드라이버가 고정 | 온라인과 GPU를 분리하거나 야간 윈도우. 임베딩 인덱싱도 같은 유형 |
 | 파인튜닝(LoRA/QLoRA) | 어댑터만 학습, 가중치 동결 | GPU 메모리(옵티마이저와 그래디언트) | 풀 파인튜닝 대비 대폭 절감 | 배치성, 간헐적 부하 |
 | 학습/풀 파인튜닝 | 전체 가중치 갱신 | GPU 메모리와 다중 GPU 인터커넥트 | 매우 높음(가중치×수 배) | 다수 GPU, 노드 스케일아웃 |
 
 핵심 차이를 요약하면 다음과 같습니다.
 
-- **추론**은 GPU 메모리 안에 **모델 가중치 + KV 캐시 + 활성화 버퍼**가 모두 들어가야 합니다. KV 캐시는 동시 요청 수와 컨텍스트 길이에 비례해 커지며, 대형 모델에서는 가중치의 **2.5–5배**까지 커져 메모리 병목의 주원인으로 작용할 수 있습니다. ([BentoML — GPU Memory for LLM Inference](https://www.bentoml.com/blog/what-is-gpu-memory-and-why-it-matters-for-llm-inference))
+- **추론**은 GPU 메모리 안에 **모델 가중치 + KV 캐시 + 활성화 버퍼**가 모두 들어가야 합니다. KV 캐시는 동시 요청 수와 컨텍스트 길이에 비례해 커지며, 대형 모델에서는 가중치의 **2.5–5배**까지 커져 메모리 병목의 주원인으로 작용할 수 있습니다. ([BentoML, GPU Memory for LLM Inference](https://www.bentoml.com/blog/what-is-gpu-memory-and-why-it-matters-for-llm-inference))
 - **배치 추론**은 온라인 추론과 같은 엔진을 사용하지만 목표가 다릅니다. 지연이 아니라 "이 윈도우 안에 문서 N건"이 목표이므로, 동시성을 드라이버가 고정해 GPU 가동률을 높게 유지할 수 있고 그만큼 토큰당 비용이 낮아집니다([07 7.7절](07-tco-cost-model.md)). 대신 온라인 서비스와 GPU를 나눠 사용하면 대화형의 첫 토큰 지연이 늘어나므로, 사이징에서는 배치 전용 풀을 구성할지, 야간 유휴 용량으로 흡수할지를 먼저 정합니다([06 6.2절](06-capacity-planning.md)의 버스트 흡수와 [06 6.3절](06-capacity-planning.md)의 Reservation과 쿼터). 실행 경로와 우선순위 수단은 [③ 07 7.9절](../../03-serving-api/docs/07-observability-ops.md), 파이프라인 설계는 [앱 가이드 03 3.7절](https://github.com/JaeHoYun/vcf-private-ai-apps/blob/main/docs/03-design-patterns.md)에 있습니다.
-- **RAG**는 지식을 모델 파라미터가 아닌 **벡터 데이터베이스**에 저장하므로, 추론 GPU 외에 임베딩 모델과 벡터DB(주로 CPU/RAM/스토리지)를 별도로 산정해야 합니다. 검색 단계로 쿼리당 지연이 추가됩니다. ([Glean — RAG vs Fine-Tuning](https://www.glean.com/blog/retrieval-augemented-generation-vs-fine-tuning))
-- **LoRA/QLoRA 파인튜닝**은 전체 파라미터의 극히 일부만 학습해 풀 파인튜닝 대비 메모리를 크게 줄입니다(예: QLoRA로 7B급을 24GB GPU 단일 장비에서 학습 가능). 다만 모든 수치는 모델, 시퀀스 길이, 배치에 따라 달라지므로 **실측이 필요**합니다. ([DigitalOcean — GPU Options for Finetuning](https://www.digitalocean.com/resources/articles/gpu-options-finetuning))
+- **RAG**는 지식을 모델 파라미터가 아닌 **벡터 데이터베이스**에 저장하므로, 추론 GPU 외에 임베딩 모델과 벡터DB(주로 CPU/RAM/스토리지)를 별도로 산정해야 합니다. 검색 단계로 쿼리당 지연이 추가됩니다. ([Glean, RAG vs Fine-Tuning](https://www.glean.com/blog/retrieval-augemented-generation-vs-fine-tuning))
+- **LoRA/QLoRA 파인튜닝**은 전체 파라미터의 극히 일부만 학습해 풀 파인튜닝 대비 메모리를 크게 줄입니다(예: QLoRA로 7B급을 24GB GPU 단일 장비에서 학습 가능). 다만 모든 수치는 모델, 시퀀스 길이, 배치에 따라 달라지므로 **실측이 필요**합니다. ([DigitalOcean, GPU Options for Finetuning](https://www.digitalocean.com/resources/articles/gpu-options-finetuning))
 
 ---
 
@@ -75,13 +75,13 @@ AI 워크로드는 자원 소비 패턴이 유형마다 크게 다릅니다. 사
 | 가용성 | SLA, 다중화(N+1), 장애 도메인 | 노드 수, 헤드룸, 리던던시 |
 | 운영 | 멀티테넌시 격리, 성장률, 데이터 주권 | 분할 방식(MIG/vGPU), 용량 계획 |
 
-> 가중치 메모리 어림식: **메모리(GB) ≈ 파라미터 수(B) × 파라미터당 바이트 × (1 + 오버헤드)**. 예) 7B 모델을 FP16(2바이트)로 적재하면 가중치만 약 14GB입니다. 여기에 KV 캐시, 활성화, 프레임워크 오버헤드가 더해집니다. **이 값은 어림이며 환경별로 상이하므로 실측이 필요합니다.** ([Spheron — VRAM 계산](https://www.spheron.network/blog/gpu-memory-requirements-llm/), [VMware — LLM Inference Sizing Guidance](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/))
+> 가중치 메모리 어림식: **메모리(GB) ≈ 파라미터 수(B) × 파라미터당 바이트 × (1 + 오버헤드)**. 예) 7B 모델을 FP16(2바이트)로 적재하면 가중치만 약 14GB입니다. 여기에 KV 캐시, 활성화, 프레임워크 오버헤드가 더해집니다. **이 값은 어림이며 환경별로 상이하므로 실측이 필요합니다.** ([Spheron, VRAM 계산](https://www.spheron.network/blog/gpu-memory-requirements-llm/), [VMware, LLM Inference Sizing Guidance](https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/))
 
 지연 지표 정의(서빙 기준):
 
 - **TTFT(Time To First Token)**: 프롬프트 제출부터 첫 토큰 수신까지. 체감 응답성의 핵심 지표입니다. ([vLLM Metrics](https://docs.vllm.ai/en/stable/design/metrics/))
 - **ITL/TPOT**: 토큰 간 지연 / 출력 토큰당 평균 시간. 생성 속도를 좌우합니다.
-- **P95/P99**: 백분위 지연. 최악 응답성의 척도로 P99가 흔히 사용됩니다. ([Anyscale — LLM 지표](https://docs.anyscale.com/llm/serving/benchmarking/metrics))
+- **P95/P99**: 백분위 지연. 최악 응답성의 척도로 P99가 흔히 사용됩니다. ([Anyscale, LLM 지표](https://docs.anyscale.com/llm/serving/benchmarking/metrics))
 
 ---
 
@@ -103,7 +103,7 @@ AI 워크로드는 자원 소비 패턴이 유형마다 크게 다릅니다. 사
 | 4 클러스터 | VKS 클러스터와 노드 풀 구성 | [04](04-vks-cluster-sizing.md) |
 | 5 용량과 비용 | 용량 계획과 TCO | [06](06-capacity-planning.md), [07](07-tco-cost-model.md) |
 
-> GPU 공유가 필요한 경우, 하드웨어 격리가 강한 **MIG**(A100/H100/H200 등 지원)와 소프트웨어 기반 **vGPU 타임슬라이싱**을 워크로드 격리와 활용률 요구에 맞춰 선택합니다. 분할 방식에 따라 메모리 대역폭 활용률이 달라지므로 실측 비교가 권장됩니다. ([NVIDIA AI Enterprise — vGPU](https://docs.nvidia.com/ai-enterprise/release-4/latest/infra-software/vgpu/features.html))
+> GPU 공유가 필요한 경우, 하드웨어 격리가 강한 **MIG**(A100/H100/H200 등 지원)와 소프트웨어 기반 **vGPU 타임슬라이싱**을 워크로드 격리와 활용률 요구에 맞춰 선택합니다. 분할 방식에 따라 메모리 대역폭 활용률이 달라지므로 실측 비교가 권장됩니다. ([NVIDIA AI Enterprise, vGPU](https://docs.nvidia.com/ai-enterprise/release-4/latest/infra-software/vgpu/features.html))
 
 위 5단계는 워크로드 요구에서 자원을 도출하는 **순방향(수요 기반)** 절차입니다. 이미 고정된 자원에서 거꾸로 가능한 워크로드를 도출하는 **역방향(공급 제약)** 절차는 1.7을 참조하세요.
 
@@ -124,9 +124,9 @@ AI 워크로드는 자원 소비 패턴이 유형마다 크게 다릅니다. 사
 
 1. **벤치마크 환경 고정**: 대상 모델, 정밀도, GPU 등급, VKS 노드 풀을 프로덕션과 동일하게 구성하고, 한 번에 하나의 변수만 바꿉니다.
 2. **서빙 부하시험**: vLLM 벤치마크 등으로 요청률(request-rate)과 최대 동시성(max-concurrency)을 단계적으로 높이며 **TTFT, ITL, 종단 지연, 처리량**(throughput)을 측정합니다. 요청률을 무한대로 설정하면 최대 처리량을, 유한값으로 설정하면 통제된 부하를 시험할 수 있습니다. ([vLLM Benchmark CLI](https://docs.vllm.ai/en/latest/benchmarking/cli/))
-3. **지표 백분위 확인**: 평균이 아닌 **P95/P99 지연**으로 SLA 충족 여부를 판정합니다(특히 TTFT). ([Anyscale — 지표 해설](https://docs.anyscale.com/llm/serving/benchmarking/metrics))
+3. **지표 백분위 확인**: 평균이 아닌 **P95/P99 지연**으로 SLA 충족 여부를 판정합니다(특히 TTFT). ([Anyscale, 지표 해설](https://docs.anyscale.com/llm/serving/benchmarking/metrics))
 4. **포화점 탐색**: 동시성을 높이며 지연 목표를 깨는 지점(SLA 위반 임계 동시성)을 찾아 **노드당 안전 동시성**을 산출합니다.
-5. **GPU 활용률 검증**: GPU 메모리 점유, 연산 활용률, 메모리 대역폭을 관측해, MIG/vGPU 분할 시 활용률이 기대치(예: 타임슬라이싱 대비 MIG의 대역폭 활용률 우위)에 부합하는지 확인합니다. ([Spheron — MIG/Time-Slicing 가이드](https://www.spheron.network/blog/run-multiple-llms-one-gpu-mig-time-slicing-guide/))
+5. **GPU 활용률 검증**: GPU 메모리 점유, 연산 활용률, 메모리 대역폭을 관측해, MIG/vGPU 분할 시 활용률이 기대치(예: 타임슬라이싱 대비 MIG의 대역폭 활용률 우위)에 부합하는지 확인합니다. ([Spheron, MIG/Time-Slicing 가이드](https://www.spheron.network/blog/run-multiple-llms-one-gpu-mig-time-slicing-guide/))
 6. **추정 대비 보정**: 실측값과 1.4 추정치의 차이(델타)를 기록하고, 사이징 모델의 가정(오버헤드 계수와 동시성 가정)을 갱신합니다. 이 보정 루프는 [06-capacity-planning.md](06-capacity-planning.md)의 용량 재평가 주기에 편입합니다.
 
 > 검증 데이터(부하 조건, 측정 백분위, 하드웨어 사양)는 추적 가능하도록 기록해, 이후 02–07 문서의 산정 근거와 연결합니다. 측정 없이 확정한 수치는 어디까지나 가정임을 문서에 명시하세요.
@@ -156,7 +156,7 @@ AI 워크로드는 자원 소비 패턴이 유형마다 크게 다릅니다. 사
 | 4 할당 상한과 정책 | MIG/vGPU 프로파일, 네임스페이스 쿼터, GPU Reservation으로 워크로드별 최대치 고정, 오버서브 경계 설정 | [04](04-vks-cluster-sizing.md), [06](06-capacity-planning.md) |
 | 5 잔여, 다음 행동 | 남으면 신규 워크로드 여지, 부족하면 증설, 회수, 양자화 다운사이즈 판단(한계비용 관점) | [06](06-capacity-planning.md), [07](07-tco-cost-model.md) |
 
-> **역방향의 첫 함정 — 단일 박스와 플랫폼 최소요건.** GPU를 서버 한 대에 몰아 장착한 구성(예: "베어메탈 1대 × GPU 8장")은 프로덕션 VKS 클러스터의 **최소 3대 GPU 호스트 요건**(1.1)에 미달합니다. 따라서 단일 박스는 (가) GPU 독점 접근(DirectPath) 기반 단일 VM 용도, (나) dev, 배치 등 비프로덕션 용도, (다) 호스트 2대 추가 중 하나로 귀결됩니다. "장비는 있는데 프로덕션 플랫폼으로는 사용하기 어려운" 이 간극을 어떻게 메울지가 역방향 사이징의 핵심 의사결정입니다. 고정 자원에서 비용까지 한 시나리오로 끝까지 다룬 역방향 전 과정 예제는 [09 역방향 시나리오](09-reverse-sizing-scenario.md)에서 다룹니다.
+> **역방향의 첫 함정. 단일 박스와 플랫폼 최소요건.** GPU를 서버 한 대에 몰아 장착한 구성(예: "베어메탈 1대 × GPU 8장")은 프로덕션 VKS 클러스터의 **최소 3대 GPU 호스트 요건**(1.1)에 미달합니다. 따라서 단일 박스는 (가) GPU 독점 접근(DirectPath) 기반 단일 VM 용도, (나) dev, 배치 등 비프로덕션 용도, (다) 호스트 2대 추가 중 하나로 귀결됩니다. "장비는 있는데 프로덕션 플랫폼으로는 사용하기 어려운" 이 간극을 어떻게 메울지가 역방향 사이징의 핵심 의사결정입니다. 고정 자원에서 비용까지 한 시나리오로 끝까지 다룬 역방향 전 과정 예제는 [09 역방향 시나리오](09-reverse-sizing-scenario.md)에서 다룹니다.
 
 두 방향은 배타적이지 않습니다. 보통 역방향으로 "기보유 자원으로 가능한 범위"를 먼저 확정한 뒤, 부족분만 순방향으로 추가 산정합니다. 예산 추정 vs 확정 사이징(1.1.1)의 구분과 "추정으로 시작해 실측으로 보정"(1.5)하는 원칙은 두 방향 모두에 그대로 적용됩니다.
 

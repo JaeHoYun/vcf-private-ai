@@ -12,8 +12,8 @@
 
 **무엇을 정하나.** 워크로드 네트워킹을 NSX 오버레이(+VPC)로 소프트웨어 정의할지, 기존 물리 VLAN에 기반한 세그먼트로 구성할지.
 
-- **경로 A. NSX 오버레이/VPC**: 소프트웨어 정의 네트워킹. VPC로 테넌트 셀프서비스와 자동 IPAM, 마이크로세그멘테이션을 제공. NSX Edge, 오버레이 전송 영역(TZ)이 필요하며 VKS와 통합이 긴밀함.
-- **경로 B. 물리망 VLAN 기반**: 기존 물리 VLAN에 직접 연결(VLAN 전송 영역). 오버레이 캡슐화 오버헤드와 Edge, 터널이 불필요. 단 자동화, 격리, 확장에 제약이 있고 VLAN을 수동 관리해야 함.
+- **경로 A. NSX 오버레이/VPC.** 소프트웨어 정의 네트워킹. VPC로 테넌트 셀프서비스와 자동 IPAM, 마이크로세그멘테이션을 제공. NSX Edge, 오버레이 전송 영역(TZ)이 필요하며 VKS와 통합이 긴밀함.
+- **경로 B. 물리망 VLAN 기반.** 기존 물리 VLAN에 직접 연결(VLAN 전송 영역). 오버레이 캡슐화 오버헤드와 Edge, 터널이 불필요. 단 자동화, 격리, 확장에 제약이 있고 VLAN을 수동 관리해야 함.
 
 | 차원 | NSX 오버레이/VPC | 물리망 VLAN |
 |------|-----------------|-------------|
@@ -38,9 +38,9 @@
 
 **무엇을 정하나.** 쿠버네티스 인그레스와 모델 엔드포인트의 로드밸런싱을 무엇으로 처리할지.
 
-- **경로 A. AVI(NSX Advanced Load Balancer)**: VKS 클러스터 생성 시 AKO(Avi Kubernetes Operator)가 자동 설치되어 L7 로드밸런싱, WAF, Gateway API, DNS, 분석을 제공. 별도 라이선스와 Service Engine이 필요.
-- **경로 B. 내장 L4 LB**: Foundation Load Balancer(VDS 네트워킹 기본 L4) 또는 NSX Load Balancer(VCF 기본 L4). 단순하고 추가 비용이 적으나 L4에 한정.
-- **경로 C. 서드파티(클러스터 내장형) LB**: kube-vip, MetalLB 등을 클러스터 내부에 직접 배포해 VMware LB를 우회. 기존 표준 재사용, 특수 요구에 유연하나 직접 운영.
+- **경로 A. AVI(NSX Advanced Load Balancer).** VKS 클러스터 생성 시 AKO(Avi Kubernetes Operator)가 자동 설치되어 L7 로드밸런싱, WAF, Gateway API, DNS, 분석을 제공. 별도 라이선스와 Service Engine이 필요.
+- **경로 B. 내장 L4 LB.** Foundation Load Balancer(VDS 네트워킹 기본 L4) 또는 NSX Load Balancer(VCF 기본 L4). 단순하고 추가 비용이 적으나 L4에 한정.
+- **경로 C. 서드파티(클러스터 내장형) LB.** kube-vip, MetalLB 등을 클러스터 내부에 직접 배포해 VMware LB를 우회. 기존 표준 재사용, 특수 요구에 유연하나 직접 운영.
 
 | 차원 | AVI | 내장 L4(Foundation, NSX) | 서드파티(kube-vip, MetalLB) |
 |------|-----|------------------------|---------------------------|
@@ -70,8 +70,8 @@
 
 **무엇을 정하나.** 워크로드 도메인의 프린시플(주) 스토리지를 무엇으로 구성할지.
 
-- **경로 A. vSAN**: 하이퍼컨버지드(HCI). VCF와 깊게 통합되고 SPBM(스토리지 정책)으로 관리, ESA로 고성능. 별도 SAN 없이 노드 디스크를 풀링.
-- **경로 B. 서드파티와 외장(NFS, VMFS on FC, vVol)**: 기존 스토리지 자산을 재사용하고 전용 데이터 서비스(중복제거, 스냅샷, 복제)를 활용. VCF 9.1은 워크로드 도메인 프린시플로 vSAN, NFS, VMFS on FC, vVol 4종을 지원.
+- **경로 A. vSAN.** 하이퍼컨버지드(HCI). VCF와 깊게 통합되고 SPBM(스토리지 정책)으로 관리, ESA로 고성능. 별도 SAN 없이 노드 디스크를 풀링.
+- **경로 B. 서드파티와 외장(NFS, VMFS on FC, vVol).** 기존 스토리지 자산을 재사용하고 전용 데이터 서비스(중복제거, 스냅샷, 복제)를 활용. VCF 9.1은 워크로드 도메인 프린시플로 vSAN, NFS, VMFS on FC, vVol 4종을 지원.
 
 | 차원 | vSAN | 외장(NFS, FC, vVol) |
 |------|------|-------------------|
@@ -95,8 +95,8 @@
 
 **무엇을 정하나.** RAG의 벡터 저장소를 VMware 검증 스택으로 구성할지, 외부 전용 벡터DB로 구성할지.
 
-- **경로 A. DSM pgvector**: Data Services Manager의 PostgreSQL + pgvector(PAIS 검증 조합). PAIS Data Indexing과 통합되고 수명주기가 관리형이며, 관계형 SQL과 벡터 검색을 단일 DB에서 처리.
-- **경로 B. 외부 전용 벡터DB**: Milvus, Weaviate, Qdrant 등. 대규모 ANN, 고급 필터링, 샤딩에 강하나 VKS에 직접 배포해 자가 운영해야 하고 PAIS 공식 통합이 아닌 커스텀 경로.
+- **경로 A. DSM pgvector.** Data Services Manager의 PostgreSQL + pgvector(PAIS 검증 조합). PAIS Data Indexing과 통합되고 수명주기가 관리형이며, 관계형 SQL과 벡터 검색을 단일 DB에서 처리.
+- **경로 B. 외부 전용 벡터DB.** Milvus, Weaviate, Qdrant 등. 대규모 ANN, 고급 필터링, 샤딩에 강하나 VKS에 직접 배포해 자가 운영해야 하고 PAIS 공식 통합이 아닌 커스텀 경로.
 
 | 차원 | DSM pgvector | 외부 전용 벡터DB |
 |------|-------------|-----------------|
@@ -120,9 +120,9 @@
 
 **무엇을 정하나.** 가용성과 재해복구를 어느 수준까지 설계할지.
 
-- **경로 A. 단일 사이트**: vSphere HA + vSAN FTT(장애 허용)로 호스트 장애를 흡수하고 백업과 복구로 데이터를 보호. 가장 단순과 저비용이나 사이트 전체 장애는 미보호.
-- **경로 B. vSAN stretched cluster**: 두 사이트 동기 복제 + witness로 RPO 0과 자동 페일오버. 사이트 간 저지연 링크가 필요하고 비용이 약 2배.
-- **경로 C. 멀티사이트 DR(active-passive)**: 별도 사이트로 비동기 복제, VCF Operations 기반 복구. RPO가 0보다 크고 GPU 자원 재배치를 함께 설계.
+- **경로 A. 단일 사이트.** vSphere HA + vSAN FTT(장애 허용)로 호스트 장애를 흡수하고 백업과 복구로 데이터를 보호. 가장 단순과 저비용이나 사이트 전체 장애는 미보호.
+- **경로 B. vSAN stretched cluster.** 두 사이트 동기 복제 + witness로 RPO 0과 자동 페일오버. 사이트 간 저지연 링크가 필요하고 비용이 약 2배.
+- **경로 C. 멀티사이트 DR(active-passive).** 별도 사이트로 비동기 복제, VCF Operations 기반 복구. RPO가 0보다 크고 GPU 자원 재배치를 함께 설계.
 
 | 차원 | 단일 사이트 | stretched | 멀티사이트 DR |
 |------|------------|-----------|--------------|

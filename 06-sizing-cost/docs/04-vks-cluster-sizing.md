@@ -13,8 +13,8 @@
 
 VKS 클러스터 한 개는 크게 두 층으로 구성됩니다.
 
-- **컨트롤 플레인(Control Plane)**: Kubernetes API 서버, etcd, 스케줄러를 호스팅하는 노드. VM으로 프로비저닝됩니다.
-- **워커 노드 풀(Worker Node Pool)**: 실제 파드(워크로드)가 실행되는 노드 그룹. 노드 풀별로 VM Class(노드 1대의 vCPU, RAM, GPU 사양 템플릿)와 노드 수를 따로 지정합니다.
+- **컨트롤 플레인(Control Plane).** Kubernetes API 서버, etcd, 스케줄러를 호스팅하는 노드. VM으로 프로비저닝됩니다.
+- **워커 노드 풀(Worker Node Pool).** 실제 파드(워크로드)가 실행되는 노드 그룹. 노드 풀별로 VM Class(노드 1대의 vCPU, RAM, GPU 사양 템플릿)와 노드 수를 따로 지정합니다.
 
 컨트롤 플레인 노드 수는 **반드시 홀수(1 또는 3)** 여야 합니다. 프로덕션과 HA 환경에서는 **3노드 컨트롤 플레인**이 표준입니다. 컨트롤 플레인은 scale-out(노드 추가)은 지원하나 scale-in(노드 축소)은 지원하지 않으므로, 처음부터 3노드로 설계하는 편이 안전합니다(출처: [Broadcom TechDocs — Manually Scale a Cluster Using Kubectl](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vsphere-supervisor-services-and-standalone-components/latest/managing-vsphere-kuberenetes-service-clusters-and-workloads/operating-tkg-service-clusters/manually-scale-a-cluster-using-kubectl.html)).
 
@@ -48,9 +48,9 @@ VCF 9.1은 native Kubernetes HA의 현대적 표준으로 **3-Zone 배포 모델
 
 GPU 워커 노드 풀과 일반 워커 노드 풀은 **반드시 별도 노드 풀로 분리**하는 것을 권장합니다. 이유는 다음과 같습니다.
 
-- **비용 격리**: GPU 노드는 단가가 매우 높습니다. CPU만 사용하는 시스템 파드(모니터링, 로깅, 인그레스 등)가 GPU 노드를 점유하면 GPU가 낭비됩니다.
-- **스케줄링 정확성**: GPU 노드에 `taint`를 걸고 GPU 워크로드에만 `toleration`을 부여하면, GPU가 필요 없는 파드는 GPU 노드에 배치되지 않습니다.
-- **오토스케일 분리**: GPU 노드 풀과 일반 노드 풀의 오토스케일 정책(min/max)을 독립적으로 운영할 수 있습니다.
+- **비용 격리.** GPU 노드는 단가가 매우 높습니다. CPU만 사용하는 시스템 파드(모니터링, 로깅, 인그레스 등)가 GPU 노드를 점유하면 GPU가 낭비됩니다.
+- **스케줄링 정확성.** GPU 노드에 `taint`를 걸고 GPU 워크로드에만 `toleration`을 부여하면, GPU가 필요 없는 파드는 GPU 노드에 배치되지 않습니다.
+- **오토스케일 분리.** GPU 노드 풀과 일반 노드 풀의 오토스케일 정책(min/max)을 독립적으로 운영할 수 있습니다.
 
 VKS 3.5+는 Kubernetes 1.34에서 **DRA(Dynamic Resource Allocation)가 stable로 승격**된 것을 통합했습니다. DRA에서는 관리자가 `DeviceClass`로 GPU 같은 하드웨어 자원을 분류하고, 워크로드는 `ResourceClaim`/`ResourceClaimTemplate`으로 특정 GPU 디바이스를 선언적으로 요청합니다. 단순 개수(count) 기반 요청보다 CEL(Common Expression Language) 기반 세밀한 필터링이 가능해 GPU 활용도가 높아지고, 여러 파드/컨테이너 간 GPU 공유도 지원합니다(출처: [VCF Blog — VKS 3.5 is Now Live](https://blogs.vmware.com/cloud-foundation/2025/10/29/build-deploy-and-scale-with-confidence-vsphere-kubernetes-service-3-5-is-now-live-with-24-month-support/)).
 
@@ -72,7 +72,7 @@ GPU 노드 풀의 노드 사양(노드당 GPU 수, vCPU, RAM)은 VM Class로 결
 | 스케일 단위(granularity) | 큰 단위로만 증감 (낭비 가능) | 세밀한 증감 가능 |
 | 빈 패킹(bin-packing) | 큰 작업에 유리 | 작은 추론 작업 다수에 유리 |
 
-**일반 지침**: 멀티 GPU 학습(분산 트레이닝)은 노드 내 GPU 다수 + 고속 인터커넥트가 유리하므로 few-large를, 단일 GPU 추론(서빙)이 다수라면 활용도와 세밀한 스케일을 위해 many-small을 택하는 것이 보통입니다. 다만 호스트당 물리 GPU 장착 수와 VM Class에서 패스스루/vGPU로 노출 가능한 GPU 수에 제약이 있으므로, 물리 서버 사양과 함께 결정해야 합니다. 호스트당 GPU 슬롯 수와 VM Class 정의는 환경마다 다르므로 도입 전 실제 환경에서 확인하시기 바랍니다. 고정 GPU 적재와 패킹 관점의 역산은 [02 2.9절 고정 GPU 적재와 패킹](02-gpu-sizing.md#29-고정-gpu-적재와-패킹-공급-제약)과 [09 역방향 사이징 시나리오](09-reverse-sizing-scenario.md)를 참조하세요.
+**일반 지침.** 멀티 GPU 학습(분산 트레이닝)은 노드 내 GPU 다수 + 고속 인터커넥트가 유리하므로 few-large를, 단일 GPU 추론(서빙)이 다수라면 활용도와 세밀한 스케일을 위해 many-small을 택하는 것이 보통입니다. 다만 호스트당 물리 GPU 장착 수와 VM Class에서 패스스루/vGPU로 노출 가능한 GPU 수에 제약이 있으므로, 물리 서버 사양과 함께 결정해야 합니다. 호스트당 GPU 슬롯 수와 VM Class 정의는 환경마다 다르므로 도입 전 실제 환경에서 확인하시기 바랍니다. 고정 GPU 적재와 패킹 관점의 역산은 [02 2.9절 고정 GPU 적재와 패킹](02-gpu-sizing.md#29-고정-gpu-적재와-패킹-공급-제약)과 [09 역방향 사이징 시나리오](09-reverse-sizing-scenario.md)를 참조하세요.
 
 ### 서비스 유형별 노드 구성
 
@@ -120,14 +120,14 @@ VKS는 Kubernetes Cluster Autoscaler 구현을 제공하며, 워크로드 수요
 
 - **scale-out / scale-in 모두 지원**하나, 특정 애플리케이션(로컬 스토리지 사용, PodDisruptionBudget 등)이 노드 제거를 허용하지 않으면 scale-in이 일어나지 않을 수 있습니다.
 - **scale-from-zero / scale-to-zero**(노드 0개에서 시작과 축소)는 **VKS 3.3+ 및 VKr 1.31.4+** 에서 지원됩니다.
-- **버전 일치 요건**: VKr(vSphere Kubernetes release)의 마이너 버전과 Cluster Autoscaler 패키지의 마이너 버전이 일치해야 합니다.
+- **버전 일치 요건.** VKr(vSphere Kubernetes release)의 마이너 버전과 Cluster Autoscaler 패키지의 마이너 버전이 일치해야 합니다.
 
 (출처: [Broadcom TechDocs — About Cluster Autoscaling](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-service-administration-and-development/9-0/managing-vsphere-kuberenetes-service-clusters-and-workloads/autoscaling-tkg-service-clusters/about-cluster-autoscaling.html))
 
 ### GPU 노드 오토스케일에서 특히 주의할 점
 
-- **스케일 지연(provisioning time)**: GPU 노드는 신규 VM 부팅 + 드라이버/GPU Operator 데몬셋 기동까지 시간이 걸려, 일반 CPU 노드보다 "준비 완료(Ready)"까지 지연이 큽니다. 추론 트래픽 급증(버스트)에 즉시 대응하려면 **최소 노드 수(min)에 헤드룸을 미리 확보**해 두는 편이 안전합니다.
-- **min/max 분리 운영**: GPU 노드 풀과 일반 노드 풀에 서로 다른 min/max를 설정해, GPU는 약간의 상시 여유(warm pool 성격)를, 일반 노드는 공격적 scale-to-zero를 적용하는 식의 조합이 가능합니다.
+- **스케일 지연(provisioning time).** GPU 노드는 신규 VM 부팅 + 드라이버/GPU Operator 데몬셋 기동까지 시간이 걸려, 일반 CPU 노드보다 "준비 완료(Ready)"까지 지연이 큽니다. 추론 트래픽 급증(버스트)에 즉시 대응하려면 **최소 노드 수(min)에 헤드룸을 미리 확보**해 두는 편이 안전합니다.
+- **min/max 분리 운영.** GPU 노드 풀과 일반 노드 풀에 서로 다른 min/max를 설정해, GPU는 약간의 상시 여유(warm pool 성격)를, 일반 노드는 공격적 scale-to-zero를 적용하는 식의 조합이 가능합니다.
 - 노드 풀별 라벨과 테인트는 MachineDeployment 어노테이션(`capacity.cluster-autoscaler.kubernetes.io/labels`, `.../taints`)으로 오토스케일러에 전달됩니다.
 
 구체적 노드 풀별 min/max 상한 수치는 공식 문서에 단일 값으로 명시되어 있지 않으므로(환경과 릴리스별 상이), 4.6 실측과 함께 도입 전 공식 확인이 필요합니다.
@@ -169,8 +169,8 @@ VCF 9.1은 클러스터 수를 약 2.5배 늘려 **Supervisor 한 개당 최대 
 
 ### 노드 배치 (용량 관점)
 
-- **anti-affinity**: 동일 클러스터의 컨트롤 플레인 3노드, 그리고 GPU 워커 노드는 가급적 서로 다른 호스트와 Zone에 분산되도록 배치 정책(Placement Policy)을 적용합니다. DRS/HA가 노드 VM을 호스트에 분산합니다.
-- **호스트당 GPU**: 물리 호스트에 장착된 GPU 수와 VM Class가 노출하는 GPU 수가 GPU 노드 밀도를 결정합니다. few-large 전략은 호스트당 GPU가 많아야 성립합니다.
+- **anti-affinity.** 동일 클러스터의 컨트롤 플레인 3노드, 그리고 GPU 워커 노드는 가급적 서로 다른 호스트와 Zone에 분산되도록 배치 정책(Placement Policy)을 적용합니다. DRS/HA가 노드 VM을 호스트에 분산합니다.
+- **호스트당 GPU.** 물리 호스트에 장착된 GPU 수와 VM Class가 노출하는 GPU 수가 GPU 노드 밀도를 결정합니다. few-large 전략은 호스트당 GPU가 많아야 성립합니다.
 - vSAN 용량과 네트워크(대역폭, vNIC, 멀티네트워크) 사이징은 본 문서 범위를 넘으며 [05-storage-network-sizing.md](05-storage-network-sizing.md)에서 다룹니다.
 - 전반 아키텍처와 구축 순서는 시리즈 ① [인프라 가이드](../../01-infra/README.md)를 참조하세요.
 
@@ -198,12 +198,12 @@ VCF 9.1은 클러스터 수를 약 2.5배 늘려 **Supervisor 한 개당 최대 
 
 설계 수치를 실제 환경에서 검증하는 절차입니다. 모든 수치는 환경과 릴리스별로 다르므로 도입 전 실측을 권장합니다.
 
-1. **노드 가용 자원 실측**: `kubectl describe node <gpu-node>` 로 Allocatable vs Capacity 차이(예약량)와 GPU Operator 데몬셋 파드의 requests를 확인해 노드당 실제 워크로드 가용 vCPU, RAM, GPU를 산출합니다.
-2. **GPU 노출과 DRA 확인**: `kubectl get resourceslices` / `kubectl get deviceclasses` 로 DRA가 GPU를 정상 노출하는지, ResourceClaim이 의도대로 바인딩되는지 점검합니다.
-3. **오토스케일 반응 시간 측정**: 부하 생성으로 scale-out을 유발하고, 신규 GPU 노드가 `Ready` 상태로 전환될 때까지(VM 부팅 + 드라이버/데몬셋 기동 포함) 걸린 시간을 기록해 헤드룸(min) 값을 보정합니다.
-4. **스케일 한도 대비 점검**: 현재 Supervisor의 클러스터 수, 노드 총수를 집계해 500 / 4,000 한도 대비 소진율을 모니터링합니다.
-5. **배치 검증**: 컨트롤 플레인 3노드와 GPU 워커 노드가 anti-affinity, Zone 정책대로 서로 다른 호스트/Zone에 분산되었는지 확인합니다.
-6. **공식 문서 재확인**: 위 한도와 동작 수치는 [Broadcom TechDocs(VKS/Supervisor)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vsphere-supervisor-services-and-standalone-components/latest/managing-vsphere-kubernetes-service/running-tkg-service-clusters/tkg-service-components.html)와 해당 릴리스의 Configuration Maximums로 도입 시점에 다시 확인합니다.
+1. **노드 가용 자원 실측.** `kubectl describe node <gpu-node>` 로 Allocatable vs Capacity 차이(예약량)와 GPU Operator 데몬셋 파드의 requests를 확인해 노드당 실제 워크로드 가용 vCPU, RAM, GPU를 산출합니다.
+2. **GPU 노출과 DRA 확인.** `kubectl get resourceslices` / `kubectl get deviceclasses` 로 DRA가 GPU를 정상 노출하는지, ResourceClaim이 의도대로 바인딩되는지 점검합니다.
+3. **오토스케일 반응 시간 측정.** 부하 생성으로 scale-out을 유발하고, 신규 GPU 노드가 `Ready` 상태로 전환될 때까지(VM 부팅 + 드라이버/데몬셋 기동 포함) 걸린 시간을 기록해 헤드룸(min) 값을 보정합니다.
+4. **스케일 한도 대비 점검.** 현재 Supervisor의 클러스터 수, 노드 총수를 집계해 500 / 4,000 한도 대비 소진율을 모니터링합니다.
+5. **배치 검증.** 컨트롤 플레인 3노드와 GPU 워커 노드가 anti-affinity, Zone 정책대로 서로 다른 호스트/Zone에 분산되었는지 확인합니다.
+6. **공식 문서 재확인.** 위 한도와 동작 수치는 [Broadcom TechDocs(VKS/Supervisor)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vsphere-supervisor-services-and-standalone-components/latest/managing-vsphere-kubernetes-service/running-tkg-service-clusters/tkg-service-components.html)와 해당 릴리스의 Configuration Maximums로 도입 시점에 다시 확인합니다.
 
 스토리지와 네트워크 실측은 [05-storage-network-sizing.md](05-storage-network-sizing.md)로 이어집니다.
 

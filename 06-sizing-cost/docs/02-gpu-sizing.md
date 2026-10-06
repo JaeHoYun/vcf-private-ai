@@ -92,8 +92,8 @@ vLLM 커뮤니티가 정리한 토큰당 KV 캐시 어림식은 다음과 같습
 | 요청당 KV(4K 컨텍스트) | 0.000122 × 4,096 | 약 **0.5 GiB** |
 | 총 KV(동시성 50) | 0.5 × 50 | 약 **25 GiB** |
 
-- **교차검증**: 위 토큰당 0.000122 GiB는 VMware 사이징 계산기의 8B 계수와 동일합니다([부록 A1.1](../appendix/A1-first-order-reference.md#a11-추론-처리량과-동시성-1차-가정치)). 구조식과 공개 계산기, 두 독립 방법이 일치합니다.
-- **GQA의 효과**: 같은 모델이 GQA가 아니라 MHA(KV 헤드 = 어텐션 헤드 32)였다면 토큰당 KV가 4배(약 0.5 MiB/token) → 요청당 약 2 GiB, 동시성 50이면 약 100 GiB로 80GB 단일 GPU를 초과합니다. KV 헤드 구조가 동시성에 결정적임을 보여줍니다.
+- **교차검증.** 위 토큰당 0.000122 GiB는 VMware 사이징 계산기의 8B 계수와 동일합니다([부록 A1.1](../appendix/A1-first-order-reference.md#a11-추론-처리량과-동시성-1차-가정치)). 구조식과 공개 계산기, 두 독립 방법이 일치합니다.
+- **GQA의 효과.** 같은 모델이 GQA가 아니라 MHA(KV 헤드 = 어텐션 헤드 32)였다면 토큰당 KV가 4배(약 0.5 MiB/token) → 요청당 약 2 GiB, 동시성 50이면 약 100 GiB로 80GB 단일 GPU를 초과합니다. KV 헤드 구조가 동시성에 결정적임을 보여줍니다.
 - 이 예제를 가중치, 노드, 클러스터, 비용까지 이어지는 전체 흐름은 [08 레퍼런스 시나리오](08-reference-scenario.md)에서 시나리오 동시성(약 21)으로 적용합니다.
 
 > 정확한 구조값(레이어/KV 헤드/head_dim)은 모델 카드와 config에서 확인해야 하며, 위 경향은 어림입니다. 실측 필요.
@@ -109,9 +109,9 @@ vLLM 커뮤니티가 정리한 토큰당 KV 캐시 어림식은 다음과 같습
 | INT8 / FP8 | 약 50% (약 2배 효율) | 미미(약 1% 내외) | 표준적 절감, 대부분 안전 |
 | INT4 | 약 75% (약 4배 효율) | 모델과 기법에 민감 | AWQ/GPTQ 등 고급 기법 권장 |
 
-- **GPTQ**: 가중치를 배치 단위로 처리하며 양자화 오차(MSE, 평균제곱오차)를 최소화하는 학습 후 양자화(PTQ, Post-Training Quantization) 기법. GPU 추론에 최적화.
-- **AWQ**: 활성화 통계로 약 1%의 중요 가중치 채널을 식별하고 보존한 뒤 저비트화. 동일 비트폭에서 GPTQ보다 정확도 유지가 유리한 경향([AWQ 논문](https://arxiv.org/pdf/2306.00978)).
-- **모델 크기 효과**: INT4는 소형 모델에서 품질 저하가 두드러지지만, 모델이 커질수록 영향이 완화되는 경향이 보고됩니다([AWS ML 블로그](https://aws.amazon.com/blogs/machine-learning/accelerating-llm-inference-with-post-training-weight-and-activation-using-awq-and-gptq-on-amazon-sagemaker-ai/)).
+- **GPTQ.** 가중치를 배치 단위로 처리하며 양자화 오차(MSE, 평균제곱오차)를 최소화하는 학습 후 양자화(PTQ, Post-Training Quantization) 기법. GPU 추론에 최적화.
+- **AWQ.** 활성화 통계로 약 1%의 중요 가중치 채널을 식별하고 보존한 뒤 저비트화. 동일 비트폭에서 GPTQ보다 정확도 유지가 유리한 경향([AWQ 논문](https://arxiv.org/pdf/2306.00978)).
+- **모델 크기 효과.** INT4는 소형 모델에서 품질 저하가 두드러지지만, 모델이 커질수록 영향이 완화되는 경향이 보고됩니다([AWS ML 블로그](https://aws.amazon.com/blogs/machine-learning/accelerating-llm-inference-with-post-training-weight-and-activation-using-awq-and-gptq-on-amazon-sagemaker-ai/)).
 
 > 절감률, 품질 회복률은 데이터셋, 태스크, 기법에 따라 달라지는 어림 수치입니다. 도입 전 대상 태스크에서 정확도/지연을 실측해 비교하세요.
 
@@ -183,7 +183,7 @@ PAIF에서 ESXi 호스트의 GPU는 vGPU 타임슬라이스, MIG, DirectPath I/O
 | DirectPath I/O(전용) | GPU 1장 전체 | 완전 전용 | 대형 모델, 최대 성능(대형 추론/사전학습) |
 
 - **MIG**는 단일 물리 GPU를 하드웨어로 쪼개 각 슬라이스를 다른 VM에 할당합니다. 예컨대 H100은 8개의 메모리 슬라이스(각 약 10GB)와 7개의 컴퓨트 슬라이스로 구성되며, `[compute]g.[memory]gb` 표기로 프로파일을 지정합니다(예: `3g.40gb` = 컴퓨트 3슬라이스와 VRAM 40GB). 프로파일은 1, 2, 3, 4, 7 슬라이스를 소비하며 합이 7 이하인 조합만 유효합니다([NVIDIA MIG User Guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-mig-profiles.html)).
-- **선택 가이드(용량 효율)**: 작은 모델을 강한 격리로 여러 개 운영할 때는 MIG, 하나의 큰 모델로 최대 성능이 필요할 때는 DirectPath I/O, 부하가 낮고 간헐적인 소형 워크로드가 많을 때는 vGPU 타임슬라이스가 일반적으로 효율적입니다.
+- **선택 가이드(용량 효율).** 작은 모델을 강한 격리로 여러 개 운영할 때는 MIG, 하나의 큰 모델로 최대 성능이 필요할 때는 DirectPath I/O, 부하가 낮고 간헐적인 소형 워크로드가 많을 때는 vGPU 타임슬라이스가 일반적으로 효율적입니다.
 - 상세 아키텍처와 구성 절차는 시리즈 [① 인프라](../../01-infra/README.md)를 참조하세요.
 
 ---
@@ -203,10 +203,10 @@ GPU 선택의 1차 기준은 **HBM 용량**(2.2–2.4의 가중치+KV 캐시가 
 (출처: [RunPod H100](https://www.runpod.io/articles/guides/nvidia-h100), [RunPod H200](https://www.runpod.io/articles/guides/nvidia-h200-gpu). 벤더 정리 자료이므로 공식 데이터시트 교차 확인 필요)
 
 선택 시 고려사항:
-- **메모리 우선**: 장문 컨텍스트, 고동시, 대형 모델은 HBM 용량이 큰 세대(예: H200 계열)가 단일 장 적재와 KV 캐시 여유 면에서 유리합니다.
-- **대역폭 우선**: 토큰 디코딩은 메모리 대역폭에 민감하므로, 동일 메모리라면 최신 세대가 지연과 처리량에서 유리합니다.
-- **서버 형태가 공유 방식을 제약합니다**: HGX B200과 B300은 vSphere에서 GPU 1장을 여러 VM이 나눠 사용하는 분할 vGPU를 지원하지 않고, VM당 GPU 1장이나 여러 장 할당만 지원합니다([NVIDIA AI Enterprise 8.2 지원 매트릭스](https://docs.nvidia.com/ai-enterprise/release-8/latest/support/support-matrix-8/8.2.html)). 여러 소형 모델을 GPU 한 장에 촘촘히 담는 용도(04 4.3절 서비스 유형 N1)에는 맞지 않습니다. 반대로 RTX PRO 6000, L40S 같은 PCIe GPU는 MIG와 시분할 공유가 가능하지만 vGPU P2P 지원 목록에 없어 여러 GPU로 대형 모델을 나눠 서빙하는 용도(N2)에는 불리합니다([NVIDIA AI Enterprise P2P](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/p2p.html)). NVSwitch를 갖춘 Blackwell HGX 플랫폼은 PAIF 9.1부터 지원되며([PAIF 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)), VCF는 호스트당 Blackwell GPU를 최대 16장까지 지원합니다([PAIF 9.1 물리 인프라](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/physical-infrastructure-options.html)).
-- **특정 제품 단정 금지**: 실제 도입 GPU는 PAIF 지원 매트릭스와 서버 벤더의 BCG(BIOS, 펌웨어)/HCL(하드웨어 호환성 목록), NVIDIA 공식 사양으로 확정해야 합니다. 본 문서의 표는 산정 감각을 위한 참고치입니다.
+- **메모리 우선.** 장문 컨텍스트, 고동시, 대형 모델은 HBM 용량이 큰 세대(예: H200 계열)가 단일 장 적재와 KV 캐시 여유 면에서 유리합니다.
+- **대역폭 우선.** 토큰 디코딩은 메모리 대역폭에 민감하므로, 동일 메모리라면 최신 세대가 지연과 처리량에서 유리합니다.
+- **서버 형태가 공유 방식을 제약합니다.** HGX B200과 B300은 vSphere에서 GPU 1장을 여러 VM이 나눠 사용하는 분할 vGPU를 지원하지 않고, VM당 GPU 1장이나 여러 장 할당만 지원합니다([NVIDIA AI Enterprise 8.2 지원 매트릭스](https://docs.nvidia.com/ai-enterprise/release-8/latest/support/support-matrix-8/8.2.html)). 여러 소형 모델을 GPU 한 장에 촘촘히 담는 용도(04 4.3절 서비스 유형 N1)에는 맞지 않습니다. 반대로 RTX PRO 6000, L40S 같은 PCIe GPU는 MIG와 시분할 공유가 가능하지만 vGPU P2P 지원 목록에 없어 여러 GPU로 대형 모델을 나눠 서빙하는 용도(N2)에는 불리합니다([NVIDIA AI Enterprise P2P](https://docs.nvidia.com/ai-enterprise/release-8/latest/infra-software/vgpu/features/p2p.html)). NVSwitch를 갖춘 Blackwell HGX 플랫폼은 PAIF 9.1부터 지원되며([PAIF 9.1 릴리스 노트](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/private-ai-release-notes/vmware-private-ai-foundation-with-nvidia-91-release-notes.html)), VCF는 호스트당 Blackwell GPU를 최대 16장까지 지원합니다([PAIF 9.1 물리 인프라](https://techdocs.broadcom.com/us/en/vmware-cis/private-ai/foundation-with-nvidia/9-1/deploying-private-ai-foundation-with-nvidia/physical-infrastructure-options.html)).
+- **특정 제품 단정 금지.** 실제 도입 GPU는 PAIF 지원 매트릭스와 서버 벤더의 BCG(BIOS, 펌웨어)/HCL(하드웨어 호환성 목록), NVIDIA 공식 사양으로 확정해야 합니다. 본 문서의 표는 산정 감각을 위한 참고치입니다.
 
 ---
 
@@ -245,8 +245,8 @@ GPU 선택의 1차 기준은 **HBM 용량**(2.2–2.4의 가중치+KV 캐시가 
 
 작은 모델 여러 개를 한 장(또는 한 풀)에 담을 때는 두 방법이 있습니다.
 
-- **합산(soft)**: 한 GPU에 `Σ(가중치 + 요청당 KV × 동시성) ≤ 가용 VRAM`인 만큼 적재. 격리는 약합니다(같은 메모리 공간 공유).
-- **MIG 분할(hard)**: 80GB GPU를 슬라이스로 쪼개 각 모델을 격리 적재(2.7). 예측 가능한 SLA, 테넌트 격리에 유리하며, 프로파일 슬라이스 합이 7 이하인 조합만 유효합니다(2.7).
+- **합산(soft).** 한 GPU에 `Σ(가중치 + 요청당 KV × 동시성) ≤ 가용 VRAM`인 만큼 적재. 격리는 약합니다(같은 메모리 공간 공유).
+- **MIG 분할(hard).** 80GB GPU를 슬라이스로 쪼개 각 모델을 격리 적재(2.7). 예측 가능한 SLA, 테넌트 격리에 유리하며, 프로파일 슬라이스 합이 7 이하인 조합만 유효합니다(2.7).
 
 ### 풀 전체 천장 (집계)
 
@@ -311,13 +311,13 @@ LoRA는 베이스 가중치를 동결하고 소형 어댑터만 학습하므로,
 
 본 문서의 산식은 1차 사이징용 어림이며, 다음 절차로 실측과 검증한 뒤 확정하세요.
 
-1. **가중치 메모리 검증**: 대상 모델과 정밀도로 엔진을 기동해 로드 직후 VRAM 점유를 확인하고 2.2 표값과 대조합니다(차이 5–20%는 정상 범위).
-2. **KV 캐시와 동시성 검증**: vLLM 기동 로그의 KV 캐시 블록 수(또는 가용 토큰 수)를 확인하고, `gpu_memory_utilization`(메인라인 기본 0.9)을 조정해 가용 KV 캐시가 목표 동시성을 수용하는지 점검합니다([vLLM cache config](https://docs.vllm.ai/en/stable/api/vllm/config/cache/)).
-3. **처리량과 지연 측정**: 대표 입력/출력 토큰 분포로 부하 시험을 실행해 Replica당 QPS, tokens/s, TTFT, TPOT를 실측하고, 2.5의 Replica 환산식에 대입합니다.
-4. **양자화 영향 측정**: 후보 양자화(INT8/INT4, AWQ/GPTQ)별로 정확도(태스크 평가)와 지연을 함께 측정해 메모리 절감 대비 품질 손실을 비교합니다(2.4).
-5. **공유 방식 검증**: MIG 프로파일, vGPU, DirectPath I/O 각각에서 격리도와 실효 처리량을 확인하고, 워크로드 SLA에 맞는 방식을 선택합니다(2.7).
-6. **헤드룸 확정**: 피크 부하 + 단편화 여유(통상 20–30%)를 반영해 총 GPU 수를 올림 확정합니다(2.5).
-7. **호환성 확인**: 확정 GPU, 드라이버, 프로파일이 PAIF 지원 매트릭스와 서버 BCG/HCL에 부합하는지 최종 점검합니다(2.8).
+1. **가중치 메모리 검증.** 대상 모델과 정밀도로 엔진을 기동해 로드 직후 VRAM 점유를 확인하고 2.2 표값과 대조합니다(차이 5–20%는 정상 범위).
+2. **KV 캐시와 동시성 검증.** vLLM 기동 로그의 KV 캐시 블록 수(또는 가용 토큰 수)를 확인하고, `gpu_memory_utilization`(메인라인 기본 0.9)을 조정해 가용 KV 캐시가 목표 동시성을 수용하는지 점검합니다([vLLM cache config](https://docs.vllm.ai/en/stable/api/vllm/config/cache/)).
+3. **처리량과 지연 측정.** 대표 입력/출력 토큰 분포로 부하 시험을 실행해 Replica당 QPS, tokens/s, TTFT, TPOT를 실측하고, 2.5의 Replica 환산식에 대입합니다.
+4. **양자화 영향 측정.** 후보 양자화(INT8/INT4, AWQ/GPTQ)별로 정확도(태스크 평가)와 지연을 함께 측정해 메모리 절감 대비 품질 손실을 비교합니다(2.4).
+5. **공유 방식 검증.** MIG 프로파일, vGPU, DirectPath I/O 각각에서 격리도와 실효 처리량을 확인하고, 워크로드 SLA에 맞는 방식을 선택합니다(2.7).
+6. **헤드룸 확정.** 피크 부하 + 단편화 여유(통상 20–30%)를 반영해 총 GPU 수를 올림 확정합니다(2.5).
+7. **호환성 확인.** 확정 GPU, 드라이버, 프로파일이 PAIF 지원 매트릭스와 서버 BCG/HCL에 부합하는지 최종 점검합니다(2.8).
 
 > 위 절차의 모든 수치는 환경별로 달라집니다. 이 문서의 표와 산식은 출발점이며, **확정 용량은 실측값으로 갈음**한다는 원칙을 유지하세요. 불확실한 항목은 "확인 필요"로 남기고 진행하세요.
 

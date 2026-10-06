@@ -12,7 +12,7 @@
 
 **무엇을 정하나.** 관리 도메인과 GPU 가속 워크로드 도메인을 분리할지(표준), 한 클러스터에 합칠지(통합). Private AI에서는 **표준이 기본**이며 통합은 권고하지 않습니다.
 
-**기본 설계. 표준(standard)**: 관리 도메인과 GPU 가속 워크로드 도메인을 물리적으로 분리합니다. 이 구성을 출발점으로 삼는 이유는 GPU 워크로드의 독립 확장과 수명주기 관리, 관리 컴포넌트와의 자원 격리, 테넌시와 보안 경계 확보, VKS Supervisor와 GPU 노드의 안정적 적재가 모두 가능하기 때문입니다.
+**기본 설계. 표준(standard).** 관리 도메인과 GPU 가속 워크로드 도메인을 물리적으로 분리합니다. 이 구성을 출발점으로 삼는 이유는 GPU 워크로드의 독립 확장과 수명주기 관리, 관리 컴포넌트와의 자원 격리, 테넌시와 보안 경계 확보, VKS Supervisor와 GPU 노드의 안정적 적재가 모두 가능하기 때문입니다.
 
 **통합(consolidated)은 권고하지 않습니다.** 관리와 워크로드를 단일 클러스터에 합치는 통합 구성은 기술적으로 가능하지만, 이는 **VCF 최소 구성을 위한 형태**이지 Private AI 워크로드에는 맞지 않습니다. 사유:
 
@@ -32,9 +32,9 @@
 
 **무엇을 정하나.** 한 물리 GPU를 워크로드에 어떻게 나눌지. 활용률, 격리, 성능 예측성의 삼각 트레이드오프입니다.
 
-- **경로 A. MIG(Multi-Instance GPU)**: 지원 GPU(예: A100, H100, H200급)를 하드웨어 수준으로 분할. 인스턴스 간 강한 격리와 예측 가능한 성능, 단 분할 입도는 고정. ESXi 호스트마다 MIG 활성화 필요.
-- **경로 B. 타임슬라이싱(vGPU time-share)**: 시간 분할로 여러 VM이 GPU를 공유. 유연하고 활용률이 높지만 격리와 QoS가 약하고 메모리 경합이 발생. NVIDIA AI Enterprise(NVAIE) 라이선스 필요.
-- **경로 C. 풀 패스스루(DirectPath I/O)**: VM 하나가 물리 GPU 전체(메모리, 코어, NVLink 대역)를 독점. 최고 성능, 공유 불가, vMotion, HA 제약.
+- **경로 A. MIG(Multi-Instance GPU).** 지원 GPU(예: A100, H100, H200급)를 하드웨어 수준으로 분할. 인스턴스 간 강한 격리와 예측 가능한 성능, 단 분할 입도는 고정. ESXi 호스트마다 MIG 활성화 필요.
+- **경로 B. 타임슬라이싱(vGPU time-share).** 시간 분할로 여러 VM이 GPU를 공유. 유연하고 활용률이 높지만 격리와 QoS가 약하고 메모리 경합이 발생. NVIDIA AI Enterprise(NVAIE) 라이선스 필요.
+- **경로 C. 풀 패스스루(DirectPath I/O).** VM 하나가 물리 GPU 전체(메모리, 코어, NVLink 대역)를 독점. 최고 성능, 공유 불가, vMotion, HA 제약.
 
 | 차원 | MIG | 타임슬라이싱 | 풀 패스스루 |
 |------|-----|-------------|------------|
@@ -59,8 +59,8 @@
 
 **무엇을 정하나.** 모델 서빙과 학습 워크로드를 쿠버네티스(VKS) 기반 컨테이너로 배포할지, 딥러닝 VM(DLVM)에 직접 설치할지.
 
-- **경로 A. VKS(vSphere Kubernetes Service)**: 선언형 배포, 오토스케일, 롤아웃을 갖춘 쿠버네티스 기반. PAIS Model Runtime의 실행 기반이며 다수 모델과 멀티테넌시에 유리. 쿠버네티스 운영 스킬과 일정 규모(프로덕션 GPU 노드 최소 3대급)가 전제.
-- **경로 B. DLVM(Deep Learning VM)**: 인기 AI/ML 런타임이 사전 구성된 VM 이미지(콘텐츠 라이브러리)를 바로 배포. 단발 실험, 단일 워크로드에 빠르고, 쿠버네티스가 불필요. 스케일과 수명주기 관리는 수동.
+- **경로 A. VKS(vSphere Kubernetes Service).** 선언형 배포, 오토스케일, 롤아웃을 갖춘 쿠버네티스 기반. PAIS Model Runtime의 실행 기반이며 다수 모델과 멀티테넌시에 유리. 쿠버네티스 운영 스킬과 일정 규모(프로덕션 GPU 노드 최소 3대급)가 전제.
+- **경로 B. DLVM(Deep Learning VM).** 인기 AI/ML 런타임이 사전 구성된 VM 이미지(콘텐츠 라이브러리)를 바로 배포. 단발 실험, 단일 워크로드에 빠르고, 쿠버네티스가 불필요. 스케일과 수명주기 관리는 수동.
 
 | 차원 | VKS | DLVM |
 |------|-----|------|
@@ -83,9 +83,9 @@
 
 **무엇을 정하나.** 모델을 어떤 추론 스택으로 노출할지. 전형적인 빌드 vs 바이(build vs buy) 결정입니다.
 
-- **경로 A. PAIS Model Runtime(관리형)**: VMware가 관리하는 서빙 계층으로 vLLM, Infinity, llama.cpp 추론 엔진을 내장하고 Model Gallery와 OpenAI 호환 API를 제공. 운영 부담이 가장 적고 플랫폼 통합도가 높음.
-- **경로 B. NIM 직접(NVIDIA Inference Microservices)**: NVIDIA가 최적화한 추론 마이크로서비스. 검증된 모델에서 최고 성능과 기업 지원, 단 NVAIE 라이선스와 NGC(NVIDIA GPU Cloud, NVIDIA의 컨테이너와 모델 배포 카탈로그) 의존.
-- **경로 C. 자가 vLLM(직접 운영)**: vLLM 등을 직접 컨테이너로 운영. 최신 오픈 모델과 커스텀에 최대 유연성, 운영과 지원은 자체 부담.
+- **경로 A. PAIS Model Runtime(관리형).** VMware가 관리하는 서빙 계층으로 vLLM, Infinity, llama.cpp 추론 엔진을 내장하고 Model Gallery와 OpenAI 호환 API를 제공. 운영 부담이 가장 적고 플랫폼 통합도가 높음.
+- **경로 B. NIM 직접(NVIDIA Inference Microservices).** NVIDIA가 최적화한 추론 마이크로서비스. 검증된 모델에서 최고 성능과 기업 지원, 단 NVAIE 라이선스와 NGC(NVIDIA GPU Cloud, NVIDIA의 컨테이너와 모델 배포 카탈로그) 의존.
+- **경로 C. 자가 vLLM(직접 운영).** vLLM 등을 직접 컨테이너로 운영. 최신 오픈 모델과 커스텀에 최대 유연성, 운영과 지원은 자체 부담.
 
 | 차원 | PAIS Model Runtime | NIM 직접 | 자가 vLLM |
 |------|-------------------|----------|-----------|
@@ -104,9 +104,9 @@
 
 경로 A(PAIS Model Runtime)를 골랐다면 3.0부터 한 단계 더 정할 것이 생깁니다. 모델이 실행되는 위치입니다. PAIS 2.1까지는 답이 하나(해당 네임스페이스의 GPU)였지만, 3.0은 세 가지를 같은 OpenAI 호환 엔드포인트로 노출합니다([③ 02 2.5.1절](../../03-serving-api/docs/02-serving-api-architecture.md)).
 
-- **경로 A-1. 로컬**: 네임스페이스마다 자기 GPU에 모델을 배포함. 격리가 가장 단순하고 장애 범위가 좁으나, 같은 모델을 사용하는 테넌트 수만큼 GPU가 중복됨.
-- **경로 A-2. 중앙 공유**: 한 provider 인스턴스가 공통 모델을 서빙하고 각 테넌트는 consumer 네임스페이스에서 참조. 지식베이스, 에이전트, 도구는 테넌트 안에 남고 모델 가중치와 GPU만 한 곳에 집중됨. API 토큰과 LoadBalancer 지원 Ingress가 전제.
-- **경로 A-3. 원격 클라우드**: Google Gemini, Gemini Enterprise Agent Platform, OpenAI 호환 서비스를 `InferenceGatewayRoute`로 연결. GPU가 필요 없고 최신 상용 모델을 사용할 수 있으나 프롬프트가 사외로 반출됨. 토큰 사용량 추적과 TLS 검증 모드는 제공되지만 어떤 데이터를 보내도 되는지는 [⑤ 05 데이터 거버넌스](../../05-security/docs/05-data-governance.md)의 반출 정책이 정함.
+- **경로 A-1. 로컬.** 네임스페이스마다 자기 GPU에 모델을 배포함. 격리가 가장 단순하고 장애 범위가 좁으나, 같은 모델을 사용하는 테넌트 수만큼 GPU가 중복됨.
+- **경로 A-2. 중앙 공유.** 한 provider 인스턴스가 공통 모델을 서빙하고 각 테넌트는 consumer 네임스페이스에서 참조. 지식베이스, 에이전트, 도구는 테넌트 안에 남고 모델 가중치와 GPU만 한 곳에 집중됨. API 토큰과 LoadBalancer 지원 Ingress가 전제.
+- **경로 A-3. 원격 클라우드.** Google Gemini, Gemini Enterprise Agent Platform, OpenAI 호환 서비스를 `InferenceGatewayRoute`로 연결. GPU가 필요 없고 최신 상용 모델을 사용할 수 있으나 프롬프트가 사외로 반출됨. 토큰 사용량 추적과 TLS 검증 모드는 제공되지만 어떤 데이터를 보내도 되는지는 [⑤ 05 데이터 거버넌스](../../05-security/docs/05-data-governance.md)의 반출 정책이 정함.
 
 | 차원 | 로컬 | 중앙 공유 | 원격 클라우드 |
 |------|------|-----------|---------------|
